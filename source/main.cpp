@@ -1,7 +1,11 @@
 #include <chrono>
 #include <iostream>
 
+#include <QApplication>
+
 #include <hdf5/hdf5_io.hpp>
+
+#include <window.hpp>
 
 /*
 void main()
@@ -30,12 +34,10 @@ void main()
   io.load_fiber_inclination_map(offset, size, fiber_inclination_map);
 
   std::cout << "Ending PLI visualization app." << std::endl;
-}
-*/
 
-void main()
-{
-  std::cout << "Starting PLI visualization app." << std::endl;
+
+
+
 
   pli::hdf5_io<float> io("D:/data/Test/Test.h5");
   io.set_dataset_path_fiber_direction   ("fiber_directions");
@@ -45,6 +47,12 @@ void main()
   io.load_fiber_direction_map({{0, 0, 0}}, {{5, 5, 1}}, fiber_direction_map);
   std::for_each(fiber_direction_map.data(), fiber_direction_map.data() + fiber_direction_map.num_elements(), [](float& elem) { elem++; });
   io.save_fiber_direction_map({{0, 0, 0}}, {{5, 5, 1}}, fiber_direction_map);
+}
+*/
 
-  std::cout << "Ending PLI visualization app." << std::endl;
+void main(int argc, char** argv)
+{
+  QApplication application(argc, argv);
+  pli::window window;
+  application.exec();
 }
