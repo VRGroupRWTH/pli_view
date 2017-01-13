@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.0.2)
 
 # Setup project metadata.
 set(ProjectName "pli_vis")
@@ -10,6 +10,7 @@ include("cmake/_dependencies.cmake")
 
 # Setup sources.
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/third_party)
 include("cmake/_sources.cmake")
 
 # Create source groups.
