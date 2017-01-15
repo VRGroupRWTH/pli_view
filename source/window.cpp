@@ -1,6 +1,14 @@
 #include /* implements */ <window.hpp>
 
 #include <QFileDialog>
+#include <QVTKWidget.h>
+
+#include <vtkSmartPointer.h>
+#include <vtkSphereSource.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkActor.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderer.h>
 
 #include <hdf5/hdf5_io.hpp>
 
@@ -43,6 +51,16 @@ void window::bind_actions()
     io.load_fiber_direction_map  ({{0, 0, 536}}, {{128, 128, 3}}, fiber_direction_map  );
     //std::for_each(fiber_direction_map.data(), fiber_direction_map.data() + fiber_direction_map.num_elements(), [](float& elem) { elem++; });
     //io.save_fiber_direction_map  ({{0, 0, 536}}, {{128, 128, 3}}, fiber_direction_map);
+
+    auto source   = vtkSmartPointer<vtkSphereSource>  ::New();
+    auto mapper   = vtkSmartPointer<vtkPolyDataMapper>::New();
+    auto actor    = vtkSmartPointer<vtkActor>         ::New();
+    auto renderer = vtkSmartPointer<vtkRenderer>      ::New();
+    mapper    ->SetInputConnection(source->GetOutputPort());
+    actor     ->SetMapper         (mapper);
+    renderer  ->AddActor          (actor);
+    ui_.viewer->GetRenderWindow   ()->AddRenderer(renderer);
+    ui_.viewer->show();
   });
   connect(ui_.action_file_exit, &QAction::triggered, [&] {
     logger_->info(std::string("Closing window."));

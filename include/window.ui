@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>751</width>
+    <width>697</width>
     <height>512</height>
    </rect>
   </property>
@@ -52,14 +52,7 @@
         <number>0</number>
        </property>
        <item row="0" column="0">
-        <widget class="QOpenGLWidget" name="viewer">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>1</horstretch>
-           <verstretch>1</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
+        <widget class="QVTKWidget" name="viewer"/>
        </item>
       </layout>
      </widget>
@@ -84,7 +77,7 @@
       <property name="currentIndex">
        <number>0</number>
       </property>
-      <widget class="QWidget" name="page">
+      <widget class="QWidget" name="toolbox_general">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -92,25 +85,25 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>238</width>
+         <width>220</width>
          <height>395</height>
         </rect>
        </property>
        <attribute name="label">
-        <string>Page 1</string>
+        <string>Data</string>
        </attribute>
       </widget>
-      <widget class="QWidget" name="page_2">
+      <widget class="QWidget" name="toolbox_odf">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>238</width>
+         <width>220</width>
          <height>395</height>
         </rect>
        </property>
        <attribute name="label">
-        <string>Page 2</string>
+        <string>ODF</string>
        </attribute>
       </widget>
      </widget>
@@ -156,7 +149,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>751</width>
+     <width>697</width>
      <height>21</height>
     </rect>
    </property>
@@ -227,6 +220,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QVTKWidget</class>
+   <extends>QWidget</extends>
+   <header>QVTKWidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

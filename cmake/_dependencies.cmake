@@ -14,6 +14,7 @@ set(ProjectLibraries ${ProjectLibraries} Qt5::Widgets)
 
 # Include VTK.
 find_package       (VTK REQUIRED)
+include            (${VTK_USE_FILE})
 include_directories(${VTK_INCLUDE_DIRS})
 set(ProjectLibraries ${ProjectLibraries} ${VTK_LIBRARIES})
 
