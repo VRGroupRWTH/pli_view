@@ -10,19 +10,24 @@ template<typename type>
 class loggable
 {
 public:
-  loggable()
+  loggable(std::string name = std::string(), std::shared_ptr<spdlog::sinks::sink> sink = nullptr)
   {
-    auto logger_name = typeid(type).name();
-    logger_ = spdlog::get(logger_name);
-    if (logger_ == nullptr)
-      logger_ = spdlog::stdout_logger_mt(logger_name);
-  }
-  loggable(std::string name)
-  {
+    if (name.empty())
+      name = typeid(type).name();
+
     logger_ = spdlog::get(name);
     if (logger_ == nullptr)
-      logger_ = spdlog::stdout_logger_mt(name);
+      logger_ = sink ? spdlog::create(name, sink) : spdlog::stdout_logger_mt(name);
   }
+
+  void set_sink(std::shared_ptr<spdlog::sinks::sink> sink)
+  {
+    auto name = logger_->name();
+    if (logger_)
+      spdlog::drop(name);
+    logger_ = sink ? spdlog::create(name, sink) : spdlog::stdout_logger_mt(name);
+  }
+
 protected:
   std::shared_ptr<spdlog::logger> logger_;
 };
