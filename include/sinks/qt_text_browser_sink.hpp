@@ -6,6 +6,8 @@
 
 #include <spdlog/sinks/sink.h>
 
+namespace pli
+{
 class qt_text_browser_sink : public spdlog::sinks::sink
 {
 public:
@@ -13,7 +15,7 @@ public:
   {
 
   }
-
+  
   void set_text_browser(QTextBrowser* text_browser)
   {
     text_browser_ = text_browser;
@@ -33,5 +35,6 @@ public:
 private:
   QTextBrowser* text_browser_;
 };
+}
 
 #endif

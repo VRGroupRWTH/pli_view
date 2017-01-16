@@ -8,9 +8,11 @@ set(ProjectSources
   include/attributes/loggable.hpp
 
   include/sinks/qt_text_browser_sink.hpp
-
+  
+  include/viewer.hpp
   include/window.hpp
   
   source/main.cpp
+  source/viewer.cpp
   source/window.cpp
 )

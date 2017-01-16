@@ -5,8 +5,9 @@
 
 #include <QMainWindow>
 
-#include <ui_window.h>
+#include <hdf5/hdf5_io.hpp>
 
+#include <ui_window.h>
 #include <attributes/loggable.hpp>
 
 namespace pli
@@ -23,10 +24,15 @@ public:
   }
 
 private:
-  void bind_actions();
+  void bind_actions (); 
+  void update_viewer();
 
   Ui::window ui_;
   QWidget    main_;
+
+  std::unique_ptr<pli::hdf5_io<float>> io_;
+  std::array<std::size_t, 3>           offset_;
+  std::array<std::size_t, 3>           size_;
 };
 }
 
