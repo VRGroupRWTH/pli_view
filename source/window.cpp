@@ -3,8 +3,9 @@
 #include <QFileDialog>
 #include <QVTKWidget.h>
 
+#include <vtkHedgeHog.h>
+
 #include <vtkSmartPointer.h>
-#include <vtkSphereSource.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkActor.h>
 #include <vtkRenderWindow.h>
@@ -12,6 +13,7 @@
 
 #include <hdf5/hdf5_io.hpp>
 
+#include <adapters/fom_poly_data.hpp>
 #include <sinks/qt_text_browser_sink.hpp>
 
 namespace pli
@@ -45,18 +47,18 @@ void window::bind_actions()
     io.set_dataset_path_fiber_direction  (dataset_path_prefix + "Direction");
     io.set_dataset_path_fiber_inclination(dataset_path_prefix + "Inclination");
     std::array<float, 3>         voxel_size;
-    boost::multi_array<float, 3> fiber_inclination_map, fiber_direction_map;
+    boost::multi_array<float, 3> fiber_direction_map, fiber_inclination_map;
     io.load_voxel_size(voxel_size);
-    io.load_fiber_inclination_map({{0, 0, 536}}, {{128, 128, 3}}, fiber_inclination_map);
-    io.load_fiber_direction_map  ({{0, 0, 536}}, {{128, 128, 3}}, fiber_direction_map  );
-    //std::for_each(fiber_direction_map.data(), fiber_direction_map.data() + fiber_direction_map.num_elements(), [](float& elem) { elem++; });
-    //io.save_fiber_direction_map  ({{0, 0, 536}}, {{128, 128, 3}}, fiber_direction_map);
-
-    auto source   = vtkSmartPointer<vtkSphereSource>  ::New();
+    io.load_fiber_direction_map  ({{0, 0, 536}}, {{128, 128, 1}}, fiber_direction_map  );
+    io.load_fiber_inclination_map({{0, 0, 536}}, {{128, 128, 1}}, fiber_inclination_map);
+   
+    auto hedgehog = vtkSmartPointer<vtkHedgeHog>      ::New();
     auto mapper   = vtkSmartPointer<vtkPolyDataMapper>::New();
     auto actor    = vtkSmartPointer<vtkActor>         ::New();
     auto renderer = vtkSmartPointer<vtkRenderer>      ::New();
-    mapper    ->SetInputConnection(source->GetOutputPort());
+    hedgehog  ->SetInputData  (fom_poly_data<float>::create(fiber_direction_map, fiber_inclination_map, voxel_size));
+    hedgehog  ->SetScaleFactor(0.001);
+    mapper    ->SetInputConnection(hedgehog->GetOutputPort());
     actor     ->SetMapper         (mapper);
     renderer  ->AddActor          (actor);
     ui_.viewer->GetRenderWindow   ()->AddRenderer(renderer);
