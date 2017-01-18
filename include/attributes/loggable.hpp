@@ -16,19 +16,25 @@ public:
       name = typeid(type).name();
 
     logger_ = spdlog::get(name);
-    if (logger_ == nullptr)
-      logger_ = sink ? spdlog::create(name, sink) : spdlog::stdout_logger_mt(name);
+    if (!logger_)
+      set_logger(name, sink);
   }
 
   void set_sink(std::shared_ptr<spdlog::sinks::sink> sink)
   {
     auto name = logger_->name();
+
     if (logger_)
       spdlog::drop(name);
-    logger_ = sink ? spdlog::create(name, sink) : spdlog::stdout_logger_mt(name);
+    set_logger(name, sink);
   }
 
 protected:
+  void set_logger(const std::string& name, const std::shared_ptr<spdlog::sinks::sink>& sink)
+  {
+    logger_ = sink ? spdlog::create(name, sink) : spdlog::stdout_logger_mt(name);
+  }
+
   std::shared_ptr<spdlog::logger> logger_;
 };
 }

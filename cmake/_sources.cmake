@@ -2,17 +2,19 @@ set(ProjectSources
   cmake/_dependencies.cmake
   cmake/_sources.cmake
   
-  include/adapters/fom_poly_data.hpp
-  include/adapters/vector_rgb_mapper.hpp
-
+  include/adapters/qt/line_edit_utility.hpp
+  include/adapters/spdlog/qt_text_browser_sink.hpp
+  include/adapters/vtk/color_mappers/rgb.hpp
+  include/adapters/vtk/fom_factory.hpp
   include/attributes/loggable.hpp
-
-  include/sinks/qt_text_browser_sink.hpp
+  include/ui/toolboxes/data_toolbox_widget.hpp
+  include/ui/toolboxes/fom_toolbox_widget.hpp
+  include/ui/toolboxes/fdm_toolbox_widget.hpp
+  include/ui/window.hpp
   
-  include/viewer.hpp
-  include/window.hpp
-  
+  source/ui/toolboxes/data_toolbox_widget.cpp
+  source/ui/toolboxes/fom_toolbox_widget.cpp
+  source/ui/toolboxes/fdm_toolbox_widget.cpp
+  source/ui/window.cpp
   source/main.cpp
-  source/viewer.cpp
-  source/window.cpp
 )

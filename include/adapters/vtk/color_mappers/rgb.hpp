@@ -2,10 +2,11 @@
 #define PLI_VIS_VECTOR_RGB_MAPPER_HPP_
 
 #include <array>
+#include <math.h>
 
 namespace pli
 {
-class vector_rgb_mapper
+class rgb_color_mapper
 {
 public:
   template<typename color_type, typename vector_type>

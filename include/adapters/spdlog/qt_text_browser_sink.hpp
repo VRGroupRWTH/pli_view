@@ -16,11 +16,6 @@ public:
 
   }
   
-  void set_text_browser(QTextBrowser* text_browser)
-  {
-    text_browser_ = text_browser;
-  }
-
   void log  (const spdlog::details::log_msg& message) override
   {
     text_browser_->setText(text_browser_->toPlainText().append(message.formatted.c_str()));

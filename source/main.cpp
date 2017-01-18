@@ -1,4 +1,4 @@
-#include <window.hpp>
+#include <ui/window.hpp>
 
 void main(int argc, char** argv)
 {

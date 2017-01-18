@@ -3,26 +3,25 @@
 
 #define _USE_MATH_DEFINES 
 
+#include <array>
 #include <math.h>
+
+#include <boost/multi_array.hpp>
 
 #include <vtkDoubleArray.h>
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 #include <vtkSphericalTransform.h>
-#include <vtkTransformFilter.h>
 
-#include <boost/multi_array.hpp>
-
-#include <adapters/vector_rgb_mapper.hpp>
+#include <adapters/vtk/color_mappers/rgb.hpp>
 
 namespace pli
 {
-template<typename scalar_type = vector_rgb_mapper>
-class fom_poly_data
+class fom_factory
 {
 public:
-  template<typename color_mapper_type = vector_rgb_mapper>
+  template<typename scalar_type, typename color_mapper_type = rgb_color_mapper>
   static vtkSmartPointer<vtkPolyData> create(
     const boost::multi_array<scalar_type, 3>& directions    , 
     const boost::multi_array<scalar_type, 3>& inclinations  ,
@@ -51,36 +50,24 @@ public:
       {
         for (auto z = 0; z < shape[2]; z++) 
         {
-          float position[3] =
-          {
-            voxel_size[0] * x,
-            voxel_size[1] * y,
-            voxel_size[2] * z
-          };
+          float position[3] = {voxel_size[0] * x, voxel_size[1] * y, voxel_size[2] * z};
+          float rotation[3] = {1};
 
-          std::array<float, 3> fov;
           if (input_radians)
-            fov = 
-            {
-              1,
-              directions[x][y][z],
-              (M_PI / 2 - inclinations[x][y][z]) 
-            };
+          {
+            rotation[1] = directions[x][y][z];
+            rotation[2] = (M_PI / 2 - inclinations[x][y][z]);
+          }
           else
-            fov =
-            {
-              1,
-              directions[x][y][z]            * M_PI / 180.0,
-              (90.0 - inclinations[x][y][z]) * M_PI / 180.0
-            };
+          {
+            rotation[1] =         directions  [x][y][z]  * M_PI / 180.0;
+            rotation[2] = (90.0 - inclinations[x][y][z]) * M_PI / 180.0;
+          }
 
-
-          float rotation[3];
-          spherical_transform->TransformPoint(fov.data(), rotation);
-
-          positions->SetPoint(index, position);
-          rotations->SetTuple(index, rotation);
-          colors   ->SetTuple(index, color_mapper.template map<scalar_type>(rotation).data());
+          spherical_transform->TransformPoint(rotation, rotation);
+          positions          ->SetPoint      (index   , position);
+          rotations          ->SetTuple      (index   , rotation);
+          colors             ->SetTuple      (index   , color_mapper.template map<scalar_type>(rotation).data());
 
           index++;
         }
