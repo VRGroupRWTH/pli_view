@@ -25,38 +25,32 @@ fom_plugin::fom_plugin(QWidget* parent) : plugin(parent)
   
   connect(line_edit_offset_x, &QLineEdit::editingFinished, [&]
   {
-    auto value = line_edit_utility::get_text<std::size_t>(line_edit_offset_x);
-    logger_->info("Subset X offset is set to {}.", value);
+    logger_->info("Selection X offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_x));
     update_viewer();
   });
   connect(line_edit_offset_y, &QLineEdit::editingFinished, [&]
   {
-    auto value = line_edit_utility::get_text<std::size_t>(line_edit_offset_y);
-    logger_->info("Subset Y offset is set to {}.", value);
+    logger_->info("Selection Y offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_y));
     update_viewer();
   });
   connect(line_edit_offset_z, &QLineEdit::editingFinished, [&]
   {
-    auto value = line_edit_utility::get_text<std::size_t>(line_edit_offset_z);
-    logger_->info("Subset Z offset is set to {}.", value);
+    logger_->info("Selection Z offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_z));
     update_viewer();
   });
   connect(line_edit_size_x  , &QLineEdit::editingFinished, [&]
   {
-    auto value = line_edit_utility::get_text<std::size_t>(line_edit_size_x);
-    logger_->info("Subset X size is set to {}.", value);
+    logger_->info("Selection X size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_x));
     update_viewer();
   });
   connect(line_edit_size_y  , &QLineEdit::editingFinished, [&]
   {
-    auto value = line_edit_utility::get_text<std::size_t>(line_edit_size_y);
-    logger_->info("Subset Y size is set to {}.", value);
+    logger_->info("Selection Y size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_y));
     update_viewer();
   });
   connect(line_edit_size_z  , &QLineEdit::editingFinished, [&]
   {
-    auto value = line_edit_utility::get_text<std::size_t>(line_edit_size_z);
-    logger_->info("Subset Z size is set to {}.", value);
+    logger_->info("Selection Z size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_z));
     update_viewer();
   });
   connect(checkbox_show     , &QCheckBox::stateChanged   , [&] (int state)

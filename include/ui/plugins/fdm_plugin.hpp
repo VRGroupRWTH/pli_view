@@ -6,7 +6,7 @@
 #include <ui_fdm_toolbox.h>
 
 #include <vtkActor.h>
-#include <vtkHedgeHog.h>
+#include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkSmartPointer.h>
 
@@ -21,8 +21,9 @@ public:
 
 private:
   void update_viewer() const;
+  void calculate    () const;
 
-  vtkSmartPointer<vtkHedgeHog>       hedgehog_;
+  vtkSmartPointer<vtkPolyData>       poly_data_;
   vtkSmartPointer<vtkPolyDataMapper> mapper_;
   vtkSmartPointer<vtkActor>          actor_;
 };

@@ -12,6 +12,19 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
 {
   setupUi(this);
          
+  line_edit_offset_x        ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_offset_y        ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_offset_z        ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_size_x          ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_size_y          ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_size_z          ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+
+  line_edit_fom_offset_x    ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_fom_offset_y    ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_fom_offset_z    ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_fom_size_x      ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_fom_size_y      ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_fom_size_z      ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
   line_edit_block_size_x    ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
   line_edit_block_size_y    ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
   line_edit_block_size_z    ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
@@ -21,57 +34,107 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
   line_edit_samples_x       ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
   line_edit_samples_y       ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
   
-  //set_sink(std::make_shared<qt_text_browser_sink>(console_)); // FIX This + Viewer update.
-  //
-  //connect(checkbox_show             , &QCheckBox::stateChanged   , [&](int state)
-  //{
-  //  show_ = state;
-  //  viewer_->update();
-  //});
-  //connect(line_edit_block_size_x    , &QLineEdit::editingFinished, [&] 
-  //{
-  //  block_size_[0] = line_edit_utility::get_text<std::size_t>(line_edit_block_size_x);
-  //  viewer_->update();
-  //});
-  //connect(line_edit_block_size_y    , &QLineEdit::editingFinished, [&]
-  //{
-  //  block_size_[1] = line_edit_utility::get_text<std::size_t>(line_edit_block_size_y);
-  //  viewer_->update();
-  //});
-  //connect(line_edit_block_size_z    , &QLineEdit::editingFinished, [&]
-  //{
-  //  block_size_[2] = line_edit_utility::get_text<std::size_t>(line_edit_block_size_z);
-  //  viewer_->update();
-  //});
-  //connect(line_edit_histogram_bins_x, &QLineEdit::editingFinished, [&]
-  //{
-  //  histogram_bins_[0] = line_edit_utility::get_text<std::size_t>(line_edit_histogram_bins_x);
-  //  viewer_->update();
-  //});
-  //connect(line_edit_histogram_bins_y, &QLineEdit::editingFinished, [&]
-  //{
-  //  histogram_bins_[1] = line_edit_utility::get_text<std::size_t>(line_edit_histogram_bins_y);
-  //  viewer_->update();
-  //});
-  //connect(line_edit_max_order       , &QLineEdit::editingFinished, [&]
-  //{
-  //  max_order_ = line_edit_utility::get_text<std::size_t>(line_edit_max_order);
-  //  viewer_->update();
-  //});
-  //connect(line_edit_samples_x       , &QLineEdit::editingFinished, [&]
-  //{
-  //  samples_[0] = line_edit_utility::get_text<std::size_t>(line_edit_samples_x);
-  //  viewer_->update();
-  //});
-  //connect(line_edit_samples_y       , &QLineEdit::editingFinished, [&]
-  //{
-  //  samples_[1] = line_edit_utility::get_text<std::size_t>(line_edit_samples_y);
-  //  viewer_->update();
-  //});
+  connect(line_edit_offset_x        , &QLineEdit::editingFinished, [&] 
+  {
+    logger_->info("Selection X offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_x));
+    update_viewer();
+  });
+  connect(line_edit_offset_y        , &QLineEdit::editingFinished, [&]
+  {
+    logger_->info("Selection Y offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_y));
+    update_viewer();
+  });
+  connect(line_edit_offset_z        , &QLineEdit::editingFinished, [&]
+  {
+    logger_->info("Selection Z offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_z));
+    update_viewer();
+  });
+  connect(line_edit_size_x          , &QLineEdit::editingFinished, [&] 
+  {
+    logger_->info("Selection X size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_x));
+    update_viewer();
+  });
+  connect(line_edit_size_y          , &QLineEdit::editingFinished, [&]
+  {
+    logger_->info("Selection Y size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_y));
+    update_viewer();
+  });
+  connect(line_edit_size_z          , &QLineEdit::editingFinished, [&]
+  {
+    logger_->info("Selection Z size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_z));
+    update_viewer();
+  });
 
-  hedgehog_ = vtkSmartPointer<vtkHedgeHog>      ::New();
-  mapper_   = vtkSmartPointer<vtkPolyDataMapper>::New();
-  actor_    = vtkSmartPointer<vtkActor>         ::New();
+  connect(checkbox_show             , &QCheckBox::stateChanged   , [&](int state)
+  {
+    logger_->info(std::string("Show set to ") + (state ? "true" : "false"));
+    update_viewer();
+  });
+
+  connect(line_edit_fom_offset_x    , &QLineEdit::editingFinished, [&] 
+  {
+    logger_->info("FOM X offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_fom_offset_x));
+  });
+  connect(line_edit_fom_offset_y    , &QLineEdit::editingFinished, [&]
+  {
+    logger_->info("FOM Y offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_fom_offset_y));
+  });
+  connect(line_edit_fom_offset_z    , &QLineEdit::editingFinished, [&]
+  {
+    logger_->info("FOM Z offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_fom_offset_z));
+  });
+  connect(line_edit_fom_size_x      , &QLineEdit::editingFinished, [&] 
+  {
+    logger_->info("FOM X size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_fom_size_x));
+  });
+  connect(line_edit_fom_size_y      , &QLineEdit::editingFinished, [&]
+  {
+    logger_->info("FOM Y size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_fom_size_y));
+  });
+  connect(line_edit_fom_size_z      , &QLineEdit::editingFinished, [&]
+  {
+    logger_->info("FOM Z size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_fom_size_z));
+  });
+  connect(line_edit_block_size_x    , &QLineEdit::editingFinished, [&] 
+  {
+    logger_->info("Block size X is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_block_size_x));
+  });
+  connect(line_edit_block_size_y    , &QLineEdit::editingFinished, [&]
+  {
+    logger_->info("Block size Y is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_block_size_y));
+  });
+  connect(line_edit_block_size_z    , &QLineEdit::editingFinished, [&]
+  {
+    logger_->info("Block size Z is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_block_size_z));
+  });
+  connect(line_edit_histogram_bins_x, &QLineEdit::editingFinished, [&]
+  {
+    logger_->info("Histogram latitude bins is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_histogram_bins_x));
+  });
+  connect(line_edit_histogram_bins_y, &QLineEdit::editingFinished, [&]
+  {
+    logger_->info("Histogram longitude bins are set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_histogram_bins_y));
+  });
+  connect(line_edit_max_order       , &QLineEdit::editingFinished, [&]
+  {
+    logger_->info("Maximum spherical harmonics order are set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_max_order));
+  });
+  connect(line_edit_samples_x       , &QLineEdit::editingFinished, [&]
+  {
+    logger_->info("Samples longitude partitions are set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_samples_x));
+  });
+  connect(line_edit_samples_y       , &QLineEdit::editingFinished, [&]
+  {
+    logger_->info("Samples latitude partitions are set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_samples_y));
+  });
+  connect(button_calculate          , &QPushButton::clicked      , [&]
+  {
+    calculate();
+  });
+
+  poly_data_ = vtkSmartPointer<vtkPolyData>      ::New();
+  mapper_    = vtkSmartPointer<vtkPolyDataMapper>::New();
+  actor_     = vtkSmartPointer<vtkActor>         ::New();
 }
 
 void fdm_plugin::start()
@@ -89,6 +152,10 @@ void fdm_plugin::start()
 }
 
 void fdm_plugin::update_viewer() const
+{
+
+}
+void fdm_plugin::calculate    () const
 {
 
 }

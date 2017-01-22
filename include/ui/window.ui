@@ -99,6 +99,12 @@
         <verstretch>1</verstretch>
        </sizepolicy>
       </property>
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
       <property name="frameShape">
        <enum>QFrame::Box</enum>
       </property>
@@ -126,6 +132,12 @@
          <height>384</height>
         </rect>
        </property>
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
        <attribute name="label">
         <string>Data</string>
        </attribute>
@@ -140,8 +152,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>245</width>
-         <height>384</height>
+         <width>98</width>
+         <height>28</height>
         </rect>
        </property>
        <attribute name="label">
@@ -154,8 +166,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>245</width>
-         <height>384</height>
+         <width>98</width>
+         <height>28</height>
         </rect>
        </property>
        <attribute name="label">
