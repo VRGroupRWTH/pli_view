@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>769</width>
+    <width>782</width>
     <height>528</height>
    </rect>
   </property>
@@ -52,7 +52,7 @@
         <number>0</number>
        </property>
        <item row="0" column="0">
-        <widget class="QVTKWidget" name="viewer"/>
+        <widget class="pli::viewer" name="viewer" native="true"/>
        </item>
       </layout>
      </widget>
@@ -114,7 +114,7 @@
       <property name="tabSpacing">
        <number>6</number>
       </property>
-      <widget class="pli::data_toolbox_widget" name="toolbox_data">
+      <widget class="pli::data_plugin" name="plugin_data">
        <property name="enabled">
         <bool>true</bool>
        </property>
@@ -122,7 +122,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>244</width>
+         <width>249</width>
          <height>384</height>
         </rect>
        </property>
@@ -135,12 +135,12 @@
         </property>
        </layout>
       </widget>
-      <widget class="pli::fom_toolbox_widget" name="toolbox_fom">
+      <widget class="pli::fom_plugin" name="plugin_fom">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>244</width>
+         <width>245</width>
          <height>384</height>
         </rect>
        </property>
@@ -149,12 +149,12 @@
        </attribute>
        <layout class="QGridLayout" name="gridLayout_3"/>
       </widget>
-      <widget class="pli::fdm_toolbox_widget" name="toolbox_fdm">
+      <widget class="pli::fdm_plugin" name="plugin_fdm">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>244</width>
+         <width>245</width>
          <height>384</height>
         </rect>
        </property>
@@ -172,7 +172,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>769</width>
+     <width>782</width>
      <height>21</height>
     </rect>
    </property>
@@ -180,7 +180,6 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="action_file_open"/>
     <addaction name="action_file_exit"/>
    </widget>
    <widget class="QMenu" name="menu_edit">
@@ -205,14 +204,6 @@
     <bool>false</bool>
    </property>
   </widget>
-  <action name="action_file_open">
-   <property name="text">
-    <string>Open</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+O</string>
-   </property>
-  </action>
   <action name="action_file_exit">
    <property name="text">
     <string>Exit</string>
@@ -245,26 +236,27 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QVTKWidget</class>
+   <class>pli::data_plugin</class>
    <extends>QWidget</extends>
-   <header>QVTKWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>pli::data_toolbox_widget</class>
-   <extends>QWidget</extends>
-   <header location="global">ui/toolboxes/data_toolbox_widget.hpp</header>
+   <header location="global">ui/plugins/data_plugin.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>pli::fom_toolbox_widget</class>
+   <class>pli::fom_plugin</class>
    <extends>QWidget</extends>
-   <header location="global">ui/toolboxes/fom_toolbox_widget.hpp</header>
+   <header location="global">ui/plugins/fom_plugin.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>pli::fdm_toolbox_widget</class>
+   <class>pli::fdm_plugin</class>
    <extends>QWidget</extends>
-   <header location="global">ui/toolboxes/fdm_toolbox_widget.hpp</header>
+   <header location="global">ui/plugins/fdm_plugin.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>pli::viewer</class>
+   <extends>QWidget</extends>
+   <header location="global">ui/viewer.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -18,7 +18,7 @@ public:
   
   void log  (const spdlog::details::log_msg& message) override
   {
-    text_browser_->setText(text_browser_->toPlainText().append(message.formatted.c_str()));
+    text_browser_->append(message.formatted.c_str());
     auto* scroll_bar = text_browser_->verticalScrollBar();
     scroll_bar->setValue(scroll_bar->maximum());
   }

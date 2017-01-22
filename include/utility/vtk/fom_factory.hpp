@@ -14,7 +14,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkSphericalTransform.h>
 
-#include <adapters/vtk/color_mappers/rgb.hpp>
+#include <utility/vtk/color_mappers/rgb.hpp>
 
 namespace pli
 {
