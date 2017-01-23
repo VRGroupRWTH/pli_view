@@ -55,7 +55,7 @@ public:
 
           if (input_radians)
           {
-            rotation[1] = directions[x][y][z];
+            rotation[1] =             directions  [x][y][z];
             rotation[2] = (M_PI / 2 - inclinations[x][y][z]);
           }
           else

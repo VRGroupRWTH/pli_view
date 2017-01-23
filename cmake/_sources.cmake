@@ -11,7 +11,9 @@ set(ProjectSources
   include/ui/window.hpp
   include/utility/qt/line_edit_utility.hpp
   include/utility/spdlog/qt_text_browser_sink.hpp
+  include/utility/std/base_type.hpp
   include/utility/vtk/color_mappers/rgb.hpp
+  include/utility/vtk/fdm_factory.hpp
   include/utility/vtk/fom_factory.hpp
   
   source/ui/plugins/data_plugin.cpp

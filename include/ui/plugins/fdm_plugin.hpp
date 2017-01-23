@@ -20,7 +20,7 @@ public:
   void start() override;
 
 private:
-  void update_viewer() const;
+  void update_viewer();
   void calculate    () const;
 
   vtkSmartPointer<vtkPolyData>       poly_data_;

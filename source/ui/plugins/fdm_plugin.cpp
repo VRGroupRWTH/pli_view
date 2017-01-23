@@ -5,6 +5,7 @@
 #include <ui/window.hpp>
 #include <utility/qt/line_edit_utility.hpp>
 #include <utility/spdlog/qt_text_browser_sink.hpp>
+#include <utility/vtk/fdm_factory.hpp>
 
 namespace pli
 {
@@ -18,6 +19,9 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
   line_edit_size_x          ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
   line_edit_size_y          ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
   line_edit_size_z          ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  
+  line_edit_samples_x       ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_samples_y       ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
 
   line_edit_fom_offset_x    ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
   line_edit_fom_offset_y    ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
@@ -31,8 +35,6 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
   line_edit_histogram_bins_x->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
   line_edit_histogram_bins_y->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
   line_edit_max_order       ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_samples_x       ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_samples_y       ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
   
   connect(line_edit_offset_x        , &QLineEdit::editingFinished, [&] 
   {
@@ -69,6 +71,14 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
   {
     logger_->info(std::string("Show set to ") + (state ? "true" : "false"));
     update_viewer();
+  });
+  connect(line_edit_samples_x       , &QLineEdit::editingFinished, [&]
+  {
+    logger_->info("Samples longitude partitions are set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_samples_x));
+  });
+  connect(line_edit_samples_y       , &QLineEdit::editingFinished, [&]
+  {
+    logger_->info("Samples latitude partitions are set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_samples_y));
   });
 
   connect(line_edit_fom_offset_x    , &QLineEdit::editingFinished, [&] 
@@ -119,14 +129,6 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
   {
     logger_->info("Maximum spherical harmonics order are set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_max_order));
   });
-  connect(line_edit_samples_x       , &QLineEdit::editingFinished, [&]
-  {
-    logger_->info("Samples longitude partitions are set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_samples_x));
-  });
-  connect(line_edit_samples_y       , &QLineEdit::editingFinished, [&]
-  {
-    logger_->info("Samples latitude partitions are set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_samples_y));
-  });
   connect(button_calculate          , &QPushButton::clicked      , [&]
   {
     calculate();
@@ -151,9 +153,49 @@ void fdm_plugin::start()
   owner_->viewer->renderer()->ResetCamera();
 }
 
-void fdm_plugin::update_viewer() const
+void fdm_plugin::update_viewer()
 {
+  try
+  {
+    auto data_plugin = owner_->get_plugin<pli::data_plugin>();
+    auto io          = data_plugin->io();
 
+    if (io && checkbox_show->isChecked())
+    {
+      std::array<std::size_t, 3> offset = 
+      { line_edit_utility::get_text<std::size_t>(line_edit_offset_x), 
+        line_edit_utility::get_text<std::size_t>(line_edit_offset_y),
+        line_edit_utility::get_text<std::size_t>(line_edit_offset_z)};
+      
+      std::array<std::size_t, 3> size = 
+      { line_edit_utility::get_text<std::size_t>(line_edit_size_x),
+        line_edit_utility::get_text<std::size_t>(line_edit_size_y),
+        line_edit_utility::get_text<std::size_t>(line_edit_size_z)};
+      
+      std::array<std::size_t, 2> sample_dimensions =
+      { line_edit_utility::get_text<std::size_t>(line_edit_samples_x), 
+        line_edit_utility::get_text<std::size_t>(line_edit_samples_x)};
+
+      auto fiber_distribution_map = io->load_fiber_distribution_map(offset, size);
+      auto shape                  = fiber_distribution_map.shape();
+      
+      // TODO: Sample coefficients.
+      typedef std::array<float, 3> point_type;
+      boost::multi_array<std::vector<point_type>, 3> sampled_fiber_distribution_map;
+
+      poly_data_ = fdm_factory::create(sampled_fiber_distribution_map, sample_dimensions);
+    }
+    else
+      poly_data_ = vtkSmartPointer<vtkPolyData>::New();
+    
+    mapper_->SetInputData(poly_data_);
+    actor_ ->SetMapper   (mapper_);
+    owner_ ->viewer->update();
+  }
+  catch (std::exception& exception)
+  {
+    logger_->error(std::string(exception.what()));
+  }
 }
 void fdm_plugin::calculate    () const
 {
