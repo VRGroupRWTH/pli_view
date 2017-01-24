@@ -1,11 +1,76 @@
 #include /* implements */ <ui/plugins/fdm_plugin.hpp>
 
+#define _USE_MATH_DEFINES
+
+#include <math.h>
 #include <limits>
 
 #include <ui/window.hpp>
 #include <utility/qt/line_edit_utility.hpp>
 #include <utility/spdlog/qt_text_browser_sink.hpp>
 #include <utility/vtk/fdm_factory.hpp>
+
+template<typename input_precision, typename output_precision>
+output_precision evaluate_sh(
+  const std::size_t&                    coefficient_index,
+  const std::array<input_precision, 2>& angles           ,
+  const std::array<std::size_t    , 2>& sample_dimensions,
+  const input_precision&                weight           )
+{
+  return 0;
+}
+
+template<typename input_precision, typename output_precision = std::array<input_precision, 3>>
+boost::multi_array<output_precision, 4> sample_coefficients(
+  const boost::multi_array<input_precision, 4>& coefficients     ,
+  const std  ::      array<std::size_t    , 2>& sample_dimensions)
+{
+  auto shape = coefficients.shape();
+
+  boost::multi_array<output_precision, 4> samples(boost::extents
+    [shape[0]]
+    [shape[1]]
+    [shape[2]]
+    [sample_dimensions[0] * sample_dimensions[1]]);
+
+  for (auto x = 0; x < shape[0]; x++)
+  {
+    for (auto y = 0; y < shape[1]; y++)
+    {
+      for (auto z = 0; z < shape[2]; z++)
+      {
+        for (auto c = 0; c < shape[3]; c++)
+        {
+          for (auto lon = 0; lon < sample_dimensions[0]; lon++)
+          {
+            for (auto lat = 0; lat < sample_dimensions[1]; lat++)
+            {
+              auto& sample = samples[x][y][z][lon * sample_dimensions[0] + lat];
+              sample[0]    = 1;
+              sample[1]    = 2 * M_PI / sample_dimensions[0] * (lon / sample_dimensions[0]);
+              sample[2]    =     M_PI / sample_dimensions[1] * (lat / sample_dimensions[0]);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return samples;
+
+  //if (coefficient_index == 0)
+  //{
+  //  output_points[sample_index].y = 2 * M_PI / output_resolution * (sample_index / output_resolution);
+  //  output_points[sample_index].z =     M_PI / output_resolution * (sample_index % output_resolution);
+  //}
+  //
+  //atomicAdd(&output_points[sample_index].x, evaluate<input_precision>(
+  //  coefficient_lm.x,
+  //  coefficient_lm.y,
+  //  2 * M_PI / output_resolution * (sample_index / output_resolution),
+  //      M_PI / output_resolution * (sample_index % output_resolution),
+  //  coefficients[coefficient_index]));
+}
 
 namespace pli
 {
@@ -176,14 +241,7 @@ void fdm_plugin::update_viewer()
       { line_edit_utility::get_text<std::size_t>(line_edit_samples_x), 
         line_edit_utility::get_text<std::size_t>(line_edit_samples_x)};
 
-      auto fiber_distribution_map = io->load_fiber_distribution_map(offset, size);
-      auto shape                  = fiber_distribution_map.shape();
-      
-      // TODO: Sample coefficients.
-      typedef std::array<float, 3> point_type;
-      boost::multi_array<std::vector<point_type>, 3> sampled_fiber_distribution_map;
-
-      poly_data_ = fdm_factory::create(sampled_fiber_distribution_map, sample_dimensions);
+      poly_data_ = fdm_factory::create(sample_coefficients(io->load_fiber_distribution_map(offset, size), sample_dimensions), sample_dimensions);
     }
     else
       poly_data_ = vtkSmartPointer<vtkPolyData>::New();

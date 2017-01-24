@@ -38,9 +38,9 @@ public:
     auto num_elements        = directions.num_elements();
     rotations->SetNumberOfComponents(num_components);
     colors   ->SetNumberOfComponents(num_components);
-    positions->SetNumberOfPoints    (num_elements);
-    rotations->SetNumberOfTuples    (num_elements);
-    colors   ->SetNumberOfTuples    (num_elements);
+    positions->SetNumberOfPoints    (num_elements  );
+    rotations->SetNumberOfTuples    (num_elements  );
+    colors   ->SetNumberOfTuples    (num_elements  );
 
     auto index = 0;
     auto shape = directions.shape();
