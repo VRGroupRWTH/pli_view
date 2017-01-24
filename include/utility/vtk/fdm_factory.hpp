@@ -9,7 +9,6 @@
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
-#include <vtkSphericalTransform.h>
 #include <vtkUnsignedCharArray.h>
 
 #include <utility/std/base_type.hpp>
@@ -26,16 +25,15 @@ public:
     const std::array<std::size_t, 2>&         sample_dimensions,
     color_mapper_type                         color_mapper     = color_mapper_type())
   {
-    auto poly_data           = vtkSmartPointer<vtkPolyData>          ::New();
-    auto positions           = vtkSmartPointer<vtkPoints>            ::New();
-    auto colors              = vtkSmartPointer<vtkUnsignedCharArray> ::New();
-    auto cells               = vtkSmartPointer<vtkCellArray>         ::New();
-    auto spherical_transform = vtkSmartPointer<vtkSphericalTransform>::New();
-    auto num_components      = 3;
-    auto num_elements        = distributions.num_elements();
+    auto poly_data      = vtkSmartPointer<vtkPolyData>         ::New();
+    auto positions      = vtkSmartPointer<vtkPoints>           ::New();
+    auto colors         = vtkSmartPointer<vtkUnsignedCharArray>::New();
+    auto cells          = vtkSmartPointer<vtkCellArray>        ::New();
+    auto num_elements   = distributions.num_elements();
+    auto num_components = 3;
     colors   ->SetNumberOfComponents(num_components);
-    positions->SetNumberOfPoints    (num_elements);
-    colors   ->SetNumberOfTuples    (num_elements);
+    positions->SetNumberOfPoints    (num_elements  );
+    colors   ->SetNumberOfTuples    (num_elements  );
     cells    ->Allocate             (cells->EstimateSize(num_elements, 4));
 
     auto index = 0;
@@ -50,41 +48,33 @@ public:
           for (auto s = 0; s < shape[3]; s++)
           {
             auto position = distributions[x][y][z][s];
-            spherical_transform->TransformPoint(position.data(), position.data());
-
             colors->SetTuple(index, (color_mapper.template map<base_type<points_type>::type>(position)).data());
-
             position[0] += x;
             position[1] += y;
             position[2] += z;
             positions->SetPoint(index, position.data());
-
             index++;
           }
-          //for (auto s = 0; s < sample_dimensions[0]; s++)
-          //{
-          //  for (auto t = 0; t < sample_dimensions[1]; t++)
-          //  {
-          //    auto latitude  = last_index + s;
-          //    auto longitude = last_index + t;
-          //
-          //    vtkIdType indices[4] = 
-          //    {
-          //      latitude      * sample_dimensions[1] +  longitude,
-          //      latitude      * sample_dimensions[1] + (longitude + 1) % sample_dimensions[1],
-          //     (latitude + 1) % sample_dimensions[1] * sample_dimensions[1] + (longitude + 1) % sample_dimensions[1],
-          //     (latitude + 1) % sample_dimensions[1] * sample_dimensions[1] +  longitude 
-          //    };
-          //
-          //    cells->InsertNextCell(4, indices);
-          //  }
-          //}
+          for (auto s = 0; s < sample_dimensions[0]; s++)
+          {
+            for (auto t = 0; t < sample_dimensions[1]; t++)
+            {
+              vtkIdType indices[4] = 
+              {
+                last_index +  s                             * sample_dimensions[1] +  t,
+                last_index +  s                             * sample_dimensions[1] + (t + 1) % sample_dimensions[1],
+                last_index + (s + 1) % sample_dimensions[0] * sample_dimensions[1] + (t + 1) % sample_dimensions[1],
+                last_index + (s + 1) % sample_dimensions[0] * sample_dimensions[1] +  t 
+              };
+              cells->InsertNextCell(4, indices);
+            }
+          }
         }
       }
     }
-
+    
     poly_data->SetPoints(positions);
-    //poly_data->SetPolys (cells);
+    poly_data->SetPolys (cells);
     poly_data->GetPointData()->SetScalars(colors);
     return poly_data;
   }

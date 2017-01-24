@@ -12,7 +12,8 @@
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
-#include <vtkSphericalTransform.h>
+
+#include <convert.hpp>
 
 #include <utility/vtk/color_mappers/rgb.hpp>
 
@@ -29,13 +30,12 @@ public:
     bool                                      input_radians = false,
     color_mapper_type                         color_mapper  = color_mapper_type())
   {
-    auto poly_data           = vtkSmartPointer<vtkPolyData>          ::New();
-    auto positions           = vtkSmartPointer<vtkPoints>            ::New();
-    auto rotations           = vtkSmartPointer<vtkDoubleArray>       ::New();
-    auto colors              = vtkSmartPointer<vtkUnsignedCharArray> ::New();
-    auto spherical_transform = vtkSmartPointer<vtkSphericalTransform>::New();
-    auto num_components      = 3;
-    auto num_elements        = directions.num_elements();
+    auto poly_data      = vtkSmartPointer<vtkPolyData>          ::New();
+    auto positions      = vtkSmartPointer<vtkPoints>            ::New();
+    auto rotations      = vtkSmartPointer<vtkDoubleArray>       ::New();
+    auto colors         = vtkSmartPointer<vtkUnsignedCharArray> ::New();
+    auto num_components = 3;
+    auto num_elements   = directions.num_elements();
     rotations->SetNumberOfComponents(num_components);
     colors   ->SetNumberOfComponents(num_components);
     positions->SetNumberOfPoints    (num_elements  );
@@ -50,24 +50,24 @@ public:
       {
         for (auto z = 0; z < shape[2]; z++) 
         {
-          float position[3] = {voxel_size[0] * x, voxel_size[1] * y, voxel_size[2] * z};
-          float rotation[3] = {1};
+          std::array<float, 3> position = {voxel_size[0] * x, voxel_size[1] * y, voxel_size[2] * z};
+          std::array<float, 3> rotation = {0.5};
 
           if (input_radians)
           {
-            rotation[1] =             directions  [x][y][z];
+            rotation[1] = (M_PI / 2 + directions  [x][y][z]);
             rotation[2] = (M_PI / 2 - inclinations[x][y][z]);
           }
           else
           {
-            rotation[1] =         directions  [x][y][z]  * M_PI / 180.0;
+            rotation[1] = (90.0 + directions  [x][y][z]) * M_PI / 180.0;
             rotation[2] = (90.0 - inclinations[x][y][z]) * M_PI / 180.0;
           }
 
-          spherical_transform->TransformPoint(rotation, rotation);
-          positions          ->SetPoint      (index   , position);
-          rotations          ->SetTuple      (index   , rotation);
-          colors             ->SetTuple      (index   , color_mapper.template map<scalar_type>(rotation).data());
+          rotation = to_cartesian_coords(rotation);
+          positions->SetPoint(index, position.data());
+          rotations->SetTuple(index, rotation.data());
+          colors   ->SetTuple(index, color_mapper.template map<scalar_type>(rotation).data());
 
           index++;
         }
