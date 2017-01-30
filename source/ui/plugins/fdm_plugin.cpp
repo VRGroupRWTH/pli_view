@@ -5,6 +5,8 @@
 #include <math.h>
 #include <limits>
 
+#include <vtkProperty.h>
+
 #include <convert.hpp>
 
 #include <ui/window.hpp>
@@ -249,6 +251,7 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
   mapper_    = vtkSmartPointer<vtkPolyDataMapper>::New();
   actor_     = vtkSmartPointer<vtkActor>         ::New();
   actor_->SetMapper(mapper_);
+  actor_->GetProperty()->SetLighting(false);
 }
 
 void fdm_plugin::start()

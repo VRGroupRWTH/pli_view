@@ -2,6 +2,7 @@
 
 #include <limits>
 
+#include <vtkProperty.h>
 #include <vtkSmartPointer.h>
 
 #include <ui/window.hpp>
@@ -113,6 +114,7 @@ void fom_plugin::update_viewer() const
     hedgehog_->SetScaleFactor    (line_edit_utility::get_text<float>(line_edit_scale)); 
     mapper_  ->SetInputConnection(hedgehog_->GetOutputPort());
     actor_   ->SetMapper         (mapper_);
+    actor_   ->GetProperty       ()->SetLighting(false);
     owner_   ->viewer->update();
   }
   catch (std::exception& exception)
