@@ -18,6 +18,8 @@ include            (${VTK_USE_FILE})
 include_directories(${VTK_INCLUDE_DIRS})
 set(ProjectLibraries ${ProjectLibraries} ${VTK_LIBRARIES})
 
+
+
 # Include pli_io.
-include_directories(${pli_io_INCLUDE_DIR})
-set(ProjectLibraries ${ProjectLibraries} ${pli_io_LIBRARIES})
+find_package       (PLI_IO REQUIRED)
+include_directories(${PLI_IO_INCLUDE_DIRS})
