@@ -1,5 +1,5 @@
-#ifndef PLI_VIS_VECTOR_RGB_MAPPER_HPP_
-#define PLI_VIS_VECTOR_RGB_MAPPER_HPP_
+#ifndef PLI_VIS_RGB_COLOR_MAPPER_HPP_
+#define PLI_VIS_RGB_COLOR_MAPPER_HPP_
 
 #include <array>
 #include <math.h>
@@ -14,9 +14,9 @@ public:
   {
     return
     {
-      color_type(abs(vector[0] * 255)),
-      color_type(abs(vector[1] * 255)),
-      color_type(abs(vector[2] * 255))
+      abs(vector[0] * 255),
+      abs(vector[1] * 255),
+      abs(vector[2] * 255)
     };
   }
 };

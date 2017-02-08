@@ -9,10 +9,15 @@ set(ProjectSources
   include/ui/plugins/plugin.hpp
   include/ui/viewer.hpp
   include/ui/window.hpp
+  include/utility/boost/gil/color_convert.hpp
+  include/utility/boost/gil/extension/toolbox/hsl.hpp
+  include/utility/boost/gil/extension/toolbox/hsv.hpp
   include/utility/qt/line_edit_utility.hpp
   include/utility/spdlog/qt_text_browser_sink.hpp
   include/utility/std/base_type.hpp
   include/utility/vtk/color_mappers/rgb.hpp
+  include/utility/vtk/color_mappers/hsl.hpp
+  include/utility/vtk/color_mappers/hsv.hpp
   include/utility/vtk/fdm_factory.hpp
   include/utility/vtk/fom_factory.hpp
   
