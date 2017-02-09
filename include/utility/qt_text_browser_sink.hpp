@@ -3,7 +3,6 @@
 
 #include <QScrollBar>
 #include <QTextBrowser>
-
 #include <spdlog/sinks/sink.h>
 
 namespace pli

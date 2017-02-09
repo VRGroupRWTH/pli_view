@@ -20,6 +20,10 @@ set(ProjectLibraries ${ProjectLibraries} ${VTK_LIBRARIES})
 
 
 
+# Include cush.
+find_package       (Cush REQUIRED)
+include_directories(${CUSH_INCLUDE_DIRS})
+
 # Include pli_io.
 find_package       (PLI_IO REQUIRED)
 include_directories(${PLI_IO_INCLUDE_DIRS})

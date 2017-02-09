@@ -3,29 +3,34 @@ set(ProjectSources
   cmake/_sources.cmake
   
   include/attributes/loggable.hpp
+
+  include/graphics/color_mappers/rgb.hpp
+  include/graphics/color_mappers/hsl.hpp
+  include/graphics/color_mappers/hsv.hpp
+  include/graphics/color_convert.hpp
+  include/graphics/fdm_factory.hpp
+  include/graphics/fom_factory.hpp
+  include/graphics/sampling.h
+
   include/ui/plugins/data_plugin.hpp
   include/ui/plugins/fom_plugin.hpp
   include/ui/plugins/fdm_plugin.hpp
   include/ui/plugins/plugin.hpp
   include/ui/viewer.hpp
   include/ui/window.hpp
-  include/utility/boost/gil/color_convert.hpp
-  include/utility/boost/gil/extension/toolbox/hsl.hpp
-  include/utility/boost/gil/extension/toolbox/hsv.hpp
-  include/utility/qt/line_edit_utility.hpp
-  include/utility/spdlog/qt_text_browser_sink.hpp
-  include/utility/std/base_type.hpp
-  include/utility/vtk/color_mappers/rgb.hpp
-  include/utility/vtk/color_mappers/hsl.hpp
-  include/utility/vtk/color_mappers/hsv.hpp
-  include/utility/vtk/fdm_factory.hpp
-  include/utility/vtk/fom_factory.hpp
   
+  include/utility/base_type.hpp
+  include/utility/line_edit_utility.hpp
+  include/utility/qt_text_browser_sink.hpp
+
+  source/graphics/sampling.cu
+
   source/ui/plugins/data_plugin.cpp
   source/ui/plugins/fom_plugin.cpp
   source/ui/plugins/fdm_plugin.cpp
   source/ui/plugins/plugin.cpp
   source/ui/viewer.cpp
   source/ui/window.cpp
+
   source/main.cpp
 )

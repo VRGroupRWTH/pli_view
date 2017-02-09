@@ -4,9 +4,8 @@
 #include <array>
 
 #include <boost/gil/gil_all.hpp>
-
-#include <utility/boost/gil/extension/toolbox/hsl.hpp>
-#include <utility/boost/gil/extension/toolbox/hsv.hpp>
+#include <boost/gil/extension/toolbox/hsl.hpp>
+#include <boost/gil/extension/toolbox/hsv.hpp>
 
 namespace pli
 {

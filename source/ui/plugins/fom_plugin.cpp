@@ -5,10 +5,10 @@
 #include <vtkProperty.h>
 #include <vtkSmartPointer.h>
 
+#include <graphics/fom_factory.hpp>
 #include <ui/window.hpp>
-#include <utility/qt/line_edit_utility.hpp>
-#include <utility/spdlog/qt_text_browser_sink.hpp>
-#include <utility/vtk/fom_factory.hpp>
+#include <utility/line_edit_utility.hpp>
+#include <utility/qt_text_browser_sink.hpp>
 
 namespace pli
 {

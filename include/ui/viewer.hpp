@@ -2,8 +2,8 @@
 #define PLI_VIS_VIEWER_HPP_
 
 #include <QVTKWidget.h>
-
 #include <vtkRenderer.h>
+#include <vtkOrientationMarkerWidget.h>
 #include <vtkSmartPointer.h>
 
 #include <attributes/loggable.hpp>
@@ -18,7 +18,10 @@ public:
   vtkRenderer* renderer() const;
 
 private:
-  vtkSmartPointer<vtkRenderer> renderer_;
+  void create_orientation_marker();
+
+  vtkSmartPointer<vtkRenderer>                renderer_;
+  vtkSmartPointer<vtkOrientationMarkerWidget> orientation_marker_;
 };
 }
 

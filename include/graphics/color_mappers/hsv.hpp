@@ -8,7 +8,7 @@
 
 #include <convert.hpp>
 
-#include <utility/boost/gil/color_convert.hpp>
+#include <graphics/color_convert.hpp>
 
 namespace pli
 {

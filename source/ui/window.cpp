@@ -1,7 +1,7 @@
 #include /* implements */ <ui/window.hpp>
 
 #include <ui/plugins/plugin.hpp>
-#include <utility/spdlog/qt_text_browser_sink.hpp>
+#include <utility/qt_text_browser_sink.hpp>
 
 namespace pli
 {

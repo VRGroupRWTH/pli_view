@@ -7,7 +7,6 @@
 #include <math.h>
 
 #include <boost/multi_array.hpp>
-
 #include <vtkDoubleArray.h>
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
@@ -15,7 +14,7 @@
 
 #include <convert.hpp>
 
-#include <utility/vtk/color_mappers/rgb.hpp>
+#include <graphics/color_mappers/rgb.hpp>
 
 namespace pli
 {
@@ -51,16 +50,16 @@ public:
         for (auto z = 0; z < shape[2]; z++) 
         {
           std::array<float, 3> position = {voxel_size[0] * x, voxel_size[1] * y, voxel_size[2] * z};
-          std::array<float, 3> rotation = {0.5};
+          std::array<float, 3> rotation = {1.0};
 
           if (input_radians)
           {
-            rotation[1] = (M_PI / 2 + directions  [x][y][z]);
+            rotation[1] =             directions  [x][y][z];
             rotation[2] = (M_PI / 2 - inclinations[x][y][z]);
           }
           else
           {
-            rotation[1] = (90.0 + directions  [x][y][z]) * M_PI / 180.0;
+            rotation[1] =         directions  [x][y][z]  * M_PI / 180.0;
             rotation[2] = (90.0 - inclinations[x][y][z]) * M_PI / 180.0;
           }
 
