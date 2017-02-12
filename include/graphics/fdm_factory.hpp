@@ -62,7 +62,7 @@ public:
     poly_data->GetPointData()->SetScalars(colors);
     return poly_data;
   }
-
+  
   template<typename points_type, typename color_mapper_type = rgb_color_mapper>
   static vtkSmartPointer<vtkPolyData> create(
     boost::multi_array<points_type, 4>& samples          ,
@@ -89,7 +89,7 @@ public:
         for (auto z = 0; z < shape[2]; z++)
         {
           auto& sample = samples[x][y][z];
-
+          
           // Normalize samples.
           auto max_sample = *std::max_element(sample.begin(), sample.end(),
           [](const points_type& lhs, const points_type& rhs)
@@ -115,9 +115,9 @@ public:
           {
             auto position = sample[s];
             colors->SetTuple(index, (color_mapper.template map<base_type<points_type>::type>(position)).data());
-            position[0] += x;
-            position[1] += y;
-            position[2] += z;
+            position[0] += 2 * x;
+            position[1] += 2 * y;
+            position[2] += 2 * z;
             positions->SetPoint(index, position.data());
             index++;
           }

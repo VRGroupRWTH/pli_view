@@ -11,7 +11,7 @@
 #include <convert.hpp>
 
 #include <graphics/fdm_factory.hpp>
-#include <graphics/sampling.h>
+#include <graphics/sampling.hpp>
 #include <ui/window.hpp>
 #include <utility/line_edit_utility.hpp>
 #include <utility/qt_text_browser_sink.hpp>
@@ -189,7 +189,8 @@ void fdm_plugin::update_viewer()
       { line_edit_utility::get_text<std::size_t>(line_edit_samples_x), 
         line_edit_utility::get_text<std::size_t>(line_edit_samples_y)};
 
-      auto samples = sample_sums(io->load_fiber_distribution_map(offset, size), sample_dimensions);
+      auto fdm     = io->load_fiber_distribution_map(offset, size);
+      auto samples = sample_sums(fdm, sample_dimensions);
       poly_data_   = fdm_factory::create(samples, sample_dimensions);
     }
     else
