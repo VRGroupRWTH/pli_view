@@ -22,8 +22,8 @@ set(ProjectSources
   include/utility/base_type.hpp
   include/utility/line_edit_utility.hpp
   include/utility/qt_text_browser_sink.hpp
-
-  source/graphics/sampling.cu
+  
+  source/graphics/sampling.cpp
 
   source/ui/plugins/data_plugin.cpp
   source/ui/plugins/fom_plugin.cpp

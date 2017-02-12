@@ -5,6 +5,10 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 find_package(Boost REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
 
+# Include Cuda.
+find_package(Cuda REQUIRED)
+set(ProjectLibraries ${ProjectLibraries} "${CUDA_CUBLAS_LIBRARIES};${CUDA_cudadevrt_LIBRARY}")
+
 # Include Qt.
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)

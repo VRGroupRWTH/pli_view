@@ -4,6 +4,7 @@
 #include <vtkRenderWindow.h>
 
 #include <graphics/fdm_factory.hpp>
+#include <graphics/sampling.h>
 
 namespace pli
 {
@@ -24,13 +25,12 @@ vtkRenderer* viewer::renderer() const
 
 void viewer::create_orientation_marker()
 {
+  std::array<size_t, 2> dimensions = {100, 100};
+  auto sphere = sample_sphere(dimensions);
+
   auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
   auto actor  = vtkSmartPointer<vtkActor>         ::New();
-
-  boost::multi_array<float, 4> coefficients(boost::extents[1][1][1][1]);
-  coefficients[0][0][0][0] = 1;
-  auto samples = fdm_factory::sample_coefficients(coefficients, {100, 100});
-  mapper->SetInputData(fdm_factory::create(samples, {100, 100}));
+  //mapper->SetInputData(fdm_factory::create(sphere, dimensions));
   actor ->SetMapper   (mapper);
 
   orientation_marker_ = vtkSmartPointer<vtkOrientationMarkerWidget>::New();
