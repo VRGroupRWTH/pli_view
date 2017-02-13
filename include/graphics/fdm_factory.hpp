@@ -90,26 +90,6 @@ public:
         {
           auto& sample = samples[x][y][z];
           
-          // Normalize samples.
-          auto max_sample = *std::max_element(sample.begin(), sample.end(),
-          [](const points_type& lhs, const points_type& rhs)
-          {
-            return sqrt(pow(lhs[0], 2) + pow(lhs[1], 2) + pow(lhs[2], 2)) < 
-                   sqrt(pow(rhs[0], 2) + pow(rhs[1], 2) + pow(rhs[2], 2));
-          });
-          auto max_sample_length = sqrt(
-            pow(max_sample[0], 2) + 
-            pow(max_sample[1], 2) + 
-            pow(max_sample[2], 2));
-          std::transform(sample.begin(), sample.end(), sample.begin(),
-          [max_sample_length] (points_type value)
-          {
-            value[0] = value[0] / max_sample_length;
-            value[1] = value[1] / max_sample_length;
-            value[2] = value[2] / max_sample_length;
-            return value;
-          });
-
           auto last_index = index;
           for (auto s = 0; s < shape[3]; s++)
           {
@@ -121,6 +101,7 @@ public:
             positions->SetPoint(index, position.data());
             index++;
           }
+
           for (auto s = 0; s < sample_dimensions[0]; s++)
           {
             for (auto t = 0; t < sample_dimensions[1]; t++)

@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include <thrust/device_vector.h>
+#include <thrust/extrema.h>
 
 #include <cush.h>
 
@@ -19,7 +20,8 @@ void sample(
 {
   auto total_start = std::chrono::system_clock::now();
 
-  auto voxel_count = dimensions.x * dimensions.y * dimensions.z;
+  auto voxel_count  = dimensions.x * dimensions.y * dimensions.z;
+  auto sample_count = output_resolution.x * output_resolution.y;
 
   std::cout << "Allocating and copying spherical harmonics coefficients." << std::endl;
   auto coefficients_size = voxel_count * cush::coefficient_count(maximum_degree);
@@ -43,6 +45,35 @@ void sample(
     coefficients_ptr, 
     points_ptr, 
     indices_ptr);
+
+  std::cout << "Normalizing samples." << std::endl;
+  //for (auto i = 0; i < voxel_count; i++)
+  //{
+  //  float3 max_sample = *thrust::max_element(
+  //    point_vectors.begin() +  i      * sample_count,
+  //    point_vectors.begin() + (i + 1) * sample_count,
+  //    [ ] COMMON (const float3& lhs, const float3& rhs)
+  //    {
+  //      return sqrt(pow(lhs.x, 2) + pow(lhs.y, 2) + pow(lhs.z, 2)) <
+  //             sqrt(pow(rhs.x, 2) + pow(rhs.y, 2) + pow(rhs.z, 2));
+  //    });
+  //  
+  //  thrust::transform(
+  //    point_vectors.begin() +  i      * sample_count,
+  //    point_vectors.begin() + (i + 1) * sample_count,
+  //    point_vectors.begin() +  i      * sample_count,
+  //    [max_sample] COMMON (float3 value)
+  //    {
+  //      auto max_sample_length = sqrt(
+  //        pow(max_sample.x, 2) +
+  //        pow(max_sample.y, 2) +
+  //        pow(max_sample.z, 2));
+  //      value.x /= max_sample_length;
+  //      value.x /= max_sample_length;
+  //      value.x /= max_sample_length;
+  //      return value;
+  //    });
+  //}
 
   std::cout << "Copying points and indices to CPU." << std::endl;
   cudaMemcpy(points , points_ptr , sizeof(float3  ) * points_size , cudaMemcpyDeviceToHost);

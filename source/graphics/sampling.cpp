@@ -51,7 +51,13 @@ boost::multi_array<std::array<float, 3>, 4> sample_sums
 
   uint3 dimensions        = { shape[0], shape[1], shape[2] };
   uint2 output_dimensions = { sample_dimensions[0], sample_dimensions[1] };
-  sample(dimensions, cush::maximum_degree(shape[3]), output_dimensions, coefficients.data(), (float3*) samples.data(), indices.data());
+  sample(
+    dimensions, 
+    cush::maximum_degree(shape[3]), 
+    output_dimensions, 
+    coefficients.data(), 
+    (float3*) samples.data(), 
+    indices.data());
 
   return samples;
 }
