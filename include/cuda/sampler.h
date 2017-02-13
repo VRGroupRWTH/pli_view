@@ -6,12 +6,12 @@
 namespace pli
 {
 void sample(
-  const uint3&   dimensions    , 
-  const uint2&   tessellations , 
-  const unsigned maximum_degree,
-  const float*   coefficients  , 
-        float3*  points        , 
-        float*   indices       );
+  const uint3&    dimensions       , 
+  const unsigned  maximum_degree   ,
+  const uint2&    output_resolution, 
+  const float*    coefficients     , 
+        float3*   points           , 
+        unsigned* indices          );
 }
 
 #endif
