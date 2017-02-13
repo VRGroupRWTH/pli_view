@@ -8,8 +8,8 @@
 #include <vtkProperty.h>
 
 #include <cush.h>
-#include <convert.hpp>
 
+#include <cuda/convert.h>
 #include <graphics/fdm_factory.hpp>
 #include <graphics/sampling.hpp>
 #include <ui/window.hpp>
@@ -189,9 +189,13 @@ void fdm_plugin::update_viewer()
       { line_edit_utility::get_text<std::size_t>(line_edit_samples_x), 
         line_edit_utility::get_text<std::size_t>(line_edit_samples_y)};
 
-      auto fdm     = io->load_fiber_distribution_map(offset, size);
-      auto samples = sample_sums(fdm, sample_dimensions);
-      poly_data_   = fdm_factory::create(samples, sample_dimensions);
+      auto fdm = io->load_fiber_distribution_map(offset, size);
+
+      boost::multi_array<std::array<float, 3>, 4> points ;
+      boost::multi_array<unsigned, 4>             indices;
+      sample_sums(fdm, sample_dimensions, points, indices);
+
+      poly_data_ = fdm_factory::create(sample_dimensions, points, indices);
     }
     else
       poly_data_ = vtkSmartPointer<vtkPolyData>::New();

@@ -12,8 +12,7 @@
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
-#include <convert.hpp>
-
+#include <cuda/convert.h>
 #include <graphics/color_mappers/rgb.hpp>
 
 namespace pli

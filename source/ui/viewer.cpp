@@ -28,10 +28,14 @@ vtkRenderer* viewer::renderer() const
 void viewer::create_orientation_marker()
 {
   std::array<size_t, 2> dimensions = {256, 256};
-  auto sphere = sample_sphere(dimensions);
+  
+  std::vector<std::array<float, 3>> points ;
+  std::vector<unsigned>             indices;
+  sample_sphere(dimensions, points, indices);
+
   auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
   auto actor  = vtkSmartPointer<vtkActor>         ::New();
-  mapper->SetInputData(fdm_factory::create(sphere, dimensions));
+  mapper->SetInputData(fdm_factory::create(dimensions, points, indices));
   actor ->SetMapper   (mapper);
 
   orientation_marker_ = vtkSmartPointer<vtkOrientationMarkerWidget>::New();

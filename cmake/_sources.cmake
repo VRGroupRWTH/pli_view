@@ -3,7 +3,9 @@ set(ProjectSources
   cmake/_sources.cmake
   
   include/attributes/loggable.hpp
-
+  
+  include/cuda/convert.h
+  include/cuda/decorators.h
   include/cuda/sampler.h
 
   include/graphics/color_mappers/rgb.hpp

@@ -8,6 +8,8 @@
 
 #include <cush.h>
 
+#include <cuda/convert.h>
+
 namespace pli
 {
 void sample(
@@ -39,41 +41,51 @@ void sample(
 
   std::cout << "Sampling sums of spherical harmonics coefficients." << std::endl;
   cush::sample_sums<<<dim3(dimensions), 1>>>(
-    dimensions, 
-    maximum_degree, 
-    output_resolution, 
-    coefficients_ptr, 
-    points_ptr, 
-    indices_ptr);
+    dimensions       , 
+    maximum_degree   , 
+    output_resolution,
+    coefficients_ptr , 
+    points_ptr       , 
+    indices_ptr      );
+
+  std::cout << "Converting samples to Cartesian coordinates." << std::endl;
+  thrust::transform(
+    point_vectors.begin(),
+    point_vectors.end  (),
+    point_vectors.begin(),
+    [] COMMON (const float3& point)
+    {
+      return to_cartesian_coords_2(point);
+    });
 
   std::cout << "Normalizing samples." << std::endl;
-  //for (auto i = 0; i < voxel_count; i++)
-  //{
-  //  float3 max_sample = *thrust::max_element(
-  //    point_vectors.begin() +  i      * sample_count,
-  //    point_vectors.begin() + (i + 1) * sample_count,
-  //    [ ] COMMON (const float3& lhs, const float3& rhs)
-  //    {
-  //      return sqrt(pow(lhs.x, 2) + pow(lhs.y, 2) + pow(lhs.z, 2)) <
-  //             sqrt(pow(rhs.x, 2) + pow(rhs.y, 2) + pow(rhs.z, 2));
-  //    });
-  //  
-  //  thrust::transform(
-  //    point_vectors.begin() +  i      * sample_count,
-  //    point_vectors.begin() + (i + 1) * sample_count,
-  //    point_vectors.begin() +  i      * sample_count,
-  //    [max_sample] COMMON (float3 value)
-  //    {
-  //      auto max_sample_length = sqrt(
-  //        pow(max_sample.x, 2) +
-  //        pow(max_sample.y, 2) +
-  //        pow(max_sample.z, 2));
-  //      value.x /= max_sample_length;
-  //      value.x /= max_sample_length;
-  //      value.x /= max_sample_length;
-  //      return value;
-  //    });
-  //}
+  for (auto i = 0; i < voxel_count; i++)
+  {
+    float3 max_sample = *thrust::max_element(
+      point_vectors.begin() +  i      * sample_count,
+      point_vectors.begin() + (i + 1) * sample_count,
+      [] COMMON (const float3& lhs, const float3& rhs)
+      {
+        return sqrt(pow(lhs.x, 2) + pow(lhs.y, 2) + pow(lhs.z, 2)) <
+               sqrt(pow(rhs.x, 2) + pow(rhs.y, 2) + pow(rhs.z, 2));
+      });
+    
+    thrust::transform(
+      point_vectors.begin() +  i      * sample_count,
+      point_vectors.begin() + (i + 1) * sample_count,
+      point_vectors.begin() +  i      * sample_count,
+      [max_sample] COMMON (float3 value)
+      {
+        auto max_sample_length = sqrt(
+          pow(max_sample.x, 2) +
+          pow(max_sample.y, 2) +
+          pow(max_sample.z, 2));
+        value.x /= max_sample_length;
+        value.y /= max_sample_length;
+        value.z /= max_sample_length;
+        return value;
+      });
+  }
 
   std::cout << "Copying points and indices to CPU." << std::endl;
   cudaMemcpy(points , points_ptr , sizeof(float3  ) * points_size , cudaMemcpyDeviceToHost);
