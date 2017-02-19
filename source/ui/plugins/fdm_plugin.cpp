@@ -1,15 +1,9 @@
 #include /* implements */ <ui/plugins/fdm_plugin.hpp>
 
-#define _USE_MATH_DEFINES
-
-#include <math.h>
 #include <limits>
 
 #include <vtkProperty.h>
 
-#include <cush.h>
-
-#include <cuda/convert.h>
 #include <graphics/fdm_factory.hpp>
 #include <graphics/sampling.hpp>
 #include <ui/window.hpp>

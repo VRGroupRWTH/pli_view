@@ -12,7 +12,7 @@
 
 namespace pli
 {
-void sample(
+void   sample(
   const uint3&    dimensions       , 
   const unsigned  maximum_degree   ,
   const uint2&    output_resolution, 
@@ -32,7 +32,7 @@ void sample(
   auto coefficients_ptr = raw_pointer_cast(&coefficient_vectors[0]);
 
   std::cout << "Allocating points and indices." << std::endl;
-  auto points_size  = voxel_count * output_resolution.x * output_resolution.y;
+  auto points_size  = voxel_count * sample_count;
   auto indices_size = 4 * points_size;
   thrust::device_vector<float3>   point_vectors(points_size );
   thrust::device_vector<unsigned> index_vectors(indices_size);
@@ -41,7 +41,7 @@ void sample(
 
   std::cout << "Sampling sums of spherical harmonics coefficients." << std::endl;
   cush::sample_sums<<<dim3(dimensions), 1>>>(
-    dimensions       , 
+    dimensions       ,
     maximum_degree   , 
     output_resolution,
     coefficients_ptr , 

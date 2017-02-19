@@ -58,7 +58,7 @@ public:
   template<typename points_type, typename indices_type = unsigned, typename color_mapper_type = rgb_color_mapper>
   static vtkSmartPointer<vtkPolyData> create(
     const std::array<std::size_t, 2>&          dimensions   ,
-    const boost::multi_array<points_type , 4>& points       ,
+          boost::multi_array<points_type , 4>& points       ,
     const boost::multi_array<indices_type, 4>& indices      ,
     color_mapper_type                          color_mapper = color_mapper_type())
   {
@@ -73,34 +73,29 @@ public:
     colors   ->SetNumberOfTuples    (num_elements  );
     cells    ->Allocate             (cells->EstimateSize(num_elements, 4));
 
-    auto index = 0;
-    for (auto x = 0; x < points.shape()[0]; x++)
+    auto shape      = points.shape();
+    auto points_ptr = points.data ();
+    for (auto i = 0; i < points.num_elements(); i++)
     {
-      for (auto y = 0; y < points.shape()[1]; y++)
-      {
-        for (auto z = 0; z < points.shape()[2]; z++)
-        {
-          for (auto s = 0; s < points.shape()[3]; s++)
-          {
-            auto position = points[x][y][z][s];
-            colors->SetTuple(index, (color_mapper.template map<base_type<points_type>::type>(position)).data());
-            position[0] += 2 * x;
-            position[1] += 2 * y;
-            position[2] += 2 * z;
-            positions->SetPoint(index, position.data());
-            index++;
-          }
-          for (auto i = 0; i < indices.shape()[3]; i += 4)
-          {
-            vtkIdType vtk_indices[4] = { 
-              indices[x][y][z][i    ], 
-              indices[x][y][z][i + 1], 
-              indices[x][y][z][i + 2], 
-              indices[x][y][z][i + 3]};
-            cells->InsertNextCell(4, vtk_indices);
-          }
-        }
-      }
+      auto position = points_ptr[i];
+      colors->SetTuple(i, (color_mapper.template map<base_type<points_type>::type>(position)).data());
+
+      auto index = int(i / shape[3]);
+      position[0] += 2 * (index / (shape[1] * shape[2]));
+      position[1] += 2 * ((index / shape[2]) % shape[1]);
+      position[2] += 2 * ((index % shape[2])); 
+      positions->SetPoint(i, position.data());
+    }
+
+    auto indices_ptr = indices.data();
+    for (auto i = 0; i < indices.num_elements(); i += 4)
+    {
+      vtkIdType vtk_indices[4] = {
+        indices_ptr[i],
+        indices_ptr[i + 1],
+        indices_ptr[i + 2],
+        indices_ptr[i + 3] };
+      cells->InsertNextCell(4, vtk_indices);
     }
 
     poly_data->SetPoints(positions);

@@ -23,8 +23,8 @@ void sample_sphere(
   {
     for (auto lat = 0; lat < dimensions[1]; lat++)
     {
-      auto point_index   =      lon + dimensions[0] * lat ;
-      auto indices_index = 4 * (lon + dimensions[0] * lat);
+      auto point_index   = lon + dimensions[0] * lat;
+      auto indices_index = 4 * point_index;
 
       auto& point = points[point_index];
       point[0] = 1.0;
