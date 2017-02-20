@@ -6,147 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>288</width>
-    <height>400</height>
+    <width>251</width>
+    <height>401</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Data Toolbox</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="1" colspan="3">
-    <widget class="QLineEdit" name="line_edit_voxel_size">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="placeholderText">
-      <string>DataSpacing</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_file">
-     <property name="text">
-      <string>File</string>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="0">
-    <widget class="QLabel" name="label_distribution">
-     <property name="text">
-      <string>Distribution</string>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="1" colspan="3">
-    <widget class="QLineEdit" name="line_edit_distribution">
-     <property name="placeholderText">
-      <string>%Slice%/Microscope/Processed/Registered/Distribution</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="1" colspan="3">
-    <widget class="QLineEdit" name="line_edit_inclination">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="placeholderText">
-      <string>%Slice%/Microscope/Processed/Registered/Inclination</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="3">
-    <widget class="QPushButton" name="button_browse_file">
-     <property name="text">
-      <string>Browse</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1" colspan="3">
-    <widget class="QLineEdit" name="line_edit_retardation">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="placeholderText">
-      <string>%Slice%/Microscope/Processed/Registered/Retardation</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="label_mask">
-     <property name="text">
-      <string>Mask</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1" colspan="3">
-    <widget class="QLineEdit" name="line_edit_transmittance">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="placeholderText">
-      <string>%Slice%/Microscope/Processed/Registered/Transmittance</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="label_retardation">
-     <property name="text">
-      <string>Retardation</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1" colspan="2">
-    <widget class="QLineEdit" name="line_edit_file">
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-     <property name="placeholderText">
-      <string>C:/Test.h5</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_voxel_size">
-     <property name="text">
-      <string>Voxel Size</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
+   <item row="0" column="0" colspan="2">
     <widget class="QLabel" name="label_data_paths">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -168,21 +36,84 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="label_transmittance">
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_file">
      <property name="text">
-      <string>Transmittance</string>
+      <string>File</string>
      </property>
     </widget>
    </item>
-   <item row="7" column="0">
-    <widget class="QLabel" name="label_inclination">
-     <property name="text">
-      <string>Inclination</string>
+   <item row="1" column="2" colspan="2">
+    <widget class="QLineEdit" name="line_edit_file">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+     <property name="placeholderText">
+      <string>C:/Test.h5</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="1" colspan="3">
+   <item row="1" column="4">
+    <widget class="QPushButton" name="button_browse_file">
+     <property name="text">
+      <string>Browse</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <widget class="QLabel" name="label_vector_spacing">
+     <property name="text">
+      <string>Vector Spacing</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2" colspan="3">
+    <widget class="QLineEdit" name="line_edit_vector_spacing">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="placeholderText">
+      <string>VectorSpacing</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="QLabel" name="label_block_size">
+     <property name="text">
+      <string>Block Size</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2" colspan="3">
+    <widget class="QLineEdit" name="line_edit_block_size">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="placeholderText">
+      <string>BlockSize</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="QLabel" name="label_mask">
+     <property name="text">
+      <string>Mask</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2" colspan="3">
     <widget class="QLineEdit" name="line_edit_mask">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -201,14 +132,66 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="0">
+   <item row="5" column="0" colspan="2">
+    <widget class="QLabel" name="label_transmittance">
+     <property name="text">
+      <string>Transmittance</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2" colspan="3">
+    <widget class="QLineEdit" name="line_edit_transmittance">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="placeholderText">
+      <string>%Slice%/Microscope/Processed/Registered/Transmittance</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="2">
+    <widget class="QLabel" name="label_retardation">
+     <property name="text">
+      <string>Retardation</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="2" colspan="3">
+    <widget class="QLineEdit" name="line_edit_retardation">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="placeholderText">
+      <string>%Slice%/Microscope/Processed/Registered/Retardation</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0" colspan="2">
     <widget class="QLabel" name="label_direction">
      <property name="text">
       <string>Direction</string>
      </property>
     </widget>
    </item>
-   <item row="6" column="1" colspan="3">
+   <item row="7" column="2" colspan="3">
     <widget class="QLineEdit" name="line_edit_direction">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -227,17 +210,47 @@
      </property>
     </widget>
    </item>
-   <item row="9" column="2" colspan="2">
-    <widget class="QPushButton" name="button_load">
-     <property name="enabled">
-      <bool>false</bool>
+   <item row="8" column="0" colspan="2">
+    <widget class="QLabel" name="label_inclination">
+     <property name="text">
+      <string>Inclination</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="2" colspan="3">
+    <widget class="QLineEdit" name="line_edit_inclination">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
      <property name="text">
-      <string>Load</string>
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="placeholderText">
+      <string>%Slice%/Microscope/Processed/Registered/Inclination</string>
      </property>
     </widget>
    </item>
    <item row="9" column="0" colspan="2">
+    <widget class="QLabel" name="label_distribution">
+     <property name="text">
+      <string>Distribution</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="2" colspan="3">
+    <widget class="QLineEdit" name="line_edit_distribution">
+     <property name="placeholderText">
+      <string>%Slice%/Microscope/Processed/Registered/Distribution</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="0" colspan="3">
     <widget class="QCheckBox" name="checkbox_autoload">
      <property name="text">
       <string>Auto load on change</string>
@@ -247,7 +260,17 @@
      </property>
     </widget>
    </item>
-   <item row="10" column="0">
+   <item row="10" column="3" colspan="2">
+    <widget class="QPushButton" name="button_load">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Load</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="1">
     <spacer name="spacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -265,7 +288,7 @@
  <tabstops>
   <tabstop>line_edit_file</tabstop>
   <tabstop>button_browse_file</tabstop>
-  <tabstop>line_edit_voxel_size</tabstop>
+  <tabstop>line_edit_vector_spacing</tabstop>
   <tabstop>line_edit_mask</tabstop>
   <tabstop>line_edit_transmittance</tabstop>
   <tabstop>line_edit_retardation</tabstop>

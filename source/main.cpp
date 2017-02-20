@@ -1,3 +1,5 @@
+#include <QApplication.h>
+
 #include <ui/window.hpp>
 
 extern "C" 
@@ -8,6 +10,6 @@ extern "C"
 void main(int argc, char** argv)
 {
   QApplication application(argc, argv);
-  pli::window  window;
+  pli::window window;
   application.exec();
 }

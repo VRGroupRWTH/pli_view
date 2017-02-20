@@ -47,6 +47,7 @@ void   sample(
     coefficients_ptr , 
     points_ptr       , 
     indices_ptr      );
+  cudaDeviceSynchronize();
 
   std::cout << "Converting samples to Cartesian coordinates." << std::endl;
   thrust::transform(
@@ -57,6 +58,7 @@ void   sample(
     {
       return to_cartesian_coords_2(point);
     });
+  cudaDeviceSynchronize();
 
   std::cout << "Normalizing samples." << std::endl;
   for (auto i = 0; i < voxel_count; i++)
@@ -69,23 +71,25 @@ void   sample(
         return sqrt(pow(lhs.x, 2) + pow(lhs.y, 2) + pow(lhs.z, 2)) <
                sqrt(pow(rhs.x, 2) + pow(rhs.y, 2) + pow(rhs.z, 2));
       });
-    
+
+    auto max_sample_length = sqrt(
+      pow(max_sample.x, 2) +
+      pow(max_sample.y, 2) +
+      pow(max_sample.z, 2));
+
     thrust::transform(
       point_vectors.begin() +  i      * sample_count,
       point_vectors.begin() + (i + 1) * sample_count,
       point_vectors.begin() +  i      * sample_count,
-      [max_sample] COMMON (float3 value)
+      [max_sample_length] COMMON (float3 value)
       {
-        auto max_sample_length = sqrt(
-          pow(max_sample.x, 2) +
-          pow(max_sample.y, 2) +
-          pow(max_sample.z, 2));
         value.x /= max_sample_length;
         value.y /= max_sample_length;
         value.z /= max_sample_length;
         return value;
       });
   }
+  cudaDeviceSynchronize();
 
   std::cout << "Copying points and indices to CPU." << std::endl;
   cudaMemcpy(points , points_ptr , sizeof(float3  ) * points_size , cudaMemcpyDeviceToHost);

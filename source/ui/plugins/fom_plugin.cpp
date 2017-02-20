@@ -105,8 +105,8 @@ void fom_plugin::update_viewer() const
 
       auto fiber_direction_map   = io->load_fiber_direction_map  (offset, size);
       auto fiber_inclination_map = io->load_fiber_inclination_map(offset, size);
-      auto voxel_size            = io->load_voxel_size           ();
-      hedgehog_->SetInputData(fom_factory::create(fiber_direction_map, fiber_inclination_map, voxel_size));
+      auto vector_spacing        = io->load_vector_spacing       ();
+      hedgehog_->SetInputData(fom_factory::create(fiber_direction_map, fiber_inclination_map, vector_spacing));
     }
     else
       hedgehog_->SetInputData(vtkSmartPointer<vtkPolyData>::New());

@@ -183,13 +183,15 @@ void fdm_plugin::update_viewer()
       { line_edit_utility::get_text<std::size_t>(line_edit_samples_x), 
         line_edit_utility::get_text<std::size_t>(line_edit_samples_y)};
 
-      auto fdm = io->load_fiber_distribution_map(offset, size);
-
+      auto fdm            = io->load_fiber_distribution_map(offset, size);
+      auto vector_spacing = io->load_vector_spacing();
+      auto block_size     = io->load_block_size    ();
+      
       boost::multi_array<std::array<float, 3>, 4> points ;
       boost::multi_array<unsigned, 4>             indices;
       sample_sums(fdm, sample_dimensions, points, indices);
 
-      poly_data_ = fdm_factory::create(sample_dimensions, points, indices);
+      poly_data_ = fdm_factory::create(points, indices, vector_spacing, block_size);
     }
     else
       poly_data_ = vtkSmartPointer<vtkPolyData>::New();

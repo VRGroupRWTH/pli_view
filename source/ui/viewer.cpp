@@ -35,7 +35,7 @@ void viewer::create_orientation_marker()
 
   auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
   auto actor  = vtkSmartPointer<vtkActor>         ::New();
-  mapper->SetInputData(fdm_factory::create(dimensions, points, indices));
+  mapper->SetInputData(fdm_factory::create(points, indices));
   actor ->SetMapper   (mapper);
 
   orientation_marker_ = vtkSmartPointer<vtkOrientationMarkerWidget>::New();

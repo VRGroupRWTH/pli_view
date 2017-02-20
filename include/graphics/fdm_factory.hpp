@@ -23,10 +23,9 @@ class fdm_factory
 public:
   template<typename points_type, typename indices_type = unsigned, typename color_mapper_type = rgb_color_mapper>
   static vtkSmartPointer<vtkPolyData> create(
-    const std::array<std::size_t, 2>&   dimensions       ,
-    const std::vector<points_type>&     points           ,
-    const std::vector<indices_type>&    indices          ,
-    color_mapper_type                   color_mapper     = color_mapper_type())
+    const std::vector<points_type>&            points       ,
+    const std::vector<indices_type>&           indices      ,
+    color_mapper_type                          color_mapper = color_mapper_type())
   {
     auto poly_data = vtkSmartPointer<vtkPolyData>         ::New();
     auto positions = vtkSmartPointer<vtkPoints>           ::New();
@@ -57,10 +56,11 @@ public:
   
   template<typename points_type, typename indices_type = unsigned, typename color_mapper_type = rgb_color_mapper>
   static vtkSmartPointer<vtkPolyData> create(
-    const std::array<std::size_t, 2>&          dimensions   ,
-          boost::multi_array<points_type , 4>& points       ,
-    const boost::multi_array<indices_type, 4>& indices      ,
-    color_mapper_type                          color_mapper = color_mapper_type())
+          boost::multi_array<points_type , 4>& points        ,
+    const boost::multi_array<indices_type, 4>& indices       ,
+    const points_type&                         vector_spacing,
+    const std::array<std::size_t, 3>           block_size    ,
+    color_mapper_type                          color_mapper  = color_mapper_type())
   {
     auto poly_data      = vtkSmartPointer<vtkPolyData>         ::New();
     auto positions      = vtkSmartPointer<vtkPoints>           ::New();
@@ -73,6 +73,16 @@ public:
     colors   ->SetNumberOfTuples    (num_elements  );
     cells    ->Allocate             (cells->EstimateSize(num_elements, 4));
 
+    std::array<float, 3> offset  = {
+      vector_spacing[0] * (block_size[0] - 1) * 0.5,
+      vector_spacing[1] * (block_size[1] - 1) * 0.5,
+      vector_spacing[2] * (block_size[2] - 1) * 0.5};
+    std::array<float, 3> spacing = {
+      vector_spacing[0] * block_size[0],
+      vector_spacing[1] * block_size[1],
+      vector_spacing[2] * block_size[2] };
+    auto scale = spacing[0] * 0.5;
+
     auto shape      = points.shape();
     auto points_ptr = points.data ();
     for (auto i = 0; i < points.num_elements(); i++)
@@ -80,10 +90,17 @@ public:
       auto position = points_ptr[i];
       colors->SetTuple(i, (color_mapper.template map<base_type<points_type>::type>(position)).data());
 
+      // Scale by primary axis.
+      position[0] *= scale;
+      position[1] *= scale;
+      position[2] *= scale;
+
+      // Position by offset, spacing and index.
       auto index = int(i / shape[3]);
-      position[0] += 2 * (index / (shape[1] * shape[2]));
-      position[1] += 2 * ((index / shape[2]) % shape[1]);
-      position[2] += 2 * ((index % shape[2])); 
+      position[0] += offset[0] + spacing[0] * (index / (shape[1] * shape[2]));
+      position[1] += offset[1] + spacing[1] * ((index / shape[2]) % shape[1]);
+      position[2] += offset[2] + spacing[2] * ((index % shape[2]));
+
       positions->SetPoint(i, position.data());
     }
 

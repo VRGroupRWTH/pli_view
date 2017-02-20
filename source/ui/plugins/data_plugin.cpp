@@ -14,23 +14,32 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
 {
   setupUi(this);
   
-  connect(button_browse_file     , &QPushButton::clicked      , [&]
+  connect(button_browse_file      , &QPushButton::clicked      , [&]
   {
     auto filename = QFileDialog::getOpenFileName(this, tr("Select PLI file."), "C:/", tr("HDF5 Files (*.h5)"));
     logger_->info("Closing browse dialog. Selection: {}.", filename.toStdString());
     set_file(filename.toStdString());
   });
 
-  connect(line_edit_voxel_size   , &QLineEdit::editingFinished, [&]
+  connect(line_edit_vector_spacing, &QLineEdit::editingFinished, [&]
   {
-    auto text = line_edit_utility::get_text(line_edit_voxel_size);  
+    auto text = line_edit_utility::get_text(line_edit_vector_spacing);  
     if (io_)
-      io_->set_attribute_path_voxel_size(text);
-    logger_->info("Voxel size attribute path is set to " + text);
+      io_->set_attribute_path_vector_spacing(text);
+    logger_->info("Vector spacing attribute path is set to " + text);
     if (checkbox_autoload->isChecked())
       on_change(io_.get());
   });
-  connect(line_edit_mask         , &QLineEdit::editingFinished, [&]
+  connect(line_edit_block_size    , &QLineEdit::editingFinished, [&]
+  {
+    auto text = line_edit_utility::get_text(line_edit_block_size);
+    if (io_)
+      io_->set_attribute_path_block_size(text);
+    logger_->info("Block size attribute path is set to " + text);
+    if (checkbox_autoload->isChecked())
+      on_change(io_.get());
+  });
+  connect(line_edit_mask          , &QLineEdit::editingFinished, [&]
   {
     auto text = line_edit_utility::get_text(line_edit_mask);
     if (io_)
@@ -39,7 +48,7 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
     if (checkbox_autoload->isChecked())
       on_change(io_.get());
   });
-  connect(line_edit_transmittance, &QLineEdit::editingFinished, [&] 
+  connect(line_edit_transmittance , &QLineEdit::editingFinished, [&] 
   {
     auto text = line_edit_utility::get_text(line_edit_transmittance);
     if (io_)
@@ -48,7 +57,7 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
     if (checkbox_autoload->isChecked())
       on_change(io_.get());
   });
-  connect(line_edit_retardation  , &QLineEdit::editingFinished, [&]
+  connect(line_edit_retardation   , &QLineEdit::editingFinished, [&]
   {
     auto text = line_edit_utility::get_text(line_edit_retardation);
     if (io_)
@@ -57,7 +66,7 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
     if (checkbox_autoload->isChecked())
       on_change(io_.get());
   });
-  connect(line_edit_direction    , &QLineEdit::editingFinished, [&]
+  connect(line_edit_direction     , &QLineEdit::editingFinished, [&]
   {
     auto text = line_edit_utility::get_text(line_edit_direction);
     if (io_)
@@ -66,7 +75,7 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
     if (checkbox_autoload->isChecked())
       on_change(io_.get());
   });
-  connect(line_edit_inclination  , &QLineEdit::editingFinished, [&]
+  connect(line_edit_inclination   , &QLineEdit::editingFinished, [&]
   {
     auto text = line_edit_utility::get_text(line_edit_inclination);
     if (io_)
@@ -75,7 +84,7 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
     if (checkbox_autoload->isChecked())
       on_change(io_.get());
   });
-  connect(line_edit_distribution , &QLineEdit::editingFinished, [&]
+  connect(line_edit_distribution  , &QLineEdit::editingFinished, [&]
   {
     auto text = line_edit_utility::get_text(line_edit_distribution);
     if (io_)
@@ -85,13 +94,13 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
       on_change(io_.get());
   });
 
-  connect(checkbox_autoload      , &QCheckBox::stateChanged   , [&] (int state)
+  connect(checkbox_autoload       , &QCheckBox::stateChanged   , [&] (int state)
   {
     button_load->setEnabled(!state);
     if (checkbox_autoload->isChecked())
       on_change(io_.get());
   });
-  connect(button_load            , &QPushButton::clicked      , [&]
+  connect(button_load             , &QPushButton::clicked      , [&]
   {
     on_change(io_.get());
   });
@@ -122,13 +131,14 @@ void data_plugin::set_file(const std::string& filename)
 
   io_.reset(new hdf5_io<float>(
     filename,
-    line_edit_utility::get_text(line_edit_voxel_size   ),
-    line_edit_utility::get_text(line_edit_mask         ),
-    line_edit_utility::get_text(line_edit_transmittance),
-    line_edit_utility::get_text(line_edit_retardation  ),
-    line_edit_utility::get_text(line_edit_direction    ),
-    line_edit_utility::get_text(line_edit_inclination  ),
-    line_edit_utility::get_text(line_edit_distribution )
+    line_edit_utility::get_text(line_edit_vector_spacing),
+    line_edit_utility::get_text(line_edit_block_size    ),
+    line_edit_utility::get_text(line_edit_mask          ),
+    line_edit_utility::get_text(line_edit_transmittance ),
+    line_edit_utility::get_text(line_edit_retardation   ),
+    line_edit_utility::get_text(line_edit_direction     ),
+    line_edit_utility::get_text(line_edit_inclination   ),
+    line_edit_utility::get_text(line_edit_distribution  )
   ));
 
   logger_->info("Opened file: " + filename);
