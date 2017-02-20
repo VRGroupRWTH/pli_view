@@ -11,6 +11,15 @@ set(ProjectSources
   include/graphics/color_mappers/rgb.hpp
   include/graphics/color_mappers/hsl.hpp
   include/graphics/color_mappers/hsv.hpp
+  include/graphics/opengl/auxiliary/glm_uniforms.hpp
+  include/graphics/opengl/all.hpp
+  include/graphics/opengl/buffer.hpp
+  include/graphics/opengl/framebuffer.hpp
+  include/graphics/opengl/opengl.hpp
+  include/graphics/opengl/program.hpp
+  include/graphics/opengl/shader.hpp
+  include/graphics/opengl/texture.hpp
+  include/graphics/opengl/vertex_array.hpp
   include/graphics/color_convert.hpp
   include/graphics/fdm_factory.hpp
   include/graphics/fom_factory.hpp
