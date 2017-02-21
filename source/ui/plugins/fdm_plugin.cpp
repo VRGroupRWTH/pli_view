@@ -2,10 +2,11 @@
 
 #include <limits>
 
+#include <cush.h>
 #include <vtkProperty.h>
 
+#include <cuda/sample.h>
 #include <graphics/fdm_factory.hpp>
-#include <graphics/sampling.hpp>
 #include <ui/window.hpp>
 #include <utility/line_edit_utility.hpp>
 #include <utility/qt_text_browser_sink.hpp>
@@ -179,18 +180,19 @@ void fdm_plugin::update_viewer()
         line_edit_utility::get_text<std::size_t>(line_edit_size_y),
         line_edit_utility::get_text<std::size_t>(line_edit_size_z)};
       
-      std::array<std::size_t, 2> sample_dimensions =
+      std::array<std::size_t, 2> tessellations =
       { line_edit_utility::get_text<std::size_t>(line_edit_samples_x), 
         line_edit_utility::get_text<std::size_t>(line_edit_samples_y)};
 
       auto fdm            = io->load_fiber_distribution_map(offset, size);
       auto vector_spacing = io->load_vector_spacing();
       auto block_size     = io->load_block_size    ();
-      
-      boost::multi_array<std::array<float, 3>, 4> points ;
-      boost::multi_array<unsigned, 4>             indices;
-      sample_sums(fdm, sample_dimensions, points, indices);
 
+      auto shape = fdm.shape();
+      boost::multi_array<std::array<float, 3>, 4> points (boost::extents[shape[0]][shape[1]][shape[2]][    tessellations[0] * tessellations[1]]);
+      boost::multi_array<unsigned, 4>             indices(boost::extents[shape[0]][shape[1]][shape[2]][4 * tessellations[0] * tessellations[1]]);
+      sample_sums({shape[0], shape[1], shape[2]}, cush::maximum_degree(shape[3]), {tessellations[0], tessellations[1]}, fdm.data(), (float3*) points.data(), indices.data());
+      
       poly_data_ = fdm_factory::create(points, indices, vector_spacing, block_size);
     }
     else

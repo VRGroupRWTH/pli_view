@@ -9,8 +9,8 @@ namespace pli
 class rgb_color_mapper
 {
 public:
-  template<typename color_type, typename vector_type>
-  static std::array<color_type, 3> map(const vector_type& vector)
+  template<typename vector_type, typename color_type = vector_type>
+  static color_type map(const vector_type& vector)
   {
     return
     {

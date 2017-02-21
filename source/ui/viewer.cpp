@@ -4,8 +4,8 @@
 #include <vtkPolyDataMapper.h>
 #include <vtkRenderWindow.h>
 
+#include <cuda/sample.h>
 #include <graphics/fdm_factory.hpp>
-#include <graphics/sampling.hpp>
 
 namespace pli
 {
@@ -29,9 +29,9 @@ void viewer::create_orientation_marker()
 {
   std::array<size_t, 2> dimensions = {256, 256};
   
-  std::vector<std::array<float, 3>> points ;
-  std::vector<unsigned>             indices;
-  sample_sphere(dimensions, points, indices);
+  std::vector<std::array<float, 3>> points (    dimensions[0] * dimensions[1]);
+  std::vector<unsigned>             indices(4 * dimensions[0] * dimensions[1]);
+  sample_sphere({dimensions[0], dimensions[1]}, (float3*) points.data(), indices.data());
 
   auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
   auto actor  = vtkSmartPointer<vtkActor>         ::New();

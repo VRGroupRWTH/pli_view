@@ -14,7 +14,6 @@
 #include <vtkUnsignedCharArray.h>
 
 #include <graphics/color_mappers/rgb.hpp>
-#include <utility/base_type.hpp>
 
 namespace pli
 {
@@ -39,7 +38,7 @@ public:
     for (auto i = 0; i < points.size(); i++)
     {
       positions->SetPoint(i, points[i].data());
-      colors   ->SetTuple(i, (color_mapper.template map<base_type<points_type>::type>(points[i])).data());
+      colors   ->SetTuple(i, (color_mapper.template map<points_type>(points[i])).data());
     }
 
     for (auto i = 0; i < indices.size(); i+=4)
@@ -88,7 +87,7 @@ public:
     for (auto i = 0; i < points.num_elements(); i++)
     {
       auto position = points_ptr[i];
-      colors->SetTuple(i, (color_mapper.template map<base_type<points_type>::type>(position)).data());
+      colors->SetTuple(i, (color_mapper.template map<points_type>(position)).data());
 
       // Scale by primary axis.
       position[0] *= scale;

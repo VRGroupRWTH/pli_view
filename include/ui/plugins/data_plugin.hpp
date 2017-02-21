@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include <hdf5/hdf5_io.hpp>
+#include <hdf5_io.hpp>
 
 #include <attributes/loggable.hpp>
 #include <ui/plugins/plugin.hpp>

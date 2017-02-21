@@ -1,4 +1,4 @@
-#include /* implements */ <cuda/sampler.h>
+#include /* implements */ <cuda/sample.h>
 
 #include <chrono>
 #include <iostream>
@@ -8,14 +8,76 @@
 
 #include <cush.h>
 
-#include <cuda/convert.h>
-
 namespace pli
 {
-void   sample(
+void sample_sphere(
+  const uint2&    tessellations,
+        float3*   points       ,
+        unsigned* indices      )
+{
+  std::cout << "Allocating points and indices." << std::endl;
+  auto points_size  = tessellations.x * tessellations.y;
+  auto indices_size = 4 * points_size;
+  thrust::device_vector<float3>   point_vector(points_size );
+  thrust::device_vector<unsigned> index_vector(indices_size);
+  auto points_ptr  = raw_pointer_cast(&point_vector[0]);
+  auto indices_ptr = raw_pointer_cast(&index_vector[0]);
+  
+  std::cout << "Sampling sphere." << std::endl;
+  cush::sample<<<dim3(tessellations.x, tessellations.y, 1), 1>>>(
+    0, 
+    0,
+    tessellations,
+    points_ptr   ,
+    indices_ptr  );
+  cudaDeviceSynchronize();
+  
+  std::cout << "Converting samples to Cartesian coordinates." << std::endl;
+  thrust::transform(
+    point_vector.begin(),
+    point_vector.end  (),
+    point_vector.begin(),
+    [] COMMON (const float3& point)
+    {
+      return cush::to_cartesian_coords(point);
+    });
+  cudaDeviceSynchronize();
+  
+  std::cout << "Normalizing samples." << std::endl;
+  float3 max_sample = *thrust::max_element(point_vector.begin(), point_vector.end(),
+    [] COMMON (const float3& lhs, const float3& rhs)
+    {
+      return sqrt(pow(lhs.x, 2) + pow(lhs.y, 2) + pow(lhs.z, 2)) <
+             sqrt(pow(rhs.x, 2) + pow(rhs.y, 2) + pow(rhs.z, 2));
+    });
+
+  auto max_sample_length = sqrt(
+    pow(max_sample.x, 2) +
+    pow(max_sample.y, 2) +
+    pow(max_sample.z, 2));
+
+  thrust::transform(
+    point_vector.begin(),
+    point_vector.end  (),
+    point_vector.begin(),
+    [max_sample_length] COMMON (float3 value)
+    {
+      value.x /= max_sample_length;
+      value.y /= max_sample_length;
+      value.z /= max_sample_length;
+      return value;
+    });
+  cudaDeviceSynchronize();
+
+  std::cout << "Copying points and indices to CPU." << std::endl;
+  cudaMemcpy(points , points_ptr , sizeof(float3  ) * points_size , cudaMemcpyDeviceToHost);
+  cudaMemcpy(indices, indices_ptr, sizeof(unsigned) * indices_size, cudaMemcpyDeviceToHost);
+}
+
+void sample_sums(
   const uint3&    dimensions       , 
   const unsigned  maximum_degree   ,
-  const uint2&    output_resolution, 
+  const uint2&    tessellations    , 
   const float*    coefficients     , 
         float3*   points           , 
         unsigned* indices          )
@@ -23,7 +85,7 @@ void   sample(
   auto total_start = std::chrono::system_clock::now();
 
   auto voxel_count  = dimensions.x * dimensions.y * dimensions.z;
-  auto sample_count = output_resolution.x * output_resolution.y;
+  auto sample_count = tessellations.x * tessellations.y;
 
   std::cout << "Allocating and copying spherical harmonics coefficients." << std::endl;
   auto coefficients_size = voxel_count * cush::coefficient_count(maximum_degree);
@@ -41,12 +103,12 @@ void   sample(
 
   std::cout << "Sampling sums of spherical harmonics coefficients." << std::endl;
   cush::sample_sums<<<dim3(dimensions), 1>>>(
-    dimensions       ,
-    maximum_degree   , 
-    output_resolution,
-    coefficients_ptr , 
-    points_ptr       , 
-    indices_ptr      );
+    dimensions      ,
+    cush::coefficient_count(maximum_degree), 
+    tessellations   ,
+    coefficients_ptr, 
+    points_ptr      , 
+    indices_ptr     );
   cudaDeviceSynchronize();
 
   std::cout << "Converting samples to Cartesian coordinates." << std::endl;
@@ -56,7 +118,7 @@ void   sample(
     point_vectors.begin(),
     [] COMMON (const float3& point)
     {
-      return to_cartesian_coords_2(point);
+      return cush::to_cartesian_coords(point);
     });
   cudaDeviceSynchronize();
 

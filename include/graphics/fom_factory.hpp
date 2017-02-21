@@ -12,7 +12,8 @@
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
-#include <cuda/convert.h>
+#include <cush.h>
+
 #include <graphics/color_mappers/rgb.hpp>
 
 namespace pli
@@ -62,10 +63,10 @@ public:
             rotation[2] = (90.0 - inclinations[x][y][z]) * M_PI / 180.0;
           }
 
-          rotation = to_cartesian_coords(rotation);
+          rotation = cush::to_cartesian_coords(rotation);
           positions->SetPoint(index, position.data());
           rotations->SetTuple(index, rotation.data());
-          colors   ->SetTuple(index, color_mapper.template map<scalar_type>(rotation).data());
+          colors   ->SetTuple(index, color_mapper.map(rotation).data());
 
           index++;
         }
