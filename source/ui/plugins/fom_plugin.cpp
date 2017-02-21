@@ -2,10 +2,10 @@
 
 #include <limits>
 
-#include <vtkProperty.h>
-#include <vtkSmartPointer.h>
+#include <all.hpp>
+#include <cuda_gl_interop.h>
+#include <cuda_runtime_api.h>
 
-#include <graphics/fom_factory.hpp>
 #include <ui/window.hpp>
 #include <utility/line_edit_utility.hpp>
 #include <utility/qt_text_browser_sink.hpp>
@@ -64,10 +64,6 @@ fom_plugin::fom_plugin(QWidget* parent) : plugin(parent)
     logger_->info("Vector scale set to " + line_edit_scale->text().toStdString());
     update_viewer();
   });
-
-  hedgehog_ = vtkSmartPointer<vtkHedgeHog>      ::New();
-  mapper_   = vtkSmartPointer<vtkPolyDataMapper>::New();
-  actor_    = vtkSmartPointer<vtkActor>         ::New();
 }
 
 void fom_plugin::start()
@@ -79,9 +75,6 @@ void fom_plugin::start()
     logger_->info(std::string("Updating viewer."));
     update_viewer();
   });
-
-  owner_->viewer->renderer()->AddActor(actor_);
-  owner_->viewer->renderer()->ResetCamera();
 }
 
 void fom_plugin::update_viewer() const
@@ -106,16 +99,34 @@ void fom_plugin::update_viewer() const
       auto fiber_direction_map   = io->load_fiber_direction_map  (offset, size);
       auto fiber_inclination_map = io->load_fiber_inclination_map(offset, size);
       auto vector_spacing        = io->load_vector_spacing       ();
-      hedgehog_->SetInputData(fom_factory::create(fiber_direction_map, fiber_inclination_map, vector_spacing));
+
+      //hedgehog_->SetInputData(fom_factory::create(fiber_direction_map, fiber_inclination_map, vector_spacing));
+
+      gl::array_buffer vertices;
+      vertices.bind    ();
+      vertices.allocate(sizeof(float3) * fiber_direction_map.num_elements() * 2);
+      vertices.unbind  ();
+
+      struct cudaGraphicsResource* vertices_cuda;
+      cudaGraphicsGLRegisterBuffer  (&vertices_cuda, vertices.id(), cudaGraphicsMapFlagsWriteDiscard);
+
+      float3* vertices_ptr;
+      size_t  num_bytes   ;
+      cudaGraphicsMapResources(1, &vertices_cuda, nullptr);
+      cudaGraphicsResourceGetMappedPointer((void**)&vertices_ptr, &num_bytes, vertices_cuda);
+      
+      // TODO: CALL KERNEL ON vertices_ptr.
+
+      cudaGraphicsUnmapResources(1, &vertices_cuda, nullptr);
+
+      // TODO: RENDER.
+
+      cudaGraphicsUnregisterResource(vertices_cuda);
     }
-    else
-      hedgehog_->SetInputData(vtkSmartPointer<vtkPolyData>::New());
     
-    hedgehog_->SetScaleFactor    (line_edit_utility::get_text<float>(line_edit_scale)); 
-    mapper_  ->SetInputConnection(hedgehog_->GetOutputPort());
-    actor_   ->SetMapper         (mapper_);
-    actor_   ->GetProperty       ()->SetLighting(false);
-    owner_   ->viewer->update();
+    // line_edit_utility::get_text<float>(line_edit_scale)
+
+    owner_->viewer->update();
   }
   catch (std::exception& exception)
   {

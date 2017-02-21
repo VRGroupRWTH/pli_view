@@ -3,10 +3,8 @@
 #include <limits>
 
 #include <cush.h>
-#include <vtkProperty.h>
 
 #include <cuda/sample.h>
-#include <graphics/fdm_factory.hpp>
 #include <ui/window.hpp>
 #include <utility/line_edit_utility.hpp>
 #include <utility/qt_text_browser_sink.hpp>
@@ -139,12 +137,6 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
   {
     calculate();
   });
-
-  poly_data_ = vtkSmartPointer<vtkPolyData>      ::New();
-  mapper_    = vtkSmartPointer<vtkPolyDataMapper>::New();
-  actor_     = vtkSmartPointer<vtkActor>         ::New();
-  actor_->SetMapper(mapper_);
-  actor_->GetProperty()->SetLighting(false);
 }
 
 void fdm_plugin::start()
@@ -156,9 +148,6 @@ void fdm_plugin::start()
     logger_->info(std::string("Updating viewer."));
     update_viewer();
   });
-
-  owner_->viewer->renderer()->AddActor(actor_);
-  owner_->viewer->renderer()->ResetCamera();
 }
 
 void fdm_plugin::update_viewer()
@@ -193,13 +182,8 @@ void fdm_plugin::update_viewer()
       boost::multi_array<unsigned, 4>             indices(boost::extents[shape[0]][shape[1]][shape[2]][4 * tessellations[0] * tessellations[1]]);
       sample_sums({shape[0], shape[1], shape[2]}, cush::maximum_degree(shape[3]), {tessellations[0], tessellations[1]}, fdm.data(), (float3*) points.data(), indices.data());
       
-      poly_data_ = fdm_factory::create(points, indices, vector_spacing, block_size);
     }
-    else
-      poly_data_ = vtkSmartPointer<vtkPolyData>::New();
     
-    mapper_->SetInputData  (poly_data_);
-    mapper_->Update        ();
     owner_ ->viewer->update();
   }
   catch (std::exception& exception)

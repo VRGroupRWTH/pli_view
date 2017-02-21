@@ -1,10 +1,8 @@
 #ifndef PLI_VIS_FDM_POLY_DATA_HPP_
 #define PLI_VIS_FDM_POLY_DATA_HPP_
 
-#define _USE_MATH_DEFINES
-
 #include <array>
-#include <math.h>
+#include <vector>
 
 #include <boost/multi_array.hpp>
 #include <vtkCellArray.h>

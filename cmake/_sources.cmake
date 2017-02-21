@@ -8,8 +8,10 @@ set(ProjectSources
   include/graphics/color_mappers/hsl.hpp
   include/graphics/color_mappers/hsv.hpp
   include/graphics/color_convert.hpp
-  include/graphics/fom_factory.hpp
-  include/graphics/fdm_factory.hpp
+  #include/graphics/fom_factory.hpp
+  #include/graphics/fdm_factory.hpp
+  include/graphics/odf_field.hpp
+  include/graphics/vector_field.hpp
   include/ui/plugins/data_plugin.hpp
   include/ui/plugins/fom_plugin.hpp
   include/ui/plugins/fdm_plugin.hpp

@@ -20,8 +20,6 @@ window:: window()
     plugin->awake();
   for (auto plugin : plugins_)
     plugin->start();
-
-  vtkObject::GlobalWarningDisplayOff();
 }
 window::~window()
 {

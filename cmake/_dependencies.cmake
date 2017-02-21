@@ -17,6 +17,11 @@ include_directories(${CUSH_INCLUDE_DIRS})
 find_package       (GLP REQUIRED)
 include_directories(${GLP_INCLUDE_DIRS})
 
+# Include HDF5.
+find_package(HDF5 REQUIRED NAMES hdf5 COMPONENTS C shared)
+include_directories(${HDF5_INCLUDE_DIR})
+set(ProjectLibraries ${ProjectLibraries} ${HDF5_C_SHARED_LIBRARY})
+
 # Include PLI_IO.
 find_package       (PLI_IO REQUIRED)
 include_directories(${PLI_IO_INCLUDE_DIRS})
@@ -27,11 +32,3 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 find_package(Qt5Widgets REQUIRED)
 set(ProjectLibraries ${ProjectLibraries} Qt5::Widgets)
-
-# Include VTK.
-find_package       (VTK REQUIRED)
-include            (${VTK_USE_FILE})
-include_directories(${VTK_INCLUDE_DIRS})
-set(ProjectLibraries ${ProjectLibraries} ${VTK_LIBRARIES})
-
-

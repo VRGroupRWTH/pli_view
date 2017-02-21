@@ -1,11 +1,6 @@
 #ifndef PLI_VIS_FOM_PLUGIN_HPP_
 #define PLI_VIS_FOM_PLUGIN_HPP_
 
-#include <vtkActor.h>
-#include <vtkHedgeHog.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkSmartPointer.h>
-
 #include <attributes/loggable.hpp>
 #include <ui/plugins/plugin.hpp>
 #include <ui_fom_toolbox.h>
@@ -21,10 +16,6 @@ public:
 
 private:
   void update_viewer() const;
-
-  vtkSmartPointer<vtkHedgeHog>       hedgehog_;
-  vtkSmartPointer<vtkPolyDataMapper> mapper_  ;
-  vtkSmartPointer<vtkActor>          actor_   ;
 };
 }
 
