@@ -7,15 +7,21 @@
 
 namespace pli
 {
-class fom_plugin : public plugin, public loggable<fom_plugin>, public Ui_fom_toolbox
+class vector_field;
+
+class fom_plugin : 
+  public plugin, 
+  public loggable<fom_plugin>, 
+  public Ui_fom_toolbox
 {
 public:
   fom_plugin(QWidget* parent = nullptr);
-
-  void start() override;
+  void start () override;
 
 private:
-  void update_viewer() const;
+  void update() const;
+
+  vector_field* vector_field_;
 };
 }
 

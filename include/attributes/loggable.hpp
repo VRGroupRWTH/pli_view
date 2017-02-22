@@ -1,5 +1,5 @@
-#ifndef PLI_VIS_LOGGING_HPP_
-#define PLI_VIS_LOGGING_HPP_
+#ifndef PLI_VIS_LOGGABLE_HPP_
+#define PLI_VIS_LOGGABLE_HPP_
 
 #include <spdlog/spdlog.h>
 #include <spdlog/logger.h>

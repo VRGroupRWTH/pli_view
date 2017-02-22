@@ -1,5 +1,5 @@
-#ifndef PLI_VIS_SAMPLER_H_
-#define PLI_VIS_SAMPLER_H_
+#ifndef PLI_VIS_SAMPLE_H_
+#define PLI_VIS_SAMPLE_H_
 
 #include <vector_types.h>
 

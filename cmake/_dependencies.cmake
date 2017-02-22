@@ -13,6 +13,11 @@ set(ProjectLibraries ${ProjectLibraries} "${CUDA_CUBLAS_LIBRARIES};${CUDA_cudade
 find_package       (Cush REQUIRED)
 include_directories(${CUSH_INCLUDE_DIRS})
 
+# Include GLEW.
+find_package       (GLEW REQUIRED)
+include_directories(${GLEW_INCLUDE_DIRS})
+set(ProjectLibraries ${ProjectLibraries} "${GLEW_LIBRARIES}")
+
 # Include GLP.
 find_package       (GLP REQUIRED)
 include_directories(${GLP_INCLUDE_DIRS})
@@ -21,6 +26,11 @@ include_directories(${GLP_INCLUDE_DIRS})
 find_package(HDF5 REQUIRED NAMES hdf5 COMPONENTS C shared)
 include_directories(${HDF5_INCLUDE_DIR})
 set(ProjectLibraries ${ProjectLibraries} ${HDF5_C_SHARED_LIBRARY})
+
+# Include OpenGL.
+find_package       (OpenGL REQUIRED)
+include_directories(${OPENGL_INCLUDE_DIRS})
+set(ProjectLibraries ${ProjectLibraries} "${OPENGL_LIBRARIES}")
 
 # Include PLI_IO.
 find_package       (PLI_IO REQUIRED)
