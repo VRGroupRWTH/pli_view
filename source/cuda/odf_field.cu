@@ -85,16 +85,6 @@ void create_odfs(
   }
   cudaDeviceSynchronize();
 
-  float3 offset       = {
-    spacing.x * (block_size.x - 1) * 0.5,
-    spacing.y * (block_size.y - 1) * 0.5,
-    spacing.z * (block_size.z - 1) * 0.5};
-  float3 real_spacing = {
-    spacing.x * block_size.x,
-    spacing.y * block_size.y,
-    spacing.z * block_size.z};
-  auto   real_scale = scale * real_spacing.x * 0.5;
-
   std::cout << "Assigning colors." << std::endl;
   thrust::transform(
     thrust::device,
@@ -108,6 +98,15 @@ void create_odfs(
   cudaDeviceSynchronize();
 
   std::cout << "Translating and scaling points." << std::endl;
+  float3 offset       = {
+    spacing.x * (block_size.x - 1) * 0.5,
+    spacing.y * (block_size.y - 1) * 0.5,
+    spacing.z * (block_size.z - 1) * 0.5};
+  float3 real_spacing = {
+    spacing.x * block_size.x,
+    spacing.y * block_size.y,
+    spacing.z * block_size.z};
+  auto   real_scale   = scale * real_spacing.x * 0.5;
   thrust::transform(
     thrust::device,
     points,
