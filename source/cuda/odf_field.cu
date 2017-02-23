@@ -7,6 +7,7 @@
 #include <thrust/extrema.h>
 
 #include <cush.h>
+#include <vector_ops.h>
 
 namespace pli
 {
@@ -44,7 +45,7 @@ void create_odfs(
     indices          );
   cudaDeviceSynchronize();
 
-  std::cout << "Converting samples to Cartesian coordinates." << std::endl;
+  std::cout << "Converting points to Cartesian coordinates." << std::endl;
   thrust::transform(
     thrust::device,
     points,
@@ -52,42 +53,76 @@ void create_odfs(
     points,
     [] COMMON (const float3& point)
     {
-      return cush::to_cartesian_coords<float3>(point);
+      return cush::to_cartesian_coords(point);
     });
   cudaDeviceSynchronize();
   
-  //std::cout << "Normalizing samples." << std::endl;
-  //for (auto i = 0; i < voxel_count; i++)
-  //{
-  //  float3* max_sample = thrust::max_element(
-  //    thrust::device,
-  //    points +  i      * tessellation_count,
-  //    points + (i + 1) * tessellation_count,
-  //    [] COMMON (const float3& lhs, const float3& rhs)
-  //    {
-  //      return sqrt(pow(lhs.x, 2) + pow(lhs.y, 2) + pow(lhs.z, 2)) <
-  //             sqrt(pow(rhs.x, 2) + pow(rhs.y, 2) + pow(rhs.z, 2));
-  //    });
-  //
-  //  thrust::transform(
-  //    thrust::device,
-  //    points +  i      * tessellation_count,
-  //    points + (i + 1) * tessellation_count,
-  //    points +  i      * tessellation_count,
-  //    [max_sample] COMMON(float3 value)
-  //    {
-  //      auto max_sample_length = sqrt(
-  //        pow(max_sample->x, 2) +
-  //        pow(max_sample->y, 2) +
-  //        pow(max_sample->z, 2));
-  //
-  //      value.x /= max_sample_length;
-  //      value.y /= max_sample_length;
-  //      value.z /= max_sample_length;
-  //      return value;
-  //    });
-  //}
-  //cudaDeviceSynchronize();
+  std::cout << "Normalizing points." << std::endl;
+  for (auto i = 0; i < voxel_count; i++)
+  {
+    float3* max_sample = thrust::max_element(
+      thrust::device,
+      points +  i      * tessellation_count,
+      points + (i + 1) * tessellation_count,
+      [] COMMON (const float3& lhs, const float3& rhs)
+      {
+        return length(lhs) < length(rhs);
+      });
+  
+    thrust::transform(
+      thrust::device,
+      points +  i      * tessellation_count,
+      points + (i + 1) * tessellation_count,
+      points +  i      * tessellation_count,
+      [max_sample] COMMON(float3 point)
+      {
+        auto max_sample_length = length(*max_sample);
+        point.x /= max_sample_length;
+        point.y /= max_sample_length;
+        point.z /= max_sample_length;
+        return point;
+      });
+  }
+  cudaDeviceSynchronize();
+
+  float3 offset       = {
+    spacing.x * (block_size.x - 1) * 0.5,
+    spacing.y * (block_size.y - 1) * 0.5,
+    spacing.z * (block_size.z - 1) * 0.5};
+  float3 real_spacing = {
+    spacing.x * block_size.x,
+    spacing.y * block_size.y,
+    spacing.z * block_size.z};
+  auto   real_scale = scale * real_spacing.x * 0.5;
+
+  std::cout << "Assigning colors." << std::endl;
+  thrust::transform(
+    thrust::device,
+    points,
+    points + point_count,
+    colors,
+    [] COMMON (const float3& point)
+    {
+      return make_float4(abs(point.x), abs(point.y), abs(point.z), 1.0);
+    });
+  cudaDeviceSynchronize();
+
+  std::cout << "Translating and scaling points." << std::endl;
+  thrust::transform(
+    thrust::device,
+    points,
+    points + point_count,
+    points,
+    [=] COMMON (const float3& point)
+    {
+      auto output = real_scale * point;
+      auto index  = int((&point - points) / tessellation_count);
+      output.x += offset.x + real_spacing.x * (index / (dimensions.z * dimensions.y));
+      output.y += offset.y + real_spacing.y * (index /  dimensions.z % dimensions.y);
+      output.z += offset.z + real_spacing.z * (index % dimensions.z);
+      return output;
+    });
+  cudaDeviceSynchronize();
 
   auto total_end = std::chrono::system_clock::now();
   std::chrono::duration<double> total_elapsed_seconds = total_end - total_start;
