@@ -19,7 +19,7 @@ public:
   void start () override;
 
 private:
-  void update   ();
+  void update   () const;
   void calculate() const;
 
   odf_field* odf_field_;

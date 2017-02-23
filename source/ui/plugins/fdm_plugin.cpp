@@ -149,7 +149,7 @@ void fdm_plugin::start    ()
 
   odf_field_ = owner_->viewer->add_renderable<odf_field>();
 }
-void fdm_plugin::update   ()
+void fdm_plugin::update   () const
 {
   try
   {
