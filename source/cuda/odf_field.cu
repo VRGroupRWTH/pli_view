@@ -24,6 +24,11 @@ void create_odfs(
         unsigned* indices          )
 {
   auto total_start = std::chrono::system_clock::now();
+  
+  auto dimension_count    = dimensions.z > 1 ? 3 : 2;
+  auto tree_max_depth     = log(dimensions.x) / log(2);
+  auto tree_voxel_count   = (pow(2, dimension_count * (tree_max_depth + 1.0)) - 1.0) / (pow(2, dimension_count) - 1.0);
+  // TODO!
 
   auto voxel_count        = dimensions.x * dimensions.y * dimensions.z;
   auto tessellation_count = tessellations.x * tessellations.y;
