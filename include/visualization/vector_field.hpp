@@ -1,8 +1,6 @@
 #ifndef PLI_VIS_VECTOR_FIELD_HPP_
 #define PLI_VIS_VECTOR_FIELD_HPP_
 
-#define GLP_CUDA_SUPPORT
-
 #include <memory>
 
 #include <all.hpp>
@@ -15,8 +13,8 @@ namespace pli
 class vector_field : public renderable
 {
 public:
-  void initialize() override;
-  void render    () override;
+  void initialize()                     override;
+  void render    (const camera* camera) override;
 
   void set_data(
     const float*  directions  ,

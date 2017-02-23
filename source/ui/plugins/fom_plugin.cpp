@@ -2,10 +2,10 @@
 
 #include <limits>
 
-#include <graphics/vector_field.hpp>
 #include <ui/window.hpp>
 #include <utility/line_edit_utility.hpp>
 #include <utility/qt_text_browser_sink.hpp>
+#include <visualization/vector_field.hpp>
 
 namespace pli
 {
@@ -97,7 +97,7 @@ void fom_plugin::update() const
       auto fiber_direction_map   = io->load_fiber_direction_map  (offset, size);
       auto fiber_inclination_map = io->load_fiber_inclination_map(offset, size);
       auto shape                 = fiber_direction_map.shape();
-      auto spacing               = io->load_vector_spacing       ();
+      auto spacing               = io->load_vector_spacing  ();
       auto scale                 = line_edit_utility::get_text<float>(line_edit_scale);
       
       vector_field_->set_data(

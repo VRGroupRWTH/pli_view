@@ -1,6 +1,7 @@
-#include /* implements */ <graphics/vector_field.hpp>
+#include /* implements */ <visualization/vector_field.hpp>
 
 #include <cuda/vector_field.h>
+#include <math/camera.hpp>
 #include <shaders/vector_field.vert.glsl>
 #include <shaders/vector_field.frag.glsl>
 
@@ -33,11 +34,13 @@ void vector_field::initialize()
   vertex_array_  ->unbind();
   shader_program_->unbind();
 }
-void vector_field::render    ()
+void vector_field::render    (const camera* camera)
 {
   shader_program_->bind  ();
   vertex_array_  ->bind  ();
-
+  
+  shader_program_->set_uniform("projection", camera->projection_matrix      ());
+  shader_program_->set_uniform("view"      , camera->inverse_absolute_matrix());
   glDrawArrays(GL_LINES, 0, draw_count_);
 
   vertex_array_  ->unbind();

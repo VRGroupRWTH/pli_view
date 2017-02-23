@@ -41,10 +41,11 @@ __global__ void create_vectors(
     y * spacing.y,
     z * spacing.z};
 
-  auto vector_start = cush::to_cartesian_coords(float3{ scale, longitude, latitude});
-  auto vector_end   = cush::to_cartesian_coords(float3{-scale, longitude, latitude});
-  auto unscaled     = cush::to_cartesian_coords(float3{   1.0, longitude, latitude});
-  auto color        = make_float4(abs(unscaled.x), abs(unscaled.y), abs(unscaled.z), 1.0);
+  auto minimum_spacing = min(spacing.x, min(spacing.y, spacing.z));
+  auto vector_start    = cush::to_cartesian_coords(float3{ scale * minimum_spacing / 2.0, longitude, latitude});
+  auto vector_end      = cush::to_cartesian_coords(float3{-scale * minimum_spacing / 2.0, longitude, latitude});
+  auto unscaled        = cush::to_cartesian_coords(float3{1.0, longitude, latitude});
+  auto color           = make_float4(abs(unscaled.x), abs(unscaled.y), abs(unscaled.z), 1.0);
 
   auto point_index = 2 * volume_index;
   points[point_index    ] = position + vector_start;

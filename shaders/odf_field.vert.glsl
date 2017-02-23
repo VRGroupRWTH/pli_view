@@ -1,11 +1,11 @@
-#ifndef VECTOR_FIELD_VERT_GLSL_
-#define VECTOR_FIELD_VERT_GLSL_
+#ifndef ODF_FIELD_VERT_GLSL_
+#define ODF_FIELD_VERT_GLSL_
 
 #include <string>
 
 namespace shaders
 {
-std::string vector_field_vert = R"(\
+std::string odf_field_vert = R"(\
 #version 400
 
 uniform mat4 projection;

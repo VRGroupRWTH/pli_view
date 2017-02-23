@@ -10,8 +10,8 @@ extern "C"
 void main(int argc, char** argv)
 {
   QSurfaceFormat format;
-  format.setProfile     (QSurfaceFormat::CoreProfile );
-  format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
+  format.setProfile     (QSurfaceFormat::CompatibilityProfile);
+  format.setSwapBehavior(QSurfaceFormat::DoubleBuffer        );
   format.setSamples     (9);
   format.setVersion     (4, 5);
   QSurfaceFormat::setDefaultFormat(format);

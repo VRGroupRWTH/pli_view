@@ -3,13 +3,15 @@
 
 namespace pli
 {
+class camera;
+
 class renderable
 {
 public:
   virtual ~renderable() = default;
 
-  virtual void initialize() { }
-  virtual void render    () { }
+  virtual void initialize()                     { }
+  virtual void render    (const camera* camera) { }
 };
 }
 

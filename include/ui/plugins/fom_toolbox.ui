@@ -216,7 +216,7 @@
    <item row="5" column="1" colspan="3">
     <widget class="QLineEdit" name="line_edit_scale">
      <property name="placeholderText">
-      <string>0.001</string>
+      <string>1.0</string>
      </property>
     </widget>
    </item>

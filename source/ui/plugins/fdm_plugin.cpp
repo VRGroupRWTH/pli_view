@@ -2,12 +2,10 @@
 
 #include <limits>
 
-#include <cush.h>
-
-#include <cuda/sample.h>
 #include <ui/window.hpp>
 #include <utility/line_edit_utility.hpp>
 #include <utility/qt_text_browser_sink.hpp>
+#include <visualization/odf_field.hpp>
 
 namespace pli
 {
@@ -41,48 +39,48 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
   connect(line_edit_offset_x        , &QLineEdit::editingFinished, [&] 
   {
     logger_->info("Selection X offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_x));
-    update_viewer();
+    update();
   });
   connect(line_edit_offset_y        , &QLineEdit::editingFinished, [&]
   {
     logger_->info("Selection Y offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_y));
-    update_viewer();
+    update();
   });
   connect(line_edit_offset_z        , &QLineEdit::editingFinished, [&]
   {
     logger_->info("Selection Z offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_z));
-    update_viewer();
+    update();
   });
   connect(line_edit_size_x          , &QLineEdit::editingFinished, [&] 
   {
     logger_->info("Selection X size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_x));
-    update_viewer();
+    update();
   });
   connect(line_edit_size_y          , &QLineEdit::editingFinished, [&]
   {
     logger_->info("Selection Y size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_y));
-    update_viewer();
+    update();
   });
   connect(line_edit_size_z          , &QLineEdit::editingFinished, [&]
   {
     logger_->info("Selection Z size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_z));
-    update_viewer();
+    update();
   });
 
   connect(checkbox_show             , &QCheckBox::stateChanged   , [&](int state)
   {
     logger_->info(std::string("Show set to ") + (state ? "true" : "false"));
-    update_viewer();
+    update();
   });
   connect(line_edit_samples_x       , &QLineEdit::editingFinished, [&]
   {
     logger_->info("Samples longitude partitions are set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_samples_x));
-    update_viewer();
+    update();
   });
   connect(line_edit_samples_y       , &QLineEdit::editingFinished, [&]
   {
     logger_->info("Samples latitude partitions are set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_samples_y));
-    update_viewer();
+    update();
   });
 
   connect(line_edit_fom_offset_x    , &QLineEdit::editingFinished, [&] 
@@ -139,18 +137,19 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
   });
 }
 
-void fdm_plugin::start()
+void fdm_plugin::start    ()
 {
   set_sink(std::make_shared<qt_text_browser_sink>(owner_->console));
 
   connect(owner_->get_plugin<data_plugin>(), &data_plugin::on_change, [&]
   {
     logger_->info(std::string("Updating viewer."));
-    update_viewer();
+    update();
   });
-}
 
-void fdm_plugin::update_viewer()
+  odf_field_ = owner_->viewer->add_renderable<odf_field>();
+}
+void fdm_plugin::update   ()
 {
   try
   {
@@ -169,19 +168,22 @@ void fdm_plugin::update_viewer()
         line_edit_utility::get_text<std::size_t>(line_edit_size_y),
         line_edit_utility::get_text<std::size_t>(line_edit_size_z)};
       
-      std::array<std::size_t, 2> tessellations =
+      uint2 tessellations =
       { line_edit_utility::get_text<std::size_t>(line_edit_samples_x), 
         line_edit_utility::get_text<std::size_t>(line_edit_samples_y)};
 
-      auto fdm            = io->load_fiber_distribution_map(offset, size);
-      auto vector_spacing = io->load_vector_spacing();
-      auto block_size     = io->load_block_size    ();
+      auto fdm        = io->load_fiber_distribution_map(offset, size);
+      auto shape      = fdm.shape              ();
+      auto spacing    = io->load_vector_spacing();
+      auto block_size = io->load_block_size    ();
 
-      auto shape = fdm.shape();
-      boost::multi_array<std::array<float, 3>, 4> points (boost::extents[shape[0]][shape[1]][shape[2]][    tessellations[0] * tessellations[1]]);
-      boost::multi_array<unsigned, 4>             indices(boost::extents[shape[0]][shape[1]][shape[2]][4 * tessellations[0] * tessellations[1]]);
-      sample_sums({shape[0], shape[1], shape[2]}, cush::maximum_degree(shape[3]), {tessellations[0], tessellations[1]}, fdm.data(), (float3*) points.data(), indices.data());
-      
+      odf_field_->set_data(
+        {shape[0], shape[1], shape[2]},
+         shape[3],
+         fdm.data(),
+         tessellations,
+        {spacing   [0], spacing   [1], spacing   [2]},
+        {block_size[0], block_size[1], block_size[2]});
     }
     
     owner_ ->viewer->update();
@@ -191,7 +193,7 @@ void fdm_plugin::update_viewer()
     logger_->error(std::string(exception.what()));
   }
 }
-void fdm_plugin::calculate    () const
+void fdm_plugin::calculate() const
 {
 
 }

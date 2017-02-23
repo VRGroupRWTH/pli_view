@@ -7,16 +7,22 @@
 
 namespace pli
 {
-class fdm_plugin : public plugin, public loggable<fdm_plugin>, public Ui_fdm_toolbox
+class odf_field;
+
+class fdm_plugin : 
+  public plugin, 
+  public loggable<fdm_plugin>, 
+  public Ui_fdm_toolbox
 {
 public:
   fdm_plugin(QWidget* parent = nullptr);
-  
-  void start() override;
+  void start () override;
 
 private:
-  void update_viewer();
-  void calculate    () const;
+  void update   ();
+  void calculate() const;
+
+  odf_field* odf_field_;
 };
 }
 
