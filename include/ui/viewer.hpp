@@ -26,11 +26,13 @@ public:
 
   camera* camera() { return &camera_; }
 
-  void initializeGL   ()                 override;
-  void paintGL        ()                 override;
-  void resizeGL       (int w, int h)     override;
-  void keyPressEvent  (QKeyEvent* event) override;
-  void keyReleaseEvent(QKeyEvent* event) override;
+  void initializeGL   ()                   override;
+  void paintGL        ()                   override;
+  void resizeGL       (int w, int h)       override;
+  void keyPressEvent  (QKeyEvent*   event) override;
+  void keyReleaseEvent(QKeyEvent*   event) override;
+  void mousePressEvent(QMouseEvent* event) override;
+  void mouseMoveEvent (QMouseEvent* event) override;
 
 private:
   bool                                     initialized_ = false;

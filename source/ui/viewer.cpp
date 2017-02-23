@@ -10,7 +10,8 @@ namespace pli
 viewer::viewer(QWidget* parent) : QOpenGLWidget(parent), interactor_(&camera_)
 {
   // Make adjustable.
-  interactor_.set_move_speed(0.001);
+  interactor_.set_move_speed(0.01);
+  interactor_.set_look_speed(0.2);
 
   setFocusPolicy(Qt::StrongFocus);
 
@@ -59,15 +60,23 @@ void viewer::resizeGL       (int w, int h)
   glViewport(0, 0, w, h);
   camera_.set_aspect_ratio((float) w / h);
 }
-void viewer::keyPressEvent  (QKeyEvent* event)
+void viewer::keyPressEvent  (QKeyEvent*   event)
 {
   interactor_.key_press_handler(event);
   update();
 }
-void viewer::keyReleaseEvent(QKeyEvent* event)
+void viewer::keyReleaseEvent(QKeyEvent*   event)
 {
   interactor_.key_release_handler(event);
   update();
 }
-
+void viewer::mousePressEvent(QMouseEvent* event)
+{
+  interactor_.mouse_press_handler(event);
+  update();
+}
+void viewer::mouseMoveEvent (QMouseEvent* event)
+{
+  interactor_.mouse_move_handler(event);
+}
 }

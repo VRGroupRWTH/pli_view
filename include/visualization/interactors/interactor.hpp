@@ -3,6 +3,8 @@
 
 #include <map>
 
+#include <QPoint.h>
+
 class QKeyEvent;
 class QMouseEvent;
 
@@ -19,6 +21,7 @@ public:
 
   void key_press_handler  (QKeyEvent*   event);
   void key_release_handler(QKeyEvent*   event);
+  void mouse_press_handler(QMouseEvent* event);
   void mouse_move_handler (QMouseEvent* event);
 
   float move_speed() const
@@ -44,6 +47,8 @@ private:
   float               move_speed_ = 1.0;
   float               look_speed_ = 1.0;
   std::map<int, bool> key_map_    ;
+
+  QPoint last_mouse_position_;
 };
 }
 
