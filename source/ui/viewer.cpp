@@ -12,9 +12,6 @@ viewer::viewer(QWidget* parent) : QOpenGLWidget(parent), interactor_(&camera_)
   // Make adjustable.
   interactor_.set_move_speed(0.001);
 
-  // Make adjustable.
-  camera_.set_orthographic(true);
-
   setFocusPolicy(Qt::StrongFocus);
 
   auto timer = new QTimer(this);
