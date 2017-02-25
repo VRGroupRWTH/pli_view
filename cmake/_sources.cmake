@@ -5,6 +5,7 @@ set(ProjectSources
   include/attributes/loggable.hpp
   include/attributes/renderable.hpp
   include/cuda/odf_field.h
+  include/cuda/orthtree.h
   include/cuda/vector_field.h
   include/math/camera.hpp
   include/math/linear_math.hpp
