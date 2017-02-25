@@ -25,22 +25,31 @@ void create_odfs(
 {
   auto total_start = std::chrono::system_clock::now();
   
-  auto dimension_count    = dimensions.z > 1 ? 3 : 2;
-  auto tree_max_depth     = log(dimensions.x) / log(2);
-  auto tree_voxel_count   = (pow(2, dimension_count * (tree_max_depth + 1.0)) - 1.0) / (pow(2, dimension_count) - 1.0);
-  // TODO!
+  auto voxel_count            = dimensions.x * dimensions.y * dimensions.z;
+  auto tessellation_count     = tessellations.x * tessellations.y;
+  auto coefficients_size      = voxel_count * coefficient_count ;
+  auto point_count            = voxel_count * tessellation_count;
+  
+  auto tree_dimension_count   = dimensions.z > 1 ? 3 : 2;
+  auto tree_depth             = unsigned(log(dimensions.x) / log(2));
+  auto tree_voxel_count       = unsigned((pow(2, tree_dimension_count * (tree_depth + 1.0)) - 1.0) / (pow(2, tree_dimension_count) - 1.0));
+  auto tree_coefficients_size = tree_voxel_count * coefficient_count ;
+  auto tree_point_count       = tree_voxel_count * tessellation_count;
 
-  auto voxel_count        = dimensions.x * dimensions.y * dimensions.z;
-  auto tessellation_count = tessellations.x * tessellations.y;
-  auto coefficients_size  = voxel_count * coefficient_count ;
-  auto point_count        = voxel_count * tessellation_count;
-
-  std::cout << "Allocating and copying spherical harmonics coefficients." << std::endl;
-  thrust::device_vector<float> coefficient_vectors(coefficients_size);
+  std::cout << "Allocating and copying the leaf spherical harmonics coefficients." << std::endl;
+  thrust::device_vector<float> coefficient_vectors(tree_coefficients_size);
   copy_n(coefficients, coefficients_size, coefficient_vectors.begin());
   auto coefficients_ptr = raw_pointer_cast(&coefficient_vectors[0]);
 
-  std::cout << "Sampling sums of spherical harmonics coefficients." << std::endl;
+  std::cout << "Calculating the branch coefficients." << std::endl;
+  create_branch_coefficients<<<dim3(tree_voxel_count - voxel_count), 1>>>(
+    dimensions       ,
+    coefficient_count,
+    coefficients_ptr );
+  cudaDeviceSynchronize();
+
+  std::cout << "Sampling sums of the coefficients." << std::endl;
+  // TODO: FIX FOR TREE.
   cush::sample_sums<<<dim3(dimensions), 1>>>(
     dimensions       ,
     coefficient_count,
@@ -50,11 +59,11 @@ void create_odfs(
     indices          );
   cudaDeviceSynchronize();
 
-  std::cout << "Converting points to Cartesian coordinates." << std::endl;
+  std::cout << "Converting the points to Cartesian coordinates." << std::endl;
   thrust::transform(
     thrust::device,
     points,
-    points + point_count,
+    points + tree_point_count,
     points,
     [] COMMON (const float3& point)
     {
@@ -62,8 +71,8 @@ void create_odfs(
     });
   cudaDeviceSynchronize();
   
-  std::cout << "Normalizing points." << std::endl;
-  for (auto i = 0; i < voxel_count; i++)
+  std::cout << "Normalizing the points." << std::endl;
+  for (auto i = 0; i < tree_voxel_count; i++)
   {
     float3* max_sample = thrust::max_element(
       thrust::device,
@@ -94,7 +103,7 @@ void create_odfs(
   thrust::transform(
     thrust::device,
     points,
-    points + point_count,
+    points + tree_point_count,
     colors,
     [] COMMON (const float3& point)
     {
@@ -102,7 +111,8 @@ void create_odfs(
     });
   cudaDeviceSynchronize();
 
-  std::cout << "Translating and scaling points." << std::endl;
+  std::cout << "Translating and scaling the points." << std::endl;
+  // TODO: FIX FOR TREE.
   float3 offset       = {
     spacing.x * (block_size.x - 1) * 0.5,
     spacing.y * (block_size.y - 1) * 0.5,
