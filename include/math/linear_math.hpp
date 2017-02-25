@@ -17,9 +17,9 @@ using vec4d  = glm::dvec4;
 using vec2i  = glm::ivec2;
 using vec3i  = glm::ivec3;
 using vec4i  = glm::ivec4;
-using vec2ui = glm::ivec2;
-using vec3ui = glm::ivec3;
-using vec4ui = glm::ivec4;
+using vec2ui = glm::uvec2;
+using vec3ui = glm::uvec3;
+using vec4ui = glm::uvec4;
 
 using mat2f  = glm::fmat2;
 using mat3f  = glm::fmat3;
