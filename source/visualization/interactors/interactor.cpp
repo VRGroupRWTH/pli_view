@@ -89,7 +89,7 @@ void interactor::mouse_move_handler (QMouseEvent* event)
   auto dy = event->y() - last_mouse_position_.y();
   if (event->buttons() & Qt::LeftButton)
   {
-    transform_->rotate(angleAxis(radians(-look_speed_ * dx), transform_->up   ()));
+    transform_->rotate(angleAxis(radians(-look_speed_ * dx), vec3f(0.0, 0.0, 1.0)));
     transform_->rotate(angleAxis(radians(-look_speed_ * dy), transform_->right()));
   }
 
