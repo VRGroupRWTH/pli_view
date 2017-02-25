@@ -33,7 +33,7 @@ __global__ void create_vectors(
     return;
 
   auto volume_index = z + dimensions.z * (y + dimensions.y * x);
-  auto longitude    =          directions  [volume_index]  * M_PI / 180.0F;
+  auto longitude    = (90.0F + directions  [volume_index]) * M_PI / 180.0F;
   auto latitude     = (90.0F - inclinations[volume_index]) * M_PI / 180.0F;
 
   vector_type position = {
@@ -45,7 +45,8 @@ __global__ void create_vectors(
   auto vector_start    = cush::to_cartesian_coords(float3{ scale * minimum_spacing / 2.0, longitude, latitude});
   auto vector_end      = cush::to_cartesian_coords(float3{-scale * minimum_spacing / 2.0, longitude, latitude});
   auto unscaled        = cush::to_cartesian_coords(float3{1.0, longitude, latitude});
-  auto color           = make_float4(abs(unscaled.x), abs(unscaled.y), abs(unscaled.z), 1.0);
+  // auto color        = make_float4(abs(unscaled.x), abs(unscaled.y), abs(unscaled.z), 1.0); // Default
+  auto color           = make_float4(abs(unscaled.x), abs(unscaled.z), abs(unscaled.y), 1.0); // DMRI
 
   auto point_index = 2 * volume_index;
   points[point_index    ] = position + vector_start;
