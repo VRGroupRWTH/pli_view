@@ -25,45 +25,66 @@ void create_odfs(
 {
   auto total_start = std::chrono::system_clock::now();
   
-  auto voxel_count            = dimensions.x * dimensions.y * dimensions.z;
-  auto tessellation_count     = tessellations.x * tessellations.y;
-  auto coefficients_size      = voxel_count * coefficient_count ;
-  auto point_count            = voxel_count * tessellation_count;
-  
-  //auto tree_dimension_count   = dimensions.z > 1 ? 3 : 2;
-  //auto tree_depth             = unsigned(log(dimensions.x) / log(2));
-  //auto tree_voxel_count       = unsigned((pow(2, tree_dimension_count * (tree_depth + 1.0)) - 1.0) / (pow(2, tree_dimension_count) - 1.0));
-  //auto tree_coefficients_size = tree_voxel_count * coefficient_count ;
-  //auto tree_point_count       = tree_voxel_count * tessellation_count;
+  auto base_voxel_count   = dimensions.x * dimensions.y * dimensions.z;
+
+  auto dimension_count    = dimensions.z > 1 ? 3 : 2;
+  auto minimum_dimension  = min(dimensions.x, dimensions.y);
+  if (dimension_count == 3)
+    minimum_dimension = min(minimum_dimension, dimensions.z);
+
+  auto max_depth          = log(minimum_dimension) / log(2);
+  auto voxel_count        = unsigned(base_voxel_count * 
+    ((1.0 - pow(1.0 / pow(2, dimension_count), max_depth + 1)) / 
+     (1.0 -     1.0 / pow(2, dimension_count))));
+
+  auto tessellation_count = tessellations.x * tessellations.y;
+  auto point_count        = voxel_count * tessellation_count;
 
   std::cout << "Allocating and copying the leaf spherical harmonics coefficients." << std::endl;
-  thrust::device_vector<float> coefficient_vectors(coefficients_size); // tree_coefficients_size
-  copy_n(coefficients, coefficients_size, coefficient_vectors.begin());
+  thrust::device_vector<float> coefficient_vectors(voxel_count * coefficient_count);
+  copy_n(coefficients, base_voxel_count * coefficient_count, coefficient_vectors.begin());
   auto coefficients_ptr = raw_pointer_cast(&coefficient_vectors[0]);
 
-  std::cout << "Calculating the branch coefficients." << std::endl;
-  //create_branch_coefficients<<<dim3(tree_voxel_count - voxel_count), 1>>>(
-  //  dimensions       ,
-  //  coefficient_count,
-  //  coefficients_ptr );
-  //cudaDeviceSynchronize();
+  auto depth_offset     = 0;
+  auto depth_dimensions = dimensions;
+  for (auto depth = max_depth; depth >= 0; depth--)
+  {
+    if (depth != max_depth)
+    {
+      std::cout << "Calculating the depth " << depth << " coefficients." << std::endl;
+      create_branch<<<dim3(depth_dimensions), 1>>>(
+        dimensions       ,
+        depth_dimensions ,
+        depth_offset     ,
+        coefficient_count,
+        coefficients_ptr );
+      cudaDeviceSynchronize();
+    }
 
-  std::cout << "Sampling sums of the coefficients." << std::endl;
-  // TODO: FIX FOR TREE.
-  cush::sample_sums<<<dim3(dimensions), 1>>>(
-    dimensions       ,
-    coefficient_count,
-    tessellations    ,
-    coefficients_ptr , 
-    points           , 
-    indices          );
-  cudaDeviceSynchronize();
+    std::cout << "Sampling sums of the coefficients." << std::endl;
+    cush::sample_sums<<<dim3(depth_dimensions), 1>>>(
+      depth_dimensions ,
+      coefficient_count,
+      tessellations    ,
+      coefficients_ptr + depth_offset * coefficient_count , 
+      points           + depth_offset * tessellation_count, 
+      indices          + depth_offset * tessellation_count * 6,
+      depth_offset     * tessellation_count);
+    cudaDeviceSynchronize();
+    
+    depth_offset += depth_dimensions.x * depth_dimensions.y * depth_dimensions.z;
+    depth_dimensions = {
+      depth_dimensions.x / 2,
+      depth_dimensions.y / 2,
+      dimension_count == 3 ? dimensions.z / 2 : 1
+    };
+  }
 
   std::cout << "Converting the points to Cartesian coordinates." << std::endl;
   thrust::transform(
     thrust::device,
     points,
-    points + point_count, // tree_point_count
+    points + point_count,
     points,
     [] COMMON (const float3& point)
     {
@@ -72,7 +93,7 @@ void create_odfs(
   cudaDeviceSynchronize();
   
   std::cout << "Normalizing the points." << std::endl;
-  for (auto i = 0; i < voxel_count /* tree_voxel_count */; i++)
+  for (auto i = 0; i < voxel_count; i++)
   {
     float3* max_sample = thrust::max_element(
       thrust::device,
@@ -103,7 +124,7 @@ void create_odfs(
   thrust::transform(
     thrust::device,
     points,
-    points + point_count, // tree_point_count
+    points + point_count,
     colors,
     [] COMMON (const float3& point)
     {
@@ -113,31 +134,56 @@ void create_odfs(
   cudaDeviceSynchronize();
 
   std::cout << "Translating and scaling the points." << std::endl;
-  // TODO: FIX FOR TREE.
-  float3 offset       = {
-    spacing.x * (block_size.x - 1) * 0.5,
-    spacing.y * (block_size.y - 1) * 0.5,
-    spacing.z * (block_size.z - 1) * 0.5};
-  float3 real_spacing = {
-    spacing.x * block_size.x,
-    spacing.y * block_size.y,
-    spacing.z * block_size.z};
-  auto   real_scale   = scale * real_spacing.x * 0.5;
-  thrust::transform(
-    thrust::device,
-    points,
-    points + point_count,
-    points,
-    [=] COMMON (const float3& point)
-    {
-      auto output = real_scale * point;
-      auto index  = int((&point - points) / tessellation_count);
-      output.x += offset.x + real_spacing.x * (index / (dimensions.z * dimensions.y));
-      output.y += offset.y + real_spacing.y * (index /  dimensions.z % dimensions.y);
-      output.z += offset.z + real_spacing.z * (index % dimensions.z);
-      return output;
-    });
-  cudaDeviceSynchronize();
+  depth_offset     = 0;
+  depth_dimensions = dimensions;
+  for (auto depth = max_depth; depth >= 0; depth--)
+  {
+    auto depth_point_offset = 
+      depth_offset * 
+      tessellation_count;
+    auto depth_point_count  =  
+      depth_dimensions.x * 
+      depth_dimensions.y * 
+      depth_dimensions.z * 
+      tessellation_count;
+    
+    uint3 depth_block_size {
+      block_size.x * pow(2, max_depth - depth),
+      block_size.y * pow(2, max_depth - depth),
+      block_size.z * pow(2, max_depth - depth)};
+    float3 offset{
+      spacing.x * (depth_block_size.x - 1) * 0.5,
+      spacing.y * (depth_block_size.y - 1) * 0.5,
+      dimension_count == 3 ? spacing.z * (depth_block_size.z - 1) * 0.5 : 0.0};
+    float3 depth_spacing {
+      spacing.x * depth_block_size.x,
+      spacing.y * depth_block_size.y,
+      dimension_count == 3 ? spacing.z * depth_block_size.z : 1.0};
+    auto depth_scale = scale * min(min(depth_spacing.x, depth_spacing.y), depth_spacing.z) * 0.5;
+
+    thrust::transform(
+      thrust::device,
+      points + depth_point_offset,
+      points + depth_point_offset + depth_point_count,
+      points + depth_point_offset,
+      [=] COMMON (const float3& point)
+      {
+        auto output = depth_scale * point;
+        auto index  = int((&point - (points + depth_point_offset)) / tessellation_count);
+        output.x += offset.x + depth_spacing.x * (index / (depth_dimensions.z * depth_dimensions.y));
+        output.y += offset.y + depth_spacing.y * (index /  depth_dimensions.z % depth_dimensions.y);
+        output.z += offset.z + depth_spacing.z * (index % depth_dimensions.z);
+        return output;
+      });
+    cudaDeviceSynchronize();
+
+    depth_offset += depth_dimensions.x * depth_dimensions.y * depth_dimensions.z;
+    depth_dimensions = {
+      depth_dimensions.x / 2,
+      depth_dimensions.y / 2,
+      dimension_count == 3 ? dimensions.z / 2 : 1
+    };
+  }
 
   auto total_end = std::chrono::system_clock::now();
   std::chrono::duration<double> total_elapsed_seconds = total_end - total_start;

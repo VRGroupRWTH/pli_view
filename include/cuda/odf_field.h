@@ -10,34 +10,31 @@
 
 namespace pli
 {
-// Called on a branch voxels count 1D grid.
+// Called on a depth_dimensions.x x depth_dimensions.y x depth_dimensions.z 3D grid.
 template<typename precision>
-__global__ void create_branch_coefficients(
+__global__ void create_branch(
   const uint3    dimensions       ,
+  const uint3    depth_dimensions ,
+  const unsigned depth_offset     ,
   const unsigned coefficient_count,
   precision*     coefficients     )
 {
-  auto voxel_count          = dimensions.x * dimensions.y * dimensions.z;
-  auto coefficients_offset  = voxel_count * coefficient_count;
-
-  auto tree_dimension_count = dimensions.z > 1 ? 3 : 2;
-  auto tree_depth           = unsigned(logf(dimensions.x) / logf(2));
-  //auto tree_voxel_count     = unsigned((pow(2, tree_dimension_count * (tree_depth + 1.0)) - 1.0) / (powf(2, tree_dimension_count) - 1.0));
-
-  //auto index                = coefficients_offset + blockIdx.x * blockDim.x + threadIdx.x;
+  auto x = blockIdx.x * blockDim.x + threadIdx.x;
+  auto y = blockIdx.y * blockDim.y + threadIdx.y;
+  auto z = blockIdx.z * blockDim.z + threadIdx.z;
   
-  //auto x                    = index / (dimensions.z * dimensions.y);
-  //auto y                    = index /  dimensions.z % dimensions.y;
-  //auto z                    = index %  dimensions.z;
+  if (x > depth_dimensions.x ||
+      y > depth_dimensions.y ||
+      z > depth_dimensions.z)
+    return;
 
-  // Convert index to depth via leaf coefficient dimensions.
-  // Get the depth of the tree from the index.
-  // 0 1 2 3 - 4 5 6 7 - 8 9 10 11 - 12 13 14 15    16 17 18 19    20
-  // 4*4*1 2*2*1 1*1*1
-  // for(auto i = 0; i < 9; i++)
-  //auto half_dimensions = 0.5 * dimensions;
-  //for (auto i = 0; i < coefficient_count; i++)
-  //  coefficients[31 + i] = coefficients[0] + coefficients[1] + coefficients[2] + coefficients[3];
+  auto linear_index       = depth_offset + z + depth_dimensions.z * (y + depth_dimensions.y * x);
+  auto coefficients_start = linear_index * coefficient_count;
+
+  // Find the 2^dims voxels from the spatially lower layer and sum them to coefficients[coefficients_index].
+  for (auto i = 0; i < powf(2, dimensions.z > 1 ? 3 : 2); i++)
+    //for (auto c = 0; c < coefficient_count; c++)
+      coefficients[coefficients_start /* + c */] = 1; // coefficients[i * dimensions.x * dimensions.y * dimensions.z * coefficient_count + c];
 }
 
 void create_odfs(

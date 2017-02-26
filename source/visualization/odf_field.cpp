@@ -60,11 +60,20 @@ void odf_field::set_data(
   const uint3&   block_size       , 
   const float    scale            )
 {
+  auto base_voxel_count   = dimensions.x * dimensions.y * dimensions.z;
+
   auto dimension_count    = dimensions.z > 1 ? 3 : 2;
-  auto tree_max_depth     = log(dimensions.x) / log(2);
-  auto tree_voxel_count   = (pow(2, dimension_count * (tree_max_depth + 1.0)) - 1.0) / (pow(2, dimension_count) - 1.0);
+  auto minimum_dimension  = min(dimensions.x, dimensions.y);
+  if (dimension_count == 3)
+    minimum_dimension = min(minimum_dimension, dimensions.z);
+
+  auto max_depth          = log(minimum_dimension) / log(2);
+  auto voxel_count        = unsigned(base_voxel_count * 
+    ((1.0 - pow(1.0 / pow(2, dimension_count), max_depth + 1)) / 
+     (1.0 -     1.0 / pow(2, dimension_count))));
+
   auto tessellation_count = tessellations.x * tessellations.y;
-  auto point_count        = tree_voxel_count * tessellation_count;
+  auto point_count        = voxel_count * tessellation_count;
   draw_count_             = 6 * point_count;
 
   vertex_buffer_->bind         ();
