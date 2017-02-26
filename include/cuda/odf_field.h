@@ -28,13 +28,36 @@ __global__ void create_branch(
       z > depth_dimensions.z)
     return;
 
+  auto dimension_count = dimensions.z > 1 ? 3 : 2;
+
+  uint3 lower_depth_dimensions  {
+    depth_dimensions.x * 2,
+    depth_dimensions.y * 2,
+    dimension_count == 3 ? depth_dimensions.z * 2 : 1
+  };
+
+  auto lower_depth_voxel_count =
+    lower_depth_dimensions.x *
+    lower_depth_dimensions.y *
+    lower_depth_dimensions.z ;
+  
+  auto lower_depth_offset =
+    depth_offset - lower_depth_voxel_count;
+  
   auto linear_index       = depth_offset + z + depth_dimensions.z * (y + depth_dimensions.y * x);
   auto coefficients_start = linear_index * coefficient_count;
 
-  // TODO Find the 2^dims voxels from the spatially lower layer and sum them to coefficients[coefficients_index].
-  for (auto i = 0; i < powf(2, dimensions.z > 1 ? 3 : 2); i++)
-    for (auto c = 0; c < coefficient_count; c++)
-      coefficients[coefficients_start + c] += coefficients[i * dimensions.x * dimensions.y * dimensions.z * coefficient_count + c];
+  // Find the 2^dims voxels from the spatially lower layer and sum them to coefficients[coefficients_start].
+  for (auto i = 0; i < 2; i++)
+    for (auto j = 0; j < 2; j++)
+      for (auto k = 0; k < (dimension_count == 3 ? 2 : 1); k++)
+      {
+        auto lower_start_index        = lower_depth_offset + (2 * z + k) + lower_depth_dimensions.z * ((2 * y + j) + lower_depth_dimensions.y * (2 * x + i));
+        auto lower_coefficients_start = lower_start_index * coefficient_count;
+
+        for (auto c = 0; c < coefficient_count; c++)
+          coefficients[coefficients_start + c] += coefficients[lower_coefficients_start + c];
+      }
 }
 
 void create_odfs(
