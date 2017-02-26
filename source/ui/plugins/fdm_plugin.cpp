@@ -83,6 +83,57 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
     update();
   });
 
+  connect(checkbox_depth_0          , &QCheckBox::stateChanged   , [&](int state)
+  {
+    logger_->info(std::string("Multiresolution grid depth 0 set to ") + (state ? "true" : "false"));
+    select_depths();
+  });
+  connect(checkbox_depth_1          , &QCheckBox::stateChanged   , [&](int state)
+  {
+    logger_->info(std::string("Multiresolution grid depth 1 set to ") + (state ? "true" : "false"));
+    select_depths();
+  });
+  connect(checkbox_depth_2          , &QCheckBox::stateChanged   , [&](int state)
+  {
+    logger_->info(std::string("Multiresolution grid depth 2 set to ") + (state ? "true" : "false"));
+    select_depths();
+  });
+  connect(checkbox_depth_3          , &QCheckBox::stateChanged   , [&](int state)
+  {
+    logger_->info(std::string("Multiresolution grid depth 3 set to ") + (state ? "true" : "false"));
+    select_depths();
+  });
+  connect(checkbox_depth_4          , &QCheckBox::stateChanged   , [&](int state)
+  {
+    logger_->info(std::string("Multiresolution grid depth 4 set to ") + (state ? "true" : "false"));
+    select_depths();
+  });
+  connect(checkbox_depth_5          , &QCheckBox::stateChanged   , [&](int state)
+  {
+    logger_->info(std::string("Multiresolution grid depth 5 set to ") + (state ? "true" : "false"));
+    select_depths();
+  });
+  connect(checkbox_depth_6          , &QCheckBox::stateChanged   , [&](int state)
+  {
+    logger_->info(std::string("Multiresolution grid depth 6 set to ") + (state ? "true" : "false"));
+    select_depths();
+  });
+  connect(checkbox_depth_7          , &QCheckBox::stateChanged   , [&](int state)
+  {
+    logger_->info(std::string("Multiresolution grid depth 7 set to ") + (state ? "true" : "false"));
+    select_depths();
+  });
+  connect(checkbox_depth_8          , &QCheckBox::stateChanged   , [&](int state)
+  {
+    logger_->info(std::string("Multiresolution grid depth 8 set to ") + (state ? "true" : "false"));
+    select_depths();
+  });
+  connect(checkbox_depth_9          , &QCheckBox::stateChanged   , [&](int state)
+  {
+    logger_->info(std::string("Multiresolution grid depth 9 set to ") + (state ? "true" : "false"));
+    select_depths();
+  });
+
   connect(line_edit_fom_offset_x    , &QLineEdit::editingFinished, [&] 
   {
     logger_->info("FOM X offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_fom_offset_x));
@@ -159,6 +210,7 @@ void fdm_plugin::start    ()
   });
 
   odf_field_ = owner_->viewer->add_renderable<odf_field>();
+  select_depths();
 }
 void fdm_plugin::update   () const
 {
@@ -207,6 +259,24 @@ void fdm_plugin::update   () const
     logger_->error(std::string(exception.what()));
   }
 }
+
+void fdm_plugin::select_depths() const
+{
+  odf_field_->set_visible_depths({
+    checkbox_depth_0->isChecked(),
+    checkbox_depth_1->isChecked(),
+    checkbox_depth_2->isChecked(),
+    checkbox_depth_3->isChecked(),
+    checkbox_depth_4->isChecked(),
+    checkbox_depth_5->isChecked(),
+    checkbox_depth_6->isChecked(),
+    checkbox_depth_7->isChecked(),
+    checkbox_depth_8->isChecked(),
+    checkbox_depth_9->isChecked()
+  });
+  owner_->viewer->update();
+}
+
 void fdm_plugin::calculate() const
 {
 

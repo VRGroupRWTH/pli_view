@@ -44,7 +44,40 @@ void odf_field::render    (const camera* camera)
   shader_program_->set_uniform("projection", camera->projection_matrix      ());
   shader_program_->set_uniform("view"      , camera->inverse_absolute_matrix());
 
-  glDrawElements(GL_TRIANGLES, draw_count_, GL_UNSIGNED_INT, nullptr);
+  // Select by visible depths.
+  auto dimension_count    = dimensions_.z > 1 ? 3 : 2;
+  auto minimum_dimension  = min(dimensions_.x, dimensions_.y);
+  if (dimension_count == 3)
+    minimum_dimension = min(minimum_dimension, dimensions_.z);
+  auto max_depth          = log(minimum_dimension) / log(2);
+  auto depth_offset       = 0;
+  auto depth_dimensions   = dimensions_;
+  auto index_count        = 6 * tessellations_.x * tessellations_.y;
+  for (auto depth = max_depth; depth >= 0; depth--)
+  {
+    if (visible_depths_[depth])
+    {
+      auto depth_index_offset =
+        depth_offset *
+        index_count  ;
+      auto depth_index_count  =
+        depth_dimensions.x *
+        depth_dimensions.y *
+        depth_dimensions.z *
+        index_count;
+      glDrawElements(GL_TRIANGLES, depth_index_count, GL_UNSIGNED_INT, (void*) (depth_index_offset * sizeof(GLuint)));
+    }
+
+    depth_offset += 
+      depth_dimensions.x * 
+      depth_dimensions.y * 
+      depth_dimensions.z;
+    depth_dimensions = {
+      depth_dimensions.x / 2,
+      depth_dimensions.y / 2,
+      dimension_count == 3 ? depth_dimensions.z / 2 : 1
+    };
+  }
 
   index_buffer_  ->unbind();
   vertex_array_  ->unbind();
@@ -62,6 +95,9 @@ void odf_field::set_data(
   const bool     clustering       ,
   const float    cluster_threshold)
 {
+  dimensions_    = dimensions;
+  tessellations_ = tessellations;
+
   auto base_voxel_count   = dimensions.x * dimensions.y * dimensions.z;
 
   auto dimension_count    = dimensions.z > 1 ? 3 : 2;
@@ -114,5 +150,11 @@ void odf_field::set_data(
   index_buffer_ ->cuda_unmap();
   color_buffer_ ->cuda_unmap();
   vertex_buffer_->cuda_unmap();
+}
+
+void odf_field::set_visible_depths(
+  const std::vector<bool>& visible_depths)
+{
+  visible_depths_ = visible_depths;
 }
 }

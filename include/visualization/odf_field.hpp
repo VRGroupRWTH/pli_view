@@ -28,13 +28,19 @@ public:
     const bool     clustering        = false,
     const float    cluster_threshold = 0.0  );
 
+  void set_visible_depths(
+    const std::vector<bool>& visible_depths);
+
 private:
-  std::unique_ptr<gl::program>      shader_program_;
-  std::unique_ptr<gl::vertex_array> vertex_array_  ;
-  std::unique_ptr<gl::array_buffer> vertex_buffer_ ;
-  std::unique_ptr<gl::array_buffer> color_buffer_  ;
-  std::unique_ptr<gl::index_buffer> index_buffer_  ;
-  std::size_t                       draw_count_    = 0;
+  std::unique_ptr<gl::program>      shader_program_ ;
+  std::unique_ptr<gl::vertex_array> vertex_array_   ;
+  std::unique_ptr<gl::array_buffer> vertex_buffer_  ;
+  std::unique_ptr<gl::array_buffer> color_buffer_   ;
+  std::unique_ptr<gl::index_buffer> index_buffer_   ;
+  std::size_t                       draw_count_     = 0;
+  uint3                             dimensions_     ;
+  uint2                             tessellations_  ;
+  std::vector<bool>                 visible_depths_ ;
 };
 }
 

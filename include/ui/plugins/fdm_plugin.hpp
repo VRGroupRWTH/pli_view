@@ -19,8 +19,9 @@ public:
   void start () override;
 
 private:
-  void update   () const;
-  void calculate() const;
+  void update       () const;
+  void select_depths() const;
+  void calculate    () const;
 
   odf_field* odf_field_;
 };
