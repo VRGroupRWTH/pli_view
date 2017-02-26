@@ -76,7 +76,7 @@ void create_odfs(
     depth_dimensions = {
       depth_dimensions.x / 2,
       depth_dimensions.y / 2,
-      dimension_count == 3 ? dimensions.z / 2 : 1
+      dimension_count == 3 ? depth_dimensions.z / 2 : 1
     };
   }
 
@@ -181,7 +181,7 @@ void create_odfs(
     depth_dimensions = {
       depth_dimensions.x / 2,
       depth_dimensions.y / 2,
-      dimension_count == 3 ? dimensions.z / 2 : 1
+      dimension_count == 3 ? depth_dimensions.z / 2 : 1
     };
   }
 

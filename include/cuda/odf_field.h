@@ -31,10 +31,10 @@ __global__ void create_branch(
   auto linear_index       = depth_offset + z + depth_dimensions.z * (y + depth_dimensions.y * x);
   auto coefficients_start = linear_index * coefficient_count;
 
-  // Find the 2^dims voxels from the spatially lower layer and sum them to coefficients[coefficients_index].
+  // TODO Find the 2^dims voxels from the spatially lower layer and sum them to coefficients[coefficients_index].
   for (auto i = 0; i < powf(2, dimensions.z > 1 ? 3 : 2); i++)
-    //for (auto c = 0; c < coefficient_count; c++)
-      coefficients[coefficients_start /* + c */] = 1; // coefficients[i * dimensions.x * dimensions.y * dimensions.z * coefficient_count + c];
+    for (auto c = 0; c < coefficient_count; c++)
+      coefficients[coefficients_start + c] += coefficients[i * dimensions.x * dimensions.y * dimensions.z * coefficient_count + c];
 }
 
 void create_odfs(
