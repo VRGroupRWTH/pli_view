@@ -98,12 +98,12 @@ void odf_field::set_data(
   dimensions_    = dimensions;
   tessellations_ = tessellations;
 
-  auto base_voxel_count   = dimensions.x * dimensions.y * dimensions.z;
+  auto base_voxel_count  = dimensions_.x * dimensions_.y * dimensions_.z;
 
-  auto dimension_count    = dimensions.z > 1 ? 3 : 2;
-  auto minimum_dimension  = min(dimensions.x, dimensions.y);
+  auto dimension_count   = dimensions_.z > 1 ? 3 : 2;
+  auto minimum_dimension = min(dimensions_.x, dimensions_.y);
   if (dimension_count == 3)
-    minimum_dimension = min(minimum_dimension, dimensions.z);
+    minimum_dimension = min(minimum_dimension, dimensions_.z);
 
   auto max_depth          = log(minimum_dimension) / log(2);
   auto voxel_count        = unsigned(base_voxel_count * 
@@ -134,7 +134,7 @@ void odf_field::set_data(
   auto cuda_index_buffer  = index_buffer_ ->cuda_map<unsigned>();
 
   create_odfs(
-    dimensions        ,
+    dimensions_       ,
     coefficient_count ,
     coefficients      ,
     tessellations     ,

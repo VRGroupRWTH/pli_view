@@ -236,6 +236,13 @@ void fdm_plugin::update   () const
         line_edit_utility::get_text<std::size_t>(line_edit_samples_y)};
 
       auto fdm        = io->load_fiber_distribution_map(offset, size);
+
+      // Roll dimensions to power of two.
+      size[0] = pow(2, ceil(log(size[0]) / log(2)));
+      size[1] = pow(2, ceil(log(size[1]) / log(2)));
+      size[2] = pow(2, ceil(log(size[2]) / log(2)));
+      fdm.resize(boost::extents[size[0]][size[1]][size[2]][fdm.shape()[3]]);
+
       auto shape      = fdm.shape              ();
       auto spacing    = io->load_vector_spacing();
       auto block_size = io->load_block_size    ();
