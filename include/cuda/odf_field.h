@@ -73,7 +73,7 @@ __global__ void create_branch(
           auto lower_start_index        = lower_depth_offset + (2 * z + k) + lower_depth_dimensions.z * ((2 * y + j) + lower_depth_dimensions.y * (2 * x + i));
           auto lower_coefficients_start = lower_start_index * coefficient_count;
 
-          auto difference = cush::compare(coefficient_count, coefficients + coefficients_start, coefficients + lower_coefficients_start);
+          auto difference = cush::l2_distance(coefficient_count, coefficients + coefficients_start, coefficients + lower_coefficients_start);
           printf("Difference: %f \n", difference);
           if (difference > cluster_threshold)
             is_similar = false;
