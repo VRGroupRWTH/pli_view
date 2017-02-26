@@ -135,6 +135,17 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
   {
     calculate();
   });
+  
+  connect(checkbox_clustering_enabled, &QCheckBox::stateChanged   , [&](int state)
+  {
+    logger_->info(std::string("Clustering set to ") + (state ? "true" : "false"));
+    update();
+  });
+  connect(slider_clustering_threshold, &QSlider::sliderReleased, [&]()
+  {
+    logger_->info("Clustering set to {}", float(slider_clustering_threshold->value()) / 100.0);
+    update();
+  });
 }
 
 void fdm_plugin::start    ()
@@ -183,7 +194,10 @@ void fdm_plugin::update   () const
          fdm.data(),
          tessellations,
         {spacing   [0], spacing   [1], spacing   [2]},
-        {block_size[0], block_size[1], block_size[2]});
+        {block_size[0], block_size[1], block_size[2]},
+        1.0,
+        checkbox_clustering_enabled->isChecked(),
+        float(slider_clustering_threshold->value()) / 100.0);
     }
     
     owner_ ->viewer->update();

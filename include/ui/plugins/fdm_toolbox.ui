@@ -7,49 +7,39 @@
     <x>0</x>
     <y>0</y>
     <width>294</width>
-    <height>404</height>
+    <height>543</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Fiber Distribution Map Toolbox</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="9" column="3">
-    <widget class="QLineEdit" name="line_edit_block_size_z">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label_subset">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>1</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
      <property name="text">
-      <string/>
+      <string>Selection</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="placeholderText">
-      <string>1</string>
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="label_show">
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_offset">
      <property name="text">
-      <string>Show</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="0">
-    <widget class="QLabel" name="label_fom_offset">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="text">
-      <string>FOM Offset</string>
+      <string>Offset</string>
      </property>
     </widget>
    </item>
@@ -69,6 +59,108 @@
      </property>
      <property name="placeholderText">
       <string>0</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QLineEdit" name="line_edit_offset_y">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="placeholderText">
+      <string>0</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="3">
+    <widget class="QLineEdit" name="line_edit_offset_z">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="placeholderText">
+      <string>0</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_size">
+     <property name="text">
+      <string>Size</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLineEdit" name="line_edit_size_x">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="placeholderText">
+      <string>100</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QLineEdit" name="line_edit_size_y">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="placeholderText">
+      <string>100</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="3">
+    <widget class="QLineEdit" name="line_edit_size_z">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="placeholderText">
+      <string>1</string>
      </property>
     </widget>
    </item>
@@ -94,42 +186,33 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_size">
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_show">
      <property name="text">
-      <string>Size</string>
+      <string>Show</string>
      </property>
     </widget>
    </item>
-   <item row="8" column="0">
-    <widget class="QLabel" name="label_fom_size">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="text">
-      <string>FOM Size</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="2">
-    <widget class="QLineEdit" name="line_edit_samples_y">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+   <item row="4" column="1">
+    <widget class="QCheckBox" name="checkbox_show">
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
      </property>
      <property name="text">
       <string/>
      </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     <property name="checked">
+      <bool>true</bool>
      </property>
-     <property name="placeholderText">
-      <string>50</string>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="label_samples">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="text">
+      <string>Samples</string>
      </property>
     </widget>
    </item>
@@ -155,21 +238,11 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="label_samples">
+   <item row="5" column="2">
+    <widget class="QLineEdit" name="line_edit_samples_y">
      <property name="enabled">
       <bool>true</bool>
      </property>
-     <property name="text">
-      <string>Samples</string>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="2">
-    <widget class="QLineEdit" name="line_edit_fom_size_y">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>1</horstretch>
@@ -183,97 +256,44 @@
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
      </property>
      <property name="placeholderText">
-      <string>1024</string>
+      <string>50</string>
      </property>
     </widget>
    </item>
-   <item row="9" column="1">
-    <widget class="QLineEdit" name="line_edit_block_size_x">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
+   <item row="6" column="0">
+    <widget class="QLabel" name="label_clustering">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>1</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
      <property name="text">
-      <string/>
+      <string>Clustering</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="placeholderText">
-      <string>32</string>
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
-    <widget class="QLineEdit" name="line_edit_size_x">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
+   <item row="7" column="0">
+    <widget class="QLabel" name="label_clustering_enabled">
      <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="placeholderText">
-      <string>100</string>
+      <string>Enabled</string>
      </property>
     </widget>
    </item>
    <item row="7" column="1">
-    <widget class="QLineEdit" name="line_edit_fom_offset_x">
+    <widget class="QCheckBox" name="checkbox_clustering_enabled">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="placeholderText">
-      <string>0</string>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="1">
-    <widget class="QLineEdit" name="line_edit_fom_size_x">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="placeholderText">
-      <string>1024</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1">
-    <widget class="QCheckBox" name="checkbox_show">
      <property name="layoutDirection">
       <enum>Qt::LeftToRight</enum>
      </property>
@@ -281,123 +301,34 @@
       <string/>
      </property>
      <property name="checked">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="label_threshold">
+     <property name="enabled">
       <bool>true</bool>
      </property>
-    </widget>
-   </item>
-   <item row="9" column="0">
-    <widget class="QLabel" name="label_block_size">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
      <property name="text">
-      <string>Block Size</string>
+      <string>Threshold</string>
      </property>
     </widget>
    </item>
-   <item row="10" column="0">
-    <widget class="QLabel" name="label_histogram_bins">
-     <property name="enabled">
-      <bool>false</bool>
+   <item row="8" column="1" colspan="3">
+    <widget class="QSlider" name="slider_clustering_threshold">
+     <property name="maximum">
+      <number>1000</number>
      </property>
-     <property name="text">
-      <string>Histogram Bins</string>
+     <property name="sliderPosition">
+      <number>500</number>
      </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_offset">
-     <property name="text">
-      <string>Offset</string>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
-   <item row="9" column="2">
-    <widget class="QLineEdit" name="line_edit_block_size_y">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="placeholderText">
-      <string>32</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QLineEdit" name="line_edit_offset_y">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="placeholderText">
-      <string>0</string>
-     </property>
-    </widget>
-   </item>
-   <item row="10" column="1">
-    <widget class="QLineEdit" name="line_edit_histogram_bins_x">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="placeholderText">
-      <string>32</string>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="3">
-    <widget class="QLineEdit" name="line_edit_fom_size_z">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="placeholderText">
-      <string>1</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0" colspan="3">
+   <item row="9" column="0" colspan="3">
     <widget class="QLabel" name="label_calculation">
      <property name="enabled">
       <bool>false</bool>
@@ -422,68 +353,18 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label_subset">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
+   <item row="10" column="0">
+    <widget class="QLabel" name="label_fom_offset">
+     <property name="enabled">
+      <bool>false</bool>
      </property>
      <property name="text">
-      <string>Selection</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+      <string>FOM Offset</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="2">
-    <widget class="QLineEdit" name="line_edit_size_y">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="placeholderText">
-      <string>100</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="3">
-    <widget class="QLineEdit" name="line_edit_offset_z">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="placeholderText">
-      <string>0</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="3">
-    <widget class="QLineEdit" name="line_edit_fom_offset_z">
+   <item row="10" column="1">
+    <widget class="QLineEdit" name="line_edit_fom_offset_x">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -504,7 +385,7 @@
      </property>
     </widget>
    </item>
-   <item row="7" column="2">
+   <item row="10" column="2">
     <widget class="QLineEdit" name="line_edit_fom_offset_y">
      <property name="enabled">
       <bool>false</bool>
@@ -526,8 +407,87 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="3">
-    <widget class="QLineEdit" name="line_edit_size_z">
+   <item row="10" column="3">
+    <widget class="QLineEdit" name="line_edit_fom_offset_z">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="placeholderText">
+      <string>0</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="0">
+    <widget class="QLabel" name="label_fom_size">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>FOM Size</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="1">
+    <widget class="QLineEdit" name="line_edit_fom_size_x">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="placeholderText">
+      <string>1024</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="2">
+    <widget class="QLineEdit" name="line_edit_fom_size_y">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="placeholderText">
+      <string>1024</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="3">
+    <widget class="QLineEdit" name="line_edit_fom_size_z">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>1</horstretch>
@@ -545,7 +505,115 @@
      </property>
     </widget>
    </item>
-   <item row="10" column="2">
+   <item row="12" column="0">
+    <widget class="QLabel" name="label_block_size">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Block Size</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="1">
+    <widget class="QLineEdit" name="line_edit_block_size_x">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="placeholderText">
+      <string>32</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="2">
+    <widget class="QLineEdit" name="line_edit_block_size_y">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="placeholderText">
+      <string>32</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="3">
+    <widget class="QLineEdit" name="line_edit_block_size_z">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="placeholderText">
+      <string>1</string>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="0">
+    <widget class="QLabel" name="label_histogram_bins">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Histogram Bins</string>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="1">
+    <widget class="QLineEdit" name="line_edit_histogram_bins_x">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="placeholderText">
+      <string>32</string>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="2">
     <widget class="QLineEdit" name="line_edit_histogram_bins_y">
      <property name="enabled">
       <bool>false</bool>
@@ -567,7 +635,17 @@
      </property>
     </widget>
    </item>
-   <item row="11" column="1">
+   <item row="14" column="0">
+    <widget class="QLabel" name="label_max_order">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Max Order</string>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="1">
     <widget class="QLineEdit" name="line_edit_max_order">
      <property name="enabled">
       <bool>false</bool>
@@ -589,17 +667,7 @@
      </property>
     </widget>
    </item>
-   <item row="11" column="0">
-    <widget class="QLabel" name="label_max_order">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="text">
-      <string>Max Order</string>
-     </property>
-    </widget>
-   </item>
-   <item row="13" column="0">
+   <item row="16" column="0">
     <spacer name="spacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -612,7 +680,7 @@
      </property>
     </spacer>
    </item>
-   <item row="12" column="0" colspan="4">
+   <item row="15" column="0" colspan="4">
     <widget class="QPushButton" name="button_calculate">
      <property name="enabled">
       <bool>false</bool>

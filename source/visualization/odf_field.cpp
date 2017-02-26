@@ -58,7 +58,9 @@ void odf_field::set_data(
   const uint2&   tessellations    , 
   const float3&  spacing          , 
   const uint3&   block_size       , 
-  const float    scale            )
+  const float    scale            ,
+  const bool     clustering       ,
+  const float    cluster_threshold)
 {
   auto base_voxel_count   = dimensions.x * dimensions.y * dimensions.z;
 
@@ -105,7 +107,9 @@ void odf_field::set_data(
     scale             ,
     cuda_vertex_buffer,
     cuda_color_buffer ,
-    cuda_index_buffer );
+    cuda_index_buffer ,
+    clustering        ,
+    cluster_threshold );
 
   index_buffer_ ->cuda_unmap();
   color_buffer_ ->cuda_unmap();

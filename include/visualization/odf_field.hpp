@@ -3,8 +3,9 @@
 
 #include <memory>
 
-#include <all.hpp>
 #include <vector_types.h>
+
+#include <all.hpp>
 
 #include <attributes/renderable.hpp>
 
@@ -17,13 +18,15 @@ public:
   void render    (const camera* camera) override;
 
   void set_data(
-    const uint3&   dimensions       ,
-    const unsigned coefficient_count,
-    const float*   coefficients     ,
-    const uint2&   tessellations    ,
-    const float3&  spacing          ,
-    const uint3&   block_size       ,
-    const float    scale            = 1.0);
+    const uint3&   dimensions        ,
+    const unsigned coefficient_count ,
+    const float*   coefficients      ,
+    const uint2&   tessellations     ,
+    const float3&  spacing           ,
+    const uint3&   block_size        ,
+    const float    scale             = 1.0  ,
+    const bool     clustering        = false,
+    const float    cluster_threshold = 0.0  );
 
 private:
   std::unique_ptr<gl::program>      shader_program_;
