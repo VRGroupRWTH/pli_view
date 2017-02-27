@@ -53,7 +53,7 @@ __global__ void create_branch(
   // Find the 2^dims voxels from the spatially lower layer and sum them to coefficients[coefficients_start].
   for (auto i = 0; i < 2; i++)
     for (auto j = 0; j < 2; j++)
-      for (auto k = 0; k < (dimension_count == 3 ? 2 : 1); k++)
+      for (auto k = 0; k < dimension_count - 1; k++)
       {
         auto lower_start_index        = lower_depth_offset + (2 * z + k) + lower_depth_dimensions.z * ((2 * y + j) + lower_depth_dimensions.y * (2 * x + i));
         auto lower_coefficients_start = lower_start_index * coefficient_count;
@@ -68,13 +68,17 @@ __global__ void create_branch(
     auto is_similar = true;
     for (auto i = 0; i < 2; i++)
       for (auto j = 0; j < 2; j++)
-        for (auto k = 0; k < (dimension_count == 3 ? 2 : 1); k++)
+        for (auto k = 0; k < dimension_count - 1; k++)
         {
           auto lower_start_index        = lower_depth_offset + (2 * z + k) + lower_depth_dimensions.z * ((2 * y + j) + lower_depth_dimensions.y * (2 * x + i));
           auto lower_coefficients_start = lower_start_index * coefficient_count;
 
+          // If any component is a zero vector, do not cluster.
+          if (cush::is_zero(coefficient_count, coefficients + lower_coefficients_start))
+            is_similar = false;
+
           auto difference = cush::l2_distance(coefficient_count, coefficients + coefficients_start, coefficients + lower_coefficients_start);
-          printf("Difference: %f \n", difference);
+          printf("Difference between %d and %d: %f \n", linear_index, lower_start_index, difference);
           if (difference > cluster_threshold)
             is_similar = false;
         }
@@ -83,7 +87,7 @@ __global__ void create_branch(
     {
       for (auto i = 0; i < 2; i++)
         for (auto j = 0; j < 2; j++)
-          for (auto k = 0; k < (dimension_count == 3 ? 2 : 1); k++)
+          for (auto k = 0; k < dimension_count - 1; k++)
           {
             auto lower_start_index        = lower_depth_offset + (2 * z + k) + lower_depth_dimensions.z * ((2 * y + j) + lower_depth_dimensions.y * (2 * x + i));
             auto lower_coefficients_start = lower_start_index * coefficient_count;
