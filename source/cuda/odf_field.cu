@@ -21,7 +21,9 @@ void create_odfs(
   const float     scale            ,
         float3*   points           ,
         float4*   colors           ,
-        unsigned* indices          )
+        unsigned* indices          ,
+        bool      clustering       ,
+        float     cluster_threshold)
 {
   auto total_start = std::chrono::system_clock::now();
   
@@ -57,10 +59,24 @@ void create_odfs(
         depth_dimensions ,
         depth_offset     ,
         coefficient_count,
-        coefficients_ptr );
+        coefficients_ptr ,
+        clustering       ,
+        cluster_threshold);
       cudaDeviceSynchronize();
     }
-
+    
+    depth_offset += depth_dimensions.x * depth_dimensions.y * depth_dimensions.z;
+    depth_dimensions = {
+      depth_dimensions.x / 2,
+      depth_dimensions.y / 2,
+      dimension_count == 3 ? depth_dimensions.z / 2 : 1
+    };
+  }
+  
+  depth_offset     = 0;
+  depth_dimensions = dimensions;
+  for (auto depth = max_depth; depth >= 0; depth--)
+  {
     std::cout << "Sampling sums of the coefficients." << std::endl;
     cush::sample_sums<<<dim3(depth_dimensions), 1>>>(
       depth_dimensions ,
