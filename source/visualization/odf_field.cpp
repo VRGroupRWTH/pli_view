@@ -44,38 +44,38 @@ void odf_field::render    (const camera* camera)
   shader_program_->set_uniform("projection", camera->projection_matrix      ());
   shader_program_->set_uniform("view"      , camera->inverse_absolute_matrix());
 
-  // Select by visible depths.
-  auto dimension_count    = dimensions_.z > 1 ? 3 : 2;
-  auto minimum_dimension  = min(dimensions_.x, dimensions_.y);
+  // Select by visible layers.
+  auto dimension_count  = dimensions_.z > 1 ? 3 : 2;
+  auto min_dimension    = min(dimensions_.x, dimensions_.y);
   if (dimension_count == 3)
-    minimum_dimension = min(minimum_dimension, dimensions_.z);
-  auto max_depth          = log(minimum_dimension) / log(2);
-  auto depth_offset       = 0;
-  auto depth_dimensions   = dimensions_;
-  auto index_count        = 6 * tessellations_.x * tessellations_.y;
-  for (auto depth = max_depth; depth >= 0; depth--)
+    min_dimension = min(min_dimension, dimensions_.z);
+  auto max_layer        = log(min_dimension) / log(2);
+  auto layer_offset     = 0;
+  auto layer_dimensions = dimensions_;
+  auto indices_count    = 6 * tessellations_.x * tessellations_.y;
+  for (auto layer = max_layer; layer >= 0; layer--)
   {
-    if (visible_depths_[depth])
+    if (visible_layers_[layer])
     {
-      auto depth_index_offset =
-        depth_offset *
-        index_count  ;
-      auto depth_index_count  =
-        depth_dimensions.x *
-        depth_dimensions.y *
-        depth_dimensions.z *
-        index_count;
-      glDrawElements(GL_TRIANGLES, depth_index_count, GL_UNSIGNED_INT, (void*) (depth_index_offset * sizeof(GLuint)));
+      auto layer_indices_offset =
+        layer_offset *
+        indices_count;
+      auto layer_indices_count  =
+        layer_dimensions.x *
+        layer_dimensions.y *
+        layer_dimensions.z *
+        indices_count;
+      glDrawElements(GL_TRIANGLES, layer_indices_count, GL_UNSIGNED_INT, (void*) (layer_indices_offset * sizeof(GLuint)));
     }
 
-    depth_offset += 
-      depth_dimensions.x * 
-      depth_dimensions.y * 
-      depth_dimensions.z;
-    depth_dimensions = {
-      depth_dimensions.x / 2,
-      depth_dimensions.y / 2,
-      dimension_count == 3 ? depth_dimensions.z / 2 : 1
+    layer_offset += 
+      layer_dimensions.x * 
+      layer_dimensions.y * 
+      layer_dimensions.z;
+    layer_dimensions = {
+      layer_dimensions.x / 2,
+      layer_dimensions.y / 2,
+      dimension_count == 3 ? layer_dimensions.z / 2 : 1
     };
   }
 
@@ -89,8 +89,8 @@ void odf_field::set_data(
   const unsigned coefficient_count,
   const float*   coefficients     ,
   const uint2&   tessellations    , 
-  const float3&  spacing          , 
-  const uint3&   block_size       , 
+  const float3&  vector_spacing   , 
+  const uint3&   vector_dimensions, 
   const float    scale            ,
   const bool     clustering       ,
   const float    cluster_threshold)
@@ -98,16 +98,14 @@ void odf_field::set_data(
   dimensions_    = dimensions;
   tessellations_ = tessellations;
 
-  auto base_voxel_count  = dimensions_.x * dimensions_.y * dimensions_.z;
-
-  auto dimension_count   = dimensions_.z > 1 ? 3 : 2;
-  auto minimum_dimension = min(dimensions_.x, dimensions_.y);
+  auto base_voxel_count = dimensions_.x * dimensions_.y * dimensions_.z;
+  auto dimension_count  = dimensions_.z > 1 ? 3 : 2;
+  auto min_dimension    = min(dimensions_.x, dimensions_.y);
   if (dimension_count == 3)
-    minimum_dimension = min(minimum_dimension, dimensions_.z);
-
-  auto max_depth          = log(minimum_dimension) / log(2);
-  auto voxel_count        = unsigned(base_voxel_count * 
-    ((1.0 - pow(1.0 / pow(2, dimension_count), max_depth + 1)) / 
+    min_dimension = min(min_dimension, dimensions_.z);
+  auto max_layer        = log(min_dimension) / log(2);
+  auto voxel_count      = unsigned(base_voxel_count * 
+    ((1.0 - pow(1.0 / pow(2, dimension_count), max_layer + 1)) / 
      (1.0 -     1.0 / pow(2, dimension_count))));
 
   auto tessellation_count = tessellations.x * tessellations.y;
@@ -138,8 +136,8 @@ void odf_field::set_data(
     coefficient_count ,
     coefficients      ,
     tessellations     ,
-    spacing           ,
-    block_size        ,
+    vector_spacing    ,
+    vector_dimensions ,
     scale             ,
     cuda_vertex_buffer,
     cuda_color_buffer ,
@@ -152,9 +150,9 @@ void odf_field::set_data(
   vertex_buffer_->cuda_unmap();
 }
 
-void odf_field::set_visible_depths(
-  const std::vector<bool>& visible_depths)
+void odf_field::set_visible_layers(
+  const std::vector<bool>& visible_layers)
 {
-  visible_depths_ = visible_depths;
+  visible_layers_ = visible_layers;
 }
 }

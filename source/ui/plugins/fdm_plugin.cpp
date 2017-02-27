@@ -243,17 +243,17 @@ void fdm_plugin::update   () const
       size[2] = pow(2, ceil(log(size[2]) / log(2)));
       fdm.resize(boost::extents[size[0]][size[1]][size[2]][fdm.shape()[3]]);
 
-      auto shape      = fdm.shape              ();
-      auto spacing    = io->load_vector_spacing();
-      auto block_size = io->load_block_size    ();
+      auto shape             = fdm.shape              ();
+      auto vector_spacing    = io->load_vector_spacing();
+      auto vector_dimensions = io->load_block_size    ();
 
       odf_field_->set_data(
         {shape[0], shape[1], shape[2]},
          shape[3],
          fdm.data(),
          tessellations,
-        {spacing   [0], spacing   [1], spacing   [2]},
-        {block_size[0], block_size[1], block_size[2]},
+        {vector_spacing   [0], vector_spacing   [1], vector_spacing   [2]},
+        {vector_dimensions[0], vector_dimensions[1], vector_dimensions[2]},
         1.0,
         checkbox_clustering_enabled->isChecked(),
         float(slider_clustering_threshold->value()) / 100.0);
@@ -269,7 +269,7 @@ void fdm_plugin::update   () const
 
 void fdm_plugin::select_depths() const
 {
-  odf_field_->set_visible_depths({
+  odf_field_->set_visible_layers({
     checkbox_depth_0->isChecked(),
     checkbox_depth_1->isChecked(),
     checkbox_depth_2->isChecked(),

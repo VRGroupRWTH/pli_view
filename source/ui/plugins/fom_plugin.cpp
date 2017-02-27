@@ -101,9 +101,9 @@ void fom_plugin::update() const
       auto scale                 = line_edit_utility::get_text<float>(line_edit_scale);
       
       vector_field_->set_data(
+        {shape  [0], shape  [1], shape  [2]},
         fiber_direction_map  .data(), 
         fiber_inclination_map.data(), 
-        {shape  [0], shape  [1], shape  [2]},
         {spacing[0], spacing[1], spacing[2]},
         scale);
     }

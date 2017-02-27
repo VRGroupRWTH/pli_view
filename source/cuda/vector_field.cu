@@ -13,8 +13,8 @@ void create_vector_field(
   const uint3&  dimensions  ,
   const float*  directions  ,
   const float*  inclinations,
-  const float&  scale       ,
   const float3& spacing     ,
+  const float&  scale       ,
         float3* points      ,
         float4* colors      )
 {
@@ -28,14 +28,15 @@ void create_vector_field(
   copy_n(inclinations, voxel_count, inclinations_vector.begin());
   auto directions_ptr   = raw_pointer_cast(&directions_vector  [0]);
   auto inclinations_ptr = raw_pointer_cast(&inclinations_vector[0]);
+  cudaDeviceSynchronize();
   
   std::cout << "Creating vectors." << std::endl;
-  create_vectors<<<grid_size_3d(dimensions), block_size_3d()>>>(
+  create_vector_field_internal<<<grid_size_3d(dimensions), block_size_3d()>>>(
     dimensions      , 
     directions_ptr  , 
     inclinations_ptr,
-    scale           , 
     spacing         , 
+    scale           , 
     points          ,
     colors          );
   cudaDeviceSynchronize();

@@ -13,13 +13,22 @@
 
 namespace pli
 {
+void create_vector_field(
+  const uint3&  dimensions  ,
+  const float*  directions  ,
+  const float*  inclinations,
+  const float3& spacing     ,
+  const float&  scale       ,
+        float3* points      ,
+        float4* colors      );
+  
 template<typename scalar_type, typename vector_type, typename color_type>
-__global__ void create_vectors(
+__global__ void create_vector_field_internal(
   const uint3        dimensions  ,
   const scalar_type* directions  ,
   const scalar_type* inclinations,
-  const scalar_type  scale       ,
   const vector_type  spacing     ,
+  const scalar_type  scale       ,
         vector_type* points      ,
         color_type*  colors      )
 {
@@ -54,15 +63,6 @@ __global__ void create_vectors(
   colors[point_index    ] = color;
   colors[point_index + 1] = color;
 }
-
-void create_vector_field(
-  const uint3&  dimensions  ,
-  const float*  directions  ,
-  const float*  inclinations,
-  const float&  scale       ,
-  const float3& spacing     ,
-        float3* points      ,
-        float4* colors      );
 }
 
 #endif

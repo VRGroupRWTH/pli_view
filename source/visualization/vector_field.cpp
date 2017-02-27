@@ -48,9 +48,9 @@ void vector_field::render    (const camera* camera)
 }
 
 void vector_field::set_data(
+  const uint3&  dimensions  ,
   const float*  directions  ,
   const float*  inclinations,
-  const uint3&  dimensions  ,
   const float3& spacing     ,
   float         scale       )
 {
@@ -72,8 +72,8 @@ void vector_field::set_data(
     dimensions        ,
     directions        ,
     inclinations      ,
-    scale             ,
     spacing           ,
+    scale             ,
     cuda_vertex_buffer,
     cuda_color_buffer );
   color_buffer_ ->cuda_unmap();

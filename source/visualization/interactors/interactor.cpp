@@ -14,17 +14,17 @@ interactor::interactor(transform* transform) : transform_(transform)
 void interactor::update_transform()
 {
   if (key_map_[Qt::Key_W])
-    transform_->translate(- transform_->forward() * move_speed_);
+    transform_->translate(- transform_->forward() * (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
   if (key_map_[Qt::Key_A])
-    transform_->translate(- transform_->right  () * move_speed_);
+    transform_->translate(- transform_->right  () * (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
   if (key_map_[Qt::Key_S])
-    transform_->translate(  transform_->forward() * move_speed_);
+    transform_->translate(  transform_->forward() * (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
   if (key_map_[Qt::Key_D])
-    transform_->translate(  transform_->right  () * move_speed_);
+    transform_->translate(  transform_->right  () * (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
   if (key_map_[Qt::Key_Z])
-    transform_->translate({           0,            0,  move_speed_});
+    transform_->translate(- transform_->up     () * (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
   if (key_map_[Qt::Key_X])
-    transform_->translate({           0,            0, -move_speed_});
+    transform_->translate(  transform_->up     () * (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
 }
 
 void interactor::key_press_handler  (QKeyEvent*   event)
@@ -48,6 +48,9 @@ void interactor::key_press_handler  (QKeyEvent*   event)
     break;
   case Qt::Key_X:
     key_map_[Qt::Key_X] = true;
+    break;
+  case Qt::Key_Shift:
+    key_map_[Qt::Key_Shift] = true;
     break;
   default: 
     break;
@@ -74,6 +77,9 @@ void interactor::key_release_handler(QKeyEvent*   event)
     break;
   case Qt::Key_X:
     key_map_[Qt::Key_X] = false;
+    break;
+  case Qt::Key_Shift:
+    key_map_[Qt::Key_Shift] = false;
     break;
   default:
     break;

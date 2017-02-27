@@ -22,14 +22,14 @@ public:
     const unsigned coefficient_count ,
     const float*   coefficients      ,
     const uint2&   tessellations     ,
-    const float3&  spacing           ,
-    const uint3&   block_size        ,
+    const float3&  vector_spacing    ,
+    const uint3&   vector_dimensions ,
     const float    scale             = 1.0  ,
     const bool     clustering        = false,
     const float    cluster_threshold = 0.0  );
 
-  void set_visible_depths(
-    const std::vector<bool>& visible_depths);
+  void set_visible_layers(
+    const std::vector<bool>& visible_layers);
 
 private:
   std::unique_ptr<gl::program>      shader_program_ ;
@@ -40,7 +40,7 @@ private:
   std::size_t                       draw_count_     = 0;
   uint3                             dimensions_     ;
   uint2                             tessellations_  ;
-  std::vector<bool>                 visible_depths_ ;
+  std::vector<bool>                 visible_layers_ ;
 };
 }
 

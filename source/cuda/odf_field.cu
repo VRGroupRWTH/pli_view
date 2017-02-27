@@ -9,6 +9,8 @@
 #include <cush.h>
 #include <vector_ops.h>
 
+#include <cuda/launch.h>
+
 namespace pli
 {
 void create_odfs(
@@ -16,8 +18,8 @@ void create_odfs(
   const unsigned  coefficient_count,
   const float*    coefficients     ,
   const uint2&    tessellations    ,
-  const float3&   spacing          ,
-  const uint3&    block_size       ,
+  const float3&   vector_spacing   ,
+  const uint3&    vector_dimensions,
   const float     scale            ,
         float3*   points           ,
         float4*   colors           ,
@@ -27,16 +29,14 @@ void create_odfs(
 {
   auto total_start = std::chrono::system_clock::now();
   
-  auto base_voxel_count   = dimensions.x * dimensions.y * dimensions.z;
-
-  auto dimension_count    = dimensions.z > 1 ? 3 : 2;
-  auto minimum_dimension  = min(dimensions.x, dimensions.y);
+  auto base_voxel_count = dimensions.x * dimensions.y * dimensions.z;
+  auto dimension_count  = dimensions.z > 1 ? 3 : 2;
+  auto min_dimension    = min(dimensions.x, dimensions.y);
   if (dimension_count == 3)
-    minimum_dimension = min(minimum_dimension, dimensions.z);
-
-  auto max_depth          = log(minimum_dimension) / log(2);
-  auto voxel_count        = unsigned(base_voxel_count * 
-    ((1.0 - pow(1.0 / pow(2, dimension_count), max_depth + 1)) / 
+    min_dimension = min(min_dimension, dimensions.z);
+  auto max_layer        = log(min_dimension) / log(2);
+  auto voxel_count      = unsigned(base_voxel_count * 
+    ((1.0 - pow(1.0 / pow(2, dimension_count), max_layer + 1)) / 
      (1.0 -     1.0 / pow(2, dimension_count))));
 
   auto tessellation_count = tessellations.x * tessellations.y;
@@ -47,52 +47,52 @@ void create_odfs(
   copy_n(coefficients, base_voxel_count * coefficient_count, coefficient_vectors.begin());
   auto coefficients_ptr = raw_pointer_cast(&coefficient_vectors[0]);
 
-  auto depth_offset     = 0;
-  auto depth_dimensions = dimensions;
-  for (auto depth = max_depth; depth >= 0; depth--)
+  auto layer_offset     = 0;
+  auto layer_dimensions = dimensions;
+  for (auto layer = max_layer; layer >= 0; layer--)
   {
-    if (depth != max_depth)
+    if (layer != max_layer)
     {
-      std::cout << "Calculating the depth " << depth << " coefficients." << std::endl;
-      create_branch<<<dim3(depth_dimensions), 1>>>(
-        dimensions       ,
-        depth_dimensions ,
-        depth_offset     ,
-        coefficient_count,
-        coefficients_ptr ,
-        clustering       ,
-        cluster_threshold);
+      std::cout << "Calculating the layer " << layer << " coefficients." << std::endl;
+      create_layer<<<grid_size_3d(layer_dimensions), block_size_3d()>>>(
+        layer_dimensions    ,
+        layer_offset        ,
+        coefficient_count   ,
+        coefficients_ptr    ,
+        dimension_count == 2,
+        clustering          ,
+        cluster_threshold   );
       cudaDeviceSynchronize();
     }
     
-    depth_offset += depth_dimensions.x * depth_dimensions.y * depth_dimensions.z;
-    depth_dimensions = {
-      depth_dimensions.x / 2,
-      depth_dimensions.y / 2,
-      dimension_count == 3 ? depth_dimensions.z / 2 : 1
+    layer_offset += layer_dimensions.x * layer_dimensions.y * layer_dimensions.z;
+    layer_dimensions = {
+      layer_dimensions.x / 2,
+      layer_dimensions.y / 2,
+      dimension_count == 3 ? layer_dimensions.z / 2 : 1
     };
   }
   
-  depth_offset     = 0;
-  depth_dimensions = dimensions;
-  for (auto depth = max_depth; depth >= 0; depth--)
+  layer_offset     = 0;
+  layer_dimensions = dimensions;
+  for (auto layer = max_layer; layer >= 0; layer--)
   {
     std::cout << "Sampling sums of the coefficients." << std::endl;
-    cush::sample_sums<<<dim3(depth_dimensions), 1>>>(
-      depth_dimensions ,
+    cush::sample_sums<<<grid_size_3d(layer_dimensions), block_size_3d()>>>(
+      layer_dimensions ,
       coefficient_count,
       tessellations    ,
-      coefficients_ptr + depth_offset * coefficient_count , 
-      points           + depth_offset * tessellation_count, 
-      indices          + depth_offset * tessellation_count * 6,
-      depth_offset     * tessellation_count);
+      coefficients_ptr + layer_offset * coefficient_count , 
+      points           + layer_offset * tessellation_count, 
+      indices          + layer_offset * tessellation_count * 6,
+      layer_offset     * tessellation_count);
     cudaDeviceSynchronize();
     
-    depth_offset += depth_dimensions.x * depth_dimensions.y * depth_dimensions.z;
-    depth_dimensions = {
-      depth_dimensions.x / 2,
-      depth_dimensions.y / 2,
-      dimension_count == 3 ? depth_dimensions.z / 2 : 1
+    layer_offset += layer_dimensions.x * layer_dimensions.y * layer_dimensions.z;
+    layer_dimensions = {
+      layer_dimensions.x / 2,
+      layer_dimensions.y / 2,
+      dimension_count == 3 ? layer_dimensions.z / 2 : 1
     };
   }
 
@@ -150,54 +150,54 @@ void create_odfs(
   cudaDeviceSynchronize();
 
   std::cout << "Translating and scaling the points." << std::endl;
-  depth_offset     = 0;
-  depth_dimensions = dimensions;
-  for (auto depth = max_depth; depth >= 0; depth--)
+  layer_offset     = 0;
+  layer_dimensions = dimensions;
+  for (auto layer = max_layer; layer >= 0; layer--)
   {
-    auto depth_point_offset = 
-      depth_offset * 
+    auto layer_point_offset = 
+      layer_offset * 
       tessellation_count;
-    auto depth_point_count  =  
-      depth_dimensions.x * 
-      depth_dimensions.y * 
-      depth_dimensions.z * 
+    auto layer_point_count  =  
+      layer_dimensions.x * 
+      layer_dimensions.y * 
+      layer_dimensions.z * 
       tessellation_count;
     
-    uint3 depth_block_size {
-      block_size.x * pow(2, max_depth - depth),
-      block_size.y * pow(2, max_depth - depth),
-      block_size.z * pow(2, max_depth - depth)};
-    float3 offset{
-      spacing.x * (depth_block_size.x - 1) * 0.5,
-      spacing.y * (depth_block_size.y - 1) * 0.5,
-      dimension_count == 3 ? spacing.z * (depth_block_size.z - 1) * 0.5 : 0.0};
-    float3 depth_spacing {
-      spacing.x * depth_block_size.x,
-      spacing.y * depth_block_size.y,
-      dimension_count == 3 ? spacing.z * depth_block_size.z : 1.0};
-    auto depth_scale = scale * min(min(depth_spacing.x, depth_spacing.y), depth_spacing.z) * 0.5;
+    uint3 layer_vectors_size {
+      vector_dimensions.x * pow(2, max_layer - layer),
+      vector_dimensions.y * pow(2, max_layer - layer),
+      vector_dimensions.z * pow(2, max_layer - layer) };
+    float3 layer_position {
+      vector_spacing.x * (layer_vectors_size.x - 1) * 0.5,
+      vector_spacing.y * (layer_vectors_size.y - 1) * 0.5,
+      dimension_count == 3 ? vector_spacing.z * (layer_vectors_size.z - 1) * 0.5 : 0.0 };
+    float3 layer_spacing {
+      vector_spacing.x * layer_vectors_size.x,
+      vector_spacing.y * layer_vectors_size.y,
+      dimension_count == 3 ? vector_spacing.z * layer_vectors_size.z : 1.0 };
+    auto layer_scale = scale * min(min(layer_spacing.x, layer_spacing.y), layer_spacing.z) * 0.5;
 
     thrust::transform(
       thrust::device,
-      points + depth_point_offset,
-      points + depth_point_offset + depth_point_count,
-      points + depth_point_offset,
+      points + layer_point_offset,
+      points + layer_point_offset + layer_point_count,
+      points + layer_point_offset,
       [=] COMMON (const float3& point)
       {
-        auto output = depth_scale * point;
-        auto index  = int((&point - (points + depth_point_offset)) / tessellation_count);
-        output.x += offset.x + depth_spacing.x * (index / (depth_dimensions.z * depth_dimensions.y));
-        output.y += offset.y + depth_spacing.y * (index /  depth_dimensions.z % depth_dimensions.y);
-        output.z += offset.z + depth_spacing.z * (index % depth_dimensions.z);
+        auto output = layer_scale * point;
+        auto index  = int((&point - (points + layer_point_offset)) / tessellation_count);
+        output.x += layer_position.x + layer_spacing.x * (index / (layer_dimensions.z * layer_dimensions.y));
+        output.y += layer_position.y + layer_spacing.y * (index /  layer_dimensions.z % layer_dimensions.y);
+        output.z += layer_position.z + layer_spacing.z * (index % layer_dimensions.z);
         return output;
       });
     cudaDeviceSynchronize();
 
-    depth_offset += depth_dimensions.x * depth_dimensions.y * depth_dimensions.z;
-    depth_dimensions = {
-      depth_dimensions.x / 2,
-      depth_dimensions.y / 2,
-      dimension_count == 3 ? depth_dimensions.z / 2 : 1
+    layer_offset += layer_dimensions.x * layer_dimensions.y * layer_dimensions.z;
+    layer_dimensions = {
+      layer_dimensions.x / 2,
+      layer_dimensions.y / 2,
+      dimension_count == 3 ? layer_dimensions.z / 2 : 1
     };
   }
 

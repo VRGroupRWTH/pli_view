@@ -17,9 +17,9 @@ public:
   void render    (const camera* camera) override;
 
   void set_data(
+    const uint3&  dimensions  ,
     const float*  directions  ,
     const float*  inclinations,
-    const uint3&  dimensions  ,
     const float3& spacing     ,
     float         scale       = 1.0);
 
