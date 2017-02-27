@@ -27,9 +27,9 @@ __global__ void create_vectors(
   auto y = blockIdx.y * blockDim.y + threadIdx.y;
   auto z = blockIdx.z * blockDim.z + threadIdx.z;
 
-  if (x > dimensions.x ||
-      y > dimensions.y ||
-      z > dimensions.z)
+  if (x >= dimensions.x ||
+      y >= dimensions.y ||
+      z >= dimensions.z)
     return;
 
   auto volume_index = z + dimensions.z * (y + dimensions.y * x);

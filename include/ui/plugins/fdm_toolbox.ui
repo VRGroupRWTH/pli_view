@@ -122,7 +122,7 @@
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
      </property>
      <property name="placeholderText">
-      <string>100</string>
+      <string>32</string>
      </property>
     </widget>
    </item>
@@ -141,7 +141,7 @@
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
      </property>
      <property name="placeholderText">
-      <string>100</string>
+      <string>32</string>
      </property>
     </widget>
    </item>
@@ -234,7 +234,7 @@
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
      </property>
      <property name="placeholderText">
-      <string>50</string>
+      <string>48</string>
      </property>
     </widget>
    </item>
@@ -256,7 +256,7 @@
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
      </property>
      <property name="placeholderText">
-      <string>50</string>
+      <string>48</string>
      </property>
     </widget>
    </item>

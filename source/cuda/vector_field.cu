@@ -5,6 +5,8 @@
 
 #include <thrust/device_vector.h>
 
+#include <cuda/launch.h>
+
 namespace pli
 {
 void create_vector_field(
@@ -28,7 +30,7 @@ void create_vector_field(
   auto inclinations_ptr = raw_pointer_cast(&inclinations_vector[0]);
   
   std::cout << "Creating vectors." << std::endl;
-  create_vectors<<<dim3(dimensions), 1>>>(
+  create_vectors<<<grid_size_3d(dimensions), block_size_3d()>>>(
     dimensions      , 
     directions_ptr  , 
     inclinations_ptr,
