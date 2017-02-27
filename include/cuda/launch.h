@@ -9,15 +9,15 @@ namespace pli
 {
 inline unsigned block_size_1d()
 {
-  return 32;
+  return 64;
 }
 inline dim3     block_size_2d()
 {
-  return {16, 16, 1};
+  return {32, 32, 1};
 }
 inline dim3     block_size_3d()
 {
-  return {8, 8, 8};
+  return {16, 16, 4};
 }
 
 inline unsigned grid_size_1d(unsigned target_dimension )
