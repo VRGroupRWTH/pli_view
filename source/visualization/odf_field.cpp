@@ -115,17 +115,17 @@ void odf_field::set_data(
   vertex_buffer_->bind         ();
   vertex_buffer_->allocate     (point_count * sizeof(float3));
   vertex_buffer_->unbind       ();
-  vertex_buffer_->cuda_register(cudaGraphicsMapFlagsNone);
+  vertex_buffer_->cuda_register(cudaGraphicsMapFlagsWriteDiscard);
 
   color_buffer_->bind          ();
   color_buffer_->allocate      (point_count * sizeof(float4));
   color_buffer_->unbind        ();
-  color_buffer_->cuda_register (cudaGraphicsMapFlagsNone);
-  
+  color_buffer_->cuda_register(cudaGraphicsMapFlagsWriteDiscard);
+
   index_buffer_ ->bind         ();
   index_buffer_ ->allocate     (draw_count_ * sizeof(unsigned));
   index_buffer_ ->unbind       ();
-  index_buffer_ ->cuda_register(cudaGraphicsMapFlagsNone);
+  index_buffer_ ->cuda_register(cudaGraphicsMapFlagsWriteDiscard);
 
   auto cuda_vertex_buffer = vertex_buffer_->cuda_map<float3  >();
   auto cuda_color_buffer  = color_buffer_ ->cuda_map<float4  >();
