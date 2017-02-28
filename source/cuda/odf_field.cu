@@ -108,34 +108,6 @@ void create_odfs(
     });
   cudaDeviceSynchronize();
   
-  std::cout << "Normalizing the points." << std::endl;
-  for (auto i = 0; i < voxel_count; i++)
-  {
-    float3* max_sample = thrust::max_element(
-      thrust::device,
-      points +  i      * tessellation_count,
-      points + (i + 1) * tessellation_count,
-      [] COMMON (const float3& lhs, const float3& rhs)
-      {
-        return length(lhs) < length(rhs);
-      });
-  
-    thrust::transform(
-      thrust::device,
-      points +  i      * tessellation_count,
-      points + (i + 1) * tessellation_count,
-      points +  i      * tessellation_count,
-      [max_sample] COMMON(float3 point)
-      {
-        auto max_sample_length = length(*max_sample);
-        point.x /= max_sample_length;
-        point.y /= max_sample_length;
-        point.z /= max_sample_length;
-        return point;
-      });
-  }
-  cudaDeviceSynchronize();
-
   std::cout << "Assigning colors." << std::endl;
   thrust::transform(
     thrust::device,
@@ -162,7 +134,7 @@ void create_odfs(
       layer_dimensions.y * 
       layer_dimensions.z * 
       tessellation_count;
-    
+
     uint3 layer_vectors_size {
       vector_dimensions.x * pow(2, max_layer - layer),
       vector_dimensions.y * pow(2, max_layer - layer),
