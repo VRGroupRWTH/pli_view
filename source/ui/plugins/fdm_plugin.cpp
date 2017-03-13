@@ -248,12 +248,12 @@ void fdm_plugin::update   () const
       auto vector_dimensions = io->load_block_size    ();
 
       odf_field_->set_data(
-        {shape[0], shape[1], shape[2]},
+        {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
          shape[3],
          fdm.data(),
          tessellations,
-        {vector_spacing   [0], vector_spacing   [1], vector_spacing   [2]},
-        {vector_dimensions[0], vector_dimensions[1], vector_dimensions[2]},
+        {vector_spacing[0], vector_spacing[1], vector_spacing[2]},
+        {unsigned(vector_dimensions[0]), unsigned(vector_dimensions[1]), unsigned(vector_dimensions[2])},
         1.0,
         checkbox_clustering_enabled->isChecked(),
         float(slider_clustering_threshold->value()) / 100.0);
