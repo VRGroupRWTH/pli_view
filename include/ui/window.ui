@@ -129,7 +129,7 @@
          <x>0</x>
          <y>0</y>
          <width>249</width>
-         <height>384</height>
+         <height>357</height>
         </rect>
        </property>
        <property name="font">
@@ -147,13 +147,26 @@
         </property>
        </layout>
       </widget>
+      <widget class="pli::retardation_plugin" name="plugin_retardation">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>249</width>
+         <height>357</height>
+        </rect>
+       </property>
+       <attribute name="label">
+        <string>Retardation Maps</string>
+       </attribute>
+      </widget>
       <widget class="pli::fom_plugin" name="plugin_fom">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>98</width>
-         <height>28</height>
+         <width>249</width>
+         <height>357</height>
         </rect>
        </property>
        <attribute name="label">
@@ -166,8 +179,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>98</width>
-         <height>28</height>
+         <width>249</width>
+         <height>357</height>
         </rect>
        </property>
        <attribute name="label">
@@ -269,6 +282,12 @@
    <class>pli::viewer</class>
    <extends>QWidget</extends>
    <header location="global">ui/viewer.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>pli::retardation_plugin</class>
+   <extends>QWidget</extends>
+   <header location="global">ui/plugins/retardation_plugin.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

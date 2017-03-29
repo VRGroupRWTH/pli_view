@@ -15,16 +15,20 @@ set(ProjectSources
   include/ui/plugins/fom_plugin.hpp
   include/ui/plugins/fdm_plugin.hpp
   include/ui/plugins/plugin.hpp
+  include/ui/plugins/retardation_plugin.hpp
   include/ui/viewer.hpp
   include/ui/window.hpp
   include/utility/line_edit_utility.hpp
   include/utility/qt_text_browser_sink.hpp
   include/visualization/interactors/interactor.hpp
   include/visualization/odf_field.hpp
+  include/visualization/scalar_field.hpp
   include/visualization/vector_field.hpp
   
   shaders/odf_field.frag.glsl
   shaders/odf_field.vert.glsl
+  shaders/scalar_field.frag.glsl
+  shaders/scalar_field.vert.glsl
   shaders/vector_field.frag.glsl
   shaders/vector_field.vert.glsl
 
@@ -36,10 +40,12 @@ set(ProjectSources
   source/ui/plugins/fom_plugin.cpp
   source/ui/plugins/fdm_plugin.cpp
   source/ui/plugins/plugin.cpp
+  source/ui/plugins/retardation_plugin.cpp
   source/ui/viewer.cpp
   source/ui/window.cpp
   source/visualization/interactors/interactor.cpp
   source/visualization/odf_field.cpp
+  source/visualization/scalar_field.cpp
   source/visualization/vector_field.cpp
   source/main.cpp
 )
