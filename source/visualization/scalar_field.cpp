@@ -35,8 +35,8 @@ void scalar_field::initialize()
   texture_        ->bind      ();
   texture_        ->min_filter(GL_NEAREST_MIPMAP_NEAREST);
   texture_        ->mag_filter(GL_NEAREST);
-  texture_        ->wrap_s    (GL_REPEAT);
-  texture_        ->wrap_t    (GL_REPEAT);
+  texture_        ->wrap_s    (GL_CLAMP_TO_EDGE);
+  texture_        ->wrap_t    (GL_CLAMP_TO_EDGE);
 
   shader_program_ ->set_uniform("texture_unit", 0);
 
@@ -67,8 +67,8 @@ void scalar_field::set_data(
   draw_count_ = 6 * dimensions.z;
 
   float3 size         = {spacing.x * dimensions.x, spacing.y * dimensions.y, spacing.z * dimensions.z};
-  float3 vertices [6] = {{0,0,0}, {size.x,0,0}, {size.x,size.y,0}, {0,0,0}, {size.x,size.y,0}, {0,size.y,0}};
-  float2 texcoords[6] = {{-size.y, size.x}, {0, size.x}, {0, 0}, {-size.y, size.x}, {0, 0}, {-size.y, 0}};
+  float3 vertices [6] = {{0,0,0}, {size.x,0,0}, {size.x,-size.y,0}, {0,0,0}, {size.x,-size.y,0}, {0,-size.y,0}};
+  float2 texcoords[6] = {{0,0}, {0,1}, {1,1}, {0,0}, {1,1}, {1,0}};
 
   vertex_buffer_  ->bind    ();
   vertex_buffer_  ->set_data(draw_count_ * sizeof(float3), vertices);
@@ -80,7 +80,7 @@ void scalar_field::set_data(
 
   texture_->set_active(0);
   texture_->bind      ();
-  texture_->set_image (GL_RED, dimensions.x, dimensions.y, GL_RED, GL_FLOAT, scalars);
+  texture_->set_image (GL_RED, dimensions.y, dimensions.x, GL_RED, GL_FLOAT, scalars);
   texture_->generate_mipmaps();
   texture_->unbind    ();
 }
