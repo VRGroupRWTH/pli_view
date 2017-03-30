@@ -50,14 +50,7 @@ transform& transform::rotate                (const quatf& amount)
 }
 transform& transform::look_at               (const vec3f& target, const vec3f& up_vector)
 {
-  auto forward_vector   = normalize(target - translation_);
-  auto right_vector     = normalize(cross(forward_vector, up_vector));
-  auto true_up_vector   = normalize(cross(right_vector, forward_vector));
-
-  auto forward_rotation = pli::rotation(                   vec3f(0, 0, 1), forward_vector);
-  auto up_rotation      = pli::rotation(forward_rotation * vec3f(0, 1, 0), true_up_vector);
-
-  return set_rotation(up_rotation * forward_rotation);
+  return set_rotation(conjugate(toQuat(lookAt(translation_, target, up_vector))));
 }
 
 void       transform::set_parent            (transform* parent)
