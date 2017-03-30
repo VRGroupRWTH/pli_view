@@ -58,8 +58,8 @@ __global__ void create_vector_field_internal(
   auto color           = make_float4(abs(unscaled.x), abs(unscaled.z), abs(unscaled.y), 1.0); // DMRI
 
   auto point_index = 2 * volume_index;
-  points[point_index    ] = position + vector_start;
-  points[point_index + 1] = position + vector_end  ;
+  points[point_index    ] = position + vector_start; points[point_index    ].y = -points[point_index    ].y;
+  points[point_index + 1] = position + vector_end  ; points[point_index + 1].y = -points[point_index + 1].y;
   colors[point_index    ] = color;
   colors[point_index + 1] = color;
 }

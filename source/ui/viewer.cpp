@@ -10,7 +10,7 @@ namespace pli
 viewer::viewer(QWidget* parent) : QOpenGLWidget(parent), interactor_(&camera_)
 {
   // Make adjustable.
-  interactor_.set_move_speed(0.1);
+  interactor_.set_move_speed(0.001);
   interactor_.set_look_speed(0.1);
 
   camera_.set_translation(vec3f(0, 0, 1));
@@ -44,7 +44,7 @@ void viewer::initializeGL   ()
     renderable->initialize();
 
   // Make adjustible.
-  glLineWidth(1);
+  glLineWidth(2);
 
   glEnable   (GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);

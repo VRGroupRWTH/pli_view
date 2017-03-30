@@ -173,6 +173,19 @@ void create_odfs(
     };
   }
 
+  std::cout << "Inverting Y coordinates." << std::endl;
+  thrust::transform(
+    thrust::device,
+    points,
+    points + point_count,
+    points,
+    [] COMMON(float3 point)
+  {
+    point.y = -point.y;
+    return point;
+  });
+  cudaDeviceSynchronize();
+
   auto total_end = std::chrono::system_clock::now();
   std::chrono::duration<double> total_elapsed_seconds = total_end - total_start;
   std::cout << "Total elapsed time: " << total_elapsed_seconds.count() << "s." << std::endl;
