@@ -10,7 +10,7 @@ namespace pli
 viewer::viewer(QWidget* parent) : QOpenGLWidget(parent), interactor_(&camera_)
 {
   // Make adjustable.
-  interactor_.set_move_speed(0.005);
+  interactor_.set_move_speed(0.1);
   interactor_.set_look_speed(0.1);
 
   camera_.set_translation(vec3f(0, 0, 1));
