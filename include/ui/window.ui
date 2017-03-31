@@ -147,7 +147,7 @@
         </property>
        </layout>
       </widget>
-      <widget class="pli::retardation_plugin" name="plugin_retardation">
+      <widget class="pli::scalar_plugin" name="plugin_scalar">
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -157,7 +157,7 @@
         </rect>
        </property>
        <attribute name="label">
-        <string>Retardation Maps</string>
+        <string>Scalar Maps</string>
        </attribute>
       </widget>
       <widget class="pli::fom_plugin" name="plugin_fom">
@@ -285,9 +285,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>pli::retardation_plugin</class>
+   <class>pli::scalar_plugin</class>
    <extends>QWidget</extends>
-   <header location="global">ui/plugins/retardation_plugin.hpp</header>
+   <header location="global">ui/plugins/scalar_plugin.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

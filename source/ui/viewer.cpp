@@ -55,7 +55,8 @@ void viewer::paintGL        ()
 
   interactor_.update_transform();
   for (auto& renderable : renderables_)
-    renderable->render(&camera_);
+    if (renderable->active())
+      renderable->render(&camera_);
 }
 void viewer::resizeGL       (int w, int h)
 {

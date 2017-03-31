@@ -125,7 +125,7 @@ void data_plugin::set_file(const std::string& filename)
     logger_->info(std::string("Failed to open file. Not specified."));
     io_.reset(nullptr);
     if (checkbox_autoload->isChecked())
-      on_change(io_.get());
+      on_change(nullptr);
     return;
   }
 

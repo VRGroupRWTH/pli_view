@@ -12,6 +12,18 @@ public:
 
   virtual void initialize()                     { }
   virtual void render    (const camera* camera) { }
+
+  void set_active(bool active)
+  {
+    active_ = active;
+  }
+  bool active    () const
+  {
+    return active_;
+  }
+
+protected:
+  bool active_ = true;
 };
 }
 

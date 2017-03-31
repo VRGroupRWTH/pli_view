@@ -15,7 +15,7 @@ set(ProjectSources
   include/ui/plugins/fom_plugin.hpp
   include/ui/plugins/fdm_plugin.hpp
   include/ui/plugins/plugin.hpp
-  include/ui/plugins/retardation_plugin.hpp
+  include/ui/plugins/scalar_plugin.hpp
   include/ui/viewer.hpp
   include/ui/window.hpp
   include/utility/line_edit_utility.hpp
@@ -40,7 +40,7 @@ set(ProjectSources
   source/ui/plugins/fom_plugin.cpp
   source/ui/plugins/fdm_plugin.cpp
   source/ui/plugins/plugin.cpp
-  source/ui/plugins/retardation_plugin.cpp
+  source/ui/plugins/scalar_plugin.cpp
   source/ui/viewer.cpp
   source/ui/window.cpp
   source/visualization/interactors/interactor.cpp

@@ -1,20 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>retardation_toolbox</class>
- <widget class="QWidget" name="retardation_toolbox">
+ <class>scalar_toolbox</class>
+ <widget class="QWidget" name="scalar_toolbox">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>250</width>
-    <height>400</height>
+    <width>281</width>
+    <height>407</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Retardation Map Toolbox</string>
+   <string>Scalar Map Toolbox</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
+    <widget class="QCheckBox" name="checkbox_auto_update">
+     <property name="text">
+      <string>Auto update</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="3">
+    <widget class="QPushButton" name="button_update">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Update</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
     <widget class="QLabel" name="label_subset">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -36,14 +56,14 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QLabel" name="label_offset">
      <property name="text">
       <string>Offset</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="2" column="1">
     <widget class="QLineEdit" name="line_edit_offset_x">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -62,7 +82,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="2">
+   <item row="2" column="2">
     <widget class="QLineEdit" name="line_edit_offset_y">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -81,7 +101,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="3">
+   <item row="2" column="3">
     <widget class="QLineEdit" name="line_edit_offset_z">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -100,14 +120,14 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QLabel" name="label_size">
      <property name="text">
       <string>Size</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="3" column="1">
     <widget class="QLineEdit" name="line_edit_size_x">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -126,7 +146,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="2">
+   <item row="3" column="2">
     <widget class="QLineEdit" name="line_edit_size_y">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -145,7 +165,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="3">
+   <item row="3" column="3">
     <widget class="QLineEdit" name="line_edit_size_z">
      <property name="enabled">
       <bool>false</bool>
@@ -167,7 +187,7 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2">
+   <item row="4" column="0">
     <widget class="QLabel" name="label_visualization">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -189,15 +209,35 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="label_show">
+   <item row="5" column="0">
+    <widget class="QLabel" name="label_transmittance">
      <property name="text">
-      <string>Show</string>
+      <string>Transmittance</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
-    <widget class="QCheckBox" name="checkbox_show">
+   <item row="5" column="1">
+    <widget class="QCheckBox" name="checkbox_transmittance">
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="label_retardation">
+     <property name="text">
+      <string>Retardation</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QCheckBox" name="checkbox_retardation">
      <property name="layoutDirection">
       <enum>Qt::LeftToRight</enum>
      </property>
@@ -209,7 +249,47 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
+   <item row="7" column="0">
+    <widget class="QLabel" name="label_direction">
+     <property name="text">
+      <string>Direction</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1">
+    <widget class="QCheckBox" name="checkbox_direction">
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="label_inclination">
+     <property name="text">
+      <string>Inclination</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="QCheckBox" name="checkbox_inclination">
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0">
     <spacer name="spacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
