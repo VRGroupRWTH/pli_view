@@ -14,6 +14,7 @@ set(ProjectSources
   include/ui/plugins/data_plugin.hpp
   include/ui/plugins/fom_plugin.hpp
   include/ui/plugins/fdm_plugin.hpp
+  include/ui/plugins/interactor_plugin.hpp
   include/ui/plugins/plugin.hpp
   include/ui/plugins/scalar_plugin.hpp
   include/ui/viewer.hpp
@@ -39,6 +40,7 @@ set(ProjectSources
   source/ui/plugins/data_plugin.cpp
   source/ui/plugins/fom_plugin.cpp
   source/ui/plugins/fdm_plugin.cpp
+  source/ui/plugins/interactor_plugin.cpp
   source/ui/plugins/plugin.cpp
   source/ui/plugins/scalar_plugin.cpp
   source/ui/viewer.cpp

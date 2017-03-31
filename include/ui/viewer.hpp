@@ -24,7 +24,8 @@ public:
   type* add_renderable   (args&&...   arguments );
   void  remove_renderable(renderable* renderable);
 
-  camera* camera() { return &camera_; }
+  camera*     camera    () { return &camera_    ; }
+  interactor* interactor() { return &interactor_; }
 
   void initializeGL   ()                   override;
   void paintGL        ()                   override;

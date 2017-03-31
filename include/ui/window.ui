@@ -129,7 +129,7 @@
          <x>0</x>
          <y>0</y>
          <width>249</width>
-         <height>357</height>
+         <height>330</height>
         </rect>
        </property>
        <property name="font">
@@ -147,13 +147,18 @@
         </property>
        </layout>
       </widget>
+      <widget class="pli::interactor_plugin" name="plugin_interactor">
+       <attribute name="label">
+        <string>Interactor</string>
+       </attribute>
+      </widget>
       <widget class="pli::scalar_plugin" name="plugin_scalar">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>0</y>
          <width>249</width>
-         <height>357</height>
+         <height>330</height>
         </rect>
        </property>
        <attribute name="label">
@@ -166,7 +171,7 @@
          <x>0</x>
          <y>0</y>
          <width>249</width>
-         <height>357</height>
+         <height>330</height>
         </rect>
        </property>
        <attribute name="label">
@@ -180,7 +185,7 @@
          <x>0</x>
          <y>0</y>
          <width>249</width>
-         <height>357</height>
+         <height>330</height>
         </rect>
        </property>
        <attribute name="label">
@@ -288,6 +293,12 @@
    <class>pli::scalar_plugin</class>
    <extends>QWidget</extends>
    <header location="global">ui/plugins/scalar_plugin.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>pli::interactor_plugin</class>
+   <extends>QWidget</extends>
+   <header location="global">ui/plugins/interactor_plugin.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
