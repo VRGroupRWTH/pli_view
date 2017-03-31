@@ -129,7 +129,7 @@
          <x>0</x>
          <y>0</y>
          <width>249</width>
-         <height>330</height>
+         <height>303</height>
         </rect>
        </property>
        <property name="font">
@@ -148,6 +148,14 @@
        </layout>
       </widget>
       <widget class="pli::interactor_plugin" name="plugin_interactor">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>98</width>
+         <height>28</height>
+        </rect>
+       </property>
        <attribute name="label">
         <string>Interactor</string>
        </attribute>
@@ -157,8 +165,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>249</width>
-         <height>330</height>
+         <width>98</width>
+         <height>28</height>
         </rect>
        </property>
        <attribute name="label">
@@ -170,8 +178,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>249</width>
-         <height>330</height>
+         <width>98</width>
+         <height>28</height>
         </rect>
        </property>
        <attribute name="label">
@@ -184,14 +192,27 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>249</width>
-         <height>330</height>
+         <width>98</width>
+         <height>28</height>
         </rect>
        </property>
        <attribute name="label">
         <string>Fiber Distribution Maps</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_4"/>
+      </widget>
+      <widget class="pli::tractography_plugin" name="plugin_tractography">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>249</width>
+         <height>303</height>
+        </rect>
+       </property>
+       <attribute name="label">
+        <string>Tractography</string>
+       </attribute>
       </widget>
      </widget>
     </item>
@@ -299,6 +320,12 @@
    <class>pli::interactor_plugin</class>
    <extends>QWidget</extends>
    <header location="global">ui/plugins/interactor_plugin.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>pli::tractography_plugin</class>
+   <extends>QWidget</extends>
+   <header location="global">ui/plugins/tractography_plugin.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
