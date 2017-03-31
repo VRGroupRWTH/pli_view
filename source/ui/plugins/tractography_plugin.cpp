@@ -1,8 +1,12 @@
 #include /* implements */ <ui/plugins/tractography_plugin.hpp>
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 #include <ui/window.hpp>
 #include <utility/line_edit_utility.hpp>
 #include <utility/qt_text_browser_sink.hpp>
+#include <convert.h>
 
 namespace pli
 {
@@ -43,15 +47,15 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
   });
   connect(button_trace        , &QPushButton::clicked      , [&]
   {
-    update();
+    trace();
   });
 }
 
-void tractography_plugin::start ()
+void tractography_plugin::start()
 {
   set_sink(std::make_shared<qt_text_browser_sink>(owner_->console));
 }
-void tractography_plugin::update() const
+void tractography_plugin::trace()
 {
   try
   {
@@ -70,10 +74,26 @@ void tractography_plugin::update() const
 
     auto fiber_direction_map   = io->load_fiber_direction_map  (offset, size);
     auto fiber_inclination_map = io->load_fiber_inclination_map(offset, size);
+    auto spacing               = io->load_vector_spacing();
     auto shape                 = fiber_direction_map.shape();
     
-    // TODO: Trace the directions and inclinations.
+    // Feed the directions and inclinations into a tangent Cartesian grid.
+    tangent::CartesianGrid grid({shape[0], shape[1], shape[2]}, spacing);
+    auto grid_ptr = grid.GetVectorPointer(0);
+    for(auto x = 0; x < shape[0]; x++)
+      for(auto y = 0; y < shape[1]; y++)
+        for(auto z = 0; z < shape[2]; z++)
+        {
+          float longitude = (90.0F + fiber_direction_map  [x][y][z]) * M_PI / 180.0F;
+          float latitude  = (90.0F - fiber_inclination_map[x][y][z]) * M_PI / 180.0F;
+          auto  cartesian = cush::to_cartesian_coords(float3{1.0F, longitude, latitude});
+          grid_ptr[z + shape[2] * (y + shape[1] * x)] = tangent::vector_t{cartesian.x, cartesian.y, cartesian.z};
+        }
 
+    // TODO: Run tangent, record results.
+
+    // TODO: Visualize recorded results.
+         
     owner_->viewer->update();
   }
   catch (std::exception& exception)
