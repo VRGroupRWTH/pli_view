@@ -9,15 +9,19 @@
 
 namespace pli
 {
-struct trilinear_interpolation_trait 
+struct nearest_neighbor_interpolator
+{
+  // TODO!
+};
+struct nearest_neighbor_interpolation_trait 
 {
   using Data         = tangent::CartesianGrid;
-  using Interpolator = tangent::BasicTrilinearInterpolator;
+  using Interpolator = nearest_neighbor_interpolator;
 };
 struct linear_tracer_trait
 {
   using Data         = tangent::CartesianGrid;
-  using Integrator   = tangent::RungeKutta4Integrator<trilinear_interpolation_trait>;
+  using Integrator   = tangent::RungeKutta4Integrator<nearest_neighbor_interpolation_trait>;
   using Recorder     = tangent::TraceRecorder;
 };
 using  linear_tracer = tangent::SimpleTracer<linear_tracer_trait>;
