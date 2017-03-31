@@ -18,7 +18,7 @@ public:
   void start () override;
 
 private:
-  void update() const;
+  void trace ();
 
   linear_tracer tracer_;
 };
