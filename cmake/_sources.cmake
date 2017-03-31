@@ -23,6 +23,7 @@ set(ProjectSources
   include/utility/line_edit_utility.hpp
   include/utility/qt_text_browser_sink.hpp
   include/visualization/interactors/interactor.hpp
+  include/visualization/linear_tracer.hpp
   include/visualization/odf_field.hpp
   include/visualization/scalar_field.hpp
   include/visualization/vector_field.hpp

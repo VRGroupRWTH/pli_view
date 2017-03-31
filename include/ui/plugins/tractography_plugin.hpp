@@ -3,6 +3,7 @@
 
 #include <attributes/loggable.hpp>
 #include <ui/plugins/plugin.hpp>
+#include <visualization/linear_tracer.hpp>
 #include <ui_tractography_toolbox.h>
 
 namespace pli
@@ -18,6 +19,8 @@ public:
 
 private:
   void update() const;
+
+  linear_tracer tracer_;
 };
 }
 
