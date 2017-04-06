@@ -14,6 +14,17 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
 {
   setupUi(this);
   
+  connect(radio_button_sliced     , &QRadioButton::clicked     , [&]()
+  {
+    if (radio_button_sliced->isChecked())
+      set_file(line_edit_file->text().toStdString());
+  });
+  connect(radio_button_volumetric , &QRadioButton::clicked     , [&]()
+  {
+    if (radio_button_volumetric->isChecked())
+      set_file(line_edit_file->text().toStdString());
+  });
+
   connect(button_browse_file      , &QPushButton::clicked      , [&]
   {
     auto filename = QFileDialog::getOpenFileName(this, tr("Select PLI file."), "C:/", tr("HDF5 Files (*.h5)"));
@@ -106,7 +117,7 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
   });
 }
 
-hdf5_io<float>* data_plugin::io() const
+hdf5_io_base* data_plugin::io() const
 {
   return io_.get();
 }
@@ -129,17 +140,30 @@ void data_plugin::set_file(const std::string& filename)
     return;
   }
 
-  io_.reset(new hdf5_io<float>(
-    filename,
-    line_edit_utility::get_text(line_edit_vector_spacing),
-    line_edit_utility::get_text(line_edit_block_size    ),
-    line_edit_utility::get_text(line_edit_mask          ),
-    line_edit_utility::get_text(line_edit_transmittance ),
-    line_edit_utility::get_text(line_edit_retardation   ),
-    line_edit_utility::get_text(line_edit_direction     ),
-    line_edit_utility::get_text(line_edit_inclination   ),
-    line_edit_utility::get_text(line_edit_distribution  )
-  ));
+  if (radio_button_sliced->isChecked())
+    io_.reset(new hdf5_io(
+      filename,
+      line_edit_utility::get_text(line_edit_vector_spacing),
+      line_edit_utility::get_text(line_edit_block_size    ),
+      line_edit_utility::get_text(line_edit_mask          ),
+      line_edit_utility::get_text(line_edit_transmittance ),
+      line_edit_utility::get_text(line_edit_retardation   ),
+      line_edit_utility::get_text(line_edit_direction     ),
+      line_edit_utility::get_text(line_edit_inclination   ),
+      line_edit_utility::get_text(line_edit_distribution  )
+    ));
+  else
+    io_.reset(new hdf5_io_2(
+      filename,
+      line_edit_utility::get_text(line_edit_vector_spacing),
+      line_edit_utility::get_text(line_edit_block_size    ),
+      line_edit_utility::get_text(line_edit_mask          ),
+      line_edit_utility::get_text(line_edit_transmittance ),
+      line_edit_utility::get_text(line_edit_retardation   ),
+      line_edit_utility::get_text(line_edit_direction     ),
+      line_edit_utility::get_text(line_edit_inclination   ),
+      line_edit_utility::get_text(line_edit_distribution  )
+    ));
 
   logger_->info("Opened file: " + filename);
 

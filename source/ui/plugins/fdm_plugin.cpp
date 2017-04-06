@@ -256,7 +256,7 @@ void fdm_plugin::update   () const
       { line_edit_utility::get_text<std::size_t>(line_edit_samples_x), 
         line_edit_utility::get_text<std::size_t>(line_edit_samples_y)};
 
-      auto fdm        = io->load_fiber_distribution_map(offset, size);
+      auto fdm        = io->load_fiber_distribution_dataset(offset, size);
 
       // Roll dimensions to power of two.
       size[0] = pow(2, ceil(log(size[0]) / log(2)));

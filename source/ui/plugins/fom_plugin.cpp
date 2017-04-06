@@ -111,8 +111,8 @@ void fom_plugin::update() const
         line_edit_utility::get_text<std::size_t>(line_edit_size_y),
         line_edit_utility::get_text<std::size_t>(line_edit_size_z)};
 
-      auto fiber_direction_map   = io->load_fiber_direction_map  (offset, size);
-      auto fiber_inclination_map = io->load_fiber_inclination_map(offset, size);
+      auto fiber_direction_map   = io->load_fiber_direction_dataset  (offset, size);
+      auto fiber_inclination_map = io->load_fiber_inclination_dataset(offset, size);
       auto shape                 = fiber_direction_map.shape();
       auto spacing               = io->load_vector_spacing  ();
       auto scale                 = line_edit_utility::get_text<float>(line_edit_scale);

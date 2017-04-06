@@ -4,6 +4,7 @@
 #include <memory>
 
 #include <hdf5_io.hpp>
+#include <hdf5_io_2.hpp>
 
 #include <attributes/loggable.hpp>
 #include <ui/plugins/plugin.hpp>
@@ -18,17 +19,17 @@ class data_plugin : public plugin, public loggable<data_plugin>, public Ui_data_
 public:
   data_plugin(QWidget* parent = nullptr);
 
-  hdf5_io<float>* io() const;
+  hdf5_io_base* io() const;
 
 signals:
-  void on_change(pli::hdf5_io<float>* io);
+  void on_change(hdf5_io_base* io);
 
 private:
   void start() override;
 
   void set_file(const std::string& filename);
 
-  std::unique_ptr<pli::hdf5_io<float>> io_;
+  std::unique_ptr<hdf5_io_base> io_;
 };
 }
 
