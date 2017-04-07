@@ -135,7 +135,7 @@ void scalar_plugin::update() const
 
     if (checkbox_transmittance->isChecked())
     {
-      auto scalar_map = io->load_transmittance_dataset(offset, size);
+      auto scalar_map = io->load_transmittance_dataset(offset, size, true);
       auto shape      = scalar_map.shape();
       scalar_fields_.at("transmittance")->set_data(
         {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
@@ -144,7 +144,7 @@ void scalar_plugin::update() const
     }
     if (checkbox_retardation->isChecked())
     {
-      auto scalar_map = io->load_retardation_dataset(offset, size);
+      auto scalar_map = io->load_retardation_dataset(offset, size, true);
       auto shape      = scalar_map.shape();
       scalar_fields_.at("retardation")->set_data(
         {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
@@ -153,7 +153,7 @@ void scalar_plugin::update() const
     }
     if (checkbox_direction->isChecked())
     {
-      auto scalar_map = io->load_fiber_direction_dataset(offset, size);
+      auto scalar_map = io->load_fiber_direction_dataset(offset, size, true);
       auto shape      = scalar_map.shape();
       scalar_fields_.at("direction")->set_data(
         {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
@@ -162,7 +162,7 @@ void scalar_plugin::update() const
     }
     if (checkbox_inclination->isChecked())
     {
-      auto scalar_map = io->load_fiber_inclination_dataset(offset, size);
+      auto scalar_map = io->load_fiber_inclination_dataset(offset, size, true);
       auto shape      = scalar_map.shape();
       scalar_fields_.at("inclination")->set_data(
         {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
