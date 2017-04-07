@@ -97,7 +97,7 @@ void tractography_plugin::trace()
     for (auto x = offset[0]; x < size[0] + offset[0]; x++)
       for (auto y = offset[1]; y < size[1] + offset[1]; y++)
         for (auto z = offset[2]; z < size[2] + offset[2]; z++)
-          seeds.push_back({{x, y, z, 0.0f}});
+          seeds.push_back({{float(x), float(y), float(z), 0.0f}});
 
     linear_tracer tracer;
     tracer.SetData           (&grid);

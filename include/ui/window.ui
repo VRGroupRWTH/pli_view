@@ -313,14 +313,8 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="action_fullscreen"/>
     <addaction name="action_file_exit"/>
-   </widget>
-   <widget class="QMenu" name="menu_edit">
-    <property name="title">
-     <string>Edit</string>
-    </property>
-    <addaction name="action_edit_undo"/>
-    <addaction name="action_edit_redo"/>
    </widget>
    <widget class="QMenu" name="menu_help">
     <property name="title">
@@ -329,7 +323,6 @@
     <addaction name="action_help_version"/>
    </widget>
    <addaction name="menu_file"/>
-   <addaction name="menu_edit"/>
    <addaction name="menu_help"/>
   </widget>
   <widget class="QStatusBar" name="status_bar">
@@ -364,6 +357,14 @@
   <action name="action_help_version">
    <property name="text">
     <string>Version</string>
+   </property>
+  </action>
+  <action name="action_fullscreen">
+   <property name="text">
+    <string>Fullscreen</string>
+   </property>
+   <property name="shortcut">
+    <string>F11</string>
    </property>
   </action>
  </widget>

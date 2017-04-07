@@ -27,26 +27,21 @@ window::~window()
     plugin->destroy();
 }
 
-void window::bind_actions()
+void window::bind_actions     ()
 {  
+  connect(action_fullscreen  , &QAction::triggered, [&] 
+  {
+    logger_->info(std::string("Toggling fullscreen mode."));
+    isFullScreen() ? showNormal() : showFullScreen();
+  });
   connect(action_file_exit   , &QAction::triggered, [&] 
   {
     logger_->info(std::string("Closing window."));
     close();
   });
-  connect(action_edit_undo   , &QAction::triggered, [&] 
-  {
-    logger_->info(std::string("Undoing last action."));
-    // TODO.
-  });
-  connect(action_edit_redo   , &QAction::triggered, [&] 
-  {
-    logger_->info(std::string("Redoing last action."));
-    // TODO.
-  });
   connect(action_help_version, &QAction::triggered, [&] 
   {
-    logger_->info(std::string("Version 1.0."));
+    logger_->info(std::string("Version ") + __DATE__);
   });
 }
 }
