@@ -79,14 +79,14 @@ protected:
   bool    disable_parent_         ;
 
   QColor  color_                  = QColor(255, 255, 255);
-  qreal   roundness_              = 70.0;
-  qreal   minimum_trail_opacity_  = 15.0;
-  qreal   trail_fade_             = 70.0;
+  qreal   roundness_              = 75.0;
+  qreal   minimum_trail_opacity_  = 25.0;
+  qreal   trail_fade_             = 75.0;
   qreal   revolutions_per_second_ = 1   ;
-  int     number_of_lines_        = 12  ;
-  int     line_length_            = 10  ;
-  int     line_width_             = 5   ;
-  int     inner_radius_           = 10  ;
+  int     number_of_lines_        = 24  ;
+  int     line_length_            = 32  ;
+  int     line_width_             = 8   ;
+  int     inner_radius_           = 24  ;
 
   QTimer* timer_                  ;
   int     current_counter_        = 0;
