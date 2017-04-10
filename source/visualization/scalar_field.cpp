@@ -46,8 +46,6 @@ void scalar_field::initialize()
 }
 void scalar_field::render    (const camera* camera)
 {
-  std::lock_guard<std::mutex> guard(mutex_);
-
   shader_program_->bind  ();
   vertex_array_  ->bind  ();
   texture_       ->bind  ();
@@ -67,8 +65,6 @@ void scalar_field::set_data(
   const float*  scalars     ,
   const float3& spacing     )
 {
-  std::lock_guard<std::mutex> guard(mutex_);
-
   draw_count_ = 6 * dimensions.z;
 
   float3 size         = {spacing.x * dimensions.x, spacing.y * dimensions.y, spacing.z * dimensions.z};
