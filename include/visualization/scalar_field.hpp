@@ -2,6 +2,7 @@
 #define PLI_VIS_SCALAR_FIELD_HPP_
 
 #include <memory>
+#include <mutex>
 
 #include <all.hpp>
 #include <vector_types.h>
@@ -22,6 +23,7 @@ public:
     const float3& spacing   );
 
 private:
+  std::mutex                        mutex_          ;
   std::unique_ptr<gl::program>      shader_program_ ;
   std::unique_ptr<gl::vertex_array> vertex_array_   ;
   std::unique_ptr<gl::array_buffer> vertex_buffer_  ;

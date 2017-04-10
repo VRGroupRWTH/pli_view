@@ -46,12 +46,15 @@ void scalar_field::initialize()
 }
 void scalar_field::render    (const camera* camera)
 {
+  std::lock_guard<std::mutex> guard(mutex_);
+
   shader_program_->bind  ();
   vertex_array_  ->bind  ();
   texture_       ->bind  ();
 
   shader_program_->set_uniform("projection", camera->projection_matrix      ());
   shader_program_->set_uniform("view"      , camera->inverse_absolute_matrix());
+
   glDrawArrays(GL_TRIANGLES, 0, draw_count_);
 
   texture_       ->unbind();
@@ -64,6 +67,8 @@ void scalar_field::set_data(
   const float*  scalars     ,
   const float3& spacing     )
 {
+  std::lock_guard<std::mutex> guard(mutex_);
+
   draw_count_ = 6 * dimensions.z;
 
   float3 size         = {spacing.x * dimensions.x, spacing.y * dimensions.y, spacing.z * dimensions.z};
@@ -77,7 +82,7 @@ void scalar_field::set_data(
   texcoord_buffer_->bind    ();
   texcoord_buffer_->set_data(draw_count_ * sizeof(float2), texcoords);
   texcoord_buffer_->unbind  ();
-
+  
   texture_->set_active(0);
   texture_->bind      ();
   texture_->set_image (GL_RED, dimensions.y, dimensions.x, GL_RED, GL_FLOAT, scalars);
