@@ -1,12 +1,14 @@
 #include /* implements */ <ui/plugins/scalar_plugin.hpp>
 
 #include <functional>
+#include <future>
 #include <limits>
 
 #include <ui/window.hpp>
 #include <utility/line_edit_utility.hpp>
 #include <utility/qt_text_browser_sink.hpp>
 #include <visualization/scalar_field.hpp>
+#include <stack>
 
 namespace pli
 {
@@ -98,7 +100,7 @@ scalar_plugin::scalar_plugin(QWidget* parent) : plugin(parent)
   });
 }
 
-void scalar_plugin::start()
+void scalar_plugin::start ()
 {
   set_sink(std::make_shared<qt_text_browser_sink>(owner_->console));
 
@@ -113,12 +115,18 @@ void scalar_plugin::start()
   scalar_fields_["direction"    ] = owner_->viewer->add_renderable<scalar_field>();
   scalar_fields_["inclination"  ] = owner_->viewer->add_renderable<scalar_field>();
 }
-void scalar_plugin::update()
+void scalar_plugin::update() const
 {
   auto data_plugin = owner_->get_plugin<pli::data_plugin>();
   auto io          = data_plugin->io();
   if (io == nullptr)
     return;
+
+  auto transmittance = scalar_fields_.at("transmittance");
+  auto retardation   = scalar_fields_.at("retardation"  );
+  auto direction     = scalar_fields_.at("direction"    );
+  auto inclination   = scalar_fields_.at("inclination"  );
+
 
   auto load_transmittance = checkbox_transmittance->isChecked();
   auto load_retardation   = checkbox_retardation  ->isChecked();
@@ -136,7 +144,7 @@ void scalar_plugin::update()
 
   owner_->viewer->set_wait_spinner_enabled(true);
 
-  std::thread load_thread([&]()
+  std::future<void> result(std::async([&]()
   {
     try
     {
@@ -145,45 +153,46 @@ void scalar_plugin::update()
       {
         auto scalar_map = io->load_transmittance_dataset(offset, size, true);
         auto shape      = scalar_map.shape();
-        //scalar_fields_.at("transmittance")->set_data(
-        //  {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
-        //  scalar_map.data(),
-        //  {spacing[0], spacing[1], spacing[2]});
+        transmittance->set_data(
+          {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
+          scalar_map.data(),
+          {spacing[0], spacing[1], spacing[2]});
       }
       if (load_retardation)
       {
         auto scalar_map = io->load_retardation_dataset(offset, size, true);
         auto shape      = scalar_map.shape();
-        //scalar_fields_.at("retardation")->set_data(
-        //  {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
-        //  scalar_map.data(),
-        //  {spacing[0], spacing[1], spacing[2]});
+        retardation->set_data(
+          {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
+          scalar_map.data(),
+          {spacing[0], spacing[1], spacing[2]});
       }
       if (load_direction)
       {
         auto scalar_map = io->load_fiber_direction_dataset(offset, size, true);
         auto shape      = scalar_map.shape();
-        //scalar_fields_.at("direction")->set_data(
-        //  {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
-        //  scalar_map.data(),
-        //  {spacing[0], spacing[1], spacing[2]});
+        direction->set_data(
+          {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
+          scalar_map.data(),
+          {spacing[0], spacing[1], spacing[2]});
       }
       if (load_inclination)
       {
         auto scalar_map = io->load_fiber_inclination_dataset(offset, size, true);
         auto shape      = scalar_map.shape();
-        //scalar_fields_.at("inclination")->set_data(
-        //  {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
-        //  scalar_map.data(),
-        //  {spacing[0], spacing[1], spacing[2]});
+        inclination->set_data(
+          {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
+          scalar_map.data(),
+          {spacing[0], spacing[1], spacing[2]});
       }
     }
     catch (std::exception& exception)
     {
       logger_->error(std::string(exception.what()));
     }
-  });
-  load_thread.join();
+  }));
+  while(result.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
+    QApplication::processEvents();
 
   owner_->viewer->set_wait_spinner_enabled(false);
   owner_->viewer->update();
