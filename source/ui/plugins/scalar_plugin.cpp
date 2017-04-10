@@ -1,5 +1,6 @@
 #include /* implements */ <ui/plugins/scalar_plugin.hpp>
 
+#include <functional>
 #include <limits>
 
 #include <ui/window.hpp>
@@ -112,69 +113,79 @@ void scalar_plugin::start()
   scalar_fields_["direction"    ] = owner_->viewer->add_renderable<scalar_field>();
   scalar_fields_["inclination"  ] = owner_->viewer->add_renderable<scalar_field>();
 }
-void scalar_plugin::update() const
+void scalar_plugin::update()
 {
-  try
+  auto data_plugin = owner_->get_plugin<pli::data_plugin>();
+  auto io          = data_plugin->io();
+  if (io == nullptr)
+    return;
+
+  auto load_transmittance = checkbox_transmittance->isChecked();
+  auto load_retardation   = checkbox_retardation  ->isChecked();
+  auto load_direction     = checkbox_direction    ->isChecked();
+  auto load_inclination   = checkbox_inclination  ->isChecked();
+  
+  std::array<std::size_t, 3> offset = 
+  { line_edit_utility::get_text<std::size_t>(line_edit_offset_x), 
+    line_edit_utility::get_text<std::size_t>(line_edit_offset_y),
+    line_edit_utility::get_text<std::size_t>(line_edit_offset_z)};     
+  std::array<std::size_t, 3> size = 
+  { line_edit_utility::get_text<std::size_t>(line_edit_size_x),
+    line_edit_utility::get_text<std::size_t>(line_edit_size_y),
+    line_edit_utility::get_text<std::size_t>(line_edit_size_z)};
+
+  owner_->viewer->set_wait_spinner_enabled(true);
+
+  std::thread load_thread([&]()
   {
-    auto data_plugin = owner_->get_plugin<pli::data_plugin>();
-    auto io          = data_plugin->io();
-    if (io == nullptr)
-      return;
+    try
+    {
+      auto spacing = io->load_vector_spacing();
+      if (load_transmittance)
+      {
+        auto scalar_map = io->load_transmittance_dataset(offset, size, true);
+        auto shape      = scalar_map.shape();
+        //scalar_fields_.at("transmittance")->set_data(
+        //  {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
+        //  scalar_map.data(),
+        //  {spacing[0], spacing[1], spacing[2]});
+      }
+      if (load_retardation)
+      {
+        auto scalar_map = io->load_retardation_dataset(offset, size, true);
+        auto shape      = scalar_map.shape();
+        //scalar_fields_.at("retardation")->set_data(
+        //  {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
+        //  scalar_map.data(),
+        //  {spacing[0], spacing[1], spacing[2]});
+      }
+      if (load_direction)
+      {
+        auto scalar_map = io->load_fiber_direction_dataset(offset, size, true);
+        auto shape      = scalar_map.shape();
+        //scalar_fields_.at("direction")->set_data(
+        //  {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
+        //  scalar_map.data(),
+        //  {spacing[0], spacing[1], spacing[2]});
+      }
+      if (load_inclination)
+      {
+        auto scalar_map = io->load_fiber_inclination_dataset(offset, size, true);
+        auto shape      = scalar_map.shape();
+        //scalar_fields_.at("inclination")->set_data(
+        //  {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
+        //  scalar_map.data(),
+        //  {spacing[0], spacing[1], spacing[2]});
+      }
+    }
+    catch (std::exception& exception)
+    {
+      logger_->error(std::string(exception.what()));
+    }
+  });
+  load_thread.join();
 
-    auto spacing = io->load_vector_spacing();
-
-    std::array<std::size_t, 3> offset = 
-    { line_edit_utility::get_text<std::size_t>(line_edit_offset_x), 
-      line_edit_utility::get_text<std::size_t>(line_edit_offset_y),
-      line_edit_utility::get_text<std::size_t>(line_edit_offset_z)};
-      
-    std::array<std::size_t, 3> size = 
-    { line_edit_utility::get_text<std::size_t>(line_edit_size_x),
-      line_edit_utility::get_text<std::size_t>(line_edit_size_y),
-      line_edit_utility::get_text<std::size_t>(line_edit_size_z)};
-
-    if (checkbox_transmittance->isChecked())
-    {
-      auto scalar_map = io->load_transmittance_dataset(offset, size, true);
-      auto shape      = scalar_map.shape();
-      scalar_fields_.at("transmittance")->set_data(
-        {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
-        scalar_map.data(),
-        {spacing[0], spacing[1], spacing[2]});
-    }
-    if (checkbox_retardation->isChecked())
-    {
-      auto scalar_map = io->load_retardation_dataset(offset, size, true);
-      auto shape      = scalar_map.shape();
-      scalar_fields_.at("retardation")->set_data(
-        {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
-        scalar_map.data(),
-        {spacing[0], spacing[1], spacing[2]});
-    }
-    if (checkbox_direction->isChecked())
-    {
-      auto scalar_map = io->load_fiber_direction_dataset(offset, size, true);
-      auto shape      = scalar_map.shape();
-      scalar_fields_.at("direction")->set_data(
-        {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
-        scalar_map.data(),
-        {spacing[0], spacing[1], spacing[2]});
-    }
-    if (checkbox_inclination->isChecked())
-    {
-      auto scalar_map = io->load_fiber_inclination_dataset(offset, size, true);
-      auto shape      = scalar_map.shape();
-      scalar_fields_.at("inclination")->set_data(
-        {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
-        scalar_map.data(),
-        {spacing[0], spacing[1], spacing[2]});
-    }
-    
-    owner_->viewer->update();
-  }
-  catch (std::exception& exception)
-  {
-    logger_->error(std::string(exception.what()));
-  }
+  owner_->viewer->set_wait_spinner_enabled(false);
+  owner_->viewer->update();
 }
 }

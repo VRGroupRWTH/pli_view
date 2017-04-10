@@ -21,7 +21,7 @@ public:
   void start        () override;
 
 private:
-  void update       () const;
+  void update       ();
 
   std::map<std::string, scalar_field*> scalar_fields_;
 };

@@ -19,6 +19,7 @@ set(ProjectSources
   include/ui/plugins/scalar_plugin.hpp
   include/ui/plugins/tractography_plugin.hpp
   include/ui/viewer.hpp
+  include/ui/wait_spinner.hpp
   include/ui/window.hpp
   include/utility/line_edit_utility.hpp
   include/utility/qt_text_browser_sink.hpp
@@ -47,6 +48,7 @@ set(ProjectSources
   source/ui/plugins/scalar_plugin.cpp
   source/ui/plugins/tractography_plugin.cpp
   source/ui/viewer.cpp
+  source/ui/wait_spinner.cpp
   source/ui/window.cpp
   source/visualization/interactors/interactor.cpp
   source/visualization/odf_field.cpp

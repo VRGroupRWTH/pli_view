@@ -11,6 +11,7 @@
 #include <attributes/loggable.hpp>
 #include <attributes/renderable.hpp>
 #include <math/camera.hpp>
+#include <ui/wait_spinner.hpp>
 #include <visualization/interactors/interactor.hpp>
 
 namespace pli
@@ -35,11 +36,14 @@ public:
   void mousePressEvent(QMouseEvent* event) override;
   void mouseMoveEvent (QMouseEvent* event) override;
 
+  void set_wait_spinner_enabled(bool enabled) const;
+
 private:
   bool                                     initialized_ = false;
   std::vector<std::unique_ptr<renderable>> renderables_ ;
   pli::camera                              camera_      ;
   pli::interactor                          interactor_  ;
+  pli::wait_spinner*                       wait_spinner_;
 };
 
 template <typename type, typename ... args>
