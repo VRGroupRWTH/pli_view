@@ -16,13 +16,13 @@ interactor_plugin::interactor_plugin(QWidget* parent) : plugin(parent)
   connect(line_edit_move_speed, &QLineEdit::editingFinished, [&]
   {
     auto value = line_edit_utility::get_text<double>(line_edit_move_speed);
-    logger_->info("Move speed set to {}.", value);
+    logger_->info("Move speed is set to {}.", value);
     owner_->viewer->interactor()->set_move_speed(value);
   });
   connect(line_edit_look_speed, &QLineEdit::editingFinished, [&]
   {
     auto value = line_edit_utility::get_text<double>(line_edit_look_speed);
-    logger_->info("Look speed set to {}.", value);
+    logger_->info("Look speed is set to {}.", value);
     owner_->viewer->interactor()->set_look_speed(value);
   });
 }
@@ -33,5 +33,7 @@ void interactor_plugin::start()
 
   owner_->viewer->interactor()->set_move_speed(line_edit_utility::get_text<double>(line_edit_move_speed));
   owner_->viewer->interactor()->set_look_speed(line_edit_utility::get_text<double>(line_edit_look_speed));
+
+  logger_->info(std::string("Start successful."));
 }
 }

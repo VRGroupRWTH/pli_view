@@ -23,27 +23,27 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
   
   connect(line_edit_offset_x, &QLineEdit::editingFinished, [&]
   {
-    logger_->info("Extents X offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_x));
+    logger_->info("X offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_x));
   });
   connect(line_edit_offset_y, &QLineEdit::editingFinished, [&]
   {
-    logger_->info("Extents Y offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_y));
+    logger_->info("Y offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_y));
   });
   connect(line_edit_offset_z, &QLineEdit::editingFinished, [&]
   {
-    logger_->info("Extents Z offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_z));
+    logger_->info("Z offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_z));
   });
   connect(line_edit_size_x  , &QLineEdit::editingFinished, [&]
   {
-    logger_->info("Extents X size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_x));
+    logger_->info("X size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_x));
   });
   connect(line_edit_size_y  , &QLineEdit::editingFinished, [&]
   {
-    logger_->info("Extents Y size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_y));
+    logger_->info("Y size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_y));
   });
   connect(line_edit_size_z  , &QLineEdit::editingFinished, [&]
   {
-    logger_->info("Extents Z size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_z));
+    logger_->info("Z size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_z));
   });
   connect(button_trace      , &QPushButton::clicked      , [&]
   {
@@ -54,10 +54,12 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
 void tractography_plugin::start()
 {
   set_sink(std::make_shared<qt_text_browser_sink>(owner_->console));
+
+  logger_->info(std::string("Start successful."));
 }
 void tractography_plugin::trace()
 {
-  logger_->info(std::string("Starting trace."));
+  logger_->info(std::string("Tracing..."));
 
   try
   {
@@ -109,7 +111,7 @@ void tractography_plugin::trace()
          
     owner_->viewer->update();
 
-    logger_->info(std::string("Ending trace."));
+    logger_->info(std::string("Trace successful."));
   }
   catch (std::exception& exception)
   {
