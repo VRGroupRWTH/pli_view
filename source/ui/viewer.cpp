@@ -7,7 +7,7 @@
 
 namespace pli
 {
-viewer::viewer(QWidget* parent) : QOpenGLWidget(parent), interactor_(&camera_), wait_spinner_(new wait_spinner(this))
+viewer::viewer(QWidget* parent) : QOpenGLWidget(parent), interactor_(&camera_), wait_spinner_(new wait_spinner(this, true, false))
 {
   // Make adjustable.
   interactor_.set_move_speed(0.001);
