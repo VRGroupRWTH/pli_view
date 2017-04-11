@@ -170,6 +170,7 @@ void data_plugin::set_file(const std::string& filename)
       line_edit_utility::get_text(line_edit_retardation   ),
       line_edit_utility::get_text(line_edit_direction     ),
       line_edit_utility::get_text(line_edit_inclination   ),
+      ""                                                   ,
       line_edit_utility::get_text(line_edit_distribution  )
     ));
   else
@@ -182,6 +183,7 @@ void data_plugin::set_file(const std::string& filename)
       line_edit_utility::get_text(line_edit_retardation   ),
       line_edit_utility::get_text(line_edit_direction     ),
       line_edit_utility::get_text(line_edit_inclination   ),
+      ""                                                   ,
       line_edit_utility::get_text(line_edit_distribution  )
     ));
 
