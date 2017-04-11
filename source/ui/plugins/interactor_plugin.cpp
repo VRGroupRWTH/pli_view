@@ -31,6 +31,12 @@ interactor_plugin::interactor_plugin(QWidget* parent) : plugin(parent)
     logger_->info("Using {} projection.", state ? "orthographic" : "perspective");
     owner_->viewer->camera()->set_orthographic(state);
   });
+  connect(button_reset        , &QPushButton::clicked      , [&]
+  {
+    logger_->info(std::string("Resetting camera transform."));
+    owner_->viewer->camera()->set_translation({0, 0, 1});
+    owner_->viewer->camera()->look_at        ({0, 0, 0});
+  });
 }
 
 void interactor_plugin::start()
