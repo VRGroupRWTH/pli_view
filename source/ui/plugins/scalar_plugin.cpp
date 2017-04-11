@@ -8,7 +8,6 @@
 #include <utility/line_edit_utility.hpp>
 #include <utility/qt_text_browser_sink.hpp>
 #include <visualization/scalar_field.hpp>
-#include <stack>
 
 namespace pli
 {
@@ -72,28 +71,28 @@ scalar_plugin::scalar_plugin(QWidget* parent) : plugin(parent)
 
   connect(checkbox_transmittance, &QCheckBox::stateChanged, [&] (int state)
   {
-    logger_->info(std::string("Show set to ") + (state ? "true" : "false"));
+    logger_->info(std::string("Show transmittance set to ") + (state ? "true" : "false"));
     scalar_fields_["transmittance"]->set_active(state);
     if (checkbox_auto_update->isChecked())
       update();
   });
   connect(checkbox_retardation  , &QCheckBox::stateChanged, [&] (int state)
   {
-    logger_->info(std::string("Show set to ") + (state ? "true" : "false"));
+    logger_->info(std::string("Show retardation set to ") + (state ? "true" : "false"));
     scalar_fields_["retardation"]->set_active(state);
     if (checkbox_auto_update->isChecked())
       update();
   });
   connect(checkbox_direction    , &QCheckBox::stateChanged, [&] (int state)
   {
-    logger_->info(std::string("Show set to ") + (state ? "true" : "false"));
+    logger_->info(std::string("Show direction set to ") + (state ? "true" : "false"));
     scalar_fields_["direction"]->set_active(state);
     if (checkbox_auto_update->isChecked())
       update();
   });
   connect(checkbox_inclination  , &QCheckBox::stateChanged, [&] (int state)
   {
-    logger_->info(std::string("Show set to ") + (state ? "true" : "false"));
+    logger_->info(std::string("Show inclination set to ") + (state ? "true" : "false"));
     scalar_fields_["inclination"]->set_active(state);
     if (checkbox_auto_update->isChecked())
       update();
@@ -122,12 +121,6 @@ void scalar_plugin::update() const
   if (io == nullptr)
     return;
 
-  auto transmittance = scalar_fields_.at("transmittance");
-  auto retardation   = scalar_fields_.at("retardation"  );
-  auto direction     = scalar_fields_.at("direction"    );
-  auto inclination   = scalar_fields_.at("inclination"  );
-
-
   auto load_transmittance = checkbox_transmittance->isChecked();
   auto load_retardation   = checkbox_retardation  ->isChecked();
   auto load_direction     = checkbox_direction    ->isChecked();
@@ -144,47 +137,24 @@ void scalar_plugin::update() const
 
   owner_->viewer->set_wait_spinner_enabled(true);
 
-  std::future<void> result(std::async([&]()
+  std::array<float, 3>         spacing;
+  boost::multi_array<float, 3> transmittance(boost::extents[size[0]][size[1]][size[2]]);
+  boost::multi_array<float, 3> retardation  (boost::extents[size[0]][size[1]][size[2]]);
+  boost::multi_array<float, 3> direction    (boost::extents[size[0]][size[1]][size[2]]);
+  boost::multi_array<float, 3> inclination  (boost::extents[size[0]][size[1]][size[2]]);
+  std::future<void> result(std::async(std::launch::async, [&]()
   {
     try
     {
-      auto spacing = io->load_vector_spacing();
+      spacing = io->load_vector_spacing();
       if (load_transmittance)
-      {
-        auto scalar_map = io->load_transmittance_dataset(offset, size, true);
-        auto shape      = scalar_map.shape();
-        transmittance->set_data(
-          {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
-          scalar_map.data(),
-          {spacing[0], spacing[1], spacing[2]});
-      }
+        transmittance = io->load_transmittance_dataset    (offset, size, true);
       if (load_retardation)
-      {
-        auto scalar_map = io->load_retardation_dataset(offset, size, true);
-        auto shape      = scalar_map.shape();
-        retardation->set_data(
-          {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
-          scalar_map.data(),
-          {spacing[0], spacing[1], spacing[2]});
-      }
+        retardation   = io->load_retardation_dataset      (offset, size, true);
       if (load_direction)
-      {
-        auto scalar_map = io->load_fiber_direction_dataset(offset, size, true);
-        auto shape      = scalar_map.shape();
-        direction->set_data(
-          {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
-          scalar_map.data(),
-          {spacing[0], spacing[1], spacing[2]});
-      }
+        direction     = io->load_fiber_direction_dataset  (offset, size, true);
       if (load_inclination)
-      {
-        auto scalar_map = io->load_fiber_inclination_dataset(offset, size, true);
-        auto shape      = scalar_map.shape();
-        inclination->set_data(
-          {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
-          scalar_map.data(),
-          {spacing[0], spacing[1], spacing[2]});
-      }
+        inclination   = io->load_fiber_inclination_dataset(offset, size, true);
     }
     catch (std::exception& exception)
     {
@@ -193,6 +163,13 @@ void scalar_plugin::update() const
   }));
   while(result.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
     QApplication::processEvents();
+
+  uint3  cuda_size    {unsigned(size[0]), unsigned(size[1]), unsigned(size[2])};
+  float3 cuda_spacing {spacing[0], spacing[1], spacing[2]};
+  scalar_fields_.at("transmittance")->set_data(cuda_size, transmittance.data(), cuda_spacing);
+  scalar_fields_.at("retardation"  )->set_data(cuda_size, retardation  .data(), cuda_spacing);
+  scalar_fields_.at("direction"    )->set_data(cuda_size, direction    .data(), cuda_spacing);
+  scalar_fields_.at("inclination"  )->set_data(cuda_size, inclination  .data(), cuda_spacing);
 
   owner_->viewer->set_wait_spinner_enabled(false);
   owner_->viewer->update();

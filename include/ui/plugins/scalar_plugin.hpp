@@ -18,10 +18,10 @@ class scalar_plugin :
 {
 public:
   scalar_plugin(QWidget* parent = nullptr);
-  void start        () override;
+  void start () override;
 
 private:
-  void update       ();
+  void update() const;
 
   std::map<std::string, scalar_field*> scalar_fields_;
 };
