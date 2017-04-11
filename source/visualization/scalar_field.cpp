@@ -1,5 +1,7 @@
 #include /* implements */ <visualization/scalar_field.hpp>
 
+#include <vector_ops.h>
+
 #include <math/camera.hpp>
 #include <shaders/scalar_field.vert.glsl>
 #include <shaders/scalar_field.frag.glsl>
@@ -70,6 +72,10 @@ void scalar_field::set_data(
   float3 size         = {spacing.x * dimensions.x, spacing.y * dimensions.y, spacing.z * dimensions.z};
   float3 vertices [6] = {{0,0,0}, {size.x,0,0}, {size.x,-size.y,0}, {0,0,0}, {size.x,-size.y,0}, {0,-size.y,0}};
   float2 texcoords[6] = {{0,0}, {0,1}, {1,1}, {0,0}, {1,1}, {1,0}};
+
+  // Adjust vertices to offset for the center of the voxels.
+  for(auto i = 0; i < 6; i++)
+    vertices[i] = vertices[i] + float3{-spacing.x / 2, spacing.y / 2, 0};
 
   vertex_buffer_  ->bind    ();
   vertex_buffer_  ->set_data(draw_count_ * sizeof(float3), vertices);
