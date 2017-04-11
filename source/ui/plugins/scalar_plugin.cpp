@@ -24,81 +24,82 @@ scalar_plugin::scalar_plugin(QWidget* parent) : plugin(parent)
   line_edit_size_y  ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
   line_edit_size_z  ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
   
-  connect(checkbox_auto_update, &QCheckBox::stateChanged   , [&](int state)
-  {
-    logger_->info("Auto update is {}.", state ? "enabled" : "disabled");
-    button_update->setEnabled(!state);
-    if (state)
-      update();
-  });
-  connect(button_update       , &QPushButton::clicked      , [&]
-  {
-    update();
-  });
-  connect(line_edit_offset_x  , &QLineEdit::editingFinished, [&]
+  connect(line_edit_offset_x    , &QLineEdit::editingFinished, [&]
   {
     logger_->info("X offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_x));
     if (checkbox_auto_update->isChecked())
       update();
   });
-  connect(line_edit_offset_y  , &QLineEdit::editingFinished, [&]
+  connect(line_edit_offset_y    , &QLineEdit::editingFinished, [&]
   {
     logger_->info("Y offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_y));
     if (checkbox_auto_update->isChecked())
       update();
   });
-  connect(line_edit_offset_z  , &QLineEdit::editingFinished, [&]
+  connect(line_edit_offset_z    , &QLineEdit::editingFinished, [&]
   {
     logger_->info("Z offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_z));
     if (checkbox_auto_update->isChecked())
       update();
   });
-  connect(line_edit_size_x    , &QLineEdit::editingFinished, [&]
+  connect(line_edit_size_x      , &QLineEdit::editingFinished, [&]
   {
     logger_->info("X size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_x));
     if (checkbox_auto_update->isChecked())
       update();
   });
-  connect(line_edit_size_y    , &QLineEdit::editingFinished, [&]
+  connect(line_edit_size_y      , &QLineEdit::editingFinished, [&]
   {
     logger_->info("Y size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_y));
     if (checkbox_auto_update->isChecked())
       update();
   });
-  connect(line_edit_size_z    , &QLineEdit::editingFinished, [&]
+  connect(line_edit_size_z      , &QLineEdit::editingFinished, [&]
   {
     logger_->info("Z size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_z));
     if (checkbox_auto_update->isChecked())
       update();
   });
 
-  connect(checkbox_transmittance, &QCheckBox::stateChanged, [&] (int state)
+  connect(checkbox_transmittance, &QCheckBox::stateChanged   , [&] (int state)
   {
     logger_->info("Transmittance maps are {}.", state ? "enabled" : "disabled");
     scalar_fields_["transmittance"]->set_active(state);
     if (checkbox_auto_update->isChecked())
       update();
   });
-  connect(checkbox_retardation  , &QCheckBox::stateChanged, [&] (int state)
+  connect(checkbox_retardation  , &QCheckBox::stateChanged   , [&] (int state)
   {
     logger_->info("Retardation maps are {}.", state ? "enabled" : "disabled");
     scalar_fields_["retardation"]->set_active(state);
     if (checkbox_auto_update->isChecked())
       update();
   });
-  connect(checkbox_direction    , &QCheckBox::stateChanged, [&] (int state)
+  connect(checkbox_direction    , &QCheckBox::stateChanged   , [&] (int state)
   {
     logger_->info("Direction maps are {}.", state ? "enabled" : "disabled");
     scalar_fields_["direction"]->set_active(state);
     if (checkbox_auto_update->isChecked())
       update();
   });
-  connect(checkbox_inclination  , &QCheckBox::stateChanged, [&] (int state)
+  connect(checkbox_inclination  , &QCheckBox::stateChanged   , [&] (int state)
   {
     logger_->info("Inclination maps are {}.", state ? "enabled" : "disabled");
     scalar_fields_["inclination"]->set_active(state);
     if (checkbox_auto_update->isChecked())
       update();
+  });
+                                                             
+  connect(checkbox_auto_update  , &QCheckBox::stateChanged   , [&] (int state)
+  {
+    logger_->info("Auto update is {}.", state ? "enabled" : "disabled");
+    button_update->setEnabled(!state);
+    if (state)
+      update();
+  });
+  connect(button_update         , &QPushButton::clicked      , [&]
+  {
+    update();
   });
 }
 

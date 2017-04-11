@@ -25,17 +25,12 @@ fom_plugin::fom_plugin(QWidget* parent) : plugin(parent)
   line_edit_size_z  ->setValidator(new QIntValidator   (0, std::numeric_limits<int>   ::max(),     this));
   line_edit_scale   ->setValidator(new QDoubleValidator(0, std::numeric_limits<double>::max(), 10, this));
   
-  connect(checkbox_auto_update, &QCheckBox::stateChanged   , [&] (int state)
+  connect(checkbox_enabled    , &QCheckBox::stateChanged   , [&] (int state)
   {
-    logger_->info("Auto update is {}.", state ? "enabled" : "disabled");
-    button_update->setEnabled(!state);
-    if (state)
-      update();
+    logger_->info(std::string(state ? "Enabled." : "Disabled."));
+    vector_field_->set_active(state);
   });
-  connect(button_update       , &QPushButton::clicked      , [&]
-  {
-    update();
-  });
+
   connect(line_edit_offset_x  , &QLineEdit::editingFinished, [&]
   {
     logger_->info("X offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_x));
@@ -72,16 +67,23 @@ fom_plugin::fom_plugin(QWidget* parent) : plugin(parent)
     if (checkbox_auto_update->isChecked())
       update();
   });
-  connect(checkbox_show       , &QCheckBox::stateChanged   , [&] (int state)
-  {
-    logger_->info(std::string(state ? "Enabled." : "Disabled."));
-    vector_field_->set_active(state);
-  });
   connect(line_edit_scale     , &QLineEdit::editingFinished, [&]
   {
     logger_->info("Scale is set to {}.", line_edit_scale->text().toStdString());
     if (checkbox_auto_update->isChecked())
       update();
+  });
+  
+  connect(checkbox_auto_update, &QCheckBox::stateChanged   , [&] (int state)
+  {
+    logger_->info("Auto update is {}.", state ? "enabled" : "disabled");
+    button_update->setEnabled(!state);
+    if (state)
+      update();
+  });
+  connect(button_update       , &QPushButton::clicked      , [&]
+  {
+    update();
   });
 }
 
@@ -130,7 +132,7 @@ void fom_plugin::update() const
   {
     try
     {
-      if(checkbox_show)
+      if(checkbox_enabled)
       {
         spacing = io->load_vector_spacing();
         direction  .reset(io->load_fiber_direction_dataset  (offset, size));

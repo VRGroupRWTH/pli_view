@@ -17,39 +17,20 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
 {
   setupUi(this);
          
-  line_edit_offset_x        ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_offset_y        ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_offset_z        ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_size_x          ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_size_y          ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_size_z          ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_offset_x ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_offset_y ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_offset_z ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_size_x   ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_size_y   ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_size_z   ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
   
-  line_edit_samples_x       ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_samples_y       ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-
-  line_edit_fom_offset_x    ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_fom_offset_y    ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_fom_offset_z    ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_fom_size_x      ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_fom_size_y      ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_fom_size_z      ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_block_size_x    ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_block_size_y    ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_block_size_z    ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_histogram_bins_x->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_histogram_bins_y->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_max_order       ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  
-  connect(checkbox_auto_update       , &QCheckBox::stateChanged   , [&](int state)
+  line_edit_samples_x->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_samples_y->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+                                
+  connect(checkbox_enabled           , &QCheckBox::stateChanged   , [&](int state)
   {
-    logger_->info("Auto update is {}.", state ? "enabled" : "disabled");
-    button_update->setEnabled(!state);
-    if (state)
-      update();
-  });
-  connect(button_update              , &QPushButton::clicked      , [&]
-  {
-    update();
+    logger_->info(std::string(state ? "Enabled." : "Disabled."));
+    odf_field_->set_active(state);
   });
 
   connect(line_edit_offset_x         , &QLineEdit::editingFinished, [&] 
@@ -88,12 +69,7 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
     if (checkbox_auto_update->isChecked())
       update();
   });
-                                     
-  connect(checkbox_show              , &QCheckBox::stateChanged   , [&](int state)
-  {
-    logger_->info(std::string(state ? "Enabled." : "Disabled."));
-    odf_field_->set_active(state);
-  });
+       
   connect(line_edit_samples_x        , &QLineEdit::editingFinished, [&]
   {
     logger_->info("Longitude partitions are set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_samples_x));
@@ -170,59 +146,19 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
     if (checkbox_auto_update->isChecked())
       update();
   });
+  
+  connect(checkbox_auto_update       , &QCheckBox::stateChanged   , [&](int state)
+  {
+    logger_->info("Auto update is {}.", state ? "enabled" : "disabled");
+    button_update->setEnabled(!state);
+    if (state)
+      update();
+  });
+  connect(button_update              , &QPushButton::clicked      , [&]
+  {
+    update();
+  });
 
-  connect(line_edit_fom_offset_x     , &QLineEdit::editingFinished, [&] 
-  {
-    logger_->info("FOM X offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_fom_offset_x));
-  });
-  connect(line_edit_fom_offset_y     , &QLineEdit::editingFinished, [&]
-  {
-    logger_->info("FOM Y offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_fom_offset_y));
-  });
-  connect(line_edit_fom_offset_z     , &QLineEdit::editingFinished, [&]
-  {
-    logger_->info("FOM Z offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_fom_offset_z));
-  });
-  connect(line_edit_fom_size_x       , &QLineEdit::editingFinished, [&] 
-  {
-    logger_->info("FOM X size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_fom_size_x));
-  });
-  connect(line_edit_fom_size_y       , &QLineEdit::editingFinished, [&]
-  {
-    logger_->info("FOM Y size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_fom_size_y));
-  });
-  connect(line_edit_fom_size_z       , &QLineEdit::editingFinished, [&]
-  {
-    logger_->info("FOM Z size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_fom_size_z));
-  });
-  connect(line_edit_block_size_x     , &QLineEdit::editingFinished, [&] 
-  {
-    logger_->info("Block size X is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_block_size_x));
-  });
-  connect(line_edit_block_size_y     , &QLineEdit::editingFinished, [&]
-  {
-    logger_->info("Block size Y is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_block_size_y));
-  });
-  connect(line_edit_block_size_z     , &QLineEdit::editingFinished, [&]
-  {
-    logger_->info("Block size Z is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_block_size_z));
-  });
-  connect(line_edit_histogram_bins_x , &QLineEdit::editingFinished, [&]
-  {
-    logger_->info("Histogram longitude partitions are set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_histogram_bins_x));
-  });
-  connect(line_edit_histogram_bins_y , &QLineEdit::editingFinished, [&]
-  {
-    logger_->info("Histogram latitude partitions are set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_histogram_bins_y));
-  });
-  connect(line_edit_max_order        , &QLineEdit::editingFinished, [&]
-  {
-    logger_->info("Maximum spherical harmonics degree is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_max_order));
-  });
-  connect(button_calculate           , &QPushButton::clicked      , [&]
-  {
-    calculate();
-  });
 }
 
 void fdm_plugin::start        ()
@@ -274,7 +210,7 @@ void fdm_plugin::update       () const
   {
     try
     {
-      if(checkbox_show)
+      if(checkbox_enabled)
       {
         spacing    = io->load_vector_spacing();
         block_size = io->load_block_size    ();
@@ -344,10 +280,5 @@ void fdm_plugin::select_depths() const
   owner_->viewer->update();
 
   logger_->info(std::string("Selection successful."));
-}
-
-void fdm_plugin::calculate    () const
-{
-  // TODO!
 }
 }

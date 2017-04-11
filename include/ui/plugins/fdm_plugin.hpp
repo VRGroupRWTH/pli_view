@@ -21,7 +21,6 @@ public:
 private:
   void update       () const;
   void select_depths() const;
-  void calculate    () const;
 
   odf_field* odf_field_;
 };
