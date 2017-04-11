@@ -26,6 +26,7 @@ set(ProjectSources
   include/utility/thread_pool.hpp
   include/visualization/interactors/first_person_interactor.hpp
   include/visualization/interactors/orbit_interactor.hpp
+  include/visualization/interactors/simple_interactor.hpp
   include/visualization/linear_tracer.hpp
   include/visualization/odf_field.hpp
   include/visualization/scalar_field.hpp
@@ -54,6 +55,7 @@ set(ProjectSources
   source/ui/window.cpp
   source/visualization/interactors/first_person_interactor.cpp
   source/visualization/interactors/orbit_interactor.cpp
+  source/visualization/interactors/simple_interactor.cpp
   source/visualization/odf_field.cpp
   source/visualization/scalar_field.cpp
   source/visualization/vector_field.cpp
