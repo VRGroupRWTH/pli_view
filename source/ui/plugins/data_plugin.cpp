@@ -1,7 +1,5 @@
 #include /* implements */ <ui/plugins/data_plugin.hpp>
 
-#include <limits>
-
 #include <QFileDialog>
 
 #include <ui/window.hpp>
@@ -16,104 +14,125 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
   
   connect(radio_button_sliced     , &QRadioButton::clicked     , [&]()
   {
+    logger_->info(std::string("Toggled sliced (Vervet1818 style) data type."));
     if (radio_button_sliced->isChecked())
       set_file(line_edit_file->text().toStdString());
   });
   connect(radio_button_volumetric , &QRadioButton::clicked     , [&]()
   {
+    logger_->info(std::string("Toggled volumetric (MSA0309 style) data type."));
     if (radio_button_volumetric->isChecked())
       set_file(line_edit_file->text().toStdString());
   });
 
   connect(button_browse_file      , &QPushButton::clicked      , [&]
   {
+    logger_->info(std::string("Opening file browser."));
     auto filename = QFileDialog::getOpenFileName(this, tr("Select PLI file."), "C:/", tr("HDF5 Files (*.h5)"));
-    logger_->info("Closing browse dialog. Selection: {}.", filename.toStdString());
+    logger_->info("Closing file browser. Selection is: {}.", filename.toStdString());
     set_file(filename.toStdString());
   });
 
   connect(line_edit_vector_spacing, &QLineEdit::editingFinished, [&]
   {
-    auto text = line_edit_utility::get_text(line_edit_vector_spacing);  
+    auto text = line_edit_utility::get_text(line_edit_vector_spacing);
+    logger_->info("Vector spacing attribute path is set to {}." + text);
     if (io_)
+    {
       io_->set_attribute_path_vector_spacing(text);
-    logger_->info("Vector spacing attribute path is set to " + text);
-    if (checkbox_autoload->isChecked())
-      on_change(io_.get());
+      if (checkbox_autoload->isChecked())
+        on_change(io_.get());
+    }
   });
   connect(line_edit_block_size    , &QLineEdit::editingFinished, [&]
   {
     auto text = line_edit_utility::get_text(line_edit_block_size);
+    logger_->info("Block size attribute path is set to {}." + text);
     if (io_)
+    {
       io_->set_attribute_path_block_size(text);
-    logger_->info("Block size attribute path is set to " + text);
-    if (checkbox_autoload->isChecked())
-      on_change(io_.get());
+      if (checkbox_autoload->isChecked())
+        on_change(io_.get());
+    }
   });
   connect(line_edit_mask          , &QLineEdit::editingFinished, [&]
   {
     auto text = line_edit_utility::get_text(line_edit_mask);
+    logger_->info("Mask dataset path is set to {}." + text);
     if (io_)
+    {
       io_->set_dataset_path_mask(text);
-    logger_->info("Mask dataset path is set to " + text);
-    if (checkbox_autoload->isChecked())
-      on_change(io_.get());
+      if (checkbox_autoload->isChecked())
+        on_change(io_.get());
+    }
   });
   connect(line_edit_transmittance , &QLineEdit::editingFinished, [&] 
   {
     auto text = line_edit_utility::get_text(line_edit_transmittance);
+    logger_->info("Transmittance dataset path is set to {}." + text);
     if (io_)
+    {
       io_->set_dataset_path_transmittance(text);
-    logger_->info("Transmittance dataset path is set to " + text);
-    if (checkbox_autoload->isChecked())
-      on_change(io_.get());
+      if (checkbox_autoload->isChecked())
+        on_change(io_.get());
+    }
   });
   connect(line_edit_retardation   , &QLineEdit::editingFinished, [&]
   {
     auto text = line_edit_utility::get_text(line_edit_retardation);
+    logger_->info("Retardation dataset path is set to {}." + text);
     if (io_)
+    {
       io_->set_dataset_path_retardation(text);
-    logger_->info("Retardation dataset path is set to " + text);
-    if (checkbox_autoload->isChecked())
-      on_change(io_.get());
+      if (checkbox_autoload->isChecked())
+        on_change(io_.get());
+    }
   });
   connect(line_edit_direction     , &QLineEdit::editingFinished, [&]
   {
     auto text = line_edit_utility::get_text(line_edit_direction);
+    logger_->info("Fiber direction dataset path is set to {}." + text);
     if (io_)
+    {
       io_->set_dataset_path_fiber_direction(text);
-    logger_->info("Fiber direction dataset path is set to " + text);
-    if (checkbox_autoload->isChecked())
-      on_change(io_.get());
+      if (checkbox_autoload->isChecked())
+        on_change(io_.get());
+    }
   });
   connect(line_edit_inclination   , &QLineEdit::editingFinished, [&]
   {
     auto text = line_edit_utility::get_text(line_edit_inclination);
+    logger_->info("Fiber inclination dataset path is set to {}." + text);
     if (io_)
+    {
       io_->set_dataset_path_fiber_inclination(text);
-    logger_->info("Fiber inclination dataset path is set to " + text);
-    if (checkbox_autoload->isChecked())
-      on_change(io_.get());
+      if (checkbox_autoload->isChecked())
+        on_change(io_.get());
+    }
   });
   connect(line_edit_distribution  , &QLineEdit::editingFinished, [&]
   {
     auto text = line_edit_utility::get_text(line_edit_distribution);
+    logger_->info("Fiber distribution dataset path is set to {}." + text);
     if (io_)
+    {
       io_->set_dataset_path_fiber_distribution(text);
-    logger_->info("Fiber distribution dataset path is set to " + text);
-    if (checkbox_autoload->isChecked())
-      on_change(io_.get());
+      if (checkbox_autoload->isChecked())
+        on_change(io_.get());
+    }
   });
 
   connect(checkbox_autoload       , &QCheckBox::stateChanged   , [&] (int state)
   {
+    logger_->info("Auto load is {}.", state ? "enabled" : "disabled");
     button_load->setEnabled(!state);
-    if (checkbox_autoload->isChecked())
+    if (io_ != nullptr && checkbox_autoload->isChecked())
       on_change(io_.get());
   });
   connect(button_load             , &QPushButton::clicked      , [&]
   {
-    on_change(io_.get());
+    if (io_ != nullptr)
+      on_change(io_.get());
   });
 }
 
@@ -125,18 +144,19 @@ hdf5_io_base* data_plugin::io() const
 void data_plugin::start()
 {
   set_sink(std::make_shared<qt_text_browser_sink>(owner_->console));
+
+  logger_->info(std::string("Start successful."));
 }
 
 void data_plugin::set_file(const std::string& filename)
 {
+  io_.reset(nullptr);
+
   line_edit_file->setText(filename.c_str());
 
   if (filename.empty())
   {
-    logger_->info(std::string("Failed to open file. Not specified."));
-    io_.reset(nullptr);
-    if (checkbox_autoload->isChecked())
-      on_change(nullptr);
+    logger_->info(std::string("Failed to open file: No filepath."));
     return;
   }
 
@@ -165,7 +185,7 @@ void data_plugin::set_file(const std::string& filename)
       line_edit_utility::get_text(line_edit_distribution  )
     ));
 
-  logger_->info("Opened file: " + filename);
+  logger_->info("Successfully opened file: {}.", filename);
 
   if (checkbox_autoload->isChecked())
     on_change(io_.get());
