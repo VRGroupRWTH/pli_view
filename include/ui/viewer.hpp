@@ -1,12 +1,12 @@
 #ifndef PLI_VIS_VIEWER_HPP_
 #define PLI_VIS_VIEWER_HPP_
 
-#include <map>
 #include <memory>
 #include <vector>
 
-#include <opengl.hpp>
 #include <QOpenGLWidget.h>
+
+#include <opengl.hpp>
 
 #include <attributes/loggable.hpp>
 #include <attributes/renderable.hpp>
