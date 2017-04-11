@@ -79,7 +79,7 @@ fom_plugin::fom_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_scale     , &QLineEdit::editingFinished, [&]
   {
-    logger_->info("Scale set to {}.", line_edit_scale->text().toStdString());
+    logger_->info("Scale is set to {}.", line_edit_scale->text().toStdString());
     if (checkbox_auto_update->isChecked())
       update();
   });
