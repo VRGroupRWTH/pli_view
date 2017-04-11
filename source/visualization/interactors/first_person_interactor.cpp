@@ -1,4 +1,4 @@
-#include /* implements */ <visualization/interactors/interactor.hpp>
+#include /* implements */ <visualization/interactors/first_person_interactor.hpp>
 
 #include <QKeyEvent>
 
@@ -6,12 +6,12 @@
 
 namespace pli
 {
-interactor::interactor(transform* transform) : transform_(transform)
+first_person_interactor::first_person_interactor(transform* transform) : transform_(transform)
 {
 
 }
 
-void interactor::update_transform()
+void first_person_interactor::update_transform()
 {
   if (key_map_[Qt::Key_W])
     transform_->translate(- transform_->forward() * (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
@@ -27,7 +27,7 @@ void interactor::update_transform()
     transform_->translate(  transform_->up     () * (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
 }
 
-void interactor::key_press_handler  (QKeyEvent*   event)
+void first_person_interactor::key_press_handler  (QKeyEvent*   event)
 {
   switch (event->key())
   {
@@ -56,7 +56,7 @@ void interactor::key_press_handler  (QKeyEvent*   event)
     break;
   }
 }
-void interactor::key_release_handler(QKeyEvent*   event)
+void first_person_interactor::key_release_handler(QKeyEvent*   event)
 {
   switch (event->key())
   {
@@ -85,11 +85,11 @@ void interactor::key_release_handler(QKeyEvent*   event)
     break;
   }
 }
-void interactor::mouse_press_handler(QMouseEvent* event)
+void first_person_interactor::mouse_press_handler(QMouseEvent* event)
 {
   last_mouse_position_ = event->pos();
 }
-void interactor::mouse_move_handler (QMouseEvent* event)
+void first_person_interactor::mouse_move_handler (QMouseEvent* event)
 {
   auto dx = event->x() - last_mouse_position_.x();
   auto dy = event->y() - last_mouse_position_.y();

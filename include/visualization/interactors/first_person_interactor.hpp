@@ -1,5 +1,5 @@
-#ifndef PLI_VIS_INTERACTOR_HPP_
-#define PLI_VIS_INTERACTOR_HPP_
+#ifndef PLI_VIS_FIRST_PERSON_INTERACTOR_HPP_
+#define PLI_VIS_FIRST_PERSON_INTERACTOR_HPP_
 
 #include <map>
 
@@ -12,10 +12,10 @@ namespace pli
 {
 class transform;
 
-class interactor
+class first_person_interactor
 {
 public:
-  interactor(transform* transform);
+  first_person_interactor(transform* transform);
 
   void update_transform();
 
