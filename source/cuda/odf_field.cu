@@ -1,7 +1,7 @@
 #include /* implements */ <cuda/odf_field.h>
 
 #include <chrono>
-#include <iostream>
+#include <string>
 
 #include <thrust/device_vector.h>
 #include <thrust/extrema.h>
@@ -25,7 +25,8 @@ void create_odfs(
         float4*   colors           ,
         unsigned* indices          ,
         bool      clustering       ,
-        float     cluster_threshold)
+        float     cluster_threshold,
+        std::function<void(const std::string&)> status_callback)
 {
   auto total_start = std::chrono::system_clock::now();
   
@@ -42,7 +43,7 @@ void create_odfs(
   auto tessellation_count = tessellations.x * tessellations.y;
   auto point_count        = voxel_count * tessellation_count;
 
-  std::cout << "Allocating and copying the leaf spherical harmonics coefficients." << std::endl;
+  status_callback("Allocating and copying the leaf spherical harmonics coefficients.");
   thrust::device_vector<float> coefficient_vectors(voxel_count * coefficient_count);
   copy_n(coefficients, base_voxel_count * coefficient_count, coefficient_vectors.begin());
   auto coefficients_ptr = raw_pointer_cast(&coefficient_vectors[0]);
@@ -53,7 +54,7 @@ void create_odfs(
   {
     if (layer != max_layer)
     {
-      std::cout << "Calculating the layer " << layer << " coefficients." << std::endl;
+      status_callback("Calculating the layer " + std::to_string(int(layer)) + " coefficients.");
       create_layer<<<grid_size_3d(layer_dimensions), block_size_3d()>>>(
         layer_dimensions    ,
         layer_offset        ,
@@ -77,7 +78,7 @@ void create_odfs(
   layer_dimensions = dimensions;
   for (auto layer = max_layer; layer >= 0; layer--)
   {
-    std::cout << "Sampling sums of the coefficients." << std::endl;
+    status_callback("Sampling sums of the layer " + std::to_string(int(layer)) + " coefficients.");
     cush::sample_sums<<<grid_size_3d(layer_dimensions), block_size_3d()>>>(
       layer_dimensions ,
       coefficient_count,
@@ -96,7 +97,7 @@ void create_odfs(
     };
   }
 
-  std::cout << "Converting the points to Cartesian coordinates." << std::endl;
+  status_callback("Converting the points to Cartesian coordinates.");
   thrust::transform(
     thrust::device,
     points,
@@ -107,8 +108,8 @@ void create_odfs(
       return cush::to_cartesian_coords(point);
     });
   cudaDeviceSynchronize();
-  
-  std::cout << "Assigning colors." << std::endl;
+
+  status_callback("Assigning colors.");
   thrust::transform(
     thrust::device,
     points,
@@ -121,7 +122,7 @@ void create_odfs(
     });
   cudaDeviceSynchronize();
 
-  std::cout << "Translating and scaling the points." << std::endl;
+  status_callback("Translating and scaling the points.");
   layer_offset     = 0;
   layer_dimensions = dimensions;
   for (auto layer = max_layer; layer >= 0; layer--)
@@ -173,7 +174,7 @@ void create_odfs(
     };
   }
 
-  std::cout << "Inverting Y coordinates." << std::endl;
+  status_callback("Inverting Y coordinates.");
   thrust::transform(
     thrust::device,
     points,
@@ -188,6 +189,6 @@ void create_odfs(
 
   auto total_end = std::chrono::system_clock::now();
   std::chrono::duration<double> total_elapsed_seconds = total_end - total_start;
-  std::cout << "Total elapsed time: " << total_elapsed_seconds.count() << "s." << std::endl;
+  status_callback("Cuda operations took " + std::to_string(total_elapsed_seconds.count()) + " seconds.");
 }
 }

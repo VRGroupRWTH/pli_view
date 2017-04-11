@@ -1,7 +1,9 @@
 #ifndef PLI_VIS_VECTOR_FIELD_HPP_
 #define PLI_VIS_VECTOR_FIELD_HPP_
 
+#include <functional>
 #include <memory>
+#include <string>
 
 #include <all.hpp>
 #include <vector_types.h>
@@ -21,7 +23,8 @@ public:
     const float*  directions  ,
     const float*  inclinations,
     const float3& spacing     ,
-    float         scale       = 1.0);
+    float         scale       = 1.0,
+    std::function<void(const std::string&)> status_callback = [](const std::string&){});
 
 private:
   std::unique_ptr<gl::program>      shader_program_;

@@ -36,7 +36,7 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
   connect(line_edit_vector_spacing, &QLineEdit::editingFinished, [&]
   {
     auto text = line_edit_utility::get_text(line_edit_vector_spacing);
-    logger_->info("Vector spacing attribute path is set to {}." + text);
+    logger_->info("Vector spacing attribute path is set to {}.", text);
     if (io_)
     {
       io_->set_attribute_path_vector_spacing(text);
@@ -47,7 +47,7 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
   connect(line_edit_block_size    , &QLineEdit::editingFinished, [&]
   {
     auto text = line_edit_utility::get_text(line_edit_block_size);
-    logger_->info("Block size attribute path is set to {}." + text);
+    logger_->info("Block size attribute path is set to {}.", text);
     if (io_)
     {
       io_->set_attribute_path_block_size(text);
@@ -58,7 +58,7 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
   connect(line_edit_mask          , &QLineEdit::editingFinished, [&]
   {
     auto text = line_edit_utility::get_text(line_edit_mask);
-    logger_->info("Mask dataset path is set to {}." + text);
+    logger_->info("Mask dataset path is set to {}.", text);
     if (io_)
     {
       io_->set_dataset_path_mask(text);
@@ -69,7 +69,7 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
   connect(line_edit_transmittance , &QLineEdit::editingFinished, [&] 
   {
     auto text = line_edit_utility::get_text(line_edit_transmittance);
-    logger_->info("Transmittance dataset path is set to {}." + text);
+    logger_->info("Transmittance dataset path is set to {}.", text);
     if (io_)
     {
       io_->set_dataset_path_transmittance(text);
@@ -80,7 +80,7 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
   connect(line_edit_retardation   , &QLineEdit::editingFinished, [&]
   {
     auto text = line_edit_utility::get_text(line_edit_retardation);
-    logger_->info("Retardation dataset path is set to {}." + text);
+    logger_->info("Retardation dataset path is set to {}.", text);
     if (io_)
     {
       io_->set_dataset_path_retardation(text);
@@ -91,7 +91,7 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
   connect(line_edit_direction     , &QLineEdit::editingFinished, [&]
   {
     auto text = line_edit_utility::get_text(line_edit_direction);
-    logger_->info("Fiber direction dataset path is set to {}." + text);
+    logger_->info("Fiber direction dataset path is set to {}.", text);
     if (io_)
     {
       io_->set_dataset_path_fiber_direction(text);
@@ -102,7 +102,7 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
   connect(line_edit_inclination   , &QLineEdit::editingFinished, [&]
   {
     auto text = line_edit_utility::get_text(line_edit_inclination);
-    logger_->info("Fiber inclination dataset path is set to {}." + text);
+    logger_->info("Fiber inclination dataset path is set to {}.", text);
     if (io_)
     {
       io_->set_dataset_path_fiber_inclination(text);
@@ -113,7 +113,7 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
   connect(line_edit_distribution  , &QLineEdit::editingFinished, [&]
   {
     auto text = line_edit_utility::get_text(line_edit_distribution);
-    logger_->info("Fiber distribution dataset path is set to {}." + text);
+    logger_->info("Fiber distribution dataset path is set to {}.", text);
     if (io_)
     {
       io_->set_dataset_path_fiber_distribution(text);

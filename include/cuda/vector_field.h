@@ -3,7 +3,9 @@
 
 #define _USE_MATH_DEFINES
 
+#include <functional>
 #include <math.h>
+#include <string>
 
 #include <device_launch_parameters.h>
 #include <vector_types.h>
@@ -20,8 +22,9 @@ void create_vector_field(
   const float3& spacing     ,
   const float&  scale       ,
         float3* points      ,
-        float4* colors      );
-  
+        float4* colors      ,
+  std::function<void(const std::string&)> status_callback = [](const std::string&){});
+
 template<typename scalar_type, typename vector_type, typename color_type>
 __global__ void create_vector_field_internal(
   const uint3        dimensions  ,

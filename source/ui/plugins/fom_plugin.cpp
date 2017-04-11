@@ -149,7 +149,10 @@ void fom_plugin::update() const
   uint3  cuda_size    {unsigned(size[0]), unsigned(size[1]), unsigned(size[2])};
   float3 cuda_spacing {spacing[0], spacing[1], spacing[2]};
   if (direction.is_initialized() && direction.get().num_elements() > 0)
-    vector_field_->set_data(cuda_size, direction.get().data(), inclination.get().data(), cuda_spacing, scale);
+    vector_field_->set_data(cuda_size, direction.get().data(), inclination.get().data(), cuda_spacing, scale, [&](const std::string& message)
+    {
+      logger_->info(message);
+    });
 
   owner_->viewer->set_wait_spinner_enabled(false);
   owner_->viewer->update();

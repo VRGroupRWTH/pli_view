@@ -1,3 +1,5 @@
+#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+
 #include <QApplication.h>
 
 #include <ui/window.hpp>

@@ -16,11 +16,12 @@ void create_vector_field(
   const float3& spacing     ,
   const float&  scale       ,
         float3* points      ,
-        float4* colors      )
+        float4* colors      ,
+  std::function<void(const std::string&)> status_callback)
 {
   auto total_start = std::chrono::system_clock::now();
 
-  std::cout << "Allocating and copying directions and inclinations." << std::endl;
+  status_callback("Allocating and copying directions and inclinations.");
   auto voxel_count = dimensions.x * dimensions.y * dimensions.z;
   thrust::device_vector<float> directions_vector  (voxel_count);
   thrust::device_vector<float> inclinations_vector(voxel_count);
@@ -30,7 +31,7 @@ void create_vector_field(
   auto inclinations_ptr = raw_pointer_cast(&inclinations_vector[0]);
   cudaDeviceSynchronize();
   
-  std::cout << "Creating vectors." << std::endl;
+  status_callback("Creating vectors.");
   create_vector_field_internal<<<grid_size_3d(dimensions), block_size_3d()>>>(
     dimensions      , 
     directions_ptr  , 
@@ -43,6 +44,6 @@ void create_vector_field(
 
   auto total_end = std::chrono::system_clock::now();
   std::chrono::duration<double> total_elapsed_seconds = total_end - total_start;
-  std::cout << "Total elapsed time: " << total_elapsed_seconds.count() << "s." << std::endl;
+  status_callback("Cuda operations took " + std::to_string(total_elapsed_seconds.count()) + " seconds.");
 }
 }

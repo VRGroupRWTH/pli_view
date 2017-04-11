@@ -93,7 +93,8 @@ void odf_field::set_data(
   const uint3&   vector_dimensions, 
   const float    scale            ,
   const bool     clustering       ,
-  const float    cluster_threshold)
+  const float    cluster_threshold,
+  std::function<void(const std::string&)> status_callback)
 {
   dimensions_    = dimensions;
   tessellations_ = tessellations;
@@ -143,7 +144,8 @@ void odf_field::set_data(
     cuda_color_buffer ,
     cuda_index_buffer ,
     clustering        ,
-    cluster_threshold );
+    cluster_threshold ,
+    status_callback   );
 
   index_buffer_ ->cuda_unmap();
   color_buffer_ ->cuda_unmap();

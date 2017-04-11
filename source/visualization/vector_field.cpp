@@ -52,7 +52,8 @@ void vector_field::set_data(
   const float*  directions  ,
   const float*  inclinations,
   const float3& spacing     ,
-  float         scale       )
+  float         scale       ,
+  std::function<void(const std::string&)> status_callback)
 {
   draw_count_ = 2 * dimensions.x * dimensions.y * dimensions.z;
 
@@ -75,7 +76,9 @@ void vector_field::set_data(
     spacing           ,
     scale             ,
     cuda_vertex_buffer,
-    cuda_color_buffer );
+    cuda_color_buffer ,
+    status_callback   );
+
   color_buffer_ ->cuda_unmap();
   vertex_buffer_->cuda_unmap();
 }

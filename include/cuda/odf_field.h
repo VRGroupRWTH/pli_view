@@ -1,6 +1,7 @@
 #ifndef PLI_VIS_SAMPLE_H_
 #define PLI_VIS_SAMPLE_H_
 
+#include <functional>
 #include <math.h>
 
 #include <device_launch_parameters.h>
@@ -23,7 +24,8 @@ void create_odfs(
         float4*   colors            ,
         unsigned* indices           ,
         bool      clustering        = false,
-        float     cluster_threshold = 0.0  );
+        float     cluster_threshold = 0.0  ,
+        std::function<void(const std::string&)> status_callback = [](const std::string&){});
   
 // Called on a layer_dimensions.x x layer_dimensions.y x layer_dimensions.z 3D grid.
 template<typename precision>

@@ -1,7 +1,9 @@
 #ifndef PLI_VIS_ODF_FIELD_HPP_
 #define PLI_VIS_ODF_FIELD_HPP_
 
+#include <functional>
 #include <memory>
+#include <string>
 
 #include <vector_types.h>
 
@@ -26,7 +28,8 @@ public:
     const uint3&   vector_dimensions ,
     const float    scale             = 1.0  ,
     const bool     clustering        = false,
-    const float    cluster_threshold = 0.0  );
+    const float    cluster_threshold = 0.0  ,
+    std::function<void(const std::string&)> status_callback = [](const std::string&){});
 
   void set_visible_layers(
     const std::vector<bool>& visible_layers);

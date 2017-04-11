@@ -312,7 +312,11 @@ void fdm_plugin::update       () const
       cuda_block_size, 
       1.0, 
       checkbox_clustering_enabled->isChecked(),
-      float(slider_clustering_threshold->value()) / 100.0F);
+      float(slider_clustering_threshold->value()) / 100.0F,
+      [&](const std::string& message)
+      {
+        logger_->info(message);
+      });
   }
 
   owner_->viewer->set_wait_spinner_enabled(false);
