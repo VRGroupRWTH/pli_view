@@ -4,9 +4,9 @@
 #include <memory>
 #include <vector>
 
-#include <QOpenGLWidget.h>
-
 #include <opengl.hpp>
+
+#include <QOpenGLWidget.h>
 
 #include <attributes/loggable.hpp>
 #include <attributes/renderable.hpp>
