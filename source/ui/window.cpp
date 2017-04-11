@@ -1,5 +1,7 @@
 #include /* implements */ <ui/window.hpp>
 
+#include <cuda_runtime_api.h>
+
 #include <ui/plugins/plugin.hpp>
 #include <utility/qt_text_browser_sink.hpp>
 
@@ -10,7 +12,7 @@ window:: window()
   setupUi      (this);
   showMaximized();
 
-  set_sink     (std::make_shared<qt_text_browser_sink>(console));
+  set_sink        (std::make_shared<qt_text_browser_sink>(console));
   bind_actions ();
 
   plugins_ = toolbox->findChildren<plugin*>(QRegExp("plugin")).toVector().toStdVector();
@@ -20,6 +22,10 @@ window:: window()
     plugin->awake();
   for (auto plugin : plugins_)
     plugin->start();
+
+  std::size_t free, total;
+  cudaMemGetInfo(&free, &total);
+  logger_->info("Available GPU memory: {} MB. Total GPU memory: {} MB.", free * 1E-6, total * 1E-6);
 }
 window::~window()
 {
