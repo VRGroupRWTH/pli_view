@@ -1,8 +1,6 @@
 #ifndef PLI_VIS_ORBIT_INTERACTOR_HPP_
 #define PLI_VIS_ORBIT_INTERACTOR_HPP_
 
-#include <map>
-
 #include <QPoint.h>
 
 class QKeyEvent;
@@ -43,10 +41,9 @@ public:
   }
 
 private:
-  transform*          transform_  ;
-  float               move_speed_ = 1.0;
-  float               look_speed_ = 1.0;
-  std::map<int, bool> key_map_    ;
+  transform* transform_  ;
+  float      move_speed_ = 1.0;
+  float      look_speed_ = 1.0;
 
   QPoint last_mouse_position_;
 };
