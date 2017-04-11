@@ -12,7 +12,7 @@
 #include <attributes/renderable.hpp>
 #include <math/camera.hpp>
 #include <ui/wait_spinner.hpp>
-#include <visualization/interactors/interactor.hpp>
+#include <visualization/interactors/orbit_interactor.hpp>
 
 namespace pli
 {
@@ -25,8 +25,8 @@ public:
   type* add_renderable   (args&&...   arguments );
   void  remove_renderable(renderable* renderable);
 
-  camera*     camera    () { return &camera_    ; }
-  interactor* interactor() { return &interactor_; }
+  camera*           camera    () { return &camera_    ; }
+  orbit_interactor* interactor() { return &interactor_; }
 
   void initializeGL   ()                   override;
   void paintGL        ()                   override;
@@ -42,7 +42,7 @@ private:
   bool                                     initialized_ = false;
   std::vector<std::unique_ptr<renderable>> renderables_ ;
   pli::camera                              camera_      ;
-  pli::interactor                          interactor_  ;
+  pli::orbit_interactor                    interactor_  ;
   pli::wait_spinner*                       wait_spinner_;
 };
 

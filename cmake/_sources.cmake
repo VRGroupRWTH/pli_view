@@ -24,7 +24,8 @@ set(ProjectSources
   include/utility/line_edit_utility.hpp
   include/utility/qt_text_browser_sink.hpp
   include/utility/thread_pool.hpp
-  include/visualization/interactors/interactor.hpp
+  include/visualization/interactors/first_person_interactor.hpp
+  include/visualization/interactors/orbit_interactor.hpp
   include/visualization/linear_tracer.hpp
   include/visualization/odf_field.hpp
   include/visualization/scalar_field.hpp
@@ -51,7 +52,8 @@ set(ProjectSources
   source/ui/viewer.cpp
   source/ui/wait_spinner.cpp
   source/ui/window.cpp
-  source/visualization/interactors/interactor.cpp
+  source/visualization/interactors/first_person_interactor.cpp
+  source/visualization/interactors/orbit_interactor.cpp
   source/visualization/odf_field.cpp
   source/visualization/scalar_field.cpp
   source/visualization/vector_field.cpp
