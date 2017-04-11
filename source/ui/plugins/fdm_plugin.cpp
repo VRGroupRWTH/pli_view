@@ -296,24 +296,24 @@ void fdm_plugin::update       () const
   while (result.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
     QApplication::processEvents();
 
-  // TODO.
-  uint3  cuda_size    {unsigned(size[0]), unsigned(size[1]), unsigned(size[2])};
-  float3 cuda_spacing {spacing[0], spacing[1], spacing[2]};
+  if (distributions.is_initialized() && distributions.get().num_elements() > 0)
+  {
+    auto shape = distributions.get().shape();
+    uint3  cuda_size      {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])};
+    float3 cuda_spacing   {spacing   [0], spacing   [1], spacing   [2]};
+    uint3  cuda_block_size{block_size[0], block_size[1], block_size[2]};
 
-  if (direction.is_initialized() && direction.get().num_elements() > 0)
-    vector_field_->set_data(cuda_size, direction.get().data(), inclination.get().data(), cuda_spacing, scale);
-
-  odf_field_->set_data(
-  { unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2]) },
-    shape[3],
-    fdm.data(),
-    tessellations,
-    { vector_spacing[0], vector_spacing[1], vector_spacing[2] },
-    { unsigned(vector_dimensions[0]), unsigned(vector_dimensions[1]), unsigned(vector_dimensions[2]) },
-    1.0,
-    checkbox_clustering_enabled->isChecked(),
-    float(slider_clustering_threshold->value()) / 100.0);
-
+    odf_field_->set_data(
+      cuda_size, 
+      shape[3], 
+      distributions.get().data(), 
+      tessellations, 
+      cuda_spacing,
+      cuda_block_size, 
+      1.0, 
+      checkbox_clustering_enabled->isChecked(),
+      float(slider_clustering_threshold->value()) / 100.0F);
+  }
 
   owner_->viewer->set_wait_spinner_enabled(false);
   owner_->viewer->update();
