@@ -409,6 +409,7 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>checkbox_enabled</tabstop>
   <tabstop>line_edit_offset_x</tabstop>
   <tabstop>line_edit_offset_y</tabstop>
   <tabstop>line_edit_offset_z</tabstop>
@@ -417,6 +418,20 @@
   <tabstop>line_edit_size_z</tabstop>
   <tabstop>line_edit_samples_x</tabstop>
   <tabstop>line_edit_samples_y</tabstop>
+  <tabstop>checkbox_depth_0</tabstop>
+  <tabstop>checkbox_depth_1</tabstop>
+  <tabstop>checkbox_depth_2</tabstop>
+  <tabstop>checkbox_depth_3</tabstop>
+  <tabstop>checkbox_depth_4</tabstop>
+  <tabstop>checkbox_depth_5</tabstop>
+  <tabstop>checkbox_depth_6</tabstop>
+  <tabstop>checkbox_depth_7</tabstop>
+  <tabstop>checkbox_depth_8</tabstop>
+  <tabstop>checkbox_depth_9</tabstop>
+  <tabstop>checkbox_clustering_enabled</tabstop>
+  <tabstop>slider_clustering_threshold</tabstop>
+  <tabstop>checkbox_auto_update</tabstop>
+  <tabstop>button_update</tabstop>
  </tabstops>
  <resources/>
  <connections/>

@@ -323,9 +323,12 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>radio_button_sliced</tabstop>
+  <tabstop>radio_button_volumetric</tabstop>
   <tabstop>line_edit_file</tabstop>
   <tabstop>button_browse_file</tabstop>
   <tabstop>line_edit_vector_spacing</tabstop>
+  <tabstop>line_edit_block_size</tabstop>
   <tabstop>line_edit_mask</tabstop>
   <tabstop>line_edit_transmittance</tabstop>
   <tabstop>line_edit_retardation</tabstop>

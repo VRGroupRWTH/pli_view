@@ -211,6 +211,18 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>checkbox_enabled</tabstop>
+  <tabstop>line_edit_offset_x</tabstop>
+  <tabstop>line_edit_offset_y</tabstop>
+  <tabstop>line_edit_offset_z</tabstop>
+  <tabstop>line_edit_size_x</tabstop>
+  <tabstop>line_edit_size_y</tabstop>
+  <tabstop>line_edit_size_z</tabstop>
+  <tabstop>line_edit_scale</tabstop>
+  <tabstop>checkbox_auto_update</tabstop>
+  <tabstop>button_update</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
