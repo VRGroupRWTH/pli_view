@@ -11,9 +11,7 @@ set(ProjectSources
   include/math/camera.hpp
   include/math/linear_math.hpp
   include/math/transform.hpp
-  include/third_party/qxt/qxtglobal.h
   include/third_party/qxt/qxtspanslider.h
-  include/third_party/qxt/qxtspanslider_p.h
   include/ui/plugins/data_plugin.hpp
   include/ui/plugins/fom_plugin.hpp
   include/ui/plugins/fdm_plugin.hpp
@@ -46,7 +44,6 @@ set(ProjectSources
   source/cuda/vector_field.cu
   source/math/camera.cpp
   source/math/transform.cpp
-  source/third_party/qxt/qxtglobal.cpp
   source/third_party/qxt/qxtspanslider.cpp
   source/ui/plugins/data_plugin.cpp
   source/ui/plugins/fom_plugin.cpp
