@@ -12,7 +12,7 @@ interactor_plugin::interactor_plugin(QWidget* parent) : plugin(parent)
   
   line_edit_move_speed->setValidator(new QDoubleValidator(0, std::numeric_limits<double>::max(), 8, this));
   line_edit_look_speed->setValidator(new QDoubleValidator(0, std::numeric_limits<double>::max(), 8, this));
-  
+
   connect(line_edit_move_speed, &QLineEdit::editingFinished, [&]
   {
     auto value = line_edit_utility::get_text<double>(line_edit_move_speed);
@@ -43,8 +43,9 @@ void interactor_plugin::start()
 {
   set_sink(std::make_shared<qt_text_browser_sink>(owner_->console));
 
-  owner_->viewer->interactor()->set_move_speed(line_edit_utility::get_text<double>(line_edit_move_speed));
-  owner_->viewer->interactor()->set_look_speed(line_edit_utility::get_text<double>(line_edit_look_speed));
+  auto interactor = owner_->viewer->interactor();
+  interactor->set_move_speed(line_edit_utility::get_text<double>(line_edit_move_speed));
+  interactor->set_look_speed(line_edit_utility::get_text<double>(line_edit_look_speed));
 
   logger_->info(std::string("Start successful."));
 }
