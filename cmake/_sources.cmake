@@ -11,6 +11,9 @@ set(ProjectSources
   include/math/camera.hpp
   include/math/linear_math.hpp
   include/math/transform.hpp
+  include/third_party/qxt/qxtglobal.h
+  include/third_party/qxt/qxtspanslider.h
+  include/third_party/qxt/qxtspansliderp.h
   include/ui/plugins/data_plugin.hpp
   include/ui/plugins/fom_plugin.hpp
   include/ui/plugins/fdm_plugin.hpp
@@ -18,7 +21,6 @@ set(ProjectSources
   include/ui/plugins/plugin.hpp
   include/ui/plugins/scalar_plugin.hpp
   include/ui/plugins/tractography_plugin.hpp
-  include/ui/span_slider.hpp
   include/ui/viewer.hpp
   include/ui/wait_spinner.hpp
   include/ui/window.hpp
@@ -44,6 +46,7 @@ set(ProjectSources
   source/cuda/vector_field.cu
   source/math/camera.cpp
   source/math/transform.cpp
+  source/third_party/qxt/qxtspanslider.cpp
   source/ui/plugins/data_plugin.cpp
   source/ui/plugins/fom_plugin.cpp
   source/ui/plugins/fdm_plugin.cpp
@@ -51,7 +54,6 @@ set(ProjectSources
   source/ui/plugins/plugin.cpp
   source/ui/plugins/scalar_plugin.cpp
   source/ui/plugins/tractography_plugin.cpp
-  source/ui/span_slider.cpp
   source/ui/viewer.cpp
   source/ui/wait_spinner.cpp
   source/ui/window.cpp

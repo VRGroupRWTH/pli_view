@@ -42,7 +42,7 @@
     </widget>
    </item>
    <item row="1" column="1" colspan="2">
-    <widget class="span_slider" name="slider_x">
+    <widget class="QxtSpanSlider" name="slider_x">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>1</horstretch>
@@ -106,7 +106,7 @@
     </widget>
    </item>
    <item row="2" column="1" colspan="2">
-    <widget class="span_slider" name="slider_y">
+    <widget class="QxtSpanSlider" name="slider_y">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>1</horstretch>
@@ -170,7 +170,7 @@
     </widget>
    </item>
    <item row="3" column="1" colspan="2">
-    <widget class="span_slider" name="slider_z">
+    <widget class="QxtSpanSlider" name="slider_z">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>1</horstretch>
@@ -296,9 +296,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>span_slider</class>
+   <class>QxtSpanSlider</class>
    <extends>QSlider</extends>
-   <header location="global">ui/span_slider.hpp</header>
+   <header location="global">third_party/qxt/qxtspanslider.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
