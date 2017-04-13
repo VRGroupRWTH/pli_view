@@ -25,10 +25,43 @@ fom_plugin::fom_plugin(QWidget* parent) : plugin(parent)
   line_edit_size_z  ->setValidator(new QIntValidator   (0, std::numeric_limits<int>   ::max(),     this));
   line_edit_scale   ->setValidator(new QDoubleValidator(0, std::numeric_limits<double>::max(), 10, this));
   
+  slider_scale->setRange(1, 100);
+
   connect(checkbox_enabled    , &QCheckBox::stateChanged   , [&] (int state)
   {
     logger_->info(std::string(state ? "Enabled." : "Disabled."));
     vector_field_->set_active(state);
+  });
+
+  connect(slider_x            , &QxtSpanSlider::lowerValueChanged, [&](int value)
+  {
+    line_edit_offset_x->setText(QString::fromStdString(std::to_string(value)));
+  });
+  connect(slider_x            , &QxtSpanSlider::upperValueChanged, [&](int value)
+  {
+    line_edit_size_x  ->setText(QString::fromStdString(std::to_string(value)));
+  });
+  connect(slider_y            , &QxtSpanSlider::lowerValueChanged, [&](int value)
+  {
+    line_edit_offset_y->setText(QString::fromStdString(std::to_string(value)));
+  });
+  connect(slider_y            , &QxtSpanSlider::upperValueChanged, [&](int value)
+  {
+    line_edit_size_y  ->setText(QString::fromStdString(std::to_string(value)));
+  });
+  connect(slider_z            , &QxtSpanSlider::lowerValueChanged, [&](int value)
+  {
+    line_edit_offset_z->setText(QString::fromStdString(std::to_string(value)));
+  });
+  connect(slider_z            , &QxtSpanSlider::upperValueChanged, [&](int value)
+  {
+    line_edit_size_z  ->setText(QString::fromStdString(std::to_string(value)));
+  });
+  connect(slider_scale        , &QxtSpanSlider::valueChanged     , [&](int value)
+  {
+    line_edit_scale->setText(QString::fromStdString(std::to_string(value)));
+    if (checkbox_auto_update->isChecked())
+      update();
   });
 
   connect(line_edit_offset_x  , &QLineEdit::editingFinished, [&]
@@ -93,6 +126,7 @@ void fom_plugin::start ()
 
   connect(owner_->get_plugin<data_plugin>(), &data_plugin::on_change, [&]
   {
+    // TODO: Get dataset size and adjust XYZ sliders accordingly.
     update();
   });
   
