@@ -10,8 +10,8 @@
 #include <device_launch_parameters.h>
 #include <vector_types.h>
 
-#include <convert.h>
-#include <vector_ops.h>
+#include <sh/convert.h>
+#include <sh/vector_ops.h>
 
 namespace pli
 {

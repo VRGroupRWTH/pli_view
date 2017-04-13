@@ -7,8 +7,8 @@
 #include <device_launch_parameters.h>
 #include <vector_types.h>
 
-#include <spherical_harmonics.h>
-#include <vector_ops.h>
+#include <sh/spherical_harmonics.h>
+#include <sh/vector_ops.h>
 
 namespace pli
 {

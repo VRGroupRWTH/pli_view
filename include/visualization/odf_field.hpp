@@ -7,9 +7,8 @@
 
 #include <vector_types.h>
 
-#include <all.hpp>
-
 #include <attributes/renderable.hpp>
+#include <opengl/all.hpp>
 
 namespace pli
 {

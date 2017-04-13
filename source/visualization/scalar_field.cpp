@@ -1,8 +1,7 @@
 #include /* implements */ <visualization/scalar_field.hpp>
 
-#include <vector_ops.h>
-
 #include <math/camera.hpp>
+#include <sh/vector_ops.h>
 #include <shaders/scalar_field.vert.glsl>
 #include <shaders/scalar_field.frag.glsl>
 

@@ -8,9 +8,34 @@ set(ProjectSources
   include/cuda/odf_field.h
   include/cuda/orthtree.h
   include/cuda/vector_field.h
+  include/io/hdf5_io.hpp
+  include/io/hdf5_io_2.hpp
+  include/io/hdf5_io_base.hpp
+  include/io/hdf5_io_selector.hpp
   include/math/camera.hpp
   include/math/linear_math.hpp
   include/math/transform.hpp
+  include/opengl/auxiliary/glm_uniforms.hpp
+  include/opengl/all.hpp
+  include/opengl/buffer.hpp
+  include/opengl/framebuffer.hpp
+  include/opengl/opengl.hpp
+  include/opengl/program.hpp
+  include/opengl/shader.hpp
+  include/opengl/texture.hpp
+  include/opengl/vertex_array.hpp
+  include/sh/choose.h
+  include/sh/clebsch_gordan.h
+  include/sh/convert.h
+  include/sh/cush.h
+  include/sh/decorators.h
+  include/sh/factorial.h
+  include/sh/launch.h
+  include/sh/legendre.h
+  include/sh/sign.h
+  include/sh/spherical_harmonics.h
+  include/sh/vector_ops.h
+  include/sh/wigner.h
   include/third_party/qxt/qxtglobal.h
   include/third_party/qxt/qxtspanslider.h
   include/third_party/qxt/qxtspansliderp.h

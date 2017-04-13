@@ -5,10 +5,10 @@
 #include <memory>
 #include <string>
 
-#include <all.hpp>
 #include <vector_types.h>
 
 #include <attributes/renderable.hpp>
+#include <opengl/all.hpp>
 
 namespace pli
 {

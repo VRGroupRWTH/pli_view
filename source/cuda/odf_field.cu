@@ -6,8 +6,8 @@
 #include <thrust/device_vector.h>
 #include <thrust/extrema.h>
 
-#include <cush.h>
-#include <vector_ops.h>
+#include <sh/cush.h>
+#include <sh/vector_ops.h>
 
 #include <cuda/launch.h>
 

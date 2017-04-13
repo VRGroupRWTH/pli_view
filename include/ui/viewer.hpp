@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include <opengl.hpp>
+#include <opengl/opengl.hpp>
 
 #include <QOpenGLWidget.h>
 
