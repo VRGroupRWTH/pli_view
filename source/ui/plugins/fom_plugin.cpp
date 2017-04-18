@@ -24,8 +24,7 @@ fom_plugin::fom_plugin(QWidget* parent) : plugin(parent)
   line_edit_size_y  ->setValidator(new QIntValidator   (0, std::numeric_limits<int>   ::max(),     this));
   line_edit_size_z  ->setValidator(new QIntValidator   (0, std::numeric_limits<int>   ::max(),     this));
   line_edit_scale   ->setValidator(new QDoubleValidator(0, std::numeric_limits<double>::max(), 10, this));
-  
-  slider_scale->setRange(1, 100);
+  slider_scale      ->setRange    (0, 100);
 
   connect(checkbox_enabled    , &QCheckBox::stateChanged   , [&] (int state)
   {
@@ -36,26 +35,29 @@ fom_plugin::fom_plugin(QWidget* parent) : plugin(parent)
   connect(slider_x            , &QxtSpanSlider::lowerValueChanged, [&](int value)
   {
     line_edit_offset_x->setText(QString::fromStdString(std::to_string(value)));
+    line_edit_size_x  ->setText(QString::fromStdString(std::to_string(slider_x->upperValue() - value)));
   });
   connect(slider_x            , &QxtSpanSlider::upperValueChanged, [&](int value)
   {
-    line_edit_size_x  ->setText(QString::fromStdString(std::to_string(value)));
+    line_edit_size_x  ->setText(QString::fromStdString(std::to_string(value - slider_x->lowerValue())));
   });
   connect(slider_y            , &QxtSpanSlider::lowerValueChanged, [&](int value)
   {
     line_edit_offset_y->setText(QString::fromStdString(std::to_string(value)));
+    line_edit_size_y  ->setText(QString::fromStdString(std::to_string(slider_y->upperValue() - value)));
   });
   connect(slider_y            , &QxtSpanSlider::upperValueChanged, [&](int value)
   {
-    line_edit_size_y  ->setText(QString::fromStdString(std::to_string(value)));
+    line_edit_size_y  ->setText(QString::fromStdString(std::to_string(value - slider_y->lowerValue())));
   });
   connect(slider_z            , &QxtSpanSlider::lowerValueChanged, [&](int value)
   {
     line_edit_offset_z->setText(QString::fromStdString(std::to_string(value)));
+    line_edit_size_z  ->setText(QString::fromStdString(std::to_string(slider_z->upperValue() - value)));
   });
   connect(slider_z            , &QxtSpanSlider::upperValueChanged, [&](int value)
   {
-    line_edit_size_z  ->setText(QString::fromStdString(std::to_string(value)));
+    line_edit_size_z  ->setText(QString::fromStdString(std::to_string(value - slider_z->lowerValue())));
   });
   connect(slider_scale        , &QxtSpanSlider::valueChanged     , [&](int value)
   {
@@ -66,37 +68,49 @@ fom_plugin::fom_plugin(QWidget* parent) : plugin(parent)
 
   connect(line_edit_offset_x  , &QLineEdit::editingFinished, [&]
   {
-    logger_->info("X offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_x));
+    auto value = line_edit_utility::get_text<std::size_t>(line_edit_offset_x);
+    logger_ ->info         ("X offset is set to {}.", value);
+    slider_x->setLowerValue(value);
     if (checkbox_auto_update->isChecked())
       update();
   });
   connect(line_edit_offset_y  , &QLineEdit::editingFinished, [&]
   {
-    logger_->info("Y offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_y));
+    auto value = line_edit_utility::get_text<std::size_t>(line_edit_offset_y);
+    logger_ ->info         ("Y offset is set to {}.", value);
+    slider_y->setLowerValue(value);
     if (checkbox_auto_update->isChecked())
       update();
   });
   connect(line_edit_offset_z  , &QLineEdit::editingFinished, [&]
   {
-    logger_->info("Z offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_z));
+    auto value = line_edit_utility::get_text<std::size_t>(line_edit_offset_z);
+    logger_ ->info         ("Z offset is set to {}.", value);
+    slider_z->setLowerValue(value);
     if (checkbox_auto_update->isChecked())
       update();
   });
   connect(line_edit_size_x    , &QLineEdit::editingFinished, [&]
   {
-    logger_->info("X size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_x));
+    auto value = line_edit_utility::get_text<std::size_t>(line_edit_size_x);
+    logger_ ->info         ("X size is set to {}.", value);
+    slider_x->setUpperValue(slider_x->lowerValue() + value);
     if (checkbox_auto_update->isChecked())
       update();
   });
   connect(line_edit_size_y    , &QLineEdit::editingFinished, [&]
   {
-    logger_->info("Y size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_y));
+    auto value = line_edit_utility::get_text<std::size_t>(line_edit_size_y);
+    logger_ ->info         ("Y size is set to {}.", value);
+    slider_y->setUpperValue(slider_y->lowerValue() + value);
     if (checkbox_auto_update->isChecked())
       update();
   });
   connect(line_edit_size_z    , &QLineEdit::editingFinished, [&]
   {
-    logger_->info("Z size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_z));
+    auto value = line_edit_utility::get_text<std::size_t>(line_edit_size_z);
+    logger_ ->info         ("Z size is set to {}.", value);
+    slider_z->setUpperValue(slider_z->lowerValue() + value);
     if (checkbox_auto_update->isChecked())
       update();
   });
