@@ -9,6 +9,7 @@
 
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/format.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/multi_array.hpp>
 
 #include <third_party/highfive/H5DataSet.hpp>
@@ -49,25 +50,32 @@ public:
   }
   
 private:
-  std::array<std::size_t, 3> load_scalar_dataset_size(std::string dataset_path) override
+  std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>> load_scalar_dataset_bounds(std::string dataset_path) override
   {
     if (!file_.isValid() || dataset_path.empty())
-      return {0, 0, 0};
+      return {{0, 0, 0}, {0, 0, 0}};
 
-    //file_.getDataSet((boost::format(boost::replace_first_copy(dataset_path, "%Slice%", "%04d")) % (offset[2])).str());
-    auto slice_count = file_.getNumberObjects();
-    
-    auto misordered_size = file_.getDataSet(dataset_path).getSpace().getDimensions();
-    return {misordered_size[1], misordered_size[2], misordered_size[0]};
+    auto first_slice_name = file_.listObjectNames()[0];
+    auto z_offset         = boost::lexical_cast<std::size_t>(first_slice_name);
+    auto z_size           = file_.getNumberObjects();
+    auto xy_size          = file_.getDataSet((boost::format(boost::replace_first_copy(dataset_path, "%Slice%", "%04d")) % z_offset).str()).getSpace().getDimensions();
+    return {{0, 0, z_offset}, {xy_size[0], xy_size[1], z_offset + z_size}};
   }
-  std::array<std::size_t, 4> load_vector_dataset_size(std::string dataset_path) override
+  std::pair<std::array<std::size_t, 4>, std::array<std::size_t, 4>> load_vector_dataset_bounds(std::string dataset_path) override
   {
     std::cout << "Vector datasets are unsupported." << std::endl;
-    return std::array<std::size_t, 4>();
+    return {{0, 0, 0, 0}, {0, 0, 0, 0}};
   }
-  std::array<std::size_t, 4> load_tensor_dataset_size(std::string dataset_path) override
+  std::pair<std::array<std::size_t, 4>, std::array<std::size_t, 4>> load_tensor_dataset_bounds(std::string dataset_path) override
   {
-    return {0, 0, 0, 0};
+    if (!file_.isValid() || dataset_path.empty())
+      return {{0, 0, 0, 0}, {0, 0, 0, 0}};
+      
+    auto first_slice_name = file_.listObjectNames()[0];
+    auto z_offset         = boost::lexical_cast<std::size_t>(first_slice_name);
+    auto z_size           = file_.getNumberObjects();
+    auto xyt_size         = file_.getDataSet((boost::format(boost::replace_first_copy(dataset_path, "%Slice%", "%04d")) % z_offset).str()).getSpace().getDimensions();
+    return {{0, 0, z_offset, 0}, {xyt_size[0], xyt_size[1], z_offset + z_size, xyt_size[2]}};
   }
 
   boost::multi_array<float, 3> load_scalar_dataset(std::string dataset_path, const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, bool normalize) override

@@ -46,26 +46,26 @@ public:
   }
   
 private:
-  std::array<std::size_t, 3>   load_scalar_dataset_size(std::string dataset_path) override
+  std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>> load_scalar_dataset_bounds(std::string dataset_path) override
   {
     if (!file_.isValid() || dataset_path.empty())
-      return {0, 0, 0};
+      return {{0, 0, 0}, {0, 0, 0}};
     auto misordered_size = file_.getDataSet(dataset_path).getSpace().getDimensions();
-    return {misordered_size[1], misordered_size[2], misordered_size[0]};
+    return {{0, 0, 0}, {misordered_size[1], misordered_size[2], misordered_size[0]}};
   }
-  std::array<std::size_t, 4>   load_vector_dataset_size(std::string dataset_path) override
+  std::pair<std::array<std::size_t, 4>, std::array<std::size_t, 4>> load_vector_dataset_bounds(std::string dataset_path) override
   {
-    return load_tensor_dataset_size(dataset_path);
+    return load_tensor_dataset_bounds(dataset_path);
   }
-  std::array<std::size_t, 4>   load_tensor_dataset_size(std::string dataset_path) override
+  std::pair<std::array<std::size_t, 4>, std::array<std::size_t, 4>> load_tensor_dataset_bounds(std::string dataset_path) override
   {
     if (!file_.isValid() || dataset_path.empty())
-      return {0, 0, 0, 0};
+      return {{0, 0, 0, 0}, {0, 0, 0, 0}};
     auto misordered_size = file_.getDataSet(dataset_path).getSpace().getDimensions();
-    return {misordered_size[2], misordered_size[3], misordered_size[0], misordered_size[1]};
+    return {{0, 0, 0, 0}, {misordered_size[2], misordered_size[3], misordered_size[0], misordered_size[1]}};
   }
 
-  boost::multi_array<float, 3> load_scalar_dataset     (std::string dataset_path, const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, bool normalize) override
+  boost::multi_array<float, 3> load_scalar_dataset(std::string dataset_path, const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, bool normalize) override
   {
     if (!file_.isValid() || dataset_path.empty())
       return boost::multi_array<float, 3>();
@@ -94,11 +94,11 @@ private:
 
     return data;
   }
-  boost::multi_array<float, 4> load_vector_dataset     (std::string dataset_path, const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, bool normalize) override
+  boost::multi_array<float, 4> load_vector_dataset(std::string dataset_path, const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, bool normalize) override
   {
     return load_tensor_dataset(dataset_path, offset, size, normalize);
   }
-  boost::multi_array<float, 4> load_tensor_dataset     (std::string dataset_path, const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, bool normalize) override
+  boost::multi_array<float, 4> load_tensor_dataset(std::string dataset_path, const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, bool normalize) override
   {
     if (!file_.isValid() || dataset_path.empty())
       return boost::multi_array<float, 4>();
