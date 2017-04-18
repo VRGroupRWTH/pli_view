@@ -126,7 +126,10 @@ void fom_plugin::start ()
 
   connect(owner_->get_plugin<data_plugin>(), &data_plugin::on_change, [&]
   {
-    // TODO: Get dataset size and adjust XYZ sliders accordingly.
+    auto bounds = owner_->get_plugin<data_plugin>()->io()->load_fiber_direction_dataset_bounds();
+    slider_x->setMinimum(bounds.first[0]); slider_x->setMaximum(bounds.second[0]);
+    slider_y->setMinimum(bounds.first[1]); slider_y->setMaximum(bounds.second[1]);
+    slider_z->setMinimum(bounds.first[2]); slider_z->setMaximum(bounds.second[2]);
     update();
   });
   
