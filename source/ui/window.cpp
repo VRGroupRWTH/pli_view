@@ -23,6 +23,8 @@ window:: window()
   for (auto plugin : plugins_)
     plugin->start();
 
+  selector->set_owner(this);
+
   std::size_t free, total;
   cudaMemGetInfo(&free, &total);
   logger_->info("Available GPU memory: {} MB. Total GPU memory: {} MB.", free * 1E-6, total * 1E-6);

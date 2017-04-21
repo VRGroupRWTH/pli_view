@@ -6,108 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>289</width>
-    <height>284</height>
+    <width>280</width>
+    <height>140</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Scalar Map Toolbox</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="5" column="3">
-    <widget class="QLineEdit" name="line_edit_size_y">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="placeholderText">
-      <string>1024</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="4">
-    <widget class="QLineEdit" name="line_edit_size_z">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="placeholderText">
-      <string>1</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0" colspan="2">
-    <widget class="QCheckBox" name="checkbox_auto_update">
-     <property name="text">
-      <string>Auto update</string>
-     </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="1">
-    <spacer name="spacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>17</width>
-       <height>270</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="6" column="2" colspan="3">
-    <widget class="QPushButton" name="button_update">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="text">
-      <string>Update</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="2">
-    <widget class="QLineEdit" name="line_edit_size_x">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="placeholderText">
-      <string>1024</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="2">
+   <item row="3" column="1">
     <widget class="QCheckBox" name="checkbox_inclination">
      <property name="layoutDirection">
       <enum>Qt::LeftToRight</enum>
@@ -120,40 +27,7 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="4">
-    <widget class="QLineEdit" name="line_edit_offset_z">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="placeholderText">
-      <string>0</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="label_offset">
-     <property name="text">
-      <string>Offset</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="label_size">
-     <property name="text">
-      <string>Size</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="2">
+   <item row="0" column="1">
     <widget class="QCheckBox" name="checkbox_transmittance">
      <property name="layoutDirection">
       <enum>Qt::LeftToRight</enum>
@@ -166,7 +40,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="2">
+   <item row="2" column="1">
     <widget class="QCheckBox" name="checkbox_direction">
      <property name="layoutDirection">
       <enum>Qt::LeftToRight</enum>
@@ -186,44 +60,6 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="2">
-    <widget class="QLineEdit" name="line_edit_offset_x">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="placeholderText">
-      <string>0</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="3">
-    <widget class="QLineEdit" name="line_edit_offset_y">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="placeholderText">
-      <string>0</string>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="0">
     <widget class="QLabel" name="label_transmittance">
      <property name="text">
@@ -238,7 +74,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="2">
+   <item row="1" column="1">
     <widget class="QCheckBox" name="checkbox_retardation">
      <property name="layoutDirection">
       <enum>Qt::LeftToRight</enum>
@@ -258,6 +94,32 @@
      </property>
     </widget>
    </item>
+   <item row="0" column="2" rowspan="4">
+    <spacer name="spacer_horizontal">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="4" column="0" colspan="3">
+    <spacer name="spacer_vertical">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>17</width>
+       <height>270</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
   </layout>
  </widget>
  <tabstops>
@@ -265,14 +127,6 @@
   <tabstop>checkbox_retardation</tabstop>
   <tabstop>checkbox_direction</tabstop>
   <tabstop>checkbox_inclination</tabstop>
-  <tabstop>line_edit_offset_x</tabstop>
-  <tabstop>line_edit_offset_y</tabstop>
-  <tabstop>line_edit_offset_z</tabstop>
-  <tabstop>line_edit_size_x</tabstop>
-  <tabstop>line_edit_size_y</tabstop>
-  <tabstop>line_edit_size_z</tabstop>
-  <tabstop>checkbox_auto_update</tabstop>
-  <tabstop>button_update</tabstop>
  </tabstops>
  <resources/>
  <connections/>

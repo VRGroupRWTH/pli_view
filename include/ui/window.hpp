@@ -6,6 +6,7 @@
 #include <QMainWindow>
 
 #include <attributes/loggable.hpp>
+#include <ui/plugins/plugin.hpp>
 #include <ui_window.h>
 
 namespace pli
@@ -30,7 +31,7 @@ public:
 private:
   void bind_actions();
 
-  std::vector<plugin*> plugins_;
+  std::vector<plugin*> plugins_ ;
 };
 }
 
