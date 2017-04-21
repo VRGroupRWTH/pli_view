@@ -46,6 +46,7 @@ set(ProjectSources
   include/ui/plugins/plugin.hpp
   include/ui/plugins/scalar_plugin.hpp
   include/ui/plugins/tractography_plugin.hpp
+  include/ui/selector.hpp
   include/ui/viewer.hpp
   include/ui/wait_spinner.hpp
   include/ui/window.hpp
@@ -79,6 +80,7 @@ set(ProjectSources
   source/ui/plugins/plugin.cpp
   source/ui/plugins/scalar_plugin.cpp
   source/ui/plugins/tractography_plugin.cpp
+  source/ui/selector.cpp
   source/ui/viewer.cpp
   source/ui/wait_spinner.cpp
   source/ui/window.cpp
