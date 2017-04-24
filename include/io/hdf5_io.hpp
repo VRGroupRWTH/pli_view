@@ -97,7 +97,7 @@ private:
       data[boost::indices[index_range()][index_range()][z]] = slice_data;
     }
 
-    if (normalize)
+    if (normalize && data.num_elements() > 0)
     {
       auto max_element = *std::max_element(data.data(), data.data() + data.num_elements());
       std::transform(data.data(), data.data() + data.num_elements(), data.data(), [max_element](const float& element)
@@ -137,7 +137,7 @@ private:
       data[boost::indices[index_range()][index_range()][z][index_range()]] = slice_data;
     }
 
-    if (normalize)
+    if (normalize && data.num_elements() > 0)
     {
       auto max_element = *std::max_element(data.data(), data.data() + data.num_elements());
       std::transform(data.data(), data.data() + data.num_elements(), data.data(), [max_element](const float& element)

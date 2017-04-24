@@ -25,13 +25,7 @@ interactor_plugin::interactor_plugin(QWidget* parent) : plugin(parent)
     logger_->info("Look speed is set to {}.", value);
     owner_->viewer->interactor()->set_look_speed(value);
   });
-
-  connect(checkbox_ortho      , &QCheckBox::stateChanged   , [&](int state)
-  {
-    logger_->info("Using {} projection.", state ? "orthographic" : "perspective");
-    owner_->viewer->camera()->set_orthographic(state);
-  });
-  connect(button_reset        , &QPushButton::clicked      , [&]
+  connect(button_reset_camera , &QPushButton::clicked      , [&]
   {
     logger_->info(std::string("Resetting camera transform."));
     owner_->viewer->camera()->set_translation({0, 0, 1});

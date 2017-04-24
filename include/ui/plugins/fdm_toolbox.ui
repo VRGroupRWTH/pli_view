@@ -64,6 +64,9 @@
    </item>
    <item row="5" column="3">
     <widget class="QLineEdit" name="line_edit_threshold">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>1</horstretch>
@@ -209,7 +212,7 @@
     </widget>
    </item>
    <item row="2" column="3">
-    <widget class="QLineEdit" name="line_edit_threshold_3">
+    <widget class="QLineEdit" name="line_edit_latitude">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>1</horstretch>
@@ -228,7 +231,7 @@
     </widget>
    </item>
    <item row="2" column="1" colspan="2">
-    <widget class="QSlider" name="slider_threshold_3">
+    <widget class="QSlider" name="slider_latitude">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>4</horstretch>
@@ -278,7 +281,7 @@ Layers</string>
     </widget>
    </item>
    <item row="1" column="1" colspan="2">
-    <widget class="QSlider" name="slider_threshold_2">
+    <widget class="QSlider" name="slider_longitude">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>4</horstretch>
@@ -336,7 +339,7 @@ Layers</string>
     </widget>
    </item>
    <item row="1" column="3">
-    <widget class="QLineEdit" name="line_edit_threshold_2">
+    <widget class="QLineEdit" name="line_edit_longitude">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>1</horstretch>
@@ -377,10 +380,10 @@ Layers</string>
  </widget>
  <tabstops>
   <tabstop>checkbox_enabled</tabstop>
-  <tabstop>slider_threshold_2</tabstop>
-  <tabstop>line_edit_threshold_2</tabstop>
-  <tabstop>slider_threshold_3</tabstop>
-  <tabstop>line_edit_threshold_3</tabstop>
+  <tabstop>slider_longitude</tabstop>
+  <tabstop>line_edit_longitude</tabstop>
+  <tabstop>slider_latitude</tabstop>
+  <tabstop>line_edit_latitude</tabstop>
   <tabstop>checkbox_depth_0</tabstop>
   <tabstop>checkbox_depth_1</tabstop>
   <tabstop>checkbox_depth_2</tabstop>

@@ -16,73 +16,27 @@ namespace pli
 fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
 {
   setupUi(this);
-         
-  line_edit_offset_x ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_offset_y ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_offset_z ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_size_x   ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_size_y   ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_size_z   ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+
+  line_edit_longitude->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_latitude ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
   
-  line_edit_samples_x->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_samples_y->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-                                
   connect(checkbox_enabled           , &QCheckBox::stateChanged   , [&](int state)
   {
     logger_->info(std::string(state ? "Enabled." : "Disabled."));
     odf_field_->set_active(state);
   });
-
-  connect(line_edit_offset_x         , &QLineEdit::editingFinished, [&] 
+  connect(line_edit_longitude        , &QLineEdit::editingFinished, [&]
   {
-    logger_->info("X offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_x));
+    logger_->info("Longitude partitions are set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_longitude));
     if (checkbox_auto_update->isChecked())
       update();
   });
-  connect(line_edit_offset_y         , &QLineEdit::editingFinished, [&]
+  connect(line_edit_latitude         , &QLineEdit::editingFinished, [&]
   {
-    logger_->info("Y offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_y));
+    logger_->info("Latitude partitions are set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_latitude));
     if (checkbox_auto_update->isChecked())
       update();
   });
-  connect(line_edit_offset_z         , &QLineEdit::editingFinished, [&]
-  {
-    logger_->info("Z offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_z));
-    if (checkbox_auto_update->isChecked())
-      update();
-  });
-  connect(line_edit_size_x           , &QLineEdit::editingFinished, [&] 
-  {
-    logger_->info("X size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_x));
-    if (checkbox_auto_update->isChecked())
-      update();
-  });
-  connect(line_edit_size_y           , &QLineEdit::editingFinished, [&]
-  {
-    logger_->info("Y size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_y));
-    if (checkbox_auto_update->isChecked())
-      update();
-  });
-  connect(line_edit_size_z           , &QLineEdit::editingFinished, [&]
-  {
-    logger_->info("Z size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_z));
-    if (checkbox_auto_update->isChecked())
-      update();
-  });
-       
-  connect(line_edit_samples_x        , &QLineEdit::editingFinished, [&]
-  {
-    logger_->info("Longitude partitions are set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_samples_x));
-    if (checkbox_auto_update->isChecked())
-      update();
-  });
-  connect(line_edit_samples_y        , &QLineEdit::editingFinished, [&]
-  {
-    logger_->info("Latitude partitions are set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_samples_y));
-    if (checkbox_auto_update->isChecked())
-      update();
-  });
-                                     
   connect(checkbox_depth_0           , &QCheckBox::stateChanged   , [&](int state)
   {
     logger_->info("Grid depth 0 is {}.", state ? "enabled" : "disabled");
@@ -133,20 +87,18 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
     logger_->info("Grid depth 9 is {}.", state ? "enabled" : "disabled");
     select_depths();
   });
-
   connect(checkbox_clustering_enabled, &QCheckBox::stateChanged   , [&](int state)
   {
     logger_->info("Clustering is {}.", state ? "enabled" : "disabled");
     if (checkbox_auto_update->isChecked())
       update();
   });
-  connect(slider_clustering_threshold, &QSlider::sliderReleased   , [&]()
+  connect(slider_threshold           , &QSlider::sliderReleased   , [&]()
   {
-    logger_->info("Clustering threshold is set to {}.", float(slider_clustering_threshold->value()) / 100.0);
+    logger_->info("Clustering threshold is set to {}.", float(slider_threshold->value()) / 100.0);
     if (checkbox_auto_update->isChecked())
       update();
-  });
-  
+  }); 
   connect(checkbox_auto_update       , &QCheckBox::stateChanged   , [&](int state)
   {
     logger_->info("Auto update is {}.", state ? "enabled" : "disabled");
@@ -158,30 +110,35 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
   {
     update();
   });
-
 }
 
 void fdm_plugin::start        ()
 {
   set_sink(std::make_shared<qt_text_browser_sink>(owner_->console));
 
-  connect(owner_->get_plugin<data_plugin>(), &data_plugin::on_change, [&]
+  connect(owner_->get_plugin<data_plugin>    (), &data_plugin    ::on_change, [&]
+  {
+    update();
+  });
+  connect(owner_->get_plugin<selector_plugin>(), &selector_plugin::on_change, [&]
   {
     update();
   });
 
   odf_field_ = owner_->viewer->add_renderable<odf_field>();
-
   select_depths();
-
   logger_->info(std::string("Start successful."));
 }
 void fdm_plugin::update       () const
 {
   logger_->info(std::string("Updating viewer..."));
 
-  auto data_plugin = owner_->get_plugin<pli::data_plugin>();
-  auto io          = data_plugin->io();
+  auto data_plugin     = owner_->get_plugin<pli::data_plugin>    ();
+  auto selector_plugin = owner_->get_plugin<pli::selector_plugin>();
+  auto io              = data_plugin    ->io    ();
+  auto offset          = selector_plugin->offset();
+  auto size            = selector_plugin->size  ();
+
   if  (io == nullptr)
   {
     logger_->info(std::string("Update failed: No data."));
@@ -190,17 +147,9 @@ void fdm_plugin::update       () const
 
   owner_->viewer->set_wait_spinner_enabled(true);
   
-  std::array<std::size_t, 3> offset =
-  {line_edit_utility::get_text<std::size_t>(line_edit_offset_x),
-   line_edit_utility::get_text<std::size_t>(line_edit_offset_y),
-   line_edit_utility::get_text<std::size_t>(line_edit_offset_z)};
-  std::array<std::size_t, 3> size =
-  {line_edit_utility::get_text<std::size_t>(line_edit_size_x),
-   line_edit_utility::get_text<std::size_t>(line_edit_size_y),
-   line_edit_utility::get_text<std::size_t>(line_edit_size_z)};
   uint2 tessellations =
-  {line_edit_utility::get_text<std::size_t>(line_edit_samples_x),
-   line_edit_utility::get_text<std::size_t>(line_edit_samples_y)};
+  {line_edit_utility::get_text<std::size_t>(line_edit_longitude),
+   line_edit_utility::get_text<std::size_t>(line_edit_latitude )};
 
   std::array<float      , 3>                    spacing      ;
   std::array<std::size_t, 3>                    block_size   ;
@@ -248,7 +197,7 @@ void fdm_plugin::update       () const
       cuda_block_size, 
       1.0, 
       checkbox_clustering_enabled->isChecked(),
-      float(slider_clustering_threshold->value()) / 100.0F,
+      float(slider_threshold->value()) / 100.0F,
       [&](const std::string& message)
       {
         logger_->info(message);

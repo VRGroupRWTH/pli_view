@@ -4,6 +4,8 @@
 #include <math.h>
 
 #include <sh/convert.h>
+#include <ui/plugins/data_plugin.hpp>
+#include <ui/plugins/selector_plugin.hpp>
 #include <ui/window.hpp>
 #include <utility/line_edit_utility.hpp>
 #include <utility/qt_text_browser_sink.hpp>
@@ -14,38 +16,7 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
 {
   setupUi(this);
   
-  line_edit_offset_x->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_offset_y->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_offset_z->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_size_x  ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_size_y  ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_size_z  ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  
-  connect(line_edit_offset_x, &QLineEdit::editingFinished, [&]
-  {
-    logger_->info("X offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_x));
-  });
-  connect(line_edit_offset_y, &QLineEdit::editingFinished, [&]
-  {
-    logger_->info("Y offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_y));
-  });
-  connect(line_edit_offset_z, &QLineEdit::editingFinished, [&]
-  {
-    logger_->info("Z offset is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_offset_z));
-  });
-  connect(line_edit_size_x  , &QLineEdit::editingFinished, [&]
-  {
-    logger_->info("X size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_x));
-  });
-  connect(line_edit_size_y  , &QLineEdit::editingFinished, [&]
-  {
-    logger_->info("Y size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_y));
-  });
-  connect(line_edit_size_z  , &QLineEdit::editingFinished, [&]
-  {
-    logger_->info("Z size is set to {}.", line_edit_utility::get_text<std::size_t>(line_edit_size_z));
-  });
-  connect(button_trace      , &QPushButton::clicked      , [&]
+  connect(button_trace_selection, &QPushButton::clicked, [&]
   {
     trace();
   });
@@ -63,19 +34,13 @@ void tractography_plugin::trace()
 
   try
   {
-    auto data_plugin = owner_->get_plugin<pli::data_plugin>();
-    auto io          = data_plugin->io();
+    auto data_plugin     = owner_->get_plugin<pli::data_plugin>();
+    auto io              = data_plugin->io();
 
-    std::array<std::size_t, 3> offset = 
-    { line_edit_utility::get_text<std::size_t>(line_edit_offset_x), 
-      line_edit_utility::get_text<std::size_t>(line_edit_offset_y),
-      line_edit_utility::get_text<std::size_t>(line_edit_offset_z)};
+    auto selector_plugin = owner_->get_plugin<pli::selector_plugin>();
+    auto offset          = selector_plugin->offset();
+    auto size            = selector_plugin->size  ();
       
-    std::array<std::size_t, 3> size = 
-    { line_edit_utility::get_text<std::size_t>(line_edit_size_x),
-      line_edit_utility::get_text<std::size_t>(line_edit_size_y),
-      line_edit_utility::get_text<std::size_t>(line_edit_size_z)};
-
     auto fiber_direction_map   = io->load_fiber_direction_dataset  (offset, size);
     auto fiber_inclination_map = io->load_fiber_inclination_dataset(offset, size);
     auto spacing               = io->load_vector_spacing();
@@ -107,8 +72,7 @@ void tractography_plugin::trace()
     auto results = tracer.TraceSeeds(seeds);
      
     // TODO: Visualize recorded results.
-
-         
+   
     owner_->viewer->update();
 
     logger_->info(std::string("Trace successful."));

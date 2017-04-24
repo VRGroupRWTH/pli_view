@@ -37,30 +37,15 @@
    </property>
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QSplitter" name="vertical_splitter">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>1</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>480</height>
-       </size>
-      </property>
+     <widget class="QSplitter" name="splitter_horizontal">
       <property name="orientation">
-       <enum>Qt::Vertical</enum>
+       <enum>Qt::Horizontal</enum>
       </property>
-      <property name="handleWidth">
-       <number>4</number>
-      </property>
-      <widget class="QFrame" name="viewer_frame">
+      <widget class="QSplitter" name="splitter_vertical_left">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>1</horstretch>
-         <verstretch>1</verstretch>
+         <verstretch>0</verstretch>
         </sizepolicy>
        </property>
        <property name="minimumSize">
@@ -69,209 +54,267 @@
          <height>480</height>
         </size>
        </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
        </property>
-       <property name="frameShadow">
-        <enum>QFrame::Sunken</enum>
+       <property name="handleWidth">
+        <number>4</number>
        </property>
-       <property name="lineWidth">
-        <number>2</number>
+       <widget class="QFrame" name="viewer_frame">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>1</horstretch>
+          <verstretch>1</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>480</height>
+         </size>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Sunken</enum>
+        </property>
+        <property name="lineWidth">
+         <number>2</number>
+        </property>
+        <layout class="QGridLayout" name="grid_layout_viewer">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="pli::viewer" name="viewer" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QTextBrowser" name="console">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>320</height>
+         </size>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Sunken</enum>
+        </property>
+        <property name="lineWidth">
+         <number>2</number>
+        </property>
+        <property name="verticalScrollBarPolicy">
+         <enum>Qt::ScrollBarAsNeeded</enum>
+        </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="textInteractionFlags">
+         <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QSplitter" name="splitter_vertical_right">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
        </property>
-       <layout class="QGridLayout" name="grid_layout_viewer">
-        <property name="leftMargin">
+       <widget class="QFrame" name="frame">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Sunken</enum>
+        </property>
+        <property name="lineWidth">
+         <number>2</number>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="pli::selector_plugin" name="plugin_selector" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QToolBox" name="toolbox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>280</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Sunken</enum>
+        </property>
+        <property name="lineWidth">
+         <number>2</number>
+        </property>
+        <property name="currentIndex">
          <number>0</number>
         </property>
-        <property name="topMargin">
-         <number>0</number>
+        <property name="tabSpacing">
+         <number>6</number>
         </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
-         <number>0</number>
-        </property>
-        <item row="0" column="0">
-         <widget class="pli::viewer" name="viewer" native="true">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QTextBrowser" name="console">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>320</height>
-        </size>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Sunken</enum>
-       </property>
-       <property name="lineWidth">
-        <number>2</number>
-       </property>
-       <property name="verticalScrollBarPolicy">
-        <enum>Qt::ScrollBarAsNeeded</enum>
-       </property>
-       <property name="horizontalScrollBarPolicy">
-        <enum>Qt::ScrollBarAlwaysOff</enum>
-       </property>
-       <property name="textInteractionFlags">
-        <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-       </property>
-      </widget>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QToolBox" name="toolbox">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>280</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Sunken</enum>
-      </property>
-      <property name="lineWidth">
-       <number>2</number>
-      </property>
-      <property name="currentIndex">
-       <number>0</number>
-      </property>
-      <property name="tabSpacing">
-       <number>6</number>
-      </property>
-      <widget class="pli::data_plugin" name="plugin_data">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>278</width>
-         <height>377</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
-       <attribute name="label">
-        <string>Data</string>
-       </attribute>
-      </widget>
-      <widget class="pli::interactor_plugin" name="plugin_interactor">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>100</width>
-         <height>30</height>
-        </rect>
-       </property>
-       <attribute name="label">
-        <string>Interactor</string>
-       </attribute>
-      </widget>
-      <widget class="pli::scalar_plugin" name="plugin_scalar">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>100</width>
-         <height>30</height>
-        </rect>
-       </property>
-       <attribute name="label">
-        <string>Scalar Maps</string>
-       </attribute>
-      </widget>
-      <widget class="pli::fom_plugin" name="plugin_fom">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>100</width>
-         <height>30</height>
-        </rect>
-       </property>
-       <attribute name="label">
-        <string>Fiber Orientation Maps</string>
-       </attribute>
-       <layout class="QGridLayout" name="grid_layout_fom"/>
-      </widget>
-      <widget class="pli::fdm_plugin" name="plugin_fdm">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>100</width>
-         <height>30</height>
-        </rect>
-       </property>
-       <attribute name="label">
-        <string>Fiber Distribution Maps</string>
-       </attribute>
-       <layout class="QGridLayout" name="grid_layout_fdm"/>
-      </widget>
-      <widget class="pli::tractography_plugin" name="plugin_tractography">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>100</width>
-         <height>30</height>
-        </rect>
-       </property>
-       <attribute name="label">
-        <string>Tractography</string>
-       </attribute>
+        <widget class="pli::data_plugin" name="plugin_data">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>278</width>
+           <height>346</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <attribute name="label">
+          <string>Data</string>
+         </attribute>
+        </widget>
+        <widget class="pli::interactor_plugin" name="plugin_interactor">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>98</width>
+           <height>28</height>
+          </rect>
+         </property>
+         <attribute name="label">
+          <string>Interactor</string>
+         </attribute>
+        </widget>
+        <widget class="pli::scalar_plugin" name="plugin_scalar">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>98</width>
+           <height>28</height>
+          </rect>
+         </property>
+         <attribute name="label">
+          <string>Scalar Maps</string>
+         </attribute>
+        </widget>
+        <widget class="pli::fom_plugin" name="plugin_fom">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>98</width>
+           <height>28</height>
+          </rect>
+         </property>
+         <attribute name="label">
+          <string>Fiber Orientation Maps</string>
+         </attribute>
+         <layout class="QGridLayout" name="grid_layout_fom"/>
+        </widget>
+        <widget class="pli::fdm_plugin" name="plugin_fdm">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>98</width>
+           <height>28</height>
+          </rect>
+         </property>
+         <attribute name="label">
+          <string>Fiber Distribution Maps</string>
+         </attribute>
+         <layout class="QGridLayout" name="grid_layout_fdm"/>
+        </widget>
+        <widget class="pli::tractography_plugin" name="plugin_tractography">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>98</width>
+           <height>28</height>
+          </rect>
+         </property>
+         <attribute name="label">
+          <string>Tractography</string>
+         </attribute>
+        </widget>
+       </widget>
       </widget>
      </widget>
     </item>
@@ -386,6 +429,12 @@
    <class>pli::tractography_plugin</class>
    <extends>QWidget</extends>
    <header location="global">ui/plugins/tractography_plugin.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>pli::selector_plugin</class>
+   <extends>QWidget</extends>
+   <header location="global">ui/plugins/selector_plugin.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

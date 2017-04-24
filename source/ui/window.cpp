@@ -12,18 +12,16 @@ window:: window()
   setupUi      (this);
   showMaximized();
 
-  set_sink        (std::make_shared<qt_text_browser_sink>(console));
-  bind_actions ();
+  set_sink    (std::make_shared<qt_text_browser_sink>(console));
+  bind_actions();
 
-  plugins_ = toolbox->findChildren<plugin*>(QRegExp("plugin")).toVector().toStdVector();
+  plugins_ = findChildren<plugin*>(QRegExp("plugin")).toVector().toStdVector();
   for (auto plugin : plugins_)
     plugin->set_owner(this);
   for (auto plugin : plugins_)
     plugin->awake();
   for (auto plugin : plugins_)
     plugin->start();
-
-  selector->set_owner(this);
 
   std::size_t free, total;
   cudaMemGetInfo(&free, &total);

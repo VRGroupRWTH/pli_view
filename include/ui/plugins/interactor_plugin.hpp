@@ -7,6 +7,7 @@
 
 namespace pli
 {
+// TODO: Move and look speed sliders.
 class interactor_plugin : 
   public plugin, 
   public loggable<interactor_plugin>, 

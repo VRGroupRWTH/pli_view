@@ -9,6 +9,7 @@ namespace pli
 {
 class odf_field;
 
+// TODO: Longitude and latitude sliders. Enable threshold slider and line edit only when clustering is enabled.
 class fdm_plugin : 
   public plugin, 
   public loggable<fdm_plugin>, 

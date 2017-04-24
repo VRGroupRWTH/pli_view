@@ -83,7 +83,7 @@ private:
         for (auto z = 0; z < size[2]; z++)
           data[x][y][z] = misordered_data[z][x][y];
 
-    if (normalize)
+    if (normalize && data.num_elements() > 0)
     {
       auto max_element = *std::max_element(data.data(), data.data() + data.num_elements());
       std::transform(data.data(), data.data() + data.num_elements(), data.data(), [max_element](const float& element)
@@ -119,7 +119,7 @@ private:
           for (auto v = 0; v < count; v++)
             data[x][y][z][v] = misordered_data[z][v][x][y];
 
-    if (normalize)
+    if (normalize && data.num_elements() > 0)
     {
       auto max_element = *std::max_element(data.data(), data.data() + data.num_elements());
       std::transform(data.data(), data.data() + data.num_elements(), data.data(), [max_element](const float& element)
