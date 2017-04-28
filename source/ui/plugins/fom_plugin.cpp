@@ -57,6 +57,8 @@ void fom_plugin::start ()
 }
 void fom_plugin::update() const
 {
+  return;
+
   logger_->info(std::string("Updating viewer..."));
 
   auto data_plugin     = owner_->get_plugin<pli::data_plugin>    ();
@@ -66,7 +68,7 @@ void fom_plugin::update() const
   auto size            = selector_plugin->size  ();
   auto scale           = line_edit_utility::get_text<float>(line_edit_fiber_scale);
 
-  if  (io == nullptr)
+  if  (io == nullptr || size[0] == 0 || size[1] == 0 || size[2] == 0)
   {
     logger_->info(std::string("Update failed: No data."));
     return;

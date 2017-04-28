@@ -131,6 +131,8 @@ void fdm_plugin::start        ()
 }
 void fdm_plugin::update       () const
 {
+  return; 
+
   logger_->info(std::string("Updating viewer..."));
 
   auto data_plugin     = owner_->get_plugin<pli::data_plugin>    ();
@@ -139,7 +141,7 @@ void fdm_plugin::update       () const
   auto offset          = selector_plugin->offset();
   auto size            = selector_plugin->size  ();
 
-  if  (io == nullptr)
+  if  (io == nullptr || size[0] == 0 || size[1] == 0 || size[2] == 0)
   {
     logger_->info(std::string("Update failed: No data."));
     return;
