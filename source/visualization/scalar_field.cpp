@@ -54,11 +54,15 @@ void scalar_field::render    (const camera* camera)
   shader_program_->set_uniform("projection", camera->projection_matrix      ());
   shader_program_->set_uniform("view"      , camera->inverse_absolute_matrix());
 
-  glDrawArrays(GL_TRIANGLES, 0, draw_count_);
+  glEnable       (GL_POLYGON_OFFSET_FILL);
+  glPolygonOffset(1.0, 10.0);
+  glDrawArrays   (GL_TRIANGLES, 0, draw_count_);
+  glDisable      (GL_POLYGON_OFFSET_FILL);
 
   texture_       ->unbind();
   vertex_array_  ->unbind();
   shader_program_->unbind();
+
 }
 
 void scalar_field::set_data(
