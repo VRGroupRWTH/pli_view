@@ -61,7 +61,7 @@ void scalar_plugin::upload()
   auto offset   = selector->offset();
   auto size     = selector->size  ();
 
-  if (io == nullptr)
+  if (io == nullptr || size[0] == 0 || size[1] == 0 || size[2] == 0)
   {
     logger_->info(std::string("Update failed: No data."));
     return;

@@ -2,7 +2,6 @@
 #define PLI_VIS_SCALAR_PLUGIN_HPP_
 
 #include <future>
-#include <map>
 
 #include <attributes/loggable.hpp>
 #include <ui/plugins/plugin.hpp>
