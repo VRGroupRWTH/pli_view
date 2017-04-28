@@ -34,7 +34,7 @@ void scalar_field::initialize()
 
   texture_        ->set_active(0);
   texture_        ->bind      ();
-  texture_        ->min_filter(GL_NEAREST_MIPMAP_NEAREST);
+  texture_        ->min_filter(GL_NEAREST);
   texture_        ->mag_filter(GL_NEAREST);
   texture_        ->wrap_s    (GL_CLAMP_TO_EDGE);
   texture_        ->wrap_t    (GL_CLAMP_TO_EDGE);
@@ -87,7 +87,6 @@ void scalar_field::set_data(
   texture_->set_active(0);
   texture_->bind      ();
   texture_->set_image (GL_RED, dimensions.y, dimensions.x, GL_RED, GL_FLOAT, scalars);
-  texture_->generate_mipmaps();
   texture_->unbind    ();
 }
 }
