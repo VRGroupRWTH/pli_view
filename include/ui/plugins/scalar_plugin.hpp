@@ -1,6 +1,7 @@
 #ifndef PLI_VIS_SCALAR_PLUGIN_HPP_
 #define PLI_VIS_SCALAR_PLUGIN_HPP_
 
+#include <future>
 #include <map>
 
 #include <attributes/loggable.hpp>
@@ -21,9 +22,10 @@ public:
   void start () override;
 
 private:
-  void update() const;
+  void upload();
 
-  std::map<std::string, scalar_field*> scalar_fields_;
+  scalar_field*     scalar_field_;
+  std::future<void> future_      ;
 };
 }
 

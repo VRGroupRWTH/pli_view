@@ -1,8 +1,5 @@
 #include /* implements */ <ui/plugins/scalar_plugin.hpp>
 
-#include <functional>
-#include <future>
-
 #include <boost/optional.hpp>
 
 #include <ui/window.hpp>
@@ -16,29 +13,25 @@ scalar_plugin::scalar_plugin(QWidget* parent) : plugin(parent)
 {
   setupUi(this);
   
-  connect(checkbox_transmittance, &QCheckBox::stateChanged, [&] (int state)
+  connect(checkbox_transmittance, &QRadioButton::clicked, [&]()
   {
-    logger_->info("Transmittance maps are {}.", state ? "enabled" : "disabled");
-    scalar_fields_["transmittance"]->set_active(state);
-    update();
+    logger_->info(std::string("Transmittance maps are selected."));
+    upload();
   });
-  connect(checkbox_retardation  , &QCheckBox::stateChanged, [&] (int state)
+  connect(checkbox_retardation  , &QRadioButton::clicked, [&]()
   {
-    logger_->info("Retardation maps are {}.", state ? "enabled" : "disabled");
-    scalar_fields_["retardation"]->set_active(state);
-    update();
+    logger_->info(std::string("Retardation maps are selected."));
+    upload();
   });
-  connect(checkbox_direction    , &QCheckBox::stateChanged, [&] (int state)
+  connect(checkbox_direction    , &QRadioButton::clicked, [&]()
   {
-    logger_->info("Direction maps are {}.", state ? "enabled" : "disabled");
-    scalar_fields_["direction"]->set_active(state);
-    update();
+    logger_->info(std::string("Direction maps are selected."));
+    upload();
   });
-  connect(checkbox_inclination  , &QCheckBox::stateChanged, [&] (int state)
+  connect(checkbox_inclination  , &QRadioButton::clicked, [&]()
   {
-    logger_->info("Inclination maps are {}.", state ? "enabled" : "disabled");
-    scalar_fields_["inclination"]->set_active(state);
-    update();
+    logger_->info(std::string("Inclination maps are selected."));
+    upload();
   });
 }
 
@@ -48,78 +41,66 @@ void scalar_plugin::start ()
 
   connect(owner_->get_plugin<data_plugin>    (), &data_plugin    ::on_change, [&]
   {
-    update();
+    upload();
   });
   connect(owner_->get_plugin<selector_plugin>(), &selector_plugin::on_change, [&]
   {
-    update();
+    upload();
   });
   
-  scalar_fields_["transmittance"] = owner_->viewer->add_renderable<scalar_field>();
-  scalar_fields_["retardation"  ] = owner_->viewer->add_renderable<scalar_field>();
-  scalar_fields_["direction"    ] = owner_->viewer->add_renderable<scalar_field>();
-  scalar_fields_["inclination"  ] = owner_->viewer->add_renderable<scalar_field>();
+  scalar_field_ = owner_->viewer->add_renderable<scalar_field>();
 
   logger_->info(std::string("Start successful."));
 }
-void scalar_plugin::update() const
+void scalar_plugin::upload()
 {
   logger_->info(std::string("Updating viewer..."));
 
-  auto data_plugin     = owner_->get_plugin<pli::data_plugin>();
-  auto selector_plugin = owner_->get_plugin<pli::selector_plugin>();
-  auto io              = data_plugin    ->io    ();
-  auto offset          = selector_plugin->offset();
-  auto size            = selector_plugin->size  ();
+  auto io       = owner_->get_plugin<pli::data_plugin>    ()->io();
+  auto selector = owner_->get_plugin<pli::selector_plugin>();
+  auto offset   = selector->offset();
+  auto size     = selector->size  ();
 
   if (io == nullptr)
   {
     logger_->info(std::string("Update failed: No data."));
     return;
   }
+
   owner_->viewer->set_wait_spinner_enabled(true);
+  selector->setEnabled(false);
 
-  std::array<float, 3>                          spacing      ;
-  boost::optional<boost::multi_array<float, 3>> transmittance;
-  boost::optional<boost::multi_array<float, 3>> retardation  ;
-  boost::optional<boost::multi_array<float, 3>> direction    ;
-  boost::optional<boost::multi_array<float, 3>> inclination  ;
-
-  std::future<void> result(std::async(std::launch::async, [&]()
+  // Load data from hard drive (on another thread).
+  std::array<float, 3>                          spacing;
+  boost::optional<boost::multi_array<float, 3>> data   ;
+  future_ = std::async(std::launch::async, [&]
   {
     try
     {
       spacing = io->load_vector_spacing();
-      if(checkbox_transmittance->isChecked()) 
-        transmittance.reset(io->load_transmittance_dataset    (offset, size, true));
-      if(checkbox_retardation  ->isChecked()) 
-        retardation  .reset(io->load_retardation_dataset      (offset, size, true));
-      if(checkbox_direction    ->isChecked()) 
-        direction    .reset(io->load_fiber_direction_dataset  (offset, size, true));
-      if(checkbox_inclination  ->isChecked()) 
-        inclination  .reset(io->load_fiber_inclination_dataset(offset, size, true));
+      if (checkbox_transmittance->isChecked()) data.reset(io->load_transmittance_dataset    (offset, size, true));
+      if (checkbox_retardation  ->isChecked()) data.reset(io->load_retardation_dataset      (offset, size, true));
+      if (checkbox_direction    ->isChecked()) data.reset(io->load_fiber_direction_dataset  (offset, size, true));
+      if (checkbox_inclination  ->isChecked()) data.reset(io->load_fiber_inclination_dataset(offset, size, true));
     }
     catch (std::exception& exception)
     {
       logger_->error(std::string(exception.what()));
     }
-  }));
-  while(result.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
+  });
+  while(future_.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
     QApplication::processEvents();
 
+  // Upload data to GPU.
   uint3  cuda_size    {unsigned(size[0]), unsigned(size[1]), unsigned(size[2])};
   float3 cuda_spacing {spacing[0], spacing[1], spacing[2]};
-  if (transmittance.is_initialized() && transmittance.get().num_elements() > 0)
-    scalar_fields_.at("transmittance")->set_data(cuda_size, transmittance.get().data(), cuda_spacing);
-  if (retardation .is_initialized() && retardation  .get().num_elements() > 0)
-    scalar_fields_.at("retardation"  )->set_data(cuda_size, retardation  .get().data(), cuda_spacing);
-  if (direction   .is_initialized() && direction    .get().num_elements() > 0)
-    scalar_fields_.at("direction"    )->set_data(cuda_size, direction    .get().data(), cuda_spacing);
-  if (inclination .is_initialized() && inclination  .get().num_elements() > 0)
-    scalar_fields_.at("inclination"  )->set_data(cuda_size, inclination  .get().data(), cuda_spacing);
+  if (data.is_initialized() && data.get().num_elements() > 0)
+    scalar_field_->set_data(cuda_size, data.get().data(), cuda_spacing);
 
+  selector->setEnabled(true);
   owner_->viewer->set_wait_spinner_enabled(false);
   owner_->viewer->update();
+
   logger_->info(std::string("Update successful."));
 }
 }
