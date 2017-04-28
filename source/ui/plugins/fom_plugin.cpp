@@ -78,6 +78,7 @@ void fom_plugin::upload()
   owner_->viewer->set_wait_spinner_enabled(true);
   selector->setEnabled(false);
 
+  // Load data from hard drive (on another thread).
   std::array<float, 3>                          spacing    ;
   boost::optional<boost::multi_array<float, 3>> direction  ;
   boost::optional<boost::multi_array<float, 3>> inclination;
@@ -101,7 +102,13 @@ void fom_plugin::upload()
   uint3  cuda_size    {unsigned(size[0]), unsigned(size[1]), unsigned(size[2])};
   float3 cuda_spacing {spacing[0], spacing[1], spacing[2]};
   if (direction.is_initialized() && direction.get().num_elements() > 0)
-    vector_field_->set_data(cuda_size, direction.get().data(), inclination.get().data(), cuda_spacing, scale, [&](const std::string& message) { logger_->info(message); });
+    vector_field_->set_data(
+      cuda_size, 
+      direction  .get().data(), 
+      inclination.get().data(), 
+      cuda_spacing, 
+      scale, 
+      [&] (const std::string& message) { logger_->info(message); });
 
   selector->setEnabled(true);
   owner_->viewer->set_wait_spinner_enabled(false);
