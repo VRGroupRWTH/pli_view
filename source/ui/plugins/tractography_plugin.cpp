@@ -36,6 +36,11 @@ void tractography_plugin::trace()
   {
     auto data_plugin     = owner_->get_plugin<pli::data_plugin>();
     auto io              = data_plugin->io();
+    if(io == nullptr)
+    {
+      logger_->info(std::string("Trace failed: No data."));
+      return;
+    }
 
     auto selector_plugin = owner_->get_plugin<pli::selector_plugin>();
     auto offset          = selector_plugin->offset();
