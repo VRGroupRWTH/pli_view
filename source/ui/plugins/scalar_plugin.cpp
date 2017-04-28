@@ -13,22 +13,27 @@ scalar_plugin::scalar_plugin(QWidget* parent) : plugin(parent)
 {
   setupUi(this);
   
-  connect(checkbox_transmittance, &QRadioButton::clicked, [&]()
+  connect(checkbox_enabled      , &QCheckBox::stateChanged, [&](bool state)
+  {
+    logger_->info(std::string(state ? "Enabled." : "Disabled."));
+    scalar_field_->set_active(state);
+  });
+  connect(checkbox_transmittance, &QRadioButton::clicked  , [&]()
   {
     logger_->info(std::string("Transmittance maps are selected."));
     upload();
   });
-  connect(checkbox_retardation  , &QRadioButton::clicked, [&]()
+  connect(checkbox_retardation  , &QRadioButton::clicked  , [&]()
   {
     logger_->info(std::string("Retardation maps are selected."));
     upload();
   });
-  connect(checkbox_direction    , &QRadioButton::clicked, [&]()
+  connect(checkbox_direction    , &QRadioButton::clicked  , [&]()
   {
     logger_->info(std::string("Direction maps are selected."));
     upload();
   });
-  connect(checkbox_inclination  , &QRadioButton::clicked, [&]()
+  connect(checkbox_inclination  , &QRadioButton::clicked  , [&]()
   {
     logger_->info(std::string("Inclination maps are selected."));
     upload();
