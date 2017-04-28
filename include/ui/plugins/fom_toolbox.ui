@@ -28,11 +28,14 @@
        <height>0</height>
       </size>
      </property>
+     <property name="minimum">
+      <number>0</number>
+     </property>
      <property name="maximum">
-      <number>1000</number>
+      <number>10000</number>
      </property>
      <property name="value">
-      <number>500</number>
+      <number>10000</number>
      </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -48,7 +51,7 @@
       </sizepolicy>
      </property>
      <property name="placeholderText">
-      <string>1.0</string>
+      <string>1</string>
      </property>
     </widget>
    </item>
