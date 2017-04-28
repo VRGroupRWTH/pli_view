@@ -1,6 +1,8 @@
 #ifndef PLI_VIS_FDM_PLUGIN_HPP_
 #define PLI_VIS_FDM_PLUGIN_HPP_
 
+#include <future>
+
 #include <attributes/loggable.hpp>
 #include <ui/plugins/plugin.hpp>
 #include <ui_fdm_toolbox.h>
@@ -9,7 +11,6 @@ namespace pli
 {
 class odf_field;
 
-// TODO: Longitude and latitude sliders. Enable threshold slider and line edit only when clustering is enabled.
 class fdm_plugin : 
   public plugin, 
   public loggable<fdm_plugin>, 
@@ -20,10 +21,12 @@ public:
   void start () override;
 
 private:
-  void update       () const;
-  void select_depths() const;
+  void upload            ();
+  void set_visible_layers() const;
 
-  odf_field* odf_field_;
+  odf_field*        odf_field_;
+  std::future<void> future_   ;
+  float threshold_multiplier_ = 0.01;
 };
 }
 
