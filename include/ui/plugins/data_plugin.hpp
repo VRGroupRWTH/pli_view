@@ -21,7 +21,7 @@ public:
   hdf5_io_base* io() const;
 
 signals:
-  void on_change(hdf5_io_base* io);
+  void on_change();
 
 private:
   void set_file(const std::string& filename);

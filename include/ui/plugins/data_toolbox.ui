@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>390</width>
-    <height>350</height>
+    <height>320</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,6 +20,145 @@
       <string>Block Size</string>
      </property>
     </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label_file">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>File</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2" colspan="2">
+    <widget class="QRadioButton" name="radio_button_volume">
+     <property name="toolTip">
+      <string>The whole data is stored in a single dataset, similar to MSA0309.</string>
+     </property>
+     <property name="text">
+      <string>Volume</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QRadioButton" name="radio_button_slice_by_slice">
+     <property name="toolTip">
+      <string>Each slice is represented as a separate dataset, similar to Vervet1818.</string>
+     </property>
+     <property name="text">
+      <string>Slice by slice</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_file_type">
+     <property name="text">
+      <string>Type</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="1" colspan="4">
+    <widget class="QLineEdit" name="line_edit_direction">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="toolTip">
+      <string>The path to the direction dataset. For &quot;slice by slice&quot; type data, %Slice% acts as a reserved keyword indicating the slice number dataset.</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="placeholderText">
+      <string>%Slice%/Microscope/Processed/Registered/Direction</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="label_datasets">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Datasets</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1" colspan="4">
+    <widget class="QLineEdit" name="line_edit_block_size">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="toolTip">
+      <string>The attribute which specifies the number of grouped voxels in each axis (distribution only).</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="placeholderText">
+      <string>BlockSize</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1" colspan="4">
+    <widget class="QLineEdit" name="line_edit_retardation">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="toolTip">
+      <string>The path to the retardation dataset. For &quot;slice by slice&quot; type data, %Slice% acts as a reserved keyword indicating the slice number dataset.</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="placeholderText">
+      <string>%Slice%/Microscope/Processed/Registered/Retardation</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="4">
+    <widget class="QPushButton" name="button_browse">
+     <property name="text">
+      <string>Browse</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="0" colspan="5">
+    <spacer name="spacer_vertical">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>168</height>
+      </size>
+     </property>
+    </spacer>
    </item>
    <item row="7" column="1" colspan="4">
     <widget class="QLineEdit" name="line_edit_transmittance">
@@ -145,145 +284,6 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="0">
-    <widget class="QLabel" name="label_datasets">
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Datasets</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1" colspan="4">
-    <widget class="QLineEdit" name="line_edit_block_size">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="toolTip">
-      <string>The attribute which specifies the number of grouped voxels in each axis (distribution only).</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="placeholderText">
-      <string>BlockSize</string>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="1" colspan="4">
-    <widget class="QLineEdit" name="line_edit_retardation">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="toolTip">
-      <string>The path to the retardation dataset. For &quot;slice by slice&quot; type data, %Slice% acts as a reserved keyword indicating the slice number dataset.</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="placeholderText">
-      <string>%Slice%/Microscope/Processed/Registered/Retardation</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="4">
-    <widget class="QPushButton" name="button_browse">
-     <property name="text">
-      <string>Browse</string>
-     </property>
-    </widget>
-   </item>
-   <item row="13" column="0" colspan="5">
-    <spacer name="spacer_vertical">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>168</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label_file">
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>File</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2" colspan="2">
-    <widget class="QRadioButton" name="radio_button_volume">
-     <property name="toolTip">
-      <string>The whole data is stored in a single dataset, similar to MSA0309.</string>
-     </property>
-     <property name="text">
-      <string>Volume</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QRadioButton" name="radio_button_slice_by_slice">
-     <property name="toolTip">
-      <string>Each slice is represented as a separate dataset, similar to Vervet1818.</string>
-     </property>
-     <property name="text">
-      <string>Slice by slice</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_file_type">
-     <property name="text">
-      <string>Type</string>
-     </property>
-    </widget>
-   </item>
-   <item row="9" column="1" colspan="4">
-    <widget class="QLineEdit" name="line_edit_direction">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="toolTip">
-      <string>The path to the direction dataset. For &quot;slice by slice&quot; type data, %Slice% acts as a reserved keyword indicating the slice number dataset.</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="placeholderText">
-      <string>%Slice%/Microscope/Processed/Registered/Direction</string>
-     </property>
-    </widget>
-   </item>
    <item row="10" column="1" colspan="4">
     <widget class="QLineEdit" name="line_edit_inclination">
      <property name="sizePolicy">
@@ -330,26 +330,6 @@
      </property>
     </widget>
    </item>
-   <item row="12" column="0" colspan="2">
-    <widget class="QCheckBox" name="checkbox_autoload">
-     <property name="text">
-      <string>Auto load on change</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="12" column="2" colspan="3">
-    <widget class="QPushButton" name="button_load">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="text">
-      <string>Load</string>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <tabstops>
@@ -364,8 +344,6 @@
   <tabstop>line_edit_direction</tabstop>
   <tabstop>line_edit_inclination</tabstop>
   <tabstop>line_edit_distribution</tabstop>
-  <tabstop>checkbox_autoload</tabstop>
-  <tabstop>button_load</tabstop>
  </tabstops>
  <resources/>
  <connections/>
