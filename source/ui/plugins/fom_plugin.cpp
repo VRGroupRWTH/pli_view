@@ -87,8 +87,8 @@ void fom_plugin::upload()
     try
     {
       spacing = io->load_vector_spacing();
-      direction  .reset(io->load_fiber_direction_dataset  (offset, size));
-      inclination.reset(io->load_fiber_inclination_dataset(offset, size));
+      direction  .reset(io->load_fiber_direction_dataset  (offset, size, {1, 1, 1}, false));
+      inclination.reset(io->load_fiber_inclination_dataset(offset, size, {1, 1, 1}, false));
     }
     catch (std::exception& exception)
     {

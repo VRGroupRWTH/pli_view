@@ -184,7 +184,7 @@ void fdm_plugin::upload()
     {
       spacing    = io->load_vector_spacing();
       block_size = io->load_block_size    ();
-      distributions.reset(io->load_fiber_distribution_dataset(offset, size));
+      distributions.reset(io->load_fiber_distribution_dataset(offset, size, {1, 1, 1}, false));
 
       // Roll dimensions to power of two.
       size[0] = pow(2, ceil(log(size[0]) / log(2)));

@@ -164,31 +164,31 @@ public:
     return load_tensor_dataset_bounds(dataset_path_fiber_distribution_);
   }
 
-  boost::multi_array<float, 3> load_mask_dataset              (const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = false)
+  boost::multi_array<float, 3> load_mask_dataset              (const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = true)
   {
     return load_scalar_dataset(dataset_path_mask_              , offset, size, stride, normalize);
   }
-  boost::multi_array<float, 3> load_transmittance_dataset     (const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = false)
+  boost::multi_array<float, 3> load_transmittance_dataset     (const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = true)
   {
     return load_scalar_dataset(dataset_path_transmittance_     , offset, size, stride, normalize);
   } 
-  boost::multi_array<float, 3> load_retardation_dataset       (const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = false)
+  boost::multi_array<float, 3> load_retardation_dataset       (const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = true)
   {
     return load_scalar_dataset(dataset_path_retardation_       , offset, size, stride, normalize);
   }
-  boost::multi_array<float, 3> load_fiber_direction_dataset   (const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = false)
+  boost::multi_array<float, 3> load_fiber_direction_dataset   (const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = true)
   {
     return load_scalar_dataset(dataset_path_fiber_direction_   , offset, size, stride, normalize);
   }
-  boost::multi_array<float, 3> load_fiber_inclination_dataset (const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = false)
+  boost::multi_array<float, 3> load_fiber_inclination_dataset (const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = true)
   {
     return load_scalar_dataset(dataset_path_fiber_inclination_ , offset, size, stride, normalize);
   } 
-  boost::multi_array<float, 4> load_fiber_unit_vectors_dataset(const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = false)
+  boost::multi_array<float, 4> load_fiber_unit_vectors_dataset(const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = true)
   {
     return load_vector_dataset(dataset_path_fiber_unit_vectors_, offset, size, stride, normalize);
   }
-  boost::multi_array<float, 4> load_fiber_distribution_dataset(const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = false)
+  boost::multi_array<float, 4> load_fiber_distribution_dataset(const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = true)
   {
     return load_tensor_dataset(dataset_path_fiber_distribution_, offset, size, stride, normalize);
   }
