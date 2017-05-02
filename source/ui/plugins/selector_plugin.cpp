@@ -95,30 +95,6 @@ selector_plugin::selector_plugin(QWidget* parent) : plugin(parent)
   });
 }
 
-void selector_plugin::start()
-{
-  set_sink(std::make_shared<qt_text_browser_sink>(owner_->console));
-  connect(owner_->get_plugin<data_plugin>(), &data_plugin::on_change, [&]
-  {
-    auto io = owner_->get_plugin<data_plugin>()->io();
-    if(io)
-    {
-      auto bounds = io->load_fiber_direction_dataset_bounds();
-      slider_x->setMinimum(bounds.first[0]); slider_x->setMaximum(bounds.second[0]);
-      slider_y->setMinimum(bounds.first[1]); slider_y->setMaximum(bounds.second[1]);
-      slider_z->setMinimum(bounds.first[2]); slider_z->setMaximum(bounds.second[2]);
-    }
-    else
-    {
-      slider_x->setMinimum(0); slider_x->setMaximum(0);
-      slider_y->setMinimum(0); slider_y->setMaximum(0);
-      slider_z->setMinimum(0); slider_z->setMaximum(0);
-    }
-    update();
-  });
-  logger_->info(std::string("Start successful."));
-}
-
 std::array<std::size_t, 3> selector_plugin::offset() const
 {
   return
@@ -136,5 +112,56 @@ std::array<std::size_t, 3> selector_plugin::size  () const
     line_edit_utility::get_text<std::size_t>(line_edit_size_y),
     line_edit_utility::get_text<std::size_t>(line_edit_size_z)
   };
+}
+
+void selector_plugin::start ()
+{
+  set_sink(std::make_shared<qt_text_browser_sink>(owner_->console));
+
+  connect(owner_->get_plugin<data_plugin>(), &data_plugin::on_change, [&]
+  {
+    upload();
+  });
+
+  logger_->info(std::string("Start successful."));
+}
+void selector_plugin::upload()
+{
+  logger_->info(std::string("Updating selector..."));
+
+  auto io = owner_->get_plugin<data_plugin>()->io();
+  if (io)
+  {
+    // Adjust slider boundaries.
+    auto bounds = io->load_retardation_dataset_bounds();
+    slider_x->setMinimum(bounds.first[0]); slider_x->setMaximum(bounds.second[0]);
+    slider_y->setMinimum(bounds.first[1]); slider_y->setMaximum(bounds.second[1]);
+    slider_z->setMinimum(bounds.first[2]); slider_z->setMaximum(bounds.second[2]);
+
+    // Generate preview image.
+    std::array<std::size_t, 3> size   = {1, 1, 1};
+    std::array<std::size_t, 3> stride = {1, 1, 1};
+    size  [0] = 2048;
+    stride[0] = bounds.second[0] / size  [0];
+    size  [1] = bounds.second[1] / stride[0];
+    stride[1] = stride[0];
+    auto data = io->load_retardation_dataset(bounds.first, size, stride);
+    boost::multi_array<unsigned char, 3> converted(boost::extents[size[0]][size[1]][size[2]], boost::fortran_storage_order());
+    for(auto i = 0; i < size[0]; i++)
+      for(auto j = 0; j < size[1]; j++)
+        for (auto k = 0; k < size[2]; k++)
+          converted[i][j][k] = data[i][j][k] * 255.0;
+    image->setPixmap(QPixmap::fromImage(QImage(converted.data(), size[0], size[1], QImage::Format::Format_Grayscale8)));
+  }
+  else
+  {
+    slider_x->setMinimum(0); slider_x->setMaximum(0);
+    slider_y->setMinimum(0); slider_y->setMaximum(0);
+    slider_z->setMinimum(0); slider_z->setMaximum(0);
+
+    image->setPixmap(QPixmap());
+  }
+
+  image->update();
 }
 }

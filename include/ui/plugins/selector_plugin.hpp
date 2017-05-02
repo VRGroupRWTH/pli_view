@@ -17,13 +17,17 @@ class selector_plugin : public plugin, public Ui_selector_toolbox, public loggab
   Q_OBJECT
 public:
   selector_plugin(QWidget* parent = nullptr);
-  void start() override;
-
+  
   std::array<std::size_t, 3> offset() const;
   std::array<std::size_t, 3> size  () const;
 
+  void start() override;
+
 signals:
   void on_change(const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size);
+
+private:
+  void upload();
 };
 }
 
