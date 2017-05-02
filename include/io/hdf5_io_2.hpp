@@ -65,7 +65,7 @@ private:
     return {{0, 0, 0, 0}, {misordered_size[2], misordered_size[3], misordered_size[0], misordered_size[1]}};
   }
 
-  boost::multi_array<float, 3> load_scalar_dataset(std::string dataset_path, const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, bool normalize) override
+  boost::multi_array<float, 3> load_scalar_dataset(std::string dataset_path, const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride, bool normalize) override
   {
     if (!file_.isValid() || dataset_path.empty())
       return boost::multi_array<float, 3>();
@@ -73,7 +73,7 @@ private:
     boost::multi_array<float, 3> misordered_data;
     file_
       .getDataSet(dataset_path)
-      .select    ({offset[2], offset[0], offset[1]}, {size[2], size[0], size[1]})
+      .select    ({offset[2], offset[0], offset[1]}, {size[2], size[0], size[1]}, std::vector<std::size_t>{stride[0], stride[1], stride[2]})
       .read      (misordered_data);
 
     // Convert ZXY to XYZ.
@@ -94,11 +94,11 @@ private:
 
     return data;
   }
-  boost::multi_array<float, 4> load_vector_dataset(std::string dataset_path, const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, bool normalize) override
+  boost::multi_array<float, 4> load_vector_dataset(std::string dataset_path, const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride, bool normalize) override
   {
-    return load_tensor_dataset(dataset_path, offset, size, normalize);
+    return load_tensor_dataset(dataset_path, offset, size, stride, normalize);
   }
-  boost::multi_array<float, 4> load_tensor_dataset(std::string dataset_path, const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, bool normalize) override
+  boost::multi_array<float, 4> load_tensor_dataset(std::string dataset_path, const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride, bool normalize) override
   {
     if (!file_.isValid() || dataset_path.empty())
       return boost::multi_array<float, 4>();
@@ -108,7 +108,7 @@ private:
 
     boost::multi_array<float, 4> misordered_data;
     dataset
-      .select({offset[2], 0, offset[0], offset[1]}, {size[2], count, size[0], size[1]})
+      .select({offset[2], 0, offset[0], offset[1]}, {size[2], count, size[0], size[1]}, std::vector<std::size_t>{stride[2], 1, stride[0], stride[1]})
       .read  (misordered_data);
 
     // Convert ZVXY to XYZV.

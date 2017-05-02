@@ -78,22 +78,22 @@ private:
     return {{0, 0, z_offset, 0}, {xyt_size[0], xyt_size[1], z_offset + z_size, xyt_size[2]}};
   }
 
-  boost::multi_array<float, 3> load_scalar_dataset(std::string dataset_path, const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, bool normalize) override
+  boost::multi_array<float, 3> load_scalar_dataset(std::string dataset_path, const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride, bool normalize) override
   {
     boost::multi_array<float, 3> data(boost::extents[size[0]][size[1]][size[2]]);
-  
+
     if (!file_.isValid() || dataset_path.empty())
       return data;
 
     dataset_path = boost::replace_first_copy(dataset_path, "%Slice%", "%04d");
 
-    for (auto z = 0; z < size[2]; z++)
+    for (auto z = 0; z < size[2]; z+= stride[2])
     {
       boost::multi_array<float, 2> slice_data;
       file_
         .getDataSet((boost::format(dataset_path) % (z + offset[2])).str())
-        .select    ({offset[0], offset[1]}, {size[0], size[1]})
-        .read      (slice_data);
+        .select({offset[0], offset[1]}, {size[0], size[1]}, std::vector<std::size_t>{stride[0], stride[1]})
+        .read(slice_data);
       data[boost::indices[index_range()][index_range()][z]] = slice_data;
     }
 
@@ -105,15 +105,15 @@ private:
         return element / max_element;
       });
     }
-        
+
     return data;
   }
-  boost::multi_array<float, 4> load_vector_dataset(std::string dataset_path, const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, bool normalize) override
+  boost::multi_array<float, 4> load_vector_dataset(std::string dataset_path, const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride, bool normalize) override
   {
     std::cout << "Vector datasets are unsupported." << std::endl;
     return boost::multi_array<float, 4>();
   }
-  boost::multi_array<float, 4> load_tensor_dataset(std::string dataset_path, const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, bool normalize) override
+  boost::multi_array<float, 4> load_tensor_dataset(std::string dataset_path, const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride, bool normalize) override
   {
     boost::multi_array<float, 4> data(boost::extents[size[0]][size[1]][size[2]][1]);
 
@@ -122,7 +122,7 @@ private:
 
     dataset_path = boost::replace_first_copy(dataset_path, "%Slice%", "%04d");
 
-    for (auto z = 0; z < size[2]; z++)
+    for (auto z = 0; z < size[2]; z+= stride[2])
     {
       auto dataset = file_.getDataSet((boost::format(dataset_path) % (z + offset[2])).str());
       auto count   = dataset.getSpace().getDimensions()[2];
@@ -132,7 +132,7 @@ private:
       
       boost::multi_array<float, 3> slice_data;
       dataset
-        .select({offset[0], offset[1], 0}, {size[0], size[1], count})
+        .select({offset[0], offset[1], 0}, {size[0], size[1], count}, std::vector<std::size_t>{stride[0], stride[1], 1})
         .read  (slice_data);
       data[boost::indices[index_range()][index_range()][z][index_range()]] = slice_data;
     }
