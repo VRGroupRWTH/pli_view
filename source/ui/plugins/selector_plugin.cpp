@@ -163,5 +163,7 @@ void selector_plugin::upload()
   }
 
   image->update();
+
+  logger_->info(std::string("Update successful."));
 }
 }
