@@ -83,10 +83,10 @@ void scalar_plugin::upload()
     try
     {
       spacing = io->load_vector_spacing();
-      if (checkbox_transmittance->isChecked()) data.reset(io->load_transmittance_dataset    (offset, size, true));
-      if (checkbox_retardation  ->isChecked()) data.reset(io->load_retardation_dataset      (offset, size, true));
-      if (checkbox_direction    ->isChecked()) data.reset(io->load_fiber_direction_dataset  (offset, size, true));
-      if (checkbox_inclination  ->isChecked()) data.reset(io->load_fiber_inclination_dataset(offset, size, true));
+      if (checkbox_transmittance->isChecked()) data.reset(io->load_transmittance_dataset    (offset, size));
+      if (checkbox_retardation  ->isChecked()) data.reset(io->load_retardation_dataset      (offset, size));
+      if (checkbox_direction    ->isChecked()) data.reset(io->load_fiber_direction_dataset  (offset, size));
+      if (checkbox_inclination  ->isChecked()) data.reset(io->load_fiber_inclination_dataset(offset, size));
     }
     catch (std::exception& exception)
     {
