@@ -19,6 +19,8 @@
 #ifndef H5SLICE_TRAITS_HPP
 #define H5SLICE_TRAITS_HPP
 
+#include <boost/optional.hpp>
+
 namespace HighFive{
 
 class DataSet;
@@ -36,14 +38,14 @@ public:
     /// select a region in the current Slice/Dataset of 'count' points at 'offset'
     /// vector offset and count have to be from the same dimension
     ///
-    Selection select(const std::vector<size_t> & offset, const std::vector<size_t> & count) const;
+    Selection select(const std::vector<size_t> & offset, const std::vector<size_t> & count, boost::optional<std::vector<size_t>> stride = boost::none) const;
 
     ///
     /// select a region in the current Slice/Dataset of 'count' points at 'offset'
     /// array offset and count have to be from the same dimension
     ///
     template<std::size_t Size>
-    Selection select(const std::array<size_t, Size> & offset, const std::array<size_t, Size> & count) const;
+    Selection select(const std::array<size_t, Size> & offset, const std::array<size_t, Size> & count, boost::optional<std::array<size_t, Size>> stride = boost::none) const;
 
     ///
     /// Read the entire dataset into a buffer

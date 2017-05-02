@@ -28,6 +28,8 @@
 #include <numeric>
 #include <cassert>
 
+#include <boost/optional.hpp>
+
 #ifdef H5_USE_BOOST_MULTI_ARRAY
 #include <boost/multi_array.hpp>
 #endif
@@ -84,15 +86,17 @@ inline hid_t get_memspace_id(const DataSet* ptr){
 
 
 template <typename Derivate>
-inline Selection SliceTraits<Derivate>::select(const std::vector<size_t> & offset, const std::vector<size_t> & count) const{
+inline Selection SliceTraits<Derivate>::select(const std::vector<size_t> & offset, const std::vector<size_t> & count, boost::optional<std::vector<size_t>> stride) const{
     // hsize_t type convertion
     // TODO : normalize hsize_t type in HighFive namespace
-    std::vector<hsize_t> offset_local(offset.size()), count_local(count.size());
+    std::vector<hsize_t> offset_local(offset.size()), count_local(count.size()), stride_local(stride != boost::none ? (*stride).size() : 0);
     std::copy(offset.begin(), offset.end(), offset_local.begin());
     std::copy(count.begin(), count.end(), count_local.begin());
+    if(stride != boost::none)
+      std::copy((*stride).begin(), (*stride).end(), stride_local.begin());
 
     DataSpace space = static_cast<const Derivate*>(this)->getSpace().clone();
-    if( H5Sselect_hyperslab(space.getId(), H5S_SELECT_SET,  &(offset_local[0]), NULL, &(count_local[0]), NULL) < 0){
+    if( H5Sselect_hyperslab(space.getId(), H5S_SELECT_SET,  &(offset_local[0]), stride != boost::none ? &(stride_local[0]) : NULL, &(count_local[0]), NULL) < 0){
          HDF5ErrMapper::ToException<DataSpaceException>("Unable to select hyperslap");
     }
 
@@ -102,15 +106,17 @@ inline Selection SliceTraits<Derivate>::select(const std::vector<size_t> & offse
 
 template <typename Derivate>
 template <std::size_t Size>
-inline Selection SliceTraits<Derivate>::select(const std::array<size_t, Size> & offset, const std::array<size_t, Size> & count) const{
+inline Selection SliceTraits<Derivate>::select(const std::array<size_t, Size> & offset, const std::array<size_t, Size> & count, boost::optional<std::array<size_t, Size>> stride) const{
   // hsize_t type convertion
   // TODO : normalize hsize_t type in HighFive namespace
-  std::vector<hsize_t> offset_local(offset.size()), count_local(count.size());
+  std::vector<hsize_t> offset_local(offset.size()), count_local(count.size()), stride_local(stride != boost::none ? (*stride).size() : 0);
   std::copy(offset.begin(), offset.end(), offset_local.begin());
   std::copy(count.begin(), count.end(), count_local.begin());
+  if(stride != boost::none)
+    std::copy((*stride).begin(), (*stride).end(), stride_local.begin());
 
   DataSpace space = static_cast<const Derivate*>(this)->getSpace().clone();
-  if (H5Sselect_hyperslab(space.getId(), H5S_SELECT_SET, &(offset_local[0]), NULL, &(count_local[0]), NULL) < 0){
+  if (H5Sselect_hyperslab(space.getId(), H5S_SELECT_SET, &(offset_local[0]), stride != boost::none ? &(stride_local[0]) : NULL, &(count_local[0]), NULL) < 0){
     HDF5ErrMapper::ToException<DataSpaceException>("Unable to select hyperslap");
   }
 
