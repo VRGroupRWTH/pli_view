@@ -43,8 +43,8 @@ void tractography_plugin::trace()
     }
 
     auto selector_plugin = owner_->get_plugin<pli::selector_plugin>();
-    auto offset          = selector_plugin->offset();
-    auto size            = selector_plugin->size  ();
+    auto offset          = selector_plugin->selection_offset();
+    auto size            = selector_plugin->selection_size  ();
       
     auto fiber_direction_map   = io->load_fiber_direction_dataset  (offset, size);
     auto fiber_inclination_map = io->load_fiber_inclination_dataset(offset, size);

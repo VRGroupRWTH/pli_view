@@ -18,8 +18,8 @@ class selector_plugin : public plugin, public Ui_selector_toolbox, public loggab
 public:
   selector_plugin(QWidget* parent = nullptr);
   
-  std::array<std::size_t, 3> offset() const;
-  std::array<std::size_t, 3> size  () const;
+  std::array<std::size_t, 3> selection_offset() const;
+  std::array<std::size_t, 3> selection_size  () const;
 
   void start() override;
 
@@ -27,7 +27,27 @@ signals:
   void on_change(const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size);
 
 private:
+  //QSize sizeHint   () const override
+  //{
+  //  auto s     = size ();
+  //  last_width = width();
+  //  s.setWidth (QWidget::sizeHint().width());
+  //  s.setHeight(image->pixmap() ? static_cast<float>(width()) * image->pixmap()->height() / image->pixmap()->width() : height());
+  //  return s;
+  //}
+  //void  resizeEvent(QResizeEvent * event) override
+  //{
+  //  QWidget::resizeEvent(event);
+  //  if (last_width != width())
+  //  {
+  //    updateGeometry();
+  //    update();
+  //  }
+  //}
+
   void upload();
+
+  mutable int last_width;
 };
 }
 

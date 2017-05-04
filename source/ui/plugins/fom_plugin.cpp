@@ -65,8 +65,8 @@ void fom_plugin::upload()
 
   auto io       = owner_->get_plugin<pli::data_plugin>    ()->io();
   auto selector = owner_->get_plugin<pli::selector_plugin>();
-  auto offset   = selector->offset();
-  auto size     = selector->size  ();
+  auto offset   = selector->selection_offset();
+  auto size     = selector->selection_size  ();
   auto scale    = line_edit_utility::get_text<float>(line_edit_fiber_scale);
 
   if  (io == nullptr || size[0] == 0 || size[1] == 0 || size[2] == 0)

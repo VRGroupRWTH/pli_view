@@ -12,6 +12,10 @@ selector_plugin::selector_plugin(QWidget* parent) : plugin(parent)
 {
   setupUi(this);
 
+  auto policy = image->sizePolicy();
+  policy.setHeightForWidth(true);
+  image->setSizePolicy(policy);
+
   connect(slider_x          , &QxtSpanSlider::lowerValueChanged, [&](int value)
   {
     line_edit_offset_x->setText(QString::fromStdString(std::to_string(value)));
@@ -23,7 +27,7 @@ selector_plugin::selector_plugin(QWidget* parent) : plugin(parent)
   });
   connect(slider_x          , &QxtSpanSlider::sliderReleased   , [&]
   {
-    on_change(offset(), size());
+    on_change(selection_offset(), selection_size());
   });
   connect(slider_y          , &QxtSpanSlider::lowerValueChanged, [&](int value)
   {
@@ -36,7 +40,7 @@ selector_plugin::selector_plugin(QWidget* parent) : plugin(parent)
   });
   connect(slider_y          , &QxtSpanSlider::sliderReleased   , [&]
   {
-    on_change(offset(), size());
+    on_change(selection_offset(), selection_size());
   });
   connect(slider_z          , &QxtSpanSlider::lowerValueChanged, [&](int value)
   {
@@ -49,53 +53,53 @@ selector_plugin::selector_plugin(QWidget* parent) : plugin(parent)
   }); 
   connect(slider_z          , &QxtSpanSlider::sliderReleased   , [&]
   {
-    on_change(offset(), size());
+    on_change(selection_offset(), selection_size());
   });
   connect(line_edit_offset_x, &QLineEdit::editingFinished      , [&]
   {
     auto value = std::max(std::min(line_edit_utility::get_text<std::size_t>(line_edit_offset_x), std::size_t(slider_x->maximum())), std::size_t(slider_x->minimum()));
     logger_ ->info         ("X offset is set to {}.", value);
     slider_x->setLowerValue(value);
-    on_change              (offset(), size());
+    on_change              (selection_offset(), selection_size());
   });
   connect(line_edit_size_x  , &QLineEdit::editingFinished      , [&]
   {
     auto value = std::max(std::min(line_edit_utility::get_text<std::size_t>(line_edit_size_x), std::size_t(slider_x->maximum())), std::size_t(slider_x->minimum()));
     logger_ ->info         ("X size is set to {}.", value);
     slider_x->setUpperValue(slider_x->lowerValue() + value);
-    on_change              (offset(), size());
+    on_change              (selection_offset(), selection_size());
   });
   connect(line_edit_offset_y, &QLineEdit::editingFinished      , [&]
   {
     auto value = std::max(std::min(line_edit_utility::get_text<std::size_t>(line_edit_offset_y), std::size_t(slider_y->maximum())), std::size_t(slider_y->minimum()));
     logger_ ->info         ("Y offset is set to {}.", value);
     slider_y->setLowerValue(value);
-    on_change              (offset(), size());
+    on_change              (selection_offset(), selection_size());
   });
   connect(line_edit_size_y  , &QLineEdit::editingFinished      , [&]
   {
     auto value = std::max(std::min(line_edit_utility::get_text<std::size_t>(line_edit_size_y), std::size_t(slider_y->maximum())), std::size_t(slider_y->minimum()));
     logger_ ->info         ("Y size is set to {}.", value);
     slider_y->setUpperValue(slider_y->lowerValue() + value);
-    on_change              (offset(), size());
+    on_change              (selection_offset(), selection_size());
   });
   connect(line_edit_offset_z, &QLineEdit::editingFinished      , [&]
   {
     auto value = std::max(std::min(line_edit_utility::get_text<std::size_t>(line_edit_offset_z), std::size_t(slider_z->maximum())), std::size_t(slider_z->minimum()));
     logger_ ->info         ("Z offset is set to {}.", value);
     slider_z->setLowerValue(value);
-    on_change              (offset(), size());
+    on_change              (selection_offset(), selection_size());
   });
   connect(line_edit_size_z  , &QLineEdit::editingFinished      , [&]
   {
     auto value = std::max(std::min(line_edit_utility::get_text<std::size_t>(line_edit_size_z), std::size_t(slider_z->maximum())), std::size_t(slider_z->minimum()));
     logger_ ->info         ("Z size is set to {}.", value);
     slider_z->setUpperValue(slider_z->lowerValue() + value);
-    on_change              (offset(), size());
+    on_change              (selection_offset(), selection_size());
   });
 }
 
-std::array<std::size_t, 3> selector_plugin::offset() const
+std::array<std::size_t, 3> selector_plugin::selection_offset() const
 {
   return
   {
@@ -104,7 +108,7 @@ std::array<std::size_t, 3> selector_plugin::offset() const
     line_edit_utility::get_text<std::size_t>(line_edit_offset_z)
   };
 }
-std::array<std::size_t, 3> selector_plugin::size  () const
+std::array<std::size_t, 3> selector_plugin::selection_size  () const
 {
   return
   {
@@ -125,6 +129,7 @@ void selector_plugin::start ()
 
   logger_->info(std::string("Start successful."));
 }
+
 void selector_plugin::upload()
 {
   logger_->info(std::string("Updating selector..."));
@@ -141,7 +146,7 @@ void selector_plugin::upload()
     // Generate preview image.
     std::array<std::size_t, 3> size   = {1, 1, 1};
     std::array<std::size_t, 3> stride = {1, 1, 1};
-    size  [0] = 2048;
+    size  [0] = std::min(bounds.second[0], 2048ull);
     stride[0] = bounds.second[0] / size  [0];
     size  [1] = bounds.second[1] / stride[0];
     stride[1] = stride[0];
@@ -152,6 +157,9 @@ void selector_plugin::upload()
         for (auto k = 0; k < size[2]; k++)
           converted[i][j][k] = data[i][j][k] * 255.0;
     image->setPixmap(QPixmap::fromImage(QImage(converted.data(), size[0], size[1], QImage::Format::Format_Grayscale8)));
+
+    setSizeIncrement(size[0], size[1]);
+    owner_->frame_selector->setWidget(owner_->plugin_selector);
   }
   else
   {
@@ -162,7 +170,7 @@ void selector_plugin::upload()
     image->setPixmap(QPixmap());
   }
 
-  image->update();
+  update();
 
   logger_->info(std::string("Update successful."));
 }

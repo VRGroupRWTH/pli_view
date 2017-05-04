@@ -155,12 +155,14 @@ void fdm_plugin::start ()
 }
 void fdm_plugin::upload()
 {
+  return;
+
   logger_->info(std::string("Updating viewer..."));
 
   auto io       = owner_->get_plugin<pli::data_plugin>    ()->io();
   auto selector = owner_->get_plugin<pli::selector_plugin>();
-  auto offset   = selector->offset();
-  auto size     = selector->size  ();
+  auto offset   = selector->selection_offset();
+  auto size     = selector->selection_size  ();
   uint2 tessellations =
   {line_edit_utility::get_text<std::size_t>(line_edit_longitude),
    line_edit_utility::get_text<std::size_t>(line_edit_latitude )};
