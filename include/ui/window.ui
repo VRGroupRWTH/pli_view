@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1013</width>
+    <width>800</width>
     <height>600</height>
    </rect>
   </property>
@@ -43,7 +43,7 @@
       </property>
       <widget class="QSplitter" name="splitter_vertical_left">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
          <horstretch>1</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -153,10 +153,22 @@
        </widget>
       </widget>
       <widget class="QSplitter" name="splitter_vertical_right">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
-       <widget class="QFrame" name="frame">
+       <widget class="QxtLetterBoxWidget" name="frame_selector">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>1</verstretch>
+         </sizepolicy>
+        </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
         </property>
@@ -234,7 +246,7 @@
            <x>0</x>
            <y>0</y>
            <width>278</width>
-           <height>346</height>
+           <height>69</height>
           </rect>
          </property>
          <property name="font">
@@ -252,8 +264,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>98</width>
-           <height>28</height>
+           <width>278</width>
+           <height>69</height>
           </rect>
          </property>
          <attribute name="label">
@@ -265,8 +277,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>98</width>
-           <height>28</height>
+           <width>278</width>
+           <height>69</height>
           </rect>
          </property>
          <attribute name="label">
@@ -278,8 +290,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>98</width>
-           <height>28</height>
+           <width>278</width>
+           <height>69</height>
           </rect>
          </property>
          <attribute name="label">
@@ -292,8 +304,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>98</width>
-           <height>28</height>
+           <width>278</width>
+           <height>69</height>
           </rect>
          </property>
          <attribute name="label">
@@ -306,8 +318,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>98</width>
-           <height>28</height>
+           <width>278</width>
+           <height>69</height>
           </rect>
          </property>
          <attribute name="label">
@@ -325,7 +337,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1013</width>
+     <width>800</width>
      <height>21</height>
     </rect>
    </property>
@@ -435,6 +447,12 @@
    <class>pli::selector_plugin</class>
    <extends>QWidget</extends>
    <header location="global">ui/plugins/selector_plugin.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QxtLetterBoxWidget</class>
+   <extends>QFrame</extends>
+   <header location="global">third_party/qxt/qxtletterboxwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
