@@ -12,10 +12,6 @@ selector_plugin::selector_plugin(QWidget* parent) : plugin(parent)
 {
   setupUi(this);
 
-  auto policy = image->sizePolicy();
-  policy.setHeightForWidth(true);
-  image->setSizePolicy(policy);
-
   connect(slider_x          , &QxtSpanSlider::lowerValueChanged, [&](int value)
   {
     line_edit_offset_x->setText(QString::fromStdString(std::to_string(value)));
@@ -146,7 +142,7 @@ void selector_plugin::upload()
     // Generate preview image.
     std::array<std::size_t, 3> size   = {1, 1, 1};
     std::array<std::size_t, 3> stride = {1, 1, 1};
-    size  [0] = std::min(bounds.second[0], 2048ull);
+    size  [0] = std::min(bounds.second[0], 256ull);
     stride[0] = bounds.second[0] / size  [0];
     size  [1] = bounds.second[1] / stride[0];
     stride[1] = stride[0];
@@ -158,8 +154,9 @@ void selector_plugin::upload()
           converted[i][j][k] = data[i][j][k] * 255.0;
     image->setPixmap(QPixmap::fromImage(QImage(converted.data(), size[0], size[1], QImage::Format::Format_Grayscale8)));
 
-    setSizeIncrement(size[0], size[1]);
-    owner_->frame_selector->setWidget(owner_->plugin_selector);
+    // Adjust widget size.
+    image->setSizeIncrement(size[0], size[1]);
+    letterbox->setWidget(image);
   }
   else
   {

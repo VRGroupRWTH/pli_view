@@ -27,23 +27,23 @@ signals:
   void on_change(const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size);
 
 private:
-  //QSize sizeHint   () const override
-  //{
-  //  auto s     = size ();
-  //  last_width = width();
-  //  s.setWidth (QWidget::sizeHint().width());
-  //  s.setHeight(image->pixmap() ? static_cast<float>(width()) * image->pixmap()->height() / image->pixmap()->width() : height());
-  //  return s;
-  //}
-  //void  resizeEvent(QResizeEvent * event) override
-  //{
-  //  QWidget::resizeEvent(event);
-  //  if (last_width != width())
-  //  {
-  //    updateGeometry();
-  //    update();
-  //  }
-  //}
+  QSize sizeHint   () const override
+  {
+    auto s     = size ();
+    last_width = width();
+    s.setWidth (QWidget::sizeHint().width());
+    s.setHeight(image->pixmap() ? static_cast<float>(width()) * image->pixmap()->height() / image->pixmap()->width() : height());
+    return s;
+  }
+  void  resizeEvent(QResizeEvent * event) override
+  {
+    QWidget::resizeEvent(event);
+    if (last_width != width())
+    {
+      updateGeometry();
+      update();
+    }
+  }
 
   void upload();
 
