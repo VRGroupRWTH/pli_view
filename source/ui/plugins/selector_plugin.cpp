@@ -12,6 +12,11 @@ selector_plugin::selector_plugin(QWidget* parent) : plugin(parent)
 {
   setupUi(this);
 
+  //selection_square_ = std::make_unique<selection_square>(image);
+  //selection_square_->move(100, 100);
+  //selection_square_->resize(50, 50);
+  //selection_square_->setMinimumSize(30, 30);
+
   connect(slider_x          , &QxtSpanSlider::lowerValueChanged, [&](int value)
   {
     line_edit_offset_x->setText(QString::fromStdString(std::to_string(value)));

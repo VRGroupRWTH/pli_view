@@ -3,8 +3,10 @@
 
 #include <array>
 #include <cstddef>
+#include <memory>
 
 #include <attributes/loggable.hpp>
+#include <ui/selection_square.hpp>
 #include <ui/plugins/plugin.hpp>
 #include <ui_selector_toolbox.h>
 
@@ -29,6 +31,8 @@ signals:
 
 private:
   void upload();
+
+  std::unique_ptr<selection_square> selection_square_;
 };
 }
 
