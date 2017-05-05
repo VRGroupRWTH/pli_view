@@ -152,7 +152,7 @@
         </property>
        </widget>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="layout_vertical">
         <item>
          <widget class="QFrame" name="frame_selector">
@@ -243,7 +243,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>245</width>
+             <width>117</width>
              <height>145</height>
             </rect>
            </property>
@@ -262,7 +262,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>245</width>
+             <width>117</width>
              <height>145</height>
             </rect>
            </property>
@@ -275,7 +275,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>245</width>
+             <width>117</width>
              <height>145</height>
             </rect>
            </property>
@@ -288,7 +288,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>245</width>
+             <width>117</width>
              <height>145</height>
             </rect>
            </property>
@@ -316,7 +316,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>245</width>
+             <width>117</width>
              <height>145</height>
             </rect>
            </property>
