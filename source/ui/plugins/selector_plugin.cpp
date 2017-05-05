@@ -142,7 +142,7 @@ void selector_plugin::upload()
     // Generate preview image.
     std::array<std::size_t, 3> size   = {1, 1, 1};
     std::array<std::size_t, 3> stride = {1, 1, 1};
-    size  [0] = std::min(bounds.second[0], 256ull);
+    size  [0] = std::min(bounds.second[0], 2048ull);
     stride[0] = bounds.second[0] / size  [0];
     size  [1] = bounds.second[1] / stride[0];
     stride[1] = stride[0];
