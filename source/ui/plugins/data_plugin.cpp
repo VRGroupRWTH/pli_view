@@ -41,14 +41,6 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
       io_->set_attribute_path_vector_spacing(text);
     on_change();
   });
-  connect(line_edit_block_size       , &QLineEdit::editingFinished, [&]
-  {
-    auto text = line_edit_utility::get_text(line_edit_block_size);
-    logger_->info("Block size attribute path is set to {}.", text);
-    if (io_)
-      io_->set_attribute_path_block_size(text);
-    on_change();
-  });
   connect(line_edit_transmittance    , &QLineEdit::editingFinished, [&] 
   {
     auto text = line_edit_utility::get_text(line_edit_transmittance);
@@ -81,14 +73,6 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
       io_->set_dataset_path_fiber_inclination(text);
     on_change();
   });
-  connect(line_edit_distribution     , &QLineEdit::editingFinished, [&]
-  {
-    auto text = line_edit_utility::get_text(line_edit_distribution);
-    logger_->info("Fiber distribution dataset path is set to {}.", text);
-    if (io_)
-      io_->set_dataset_path_fiber_distribution(text);
-    on_change();
-  });
 }
 void data_plugin::start()
 {
@@ -113,27 +97,27 @@ void data_plugin::set_file(const std::string& filename)
       io_.reset(new hdf5_io(
         filename,
         line_edit_utility::get_text(line_edit_vector_spacing),
-        line_edit_utility::get_text(line_edit_block_size    ),
+        ""                                                   ,
         ""                                                   ,
         line_edit_utility::get_text(line_edit_transmittance ),
         line_edit_utility::get_text(line_edit_retardation   ),
         line_edit_utility::get_text(line_edit_direction     ),
         line_edit_utility::get_text(line_edit_inclination   ),
         ""                                                   ,
-        line_edit_utility::get_text(line_edit_distribution  )
+        ""
       ));
     else
       io_.reset(new hdf5_io_2(
         filename,
         line_edit_utility::get_text(line_edit_vector_spacing),
-        line_edit_utility::get_text(line_edit_block_size    ),
+        ""                                                   ,
         ""                                                   ,
         line_edit_utility::get_text(line_edit_transmittance ),
         line_edit_utility::get_text(line_edit_retardation   ),
         line_edit_utility::get_text(line_edit_direction     ),
         line_edit_utility::get_text(line_edit_inclination   ),
         ""                                                   ,
-        line_edit_utility::get_text(line_edit_distribution  )
+        ""
       ));
     logger_->info("Successfully opened file: {}.", filename);
   }

@@ -35,9 +35,9 @@
    <property name="autoFillBackground">
     <bool>false</bool>
    </property>
-   <layout class="QGridLayout" name="gridLayout_2">
+   <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QSplitter" name="splitter_horizontal">
+     <widget class="QSplitter" name="splitter">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -62,9 +62,9 @@
        </property>
        <widget class="QFrame" name="viewer_frame">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>1</horstretch>
-          <verstretch>1</verstretch>
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="minimumSize">
@@ -152,181 +152,134 @@
         </property>
        </widget>
       </widget>
-      <widget class="QWidget" name="layoutWidget">
-       <layout class="QVBoxLayout" name="layout_vertical">
-        <item>
-         <widget class="QFrame" name="frame_selector">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::NoFrame</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Sunken</enum>
-          </property>
-          <property name="lineWidth">
-           <number>0</number>
-          </property>
-          <layout class="QGridLayout" name="gridLayout">
-           <property name="leftMargin">
-            <number>0</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <item row="0" column="0">
-            <widget class="pli::selector_plugin" name="plugin_selector" native="true">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QToolBox" name="toolbox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Sunken</enum>
-          </property>
-          <property name="lineWidth">
-           <number>2</number>
-          </property>
-          <property name="currentIndex">
-           <number>4</number>
-          </property>
-          <property name="tabSpacing">
-           <number>0</number>
-          </property>
-          <widget class="pli::data_plugin" name="plugin_data">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>117</width>
-             <height>145</height>
-            </rect>
-           </property>
-           <property name="font">
-            <font>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-           <attribute name="label">
-            <string>Data</string>
-           </attribute>
-          </widget>
-          <widget class="pli::interactor_plugin" name="plugin_interactor">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>117</width>
-             <height>145</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Interactor</string>
-           </attribute>
-          </widget>
-          <widget class="pli::scalar_plugin" name="plugin_scalar">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>117</width>
-             <height>145</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Scalar Maps</string>
-           </attribute>
-          </widget>
-          <widget class="pli::fom_plugin" name="plugin_fom">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>117</width>
-             <height>145</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Fiber Orientation Maps</string>
-           </attribute>
-           <layout class="QGridLayout" name="grid_layout_fom"/>
-          </widget>
-          <widget class="pli::fdm_plugin" name="plugin_fdm">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>117</width>
-             <height>145</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Fiber Distribution Maps</string>
-           </attribute>
-           <layout class="QGridLayout" name="grid_layout_fdm"/>
-          </widget>
-          <widget class="pli::tractography_plugin" name="plugin_tractography">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>117</width>
-             <height>145</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Tractography</string>
-           </attribute>
-          </widget>
-         </widget>
-        </item>
-       </layout>
+      <widget class="QToolBox" name="toolbox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="lineWidth">
+        <number>2</number>
+       </property>
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <property name="tabSpacing">
+        <number>0</number>
+       </property>
+       <widget class="pli::data_plugin" name="plugin_data">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>117</width>
+          <height>406</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <attribute name="label">
+         <string>Data</string>
+        </attribute>
+       </widget>
+       <widget class="pli::selector_plugin" name="plugin_selection">
+        <attribute name="label">
+         <string>Selector</string>
+        </attribute>
+       </widget>
+       <widget class="pli::interactor_plugin" name="plugin_interactor">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>117</width>
+          <height>406</height>
+         </rect>
+        </property>
+        <attribute name="label">
+         <string>Interactor</string>
+        </attribute>
+       </widget>
+       <widget class="pli::scalar_plugin" name="plugin_scalar">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>117</width>
+          <height>406</height>
+         </rect>
+        </property>
+        <attribute name="label">
+         <string>Scalar Maps</string>
+        </attribute>
+       </widget>
+       <widget class="pli::fom_plugin" name="plugin_fom">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>117</width>
+          <height>406</height>
+         </rect>
+        </property>
+        <attribute name="label">
+         <string>Fiber Orientation Maps</string>
+        </attribute>
+        <layout class="QGridLayout" name="grid_layout_fom"/>
+       </widget>
+       <widget class="pli::fdm_plugin" name="plugin_fdm">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>117</width>
+          <height>406</height>
+         </rect>
+        </property>
+        <attribute name="label">
+         <string>Fiber Distribution Maps</string>
+        </attribute>
+        <layout class="QGridLayout" name="grid_layout_fdm"/>
+       </widget>
+       <widget class="pli::tractography_plugin" name="plugin_tractography">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>117</width>
+          <height>406</height>
+         </rect>
+        </property>
+        <attribute name="label">
+         <string>Tractography</string>
+        </attribute>
+       </widget>
       </widget>
      </widget>
     </item>

@@ -13,13 +13,16 @@ selection_square::selection_square(QWidget* parent) : QWidget(parent), rubber_ba
   layout->setContentsMargins(0, 0, 0, 0);
   layout->addWidget(new QSizeGrip(this), 0, Qt::AlignLeft  | Qt::AlignTop   );
   layout->addWidget(new QSizeGrip(this), 0, Qt::AlignRight | Qt::AlignBottom);
-  
-  rubber_band_->move(0, 0);
+
+  auto inner_palette = rubber_band_->palette();
+  inner_palette.setColor(QPalette::Highlight, Qt::darkRed);
+  rubber_band_->setPalette(inner_palette);
   rubber_band_->show();
 
+  setMinimumSize(1, 1);
+  move(0, 0);
   show();
 }
-
 void selection_square::resizeEvent(QResizeEvent* event)
 {
   rubber_band_->resize(size());

@@ -3,10 +3,8 @@
 
 #include <array>
 #include <cstddef>
-#include <memory>
 
 #include <attributes/loggable.hpp>
-#include <ui/selection_square.hpp>
 #include <ui/plugins/plugin.hpp>
 #include <ui_selector_toolbox.h>
 
@@ -23,16 +21,16 @@ public:
   
   std::array<std::size_t, 3> selection_offset() const;
   std::array<std::size_t, 3> selection_size  () const;
+  std::array<std::size_t, 3> selection_stride() const;
 
   void start() override;
 
 signals:
-  void on_change(const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size);
-
-private:
-  void upload();
-
-  std::unique_ptr<selection_square> selection_square_;
+  void on_change(
+    const std::array<std::size_t, 3>& offset, 
+    const std::array<std::size_t, 3>& size  , 
+    const std::array<std::size_t, 3>& stride);
+  
 };
 }
 

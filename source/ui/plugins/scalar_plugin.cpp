@@ -2,8 +2,9 @@
 
 #include <boost/optional.hpp>
 
+#include <ui/plugins/data_plugin.hpp>
+#include <ui/plugins/selector_plugin.hpp>
 #include <ui/window.hpp>
-#include <utility/line_edit_utility.hpp>
 #include <utility/qt_text_browser_sink.hpp>
 #include <visualization/scalar_field.hpp>
 
@@ -65,12 +66,15 @@ void scalar_plugin::upload()
   auto selector = owner_->get_plugin<pli::selector_plugin>();
   auto offset   = selector->selection_offset();
   auto size     = selector->selection_size  ();
+  auto stride   = selector->selection_stride();
 
   if (io == nullptr || size[0] == 0 || size[1] == 0 || size[2] == 0)
   {
     logger_->info(std::string("Update failed: No data."));
     return;
   }
+
+  size = {size[0] / stride[0], size[1] / stride[1], size[2] / stride[2]};
 
   owner_->viewer->set_wait_spinner_enabled(true);
   selector->setEnabled(false);
@@ -83,10 +87,10 @@ void scalar_plugin::upload()
     try
     {
       spacing = io->load_vector_spacing();
-      if (checkbox_transmittance->isChecked()) data.reset(io->load_transmittance_dataset    (offset, size));
-      if (checkbox_retardation  ->isChecked()) data.reset(io->load_retardation_dataset      (offset, size));
-      if (checkbox_direction    ->isChecked()) data.reset(io->load_fiber_direction_dataset  (offset, size));
-      if (checkbox_inclination  ->isChecked()) data.reset(io->load_fiber_inclination_dataset(offset, size));
+      if (checkbox_transmittance->isChecked()) data.reset(io->load_transmittance_dataset    (offset, size, stride));
+      if (checkbox_retardation  ->isChecked()) data.reset(io->load_retardation_dataset      (offset, size, stride));
+      if (checkbox_direction    ->isChecked()) data.reset(io->load_fiber_direction_dataset  (offset, size, stride));
+      if (checkbox_inclination  ->isChecked()) data.reset(io->load_fiber_inclination_dataset(offset, size, stride));
     }
     catch (std::exception& exception)
     {

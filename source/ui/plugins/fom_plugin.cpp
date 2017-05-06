@@ -67,6 +67,7 @@ void fom_plugin::upload()
   auto selector = owner_->get_plugin<pli::selector_plugin>();
   auto offset   = selector->selection_offset();
   auto size     = selector->selection_size  ();
+  auto stride   = selector->selection_stride();
   auto scale    = line_edit_utility::get_text<float>(line_edit_fiber_scale);
 
   if  (io == nullptr || size[0] == 0 || size[1] == 0 || size[2] == 0)
@@ -74,6 +75,8 @@ void fom_plugin::upload()
     logger_->info(std::string("Update failed: No data."));
     return;
   }
+
+  size = { size[0] / stride[0], size[1] / stride[1], size[2] / stride[2] };
 
   owner_->viewer->set_wait_spinner_enabled(true);
   selector->setEnabled(false);
@@ -87,8 +90,8 @@ void fom_plugin::upload()
     try
     {
       spacing = io->load_vector_spacing();
-      direction  .reset(io->load_fiber_direction_dataset  (offset, size, {1, 1, 1}, false));
-      inclination.reset(io->load_fiber_inclination_dataset(offset, size, {1, 1, 1}, false));
+      direction  .reset(io->load_fiber_direction_dataset  (offset, size, stride, false));
+      inclination.reset(io->load_fiber_inclination_dataset(offset, size, stride, false));
     }
     catch (std::exception& exception)
     {

@@ -9,11 +9,13 @@ namespace pli
 {
 window:: window()
 {
-  setupUi      (this);
+  setupUi(this);
   showMaximized();
 
   set_sink    (std::make_shared<qt_text_browser_sink>(console));
   bind_actions();
+
+  splitter_vertical_left->setSizes(QList<int>{height(), 0});
 
   plugins_ = findChildren<plugin*>(QRegExp("plugin")).toVector().toStdVector();
   for (auto plugin : plugins_)
