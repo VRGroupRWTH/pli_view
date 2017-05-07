@@ -12,7 +12,16 @@
 
 namespace pli
 {
-void create_odfs(
+void calculate_odfs(
+  const uint3&   dimensions    ,
+  const uint3&   vectors_size  , 
+  const uint2&   histogram_bins,
+  const unsigned maximum_degree,
+  const float*   directions    ,
+  const float*   inclinations  ,
+        float*   coefficients  );
+
+void sample_odfs(
   const uint3&    dimensions        ,
   const unsigned  coefficient_count ,
   const float*    coefficients      ,
@@ -29,7 +38,7 @@ void create_odfs(
   
 // Called on a layer_dimensions.x x layer_dimensions.y x layer_dimensions.z 3D grid.
 template<typename precision>
-__global__ void create_layer(
+__global__ void sample_odf_layer(
   const uint3    layer_dimensions  ,
   const unsigned layer_offset      ,
   const unsigned coefficient_count ,

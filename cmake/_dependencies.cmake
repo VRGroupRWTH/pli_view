@@ -7,7 +7,7 @@ include_directories(${Boost_INCLUDE_DIR})
 
 # Include Cuda and Cublas.
 find_package(Cuda REQUIRED)
-set(ProjectLibraries ${ProjectLibraries} "${CUDA_CUBLAS_LIBRARIES};${CUDA_cudadevrt_LIBRARY}")
+set(ProjectLibraries ${ProjectLibraries} "${CUDA_CUBLAS_LIBRARIES};${CUDA_cusolver_LIBRARY};${CUDA_cudadevrt_LIBRARY}")
 
 # Include GLEW.
 find_package       (GLEW REQUIRED)

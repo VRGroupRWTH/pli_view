@@ -7,6 +7,7 @@ set(ProjectSources
   include/cuda/launch.h
   include/cuda/odf_field.h
   include/cuda/orthtree.h
+  include/cuda/spherical_histogram.h
   include/cuda/vector_field.h
   include/io/hdf5_io.hpp
   include/io/hdf5_io_2.hpp

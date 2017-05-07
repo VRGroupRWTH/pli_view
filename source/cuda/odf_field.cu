@@ -3,6 +3,7 @@
 #include <chrono>
 #include <string>
 
+#include <cusolverDn.h>
 #include <thrust/device_vector.h>
 #include <thrust/extrema.h>
 
@@ -10,10 +11,253 @@
 #include <sh/vector_ops.h>
 
 #include <cuda/launch.h>
+#include <cuda/spherical_histogram.h>
 
 namespace pli
 {
-void create_odfs(
+void calculate_odfs(
+  const uint3&   dimensions    , 
+  const uint3&   vectors_size  , 
+  const uint2&   histogram_bins,
+  const unsigned maximum_degree, 
+  const float*   directions    , 
+  const float*   inclinations  , 
+        float*   coefficients  )
+{
+  auto total_start = std::chrono::system_clock::now();
+
+  std::cout << "Resetting GPU." << std::endl;
+  cudaDeviceReset();
+
+  std::cout << "Allocating and copying vectors." << std::endl;
+  auto voxel_count        = dimensions  .x * dimensions  .y * dimensions  .z;
+  auto vector_count       = vectors_size.x * vectors_size.y * vectors_size.z;
+  auto total_vector_count = voxel_count * vector_count;
+  thrust::device_vector<float> longitudes(total_vector_count);
+  thrust::device_vector<float> latitudes (total_vector_count);
+  copy_n(directions  , total_vector_count, longitudes.begin());
+  copy_n(inclinations, total_vector_count, latitudes .begin());
+  auto longitudes_ptr = raw_pointer_cast(&longitudes[0]);
+  auto latitudes_ptr  = raw_pointer_cast(&latitudes [0]);
+  transform(longitudes.begin(), longitudes.end(), longitudes.begin(), (90.0 + thrust::placeholders::_1) * M_PI / 180.0);
+  transform(latitudes .begin(), latitudes .end(), latitudes .begin(), (90.0 - thrust::placeholders::_1) * M_PI / 180.0);
+  cudaDeviceSynchronize();
+
+  std::cout << "Allocating histogram vector and magnitudes." << std::endl;
+  auto histogram_bin_count = histogram_bins.x * histogram_bins.y;
+  thrust::device_vector<float3> histogram_vectors   (histogram_bin_count);
+  thrust::device_vector<float > histogram_magnitudes(histogram_bin_count);
+  auto histogram_vectors_ptr    = raw_pointer_cast(&histogram_vectors   [0]);
+  auto histogram_magnitudes_ptr = raw_pointer_cast(&histogram_magnitudes[0]);
+
+  std::cout << "Allocating spherical harmonics basis matrix." << std::endl;
+  auto coefficient_count = cush::coefficient_count(maximum_degree);
+  auto matrix_size       = histogram_bin_count * coefficient_count;
+  thrust::device_vector<float> basis_matrix(matrix_size, 0.0F);
+  auto basis_matrix_ptr = raw_pointer_cast(&basis_matrix[0]);
+
+  std::cout << "Allocating spherical harmonics coefficients." << std::endl;
+  auto total_coefficient_count = voxel_count * coefficient_count;
+  thrust::device_vector<float> coefficient_vectors(total_coefficient_count);
+  auto coefficient_vectors_ptr = raw_pointer_cast(&coefficient_vectors[0]);
+
+  std::cout << "Generating histogram bins." << std::endl;
+  create_bins<<<grid_size_2d(dim3(histogram_bins.x, histogram_bins.y)), block_size_2d()>>>(
+    histogram_bins       , 
+    histogram_vectors_ptr);
+  cudaDeviceSynchronize();
+
+  std::cout << "Calculating spherical harmonics basis matrix." << std::endl;
+  cush::calculate_matrix<<<grid_size_2d(dim3(histogram_bin_count, coefficient_count)), block_size_2d()>>>(
+    histogram_bin_count  , 
+    coefficient_count    ,
+    histogram_vectors_ptr, 
+    basis_matrix_ptr     );
+  cudaDeviceSynchronize();
+
+  std::cout << "Initializing cusolver." << std::endl;
+  cusolverDnHandle_t cusolver;  
+  cusolverDnCreate(&cusolver);
+
+  std::cout << "Initializing cublas." << std::endl;
+  cublasHandle_t cublas;
+  cublasCreate(&cublas);
+
+  std::cout << "Calculating SVD work buffer size." << std::endl;
+  int buffer_size;
+  cusolverDnSgesvd_bufferSize(cusolver, histogram_bin_count, coefficient_count, &buffer_size);
+  cudaDeviceSynchronize();
+  float complex_buffer_size = buffer_size;
+
+  std::cout << "Allocating SVD buffers." << std::endl;
+  thrust::device_vector<float> buffer (buffer_size, 0.0);
+  thrust::device_vector<int>   info   (1);
+  thrust::device_vector<float> U      (histogram_bin_count * histogram_bin_count);
+  thrust::device_vector<float> E      (coefficient_count                        );
+  thrust::device_vector<float> VT     (coefficient_count   * coefficient_count  );
+  thrust::device_vector<float> UT     (histogram_bin_count * histogram_bin_count);
+  thrust::device_vector<float> EI_UT  (histogram_bin_count * coefficient_count  );
+  thrust::device_vector<float> V_EI_UT(histogram_bin_count * coefficient_count  );
+  auto alpha       = 1.0F;
+  auto beta        = 0.0F;
+  auto buffer_ptr  = raw_pointer_cast(&buffer [0]);
+  auto info_ptr    = raw_pointer_cast(&info   [0]);
+  auto U_ptr       = raw_pointer_cast(&U      [0]);
+  auto E_ptr       = raw_pointer_cast(&E      [0]);
+  auto VT_ptr      = raw_pointer_cast(&VT     [0]);
+  auto UT_ptr      = raw_pointer_cast(&UT     [0]);
+  auto EI_UT_ptr   = raw_pointer_cast(&EI_UT  [0]);
+  auto V_EI_UT_ptr = raw_pointer_cast(&V_EI_UT[0]);
+
+  std::cout << "Applying SVD." << std::endl;
+  cusolverDnSgesvd(
+    cusolver            ,
+    'A'                 ,
+    'A'                 ,
+    histogram_bin_count ,
+    coefficient_count   ,
+    basis_matrix_ptr    ,
+    histogram_bin_count ,
+    E_ptr               ,
+    U_ptr               ,
+    histogram_bin_count ,
+    VT_ptr              ,
+    coefficient_count   ,
+    buffer_ptr          ,
+    buffer_size         ,
+    &complex_buffer_size,
+    info_ptr);
+  cudaDeviceSynchronize();
+
+  std::cout << "Transposing U to U^T." << std::endl;
+  cublasSgeam(
+    cublas              ,
+    CUBLAS_OP_T         ,
+    CUBLAS_OP_N         ,
+    histogram_bin_count ,
+    histogram_bin_count ,
+    &alpha              ,
+    U_ptr               ,
+    histogram_bin_count ,
+    &beta               ,
+    nullptr             ,
+    histogram_bin_count ,
+    UT_ptr              ,
+    histogram_bin_count);
+  cudaDeviceSynchronize();
+
+  std::cout << "Inverting E to E^-1." << std::endl;
+  thrust::transform(
+    E.begin(),
+    E.end  (),
+    E.begin(),
+    [] COMMON (float& entry) -> float
+    {
+      if (int(entry) == 0)
+        return 0;
+      return entry = 1.0 / entry;
+    });
+  cudaDeviceSynchronize();
+
+  std::cout << "Computing E^-1 * U^T." << std::endl;
+  cublasSdgmm(
+    cublas             ,
+    CUBLAS_SIDE_LEFT   ,
+    coefficient_count  ,
+    histogram_bin_count,
+    UT_ptr             ,
+    histogram_bin_count,
+    E_ptr              ,
+    1                  ,
+    EI_UT_ptr          ,
+    coefficient_count);
+  cudaDeviceSynchronize();
+
+  std::cout << "Computing V * E^-1 U^T." << std::endl;
+  cublasSgemm(
+    cublas             ,
+    CUBLAS_OP_T        ,
+    CUBLAS_OP_N        ,
+    coefficient_count  ,
+    histogram_bin_count,
+    coefficient_count  ,
+    &alpha             ,
+    VT_ptr             ,
+    coefficient_count  ,
+    EI_UT_ptr          ,
+    coefficient_count  ,
+    &beta              ,
+    V_EI_UT_ptr        ,
+    coefficient_count);
+  cudaDeviceSynchronize();
+
+  std::cout << "Accumulating histograms and projecting via V E^-1 U^T * h." << std::endl;
+  for (auto x = 0; x < dimensions.x; x++)
+  {
+    for (auto y = 0; y < dimensions.y; y++)
+    {
+      for (auto z = 0; z < dimensions.z; z++)
+      {
+        auto volume_index        = z + dimensions.z * (y + dimensions.y * x);
+        auto coefficients_offset = volume_index * coefficient_count;
+
+        fill(histogram_magnitudes.begin(), histogram_magnitudes.end(), 0.0F);
+
+        uint3 offset {
+          vectors_size.x * x,
+          vectors_size.y * y,
+          vectors_size.z * z};
+        uint3 size  {
+          vectors_size.x * dimensions.x,
+          vectors_size.y * dimensions.y,
+          vectors_size.z * dimensions.z};
+
+        accumulate<<<grid_size_3d(vectors_size), block_size_3d()>>>(
+          vectors_size         ,
+          offset               ,
+          size                 ,
+          longitudes_ptr       , 
+          latitudes_ptr        , 
+          histogram_bins       , 
+          histogram_vectors_ptr, 
+          histogram_magnitudes_ptr);
+
+        cublasSgemv(
+          cublas                                        ,
+          CUBLAS_OP_N                                   ,
+          coefficient_count                             ,
+          histogram_bin_count                           ,
+          &alpha                                        ,
+          V_EI_UT_ptr                                   ,
+          coefficient_count                             ,
+          histogram_magnitudes_ptr                      , 
+          1                                             ,
+          &beta                                         ,
+          coefficient_vectors_ptr  + coefficients_offset,
+          1                                             );
+
+        cudaDeviceSynchronize();
+
+        std::cout << volume_index + 1 << "/" << voxel_count << "." << std::endl;
+      }
+    }
+  }
+
+  std::cout << "Copying coefficients to CPU." << std::endl;
+  cudaMemcpy(coefficients, coefficient_vectors_ptr, sizeof(float) * total_coefficient_count, cudaMemcpyDeviceToHost);
+  
+  std::cout << "Destroying cublas." << std::endl;
+  cublasDestroy    (cublas  );
+
+  std::cout << "Destroying cusolver." << std::endl;
+  cusolverDnDestroy(cusolver);
+
+  auto total_end = std::chrono::system_clock::now();
+  std::chrono::duration<double> total_elapsed_seconds = total_end - total_start;
+  std::cout << "Total elapsed time: " << total_elapsed_seconds.count() << "s." << std::endl;
+}
+
+void sample_odfs(
   const uint3&    dimensions       ,
   const unsigned  coefficient_count,
   const float*    coefficients     ,
@@ -55,7 +299,7 @@ void create_odfs(
     if (layer != max_layer)
     {
       status_callback("Calculating the layer " + std::to_string(int(layer)) + " coefficients.");
-      create_layer<<<grid_size_3d(layer_dimensions), block_size_3d()>>>(
+      sample_odf_layer<<<grid_size_3d(layer_dimensions), block_size_3d()>>>(
         layer_dimensions    ,
         layer_offset        ,
         coefficient_count   ,

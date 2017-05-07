@@ -159,6 +159,7 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>checkbox_enabled</tabstop>
   <tabstop>checkbox_transmittance</tabstop>
   <tabstop>checkbox_retardation</tabstop>
   <tabstop>checkbox_direction</tabstop>

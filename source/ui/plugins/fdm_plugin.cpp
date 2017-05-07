@@ -6,6 +6,8 @@
 #include <boost/format.hpp>
 #include <boost/optional.hpp>
 
+#include <cuda/odf_field.h>
+#include <sh/spherical_harmonics.h>
 #include <ui/plugins/data_plugin.hpp>
 #include <ui/plugins/selector_plugin.hpp>
 #include <ui/window.hpp>
@@ -18,9 +20,15 @@ namespace pli
 fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
 {
   setupUi(this);
-
-  line_edit_longitude->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_latitude ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  
+  line_edit_vector_block_x   ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_vector_block_x   ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_vector_block_x   ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_histogram_theta  ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_histogram_phi    ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_maximum_sh_degree->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_sampling_theta   ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_sampling_phi     ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
   
   connect(checkbox_enabled, &QCheckBox::stateChanged, [&](int state)
   {
@@ -78,31 +86,69 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
     set_visible_layers();
   });
 
-  connect(slider_longitude   , &QxtSpanSlider::valueChanged  , [&]
+  connect(slider_vector_block_x      , &QxtSpanSlider::valueChanged, [&]
   {
-    line_edit_longitude->setText(QString::fromStdString(std::to_string(slider_longitude->value())));
+    line_edit_vector_block_x->setText(QString::fromStdString(std::to_string(slider_vector_block_x->value())));
   });
-  connect(slider_longitude   , &QxtSpanSlider::sliderReleased, [&]
+  connect(line_edit_vector_block_x   , &QLineEdit::editingFinished , [&]
   {
-    upload();
+    slider_vector_block_x->setValue(line_edit_utility::get_text<std::size_t>(line_edit_vector_block_x));
   });
-  connect(slider_latitude    , &QxtSpanSlider::valueChanged  , [&]
+  connect(slider_vector_block_y      , &QxtSpanSlider::valueChanged, [&]
   {
-    line_edit_latitude->setText(QString::fromStdString(std::to_string(slider_latitude->value())));
+    line_edit_vector_block_y->setText(QString::fromStdString(std::to_string(slider_vector_block_y->value())));
   });
-  connect(slider_latitude    , &QxtSpanSlider::sliderReleased, [&]
+  connect(line_edit_vector_block_y   , &QLineEdit::editingFinished , [&]
   {
-    upload();
+    slider_vector_block_y->setValue(line_edit_utility::get_text<std::size_t>(line_edit_vector_block_y));
   });
-  connect(line_edit_longitude, &QLineEdit::editingFinished   , [&]
+  connect(slider_vector_block_z      , &QxtSpanSlider::valueChanged, [&]
   {
-    slider_longitude->setValue(line_edit_utility::get_text<std::size_t>(line_edit_longitude));
-    upload();
+    line_edit_vector_block_z->setText(QString::fromStdString(std::to_string(slider_vector_block_z->value())));
   });
-  connect(line_edit_latitude , &QLineEdit::editingFinished   , [&]
+  connect(line_edit_vector_block_z   , &QLineEdit::editingFinished , [&]
   {
-    slider_latitude->setValue(line_edit_utility::get_text<std::size_t>(line_edit_latitude));
-    upload();
+    slider_vector_block_z->setValue(line_edit_utility::get_text<std::size_t>(line_edit_vector_block_z));
+  });
+  connect(slider_histogram_theta     , &QxtSpanSlider::valueChanged, [&]
+  {
+    line_edit_histogram_theta->setText(QString::fromStdString(std::to_string(slider_histogram_theta->value())));
+  });
+  connect(line_edit_histogram_theta  , &QLineEdit::editingFinished , [&]
+  {
+    slider_histogram_theta->setValue(line_edit_utility::get_text<std::size_t>(line_edit_histogram_theta));
+  });
+  connect(slider_histogram_phi       , &QxtSpanSlider::valueChanged, [&]
+  {
+    line_edit_histogram_phi->setText(QString::fromStdString(std::to_string(slider_histogram_phi->value())));
+  });
+  connect(line_edit_histogram_phi    , &QLineEdit::editingFinished , [&]
+  {
+    slider_histogram_phi->setValue(line_edit_utility::get_text<std::size_t>(line_edit_histogram_phi));
+  });
+  connect(slider_maximum_sh_degree   , &QxtSpanSlider::valueChanged, [&]
+  {
+    line_edit_maximum_sh_degree->setText(QString::fromStdString(std::to_string(slider_maximum_sh_degree->value())));
+  });
+  connect(line_edit_maximum_sh_degree, &QLineEdit::editingFinished , [&]
+  {
+    slider_maximum_sh_degree->setValue(line_edit_utility::get_text<std::size_t>(line_edit_maximum_sh_degree));
+  });
+  connect(slider_sampling_theta      , &QxtSpanSlider::valueChanged, [&]
+  {
+    line_edit_sampling_theta->setText(QString::fromStdString(std::to_string(slider_sampling_theta->value())));
+  });
+  connect(line_edit_sampling_theta   , &QLineEdit::editingFinished , [&]
+  {
+    slider_sampling_theta->setValue(line_edit_utility::get_text<std::size_t>(line_edit_sampling_theta));
+  });
+  connect(slider_sampling_phi        , &QxtSpanSlider::valueChanged, [&]
+  {
+    line_edit_sampling_phi->setText(QString::fromStdString(std::to_string(slider_sampling_phi->value())));
+  });
+  connect(line_edit_sampling_phi     , &QLineEdit::editingFinished , [&]
+  {
+    slider_sampling_phi->setValue(line_edit_utility::get_text<std::size_t>(line_edit_sampling_phi));
   });
 
   connect(checkbox_clustering_enabled, &QCheckBox::stateChanged    , [&](int state)
@@ -111,88 +157,90 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
     label_threshold    ->setEnabled(state);
     slider_threshold   ->setEnabled(state);
     line_edit_threshold->setEnabled(state);
-    upload();
   });
   connect(slider_threshold           , &QxtSpanSlider::valueChanged, [&]
   {
     auto threshold = threshold_multiplier_ * slider_threshold->value();
     line_edit_threshold->setText(QString::fromStdString((boost::format("%.2f") % threshold).str()));
   });
-  connect(slider_threshold           , &QSlider::sliderReleased    , [&]()
-  {
-    upload();
-  });
   connect(line_edit_threshold        , &QLineEdit::editingFinished , [&]
   {
     auto threshold = line_edit_utility::get_text<double>(line_edit_threshold);
     slider_threshold->setValue(threshold / threshold_multiplier_);
-    upload();
+  });
+
+  connect(button_calculate           , &QAbstractButton::clicked   , [&]
+  {
+    calculate();
   });
 }
 
-void fdm_plugin::start ()
+void fdm_plugin::start    ()
 {
   set_sink(std::make_shared<qt_text_browser_sink>(owner_->console));
 
-  line_edit_longitude->setText(QString::fromStdString(std::to_string(slider_longitude->value())));
-  line_edit_latitude ->setText(QString::fromStdString(std::to_string(slider_latitude ->value())));
-  line_edit_threshold->setText(QString::fromStdString((boost::format("%.2f") % (threshold_multiplier_ * slider_threshold->value())).str()));
-
-  connect(owner_->get_plugin<data_plugin>    (), &data_plugin    ::on_change, [&]
-  {
-    upload();
-  });
-  connect(owner_->get_plugin<selector_plugin>(), &selector_plugin::on_change, [&]
-  {
-    upload();
-  });
+  line_edit_vector_block_x   ->setText(QString::fromStdString(std::to_string(slider_vector_block_x   ->value())));
+  line_edit_vector_block_y   ->setText(QString::fromStdString(std::to_string(slider_vector_block_y   ->value())));
+  line_edit_vector_block_z   ->setText(QString::fromStdString(std::to_string(slider_vector_block_z   ->value())));
+  line_edit_histogram_theta  ->setText(QString::fromStdString(std::to_string(slider_histogram_theta  ->value())));
+  line_edit_histogram_phi    ->setText(QString::fromStdString(std::to_string(slider_histogram_phi    ->value())));
+  line_edit_maximum_sh_degree->setText(QString::fromStdString(std::to_string(slider_maximum_sh_degree->value())));
+  line_edit_sampling_theta   ->setText(QString::fromStdString(std::to_string(slider_sampling_theta   ->value())));
+  line_edit_sampling_phi     ->setText(QString::fromStdString(std::to_string(slider_sampling_phi     ->value())));
+  line_edit_threshold        ->setText(QString::fromStdString((boost::format("%.2f") % (threshold_multiplier_ * slider_threshold->value())).str()));
 
   odf_field_ = owner_->viewer->add_renderable<odf_field>();
-
   set_visible_layers();
  
   logger_->info(std::string("Start successful."));
 }
-void fdm_plugin::upload()
+void fdm_plugin::calculate()
 {
-  return;
-
   logger_->info(std::string("Updating viewer..."));
+  
+  auto io         = owner_->get_plugin<pli::data_plugin>    ()->io();
+  auto selector   = owner_->get_plugin<pli::selector_plugin>();
+  auto offset     = selector->selection_offset();
+  auto size       = selector->selection_size  ();
+  auto stride     = selector->selection_stride();
+  auto max_degree = line_edit_utility::get_text<unsigned>(line_edit_maximum_sh_degree);
+  uint3 block_dimensions       = {
+    line_edit_utility::get_text<unsigned>(line_edit_vector_block_x ), 
+    line_edit_utility::get_text<unsigned>(line_edit_vector_block_y ), 
+    line_edit_utility::get_text<unsigned>(line_edit_vector_block_z )};
+  uint2 histogram_dimensions   = {
+    line_edit_utility::get_text<unsigned>(line_edit_histogram_theta),
+    line_edit_utility::get_text<unsigned>(line_edit_histogram_phi  )};
+  uint3 coefficient_dimensions = {
+    size[0] / block_dimensions.x, 
+    size[1] / block_dimensions.y, 
+    size[2] / block_dimensions.z };
+  uint2 sampling_dimensions    = { 
+    line_edit_utility::get_text<std::size_t>(line_edit_sampling_theta),
+    line_edit_utility::get_text<std::size_t>(line_edit_sampling_phi  )};
 
-  auto io       = owner_->get_plugin<pli::data_plugin>    ()->io();
-  auto selector = owner_->get_plugin<pli::selector_plugin>();
-  auto offset   = selector->selection_offset();
-  auto size     = selector->selection_size  ();
-  uint2 tessellations =
-  {line_edit_utility::get_text<std::size_t>(line_edit_longitude),
-   line_edit_utility::get_text<std::size_t>(line_edit_latitude )};
-
-  if  (io == nullptr || size[0] == 0 || size[1] == 0 || size[2] == 0)
+  if(io == nullptr || size[0] == 0 || size[1] == 0 || size[2] == 0)
   {
     logger_->info(std::string("Update failed: No data."));
     return;
   }
 
+  size = {size[0] / stride[0], size[1] / stride[1], size[2] / stride[2]};
+
   owner_->viewer->set_wait_spinner_enabled(true);
   selector->setEnabled(false);
 
   // Load data from hard drive (on another thread).
-  std::array<float      , 3>                    spacing      ;
-  std::array<std::size_t, 3>                    block_size   ;
-  boost::optional<boost::multi_array<float, 4>> distributions;
-  future_ = std::async(std::launch::async, [&]()
+  std::array<float, 3>                          spacing    ;
+  boost::optional<boost::multi_array<float, 3>> direction  ;
+  boost::optional<boost::multi_array<float, 3>> inclination;
+  future_ = std::async(std::launch::async, [&]
   {
     try
     {
-      spacing    = io->load_vector_spacing();
-      block_size = io->load_block_size    ();
-      distributions.reset(io->load_fiber_distribution_dataset(offset, size, {1, 1, 1}, false));
-
-      // Roll dimensions to power of two.
-      size[0] = pow(2, ceil(log(size[0]) / log(2)));
-      size[1] = pow(2, ceil(log(size[1]) / log(2)));
-      size[2] = pow(2, ceil(log(size[2]) / log(2)));
-      (*distributions).resize(boost::extents[size[0]][size[1]][size[2]][(*distributions).shape()[3]]);
+      spacing = io->load_vector_spacing();
+      direction  .reset(io->load_fiber_direction_dataset  (offset, size, stride, false));
+      inclination.reset(io->load_fiber_inclination_dataset(offset, size, stride, false));
     }
     catch (std::exception& exception)
     {
@@ -201,24 +249,37 @@ void fdm_plugin::upload()
   });
   while (future_.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
     QApplication::processEvents();
+  
+  boost::multi_array<float, 4> coefficients(boost::extents
+    [coefficient_dimensions.x]
+    [coefficient_dimensions.y]
+    [coefficient_dimensions.z]
+    [cush::coefficient_count(max_degree)]);
+  calculate_odfs(
+    coefficient_dimensions,
+    block_dimensions,
+    histogram_dimensions,
+    max_degree,
+    direction   .get().data(),
+    inclination .get().data(),
+    coefficients.data());
 
   // Upload data to GPU.
-  uint3  cuda_size      {unsigned(size[0]), unsigned(size[1]), unsigned(size[2])};
-  float3 cuda_spacing   {spacing   [0], spacing   [1], spacing   [2]};
-  uint3  cuda_block_size{block_size[0], block_size[1], block_size[2]};
-  if (distributions.is_initialized() && distributions.get().num_elements() > 0)
+  uint3  cuda_size    {unsigned(coefficient_dimensions.x), unsigned(coefficient_dimensions.y), unsigned(coefficient_dimensions.z)};
+  float3 cuda_spacing {spacing[0], spacing[1], spacing[2]};
+  if (coefficients.num_elements() > 0)
     odf_field_->set_data(
       cuda_size, 
-      distributions.get().shape()[3],
-      distributions.get().data(), 
-      tessellations, 
+      coefficients.shape()[3],
+      coefficients.data (),
+      sampling_dimensions, 
       cuda_spacing,
-      cuda_block_size, 
+      block_dimensions, 
       1.0, 
       checkbox_clustering_enabled->isChecked(),
       threshold_multiplier_ * float(slider_threshold->value()),
       [&] (const std::string& message) { logger_->info(message); });
-
+  
   selector->setEnabled(true);
   owner_->viewer->set_wait_spinner_enabled(false);
   owner_->viewer->update();

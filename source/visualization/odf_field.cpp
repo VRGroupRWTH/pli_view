@@ -132,7 +132,7 @@ void odf_field::set_data(
   auto cuda_color_buffer  = color_buffer_ ->cuda_map<float4  >();
   auto cuda_index_buffer  = index_buffer_ ->cuda_map<unsigned>();
 
-  create_odfs(
+  sample_odfs(
     dimensions_       ,
     coefficient_count ,
     coefficients      ,

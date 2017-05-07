@@ -21,12 +21,12 @@ public:
   void start () override;
 
 private:
-  void upload            ();
+  void calculate         ();
   void set_visible_layers() const;
 
-  odf_field*        odf_field_;
-  std::future<void> future_   ;
-  float threshold_multiplier_ = 0.01;
+  odf_field*        odf_field_            ;
+  std::future<void> future_               ;
+  float             threshold_multiplier_ = 0.01;
 };
 }
 
