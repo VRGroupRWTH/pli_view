@@ -112,21 +112,21 @@ void odf_field::set_data(
   auto tessellation_count = tessellations.x * tessellations.y;
   auto point_count        = voxel_count * tessellation_count;
   draw_count_             = 6 * point_count;
+  
+  vertex_buffer_->bind           ();
+  vertex_buffer_->allocate       (point_count * sizeof(float3));
+  vertex_buffer_->unbind         ();
+  vertex_buffer_->cuda_register  (cudaGraphicsMapFlagsNone);
 
-  vertex_buffer_->bind         ();
-  vertex_buffer_->allocate     (point_count * sizeof(float3));
-  vertex_buffer_->unbind       ();
-  vertex_buffer_->cuda_register(cudaGraphicsMapFlagsWriteDiscard);
+  color_buffer_->bind           ();
+  color_buffer_->allocate       (point_count * sizeof(float4));
+  color_buffer_->unbind         ();
+  color_buffer_->cuda_register  (cudaGraphicsMapFlagsNone);
 
-  color_buffer_->bind          ();
-  color_buffer_->allocate      (point_count * sizeof(float4));
-  color_buffer_->unbind        ();
-  color_buffer_->cuda_register(cudaGraphicsMapFlagsWriteDiscard);
-
-  index_buffer_ ->bind         ();
-  index_buffer_ ->allocate     (draw_count_ * sizeof(unsigned));
-  index_buffer_ ->unbind       ();
-  index_buffer_ ->cuda_register(cudaGraphicsMapFlagsWriteDiscard);
+  index_buffer_ ->bind           ();
+  index_buffer_ ->allocate       (draw_count_ * sizeof(unsigned));
+  index_buffer_ ->unbind         ();
+  index_buffer_ ->cuda_register  (cudaGraphicsMapFlagsNone);
 
   auto cuda_vertex_buffer = vertex_buffer_->cuda_map<float3  >();
   auto cuda_color_buffer  = color_buffer_ ->cuda_map<float4  >();
@@ -150,6 +150,10 @@ void odf_field::set_data(
   index_buffer_ ->cuda_unmap();
   color_buffer_ ->cuda_unmap();
   vertex_buffer_->cuda_unmap();
+  
+  index_buffer_ ->cuda_unregister();
+  color_buffer_ ->cuda_unregister();
+  vertex_buffer_->cuda_unregister();
 }
 
 void odf_field::set_visible_layers(

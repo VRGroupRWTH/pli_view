@@ -16,20 +16,20 @@
 namespace pli
 {
 void calculate_odfs(
-  const uint3&   dimensions    , 
-  const uint3&   vectors_size  , 
-  const uint2&   histogram_bins,
-  const unsigned maximum_degree, 
-  const float*   directions    , 
-  const float*   inclinations  , 
-        float*   coefficients  )
+  cublasHandle_t     cublas        ,
+  cusolverDnHandle_t cusolver      ,
+  const uint3&       dimensions    , 
+  const uint3&       vectors_size  , 
+  const uint2&       histogram_bins,
+  const unsigned     maximum_degree, 
+  const float*       directions    , 
+  const float*       inclinations  , 
+        float*       coefficients  ,
+        std::function<void(const std::string&)> status_callback)
 {
   auto total_start = std::chrono::system_clock::now();
 
-  std::cout << "Resetting GPU." << std::endl;
-  cudaDeviceReset();
-
-  std::cout << "Allocating and copying vectors." << std::endl;
+  status_callback("Allocating and copying vectors.");
   auto voxel_count        = dimensions  .x * dimensions  .y * dimensions  .z;
   auto vector_count       = vectors_size.x * vectors_size.y * vectors_size.z;
   auto total_vector_count = voxel_count * vector_count;
@@ -43,31 +43,31 @@ void calculate_odfs(
   transform(latitudes .begin(), latitudes .end(), latitudes .begin(), (90.0 - thrust::placeholders::_1) * M_PI / 180.0);
   cudaDeviceSynchronize();
 
-  std::cout << "Allocating histogram vector and magnitudes." << std::endl;
+  status_callback("Allocating histogram vector and magnitudes.");
   auto histogram_bin_count = histogram_bins.x * histogram_bins.y;
   thrust::device_vector<float3> histogram_vectors   (histogram_bin_count);
   thrust::device_vector<float > histogram_magnitudes(histogram_bin_count);
   auto histogram_vectors_ptr    = raw_pointer_cast(&histogram_vectors   [0]);
   auto histogram_magnitudes_ptr = raw_pointer_cast(&histogram_magnitudes[0]);
 
-  std::cout << "Allocating spherical harmonics basis matrix." << std::endl;
+  status_callback("Allocating spherical harmonics basis matrix.");
   auto coefficient_count = cush::coefficient_count(maximum_degree);
   auto matrix_size       = histogram_bin_count * coefficient_count;
   thrust::device_vector<float> basis_matrix(matrix_size, 0.0F);
   auto basis_matrix_ptr = raw_pointer_cast(&basis_matrix[0]);
 
-  std::cout << "Allocating spherical harmonics coefficients." << std::endl;
+  status_callback("Allocating spherical harmonics coefficients.");
   auto total_coefficient_count = voxel_count * coefficient_count;
   thrust::device_vector<float> coefficient_vectors(total_coefficient_count);
   auto coefficient_vectors_ptr = raw_pointer_cast(&coefficient_vectors[0]);
 
-  std::cout << "Generating histogram bins." << std::endl;
+  status_callback("Generating histogram bins.");
   create_bins<<<grid_size_2d(dim3(histogram_bins.x, histogram_bins.y)), block_size_2d()>>>(
     histogram_bins       , 
     histogram_vectors_ptr);
   cudaDeviceSynchronize();
 
-  std::cout << "Calculating spherical harmonics basis matrix." << std::endl;
+  status_callback("Calculating spherical harmonics basis matrix.");
   cush::calculate_matrix<<<grid_size_2d(dim3(histogram_bin_count, coefficient_count)), block_size_2d()>>>(
     histogram_bin_count  , 
     coefficient_count    ,
@@ -75,21 +75,13 @@ void calculate_odfs(
     basis_matrix_ptr     );
   cudaDeviceSynchronize();
 
-  std::cout << "Initializing cusolver." << std::endl;
-  cusolverDnHandle_t cusolver;  
-  cusolverDnCreate(&cusolver);
-
-  std::cout << "Initializing cublas." << std::endl;
-  cublasHandle_t cublas;
-  cublasCreate(&cublas);
-
-  std::cout << "Calculating SVD work buffer size." << std::endl;
+  status_callback("Calculating SVD work buffer size.");
   int buffer_size;
   cusolverDnSgesvd_bufferSize(cusolver, histogram_bin_count, coefficient_count, &buffer_size);
   cudaDeviceSynchronize();
   float complex_buffer_size = buffer_size;
 
-  std::cout << "Allocating SVD buffers." << std::endl;
+  status_callback("Allocating SVD buffers.");
   thrust::device_vector<float> buffer (buffer_size, 0.0);
   thrust::device_vector<int>   info   (1);
   thrust::device_vector<float> U      (histogram_bin_count * histogram_bin_count);
@@ -109,7 +101,7 @@ void calculate_odfs(
   auto EI_UT_ptr   = raw_pointer_cast(&EI_UT  [0]);
   auto V_EI_UT_ptr = raw_pointer_cast(&V_EI_UT[0]);
 
-  std::cout << "Applying SVD." << std::endl;
+  status_callback("Applying SVD.");
   cusolverDnSgesvd(
     cusolver            ,
     'A'                 ,
@@ -129,7 +121,7 @@ void calculate_odfs(
     info_ptr);
   cudaDeviceSynchronize();
 
-  std::cout << "Transposing U to U^T." << std::endl;
+  status_callback("Transposing U to U^T.");
   cublasSgeam(
     cublas              ,
     CUBLAS_OP_T         ,
@@ -146,7 +138,7 @@ void calculate_odfs(
     histogram_bin_count);
   cudaDeviceSynchronize();
 
-  std::cout << "Inverting E to E^-1." << std::endl;
+  status_callback("Inverting E to E^-1.");
   thrust::transform(
     E.begin(),
     E.end  (),
@@ -159,7 +151,7 @@ void calculate_odfs(
     });
   cudaDeviceSynchronize();
 
-  std::cout << "Computing E^-1 * U^T." << std::endl;
+  status_callback("Computing E^-1 * U^T.");
   cublasSdgmm(
     cublas             ,
     CUBLAS_SIDE_LEFT   ,
@@ -173,7 +165,7 @@ void calculate_odfs(
     coefficient_count);
   cudaDeviceSynchronize();
 
-  std::cout << "Computing V * E^-1 U^T." << std::endl;
+  status_callback("Computing V * E^-1 U^T.");
   cublasSgemm(
     cublas             ,
     CUBLAS_OP_T        ,
@@ -191,7 +183,7 @@ void calculate_odfs(
     coefficient_count);
   cudaDeviceSynchronize();
 
-  std::cout << "Accumulating histograms and projecting via V E^-1 U^T * h." << std::endl;
+  status_callback("Accumulating histograms and projecting via V E^-1 U^T * h.");
   for (auto x = 0; x < dimensions.x; x++)
   {
     for (auto y = 0; y < dimensions.y; y++)
@@ -243,33 +235,27 @@ void calculate_odfs(
     }
   }
 
-  std::cout << "Copying coefficients to CPU." << std::endl;
+  status_callback("Copying coefficients to CPU.");
   cudaMemcpy(coefficients, coefficient_vectors_ptr, sizeof(float) * total_coefficient_count, cudaMemcpyDeviceToHost);
-  
-  std::cout << "Destroying cublas." << std::endl;
-  cublasDestroy    (cublas  );
-
-  std::cout << "Destroying cusolver." << std::endl;
-  cusolverDnDestroy(cusolver);
 
   auto total_end = std::chrono::system_clock::now();
   std::chrono::duration<double> total_elapsed_seconds = total_end - total_start;
-  std::cout << "Total elapsed time: " << total_elapsed_seconds.count() << "s." << std::endl;
+  status_callback("Cuda ODF calculation operations took " + std::to_string(total_elapsed_seconds.count()) + " seconds.");
 }
 
 void sample_odfs(
-  const uint3&    dimensions       ,
-  const unsigned  coefficient_count,
-  const float*    coefficients     ,
-  const uint2&    tessellations    ,
-  const float3&   vector_spacing   ,
-  const uint3&    vector_dimensions,
-  const float     scale            ,
-        float3*   points           ,
-        float4*   colors           ,
-        unsigned* indices          ,
-        bool      clustering       ,
-        float     cluster_threshold,
+  const uint3&       dimensions       ,
+  const unsigned     coefficient_count,
+  const float*       coefficients     ,
+  const uint2&       tessellations    ,
+  const float3&      vector_spacing   ,
+  const uint3&       vector_dimensions,
+  const float        scale            ,
+        float3*      points           ,
+        float4*      colors           ,
+        unsigned*    indices          ,
+        bool         clustering       ,
+        float        cluster_threshold,
         std::function<void(const std::string&)> status_callback)
 {
   auto total_start = std::chrono::system_clock::now();
@@ -433,6 +419,6 @@ void sample_odfs(
 
   auto total_end = std::chrono::system_clock::now();
   std::chrono::duration<double> total_elapsed_seconds = total_end - total_start;
-  status_callback("Cuda operations took " + std::to_string(total_elapsed_seconds.count()) + " seconds.");
+  status_callback("Cuda ODF sampling operations took " + std::to_string(total_elapsed_seconds.count()) + " seconds.");
 }
 }

@@ -209,6 +209,14 @@
         </attribute>
        </widget>
        <widget class="pli::selector_plugin" name="plugin_selection">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>98</width>
+          <height>28</height>
+         </rect>
+        </property>
         <attribute name="label">
          <string>Selector</string>
         </attribute>
@@ -218,8 +226,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>117</width>
-          <height>406</height>
+          <width>98</width>
+          <height>28</height>
          </rect>
         </property>
         <attribute name="label">
@@ -231,8 +239,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>117</width>
-          <height>406</height>
+          <width>98</width>
+          <height>28</height>
          </rect>
         </property>
         <attribute name="label">
@@ -244,8 +252,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>117</width>
-          <height>406</height>
+          <width>98</width>
+          <height>28</height>
          </rect>
         </property>
         <attribute name="label">
@@ -258,8 +266,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>117</width>
-          <height>406</height>
+          <width>98</width>
+          <height>28</height>
          </rect>
         </property>
         <attribute name="label">
@@ -272,8 +280,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>117</width>
-          <height>406</height>
+          <width>98</width>
+          <height>28</height>
          </rect>
         </property>
         <attribute name="label">
@@ -306,6 +314,7 @@
      <string>Help</string>
     </property>
     <addaction name="action_help_version"/>
+    <addaction name="action_help_gpu_info"/>
    </widget>
    <addaction name="menu_file"/>
    <addaction name="menu_help"/>
@@ -350,6 +359,11 @@
    </property>
    <property name="shortcut">
     <string>F11</string>
+   </property>
+  </action>
+  <action name="action_help_gpu_info">
+   <property name="text">
+    <string>GPU Info</string>
    </property>
   </action>
  </widget>

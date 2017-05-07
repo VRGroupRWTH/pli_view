@@ -87,7 +87,7 @@
       <bool>true</bool>
      </property>
      <property name="text">
-      <string>Supervoxel Size X</string>
+      <string>Supervoxel X extent</string>
      </property>
     </widget>
    </item>
@@ -132,7 +132,7 @@
       <bool>true</bool>
      </property>
      <property name="text">
-      <string>Supervoxel Size Y</string>
+      <string>Supervoxel Y extent</string>
      </property>
     </widget>
    </item>
@@ -268,7 +268,7 @@
       <bool>true</bool>
      </property>
      <property name="text">
-      <string>Supervoxel Size Z</string>
+      <string>Supervoxel Z extent</string>
      </property>
     </widget>
    </item>

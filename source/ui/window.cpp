@@ -25,9 +25,8 @@ window:: window()
   for (auto plugin : plugins_)
     plugin->start();
 
-  std::size_t free, total;
-  cudaMemGetInfo(&free, &total);
-  logger_->info("Available GPU memory: {} MB. Total GPU memory: {} MB.", free * 1E-6, total * 1E-6);
+  action_help_version ->trigger();
+  action_help_gpu_info->trigger();
 }
 window::~window()
 {
@@ -37,19 +36,25 @@ window::~window()
 
 void window::bind_actions     ()
 {  
-  connect(action_fullscreen  , &QAction::triggered, [&] 
+  connect(action_fullscreen   , &QAction::triggered, [&] 
   {
     logger_->info(std::string("Toggling fullscreen mode."));
     isFullScreen() ? showNormal() : showFullScreen();
   });
-  connect(action_file_exit   , &QAction::triggered, [&] 
+  connect(action_file_exit    , &QAction::triggered, [&] 
   {
     logger_->info(std::string("Closing window."));
     close();
   });
-  connect(action_help_version, &QAction::triggered, [&] 
+  connect(action_help_version , &QAction::triggered, [&] 
   {
     logger_->info(std::string("Version ") + __DATE__);
+  });
+  connect(action_help_gpu_info, &QAction::triggered, [&]
+  {
+    std::size_t free, total;
+    cudaMemGetInfo(&free, &total);
+    logger_->info("Available GPU memory: {} MB. Total GPU memory: {} MB.", free * 1E-6, total * 1E-6);
   });
 }
 }

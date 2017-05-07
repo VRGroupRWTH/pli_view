@@ -3,6 +3,8 @@
 
 #include <future>
 
+#include <cusolverDn.h>
+
 #include <attributes/loggable.hpp>
 #include <ui/plugins/plugin.hpp>
 #include <ui_fdm_toolbox.h>
@@ -18,15 +20,19 @@ class fdm_plugin :
 {
 public:
   fdm_plugin(QWidget* parent = nullptr);
-  void start () override;
+  void start  () override;
+  void destroy() override;
 
 private:
   void calculate         ();
   void set_visible_layers() const;
 
-  odf_field*        odf_field_            ;
-  std::future<void> future_               ;
-  float             threshold_multiplier_ = 0.01;
+  float              threshold_multiplier_ = 0.01;
+  odf_field*         odf_field_;
+  std::future<void>  future_   ;
+  cusolverDnHandle_t cusolver_ ;
+  cublasHandle_t     cublas_   ;
+
 };
 }
 

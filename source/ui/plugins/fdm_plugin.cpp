@@ -191,9 +191,23 @@ void fdm_plugin::start    ()
 
   odf_field_ = owner_->viewer->add_renderable<odf_field>();
   set_visible_layers();
- 
+
+  logger_->info(std::string("Resetting GPU."));
+  cudaDeviceReset();
+
+  logger_->info(std::string("Initializing cusolver and cublas."));
+  cusolverDnCreate(&cusolver_);
+  cublasCreate    (&cublas_  );
+
   logger_->info(std::string("Start successful."));
 }
+void fdm_plugin::destroy()
+{
+  logger_->info(std::string("Destroying cusolver and cublas."));
+  cusolverDnDestroy(cusolver_);
+  cublasDestroy    (cublas_  );
+}
+
 void fdm_plugin::calculate()
 {
   logger_->info(std::string("Updating viewer..."));
@@ -211,10 +225,6 @@ void fdm_plugin::calculate()
   uint2 histogram_dimensions   = {
     line_edit_utility::get_text<unsigned>(line_edit_histogram_theta),
     line_edit_utility::get_text<unsigned>(line_edit_histogram_phi  )};
-  uint3 coefficient_dimensions = {
-    size[0] / block_dimensions.x, 
-    size[1] / block_dimensions.y, 
-    size[2] / block_dimensions.z };
   uint2 sampling_dimensions    = { 
     line_edit_utility::get_text<std::size_t>(line_edit_sampling_theta),
     line_edit_utility::get_text<std::size_t>(line_edit_sampling_phi  )};
@@ -226,6 +236,10 @@ void fdm_plugin::calculate()
   }
 
   size = {size[0] / stride[0], size[1] / stride[1], size[2] / stride[2]};
+  uint3 coefficient_dimensions = {
+    size[0] / block_dimensions.x, 
+    size[1] / block_dimensions.y, 
+    size[2] / block_dimensions.z };
 
   owner_->viewer->set_wait_spinner_enabled(true);
   selector->setEnabled(false);
@@ -234,6 +248,11 @@ void fdm_plugin::calculate()
   std::array<float, 3>                          spacing    ;
   boost::optional<boost::multi_array<float, 3>> direction  ;
   boost::optional<boost::multi_array<float, 3>> inclination;
+  boost::multi_array<float, 4> coefficients(boost::extents
+    [coefficient_dimensions.x]
+    [coefficient_dimensions.y]
+    [coefficient_dimensions.z]
+    [cush::coefficient_count(max_degree)]);
   future_ = std::async(std::launch::async, [&]
   {
     try
@@ -241,6 +260,18 @@ void fdm_plugin::calculate()
       spacing = io->load_vector_spacing();
       direction  .reset(io->load_fiber_direction_dataset  (offset, size, stride, false));
       inclination.reset(io->load_fiber_inclination_dataset(offset, size, stride, false));
+      
+      calculate_odfs(
+        cublas_,
+        cusolver_,
+        coefficient_dimensions,
+        block_dimensions,
+        histogram_dimensions,
+        max_degree,
+        direction   .get().data(),
+        inclination .get().data(),
+        coefficients.data(),
+        [&](const std::string& message) { logger_->info(message); });
     }
     catch (std::exception& exception)
     {
@@ -250,20 +281,6 @@ void fdm_plugin::calculate()
   while (future_.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
     QApplication::processEvents();
   
-  boost::multi_array<float, 4> coefficients(boost::extents
-    [coefficient_dimensions.x]
-    [coefficient_dimensions.y]
-    [coefficient_dimensions.z]
-    [cush::coefficient_count(max_degree)]);
-  calculate_odfs(
-    coefficient_dimensions,
-    block_dimensions,
-    histogram_dimensions,
-    max_degree,
-    direction   .get().data(),
-    inclination .get().data(),
-    coefficients.data());
-
   // Upload data to GPU.
   uint3  cuda_size    {unsigned(coefficient_dimensions.x), unsigned(coefficient_dimensions.y), unsigned(coefficient_dimensions.z)};
   float3 cuda_spacing {spacing[0], spacing[1], spacing[2]};
