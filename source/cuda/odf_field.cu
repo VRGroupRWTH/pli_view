@@ -230,7 +230,7 @@ void calculate_odfs(
 
         cudaDeviceSynchronize();
 
-        std::cout << volume_index + 1 << "/" << voxel_count << "." << std::endl;
+        status_callback(std::to_string(volume_index + 1) + "/" + std::to_string(voxel_count));
       }
     }
   }
