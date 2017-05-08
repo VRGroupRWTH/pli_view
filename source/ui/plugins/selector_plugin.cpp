@@ -21,7 +21,7 @@ selector_plugin::selector_plugin(QWidget* parent) : plugin(parent)
   {
     line_edit_size_x->setText(QString::fromStdString(std::to_string(value - slider_x->lowerValue())));
   });
-  connect(slider_x, &QxtSpanSlider::sliderReleased, [&]
+  connect(slider_x          , &QxtSpanSlider::sliderReleased, [&]
   {
     image->set_selection_offset_percentage({static_cast<float>(slider_x->lowerValue())                          / slider_x->maximum(), image->selection_offset_percentage()[1]});
     image->set_selection_size_percentage  ({static_cast<float>(slider_x->upperValue() - slider_x->lowerValue()) / slider_x->maximum(), image->selection_size_percentage  ()[1]});
@@ -35,7 +35,7 @@ selector_plugin::selector_plugin(QWidget* parent) : plugin(parent)
   {
     line_edit_size_y  ->setText(QString::fromStdString(std::to_string(value - slider_y->lowerValue())));
   });
-  connect(slider_y, &QxtSpanSlider::sliderReleased, [&]
+  connect(slider_y          , &QxtSpanSlider::sliderReleased, [&]
   {
     image->set_selection_offset_percentage({image->selection_offset_percentage()[0], static_cast<float>(slider_y->lowerValue())                          / slider_y->maximum()});
     image->set_selection_size_percentage  ({image->selection_size_percentage  ()[0], static_cast<float>(slider_y->upperValue() - slider_y->lowerValue()) / slider_y->maximum()});
