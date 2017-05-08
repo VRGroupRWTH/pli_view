@@ -242,7 +242,8 @@ void fdm_plugin::calculate()
     size[2] / block_dimensions.z };
 
   owner_->viewer->set_wait_spinner_enabled(true);
-  selector->setEnabled(false);
+  button_calculate->setEnabled(false);
+  selector        ->setEnabled(false);
 
   // Load data from hard drive (on another thread).
   std::array<float, 3>                          spacing    ;
@@ -297,7 +298,8 @@ void fdm_plugin::calculate()
       threshold_multiplier_ * float(slider_threshold->value()),
       [&] (const std::string& message) { logger_->info(message); });
   
-  selector->setEnabled(true);
+  selector        ->setEnabled(true);
+  button_calculate->setEnabled(true);
   owner_->viewer->set_wait_spinner_enabled(false);
   owner_->viewer->update();
 
