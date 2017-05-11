@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.2)
 
 # Setup project metadata.
 set(ProjectName "pli_vis")
-project(${ProjectName} VERSION 1.0.0 LANGUAGES CXX)
+project(${ProjectName} VERSION 1.0.0 LANGUAGES C CXX)
 set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++11")
 set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} "--expt-extended-lambda" "-gencode=arch=compute_50,code=sm_50" "-gencode=arch=compute_61,code=sm_61")
 

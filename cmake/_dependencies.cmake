@@ -9,11 +9,6 @@ include_directories(${Boost_INCLUDE_DIR})
 find_package(Cuda REQUIRED)
 set(ProjectLibraries ${ProjectLibraries} "${CUDA_CUBLAS_LIBRARIES};${CUDA_cusolver_LIBRARY};${CUDA_cudadevrt_LIBRARY}")
 
-# Include GLEW.
-find_package       (GLEW REQUIRED)
-include_directories(${GLEW_INCLUDE_DIRS})
-set(ProjectLibraries ${ProjectLibraries} "${GLEW_LIBRARIES}")
-
 # Include HDF5.
 find_package(HDF5 REQUIRED NAMES hdf5 COMPONENTS C shared)
 include_directories(${HDF5_INCLUDE_DIR})

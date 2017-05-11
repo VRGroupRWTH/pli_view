@@ -37,6 +37,7 @@ set(ProjectSources
   include/sh/spherical_harmonics.h
   include/sh/vector_ops.h
   include/sh/wigner.h
+  include/third_party/glew/GL/glew.h
   include/third_party/qxt/qxtglobal.h
   include/third_party/qxt/qxtletterboxwidget.h
   include/third_party/qxt/qxtletterboxwidgetp.h
@@ -77,6 +78,7 @@ set(ProjectSources
   source/cuda/vector_field.cu
   source/math/camera.cpp
   source/math/transform.cpp
+  source/third_party/glew/glew.c
   source/third_party/qxt/qxtletterboxwidget.cpp
   source/third_party/qxt/qxtspanslider.cpp
   source/ui/plugins/data_plugin.cpp

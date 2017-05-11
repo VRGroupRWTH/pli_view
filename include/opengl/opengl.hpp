@@ -1,28 +1,18 @@
 #ifndef GL_OPENGL_HPP_
 #define GL_OPENGL_HPP_
 
+#define GLEW_STATIC
+
 #include <iostream>
 
-#ifdef _WIN32
-#  include <gl/glew.h>
-#elif __APPLE__
-#  include <OpenGL/gl.h>
-#else
-#  include <gl/gl.h>
-#endif
+#include <third_party/glew/gl/glew.h>
 
 namespace opengl
 {
 inline void init()
 {
-  #ifdef _WIN32
-    glewExperimental = true;
-    glewInit();
-  #elif __APPLE__
-
-  #else
-  
-  #endif
+  glewExperimental = true;
+  glewInit();
 }
 
 inline void print_error(const char* prefix)
