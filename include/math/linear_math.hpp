@@ -1,10 +1,10 @@
 #ifndef PLI_VIS_LINEAR_MATH_HPP_
 #define PLI_VIS_LINEAR_MATH_HPP_
 
-#include <glm/glm.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtx/transform.hpp>
-#include <glm/gtx/quaternion.hpp>
+#include <third_party/glm/glm.hpp>
+#include <third_party/glm/gtc/quaternion.hpp>
+#include <third_party/glm/gtx/transform.hpp>
+#include <third_party/glm/gtx/quaternion.hpp>
 
 namespace pli
 {

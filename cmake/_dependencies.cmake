@@ -14,10 +14,6 @@ find_package       (GLEW REQUIRED)
 include_directories(${GLEW_INCLUDE_DIRS})
 set(ProjectLibraries ${ProjectLibraries} "${GLEW_LIBRARIES}")
 
-# Include GLM.
-find_package       (GLM REQUIRED)
-include_directories(${GLM_INCLUDE_DIRS})
-
 # Include HDF5.
 find_package(HDF5 REQUIRED NAMES hdf5 COMPONENTS C shared)
 include_directories(${HDF5_INCLUDE_DIR})
