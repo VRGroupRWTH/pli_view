@@ -1044,12 +1044,12 @@
   <customwidget>
    <class>QxtSpanSlider</class>
    <extends>QSlider</extends>
-   <header location="global">third_party/qxt/qxtspanslider.h</header>
+   <header location="global">third_party/qxt/QxtSpanSlider.h</header>
   </customwidget>
   <customwidget>
    <class>QxtLetterBoxWidget</class>
    <extends>QFrame</extends>
-   <header location="global">third_party/qxt/qxtletterboxwidget.h</header>
+   <header location="global">third_party/qxt/QxtLetterBoxWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
