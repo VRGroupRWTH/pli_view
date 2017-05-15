@@ -1,4 +1,4 @@
-#include <third_party/qxt/qxtspanslider.h>
+#include <third_party/qxt/QxtSpanSlider.h>
 /****************************************************************************
 ** Copyright (c) 2006 - 2011, the LibQxt project.
 ** See the Qxt AUTHORS file for a list of authors and copyright holders.
