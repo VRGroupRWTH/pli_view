@@ -32,7 +32,7 @@
 #define QXTLETTERBOXWIDGET_H
 
 #include <QFrame>
-#include "qxtglobal.h"
+#include "QxtGlobal.h"
 
 class QxtLetterBoxWidgetPrivate;
 

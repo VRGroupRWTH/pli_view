@@ -31,7 +31,7 @@
 
 #define QXTLETTERBOXWIDGET_P_H
 
-#include "qxtletterboxwidget.h"
+#include "QxtLetterBoxWidget.h"
 #include <QTimer>
 
 class QxtLetterBoxWidgetPrivate : public QObject, public QxtPrivate<QxtLetterBoxWidget>

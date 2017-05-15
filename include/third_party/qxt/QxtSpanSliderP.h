@@ -33,7 +33,7 @@
 
 #include <QStyle>
 #include <QObject>
-#include "qxtspanslider.h"
+#include "QxtSpanSlider.h"
 
 QT_FORWARD_DECLARE_CLASS(QStylePainter)
 QT_FORWARD_DECLARE_CLASS(QStyleOptionSlider)

@@ -29,7 +29,7 @@
 ** <http://libqxt.org>  <foundation@libqxt.org>
 *****************************************************************************/
 
-#include <third_party/qxt/qxtspansliderp.h>
+#include <third_party/qxt/QxtSpanSliderP.h>
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QApplication>

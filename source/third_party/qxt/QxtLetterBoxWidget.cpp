@@ -29,7 +29,7 @@
 ** <http://libqxt.org>  <foundation@libqxt.org>
 *****************************************************************************/
 
-#include "third_party/qxt/qxtletterboxwidgetp.h"
+#include "third_party/qxt/QxtLetterBoxWidgetP.h"
 #include <QLayout>
 #include <QStyle>
 

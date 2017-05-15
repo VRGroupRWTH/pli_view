@@ -32,7 +32,7 @@
 #define QXTSPANSLIDER_H
 
 #include <QSlider>
-#include "qxtglobal.h"
+#include "QxtGlobal.h"
 
 class QxtSpanSliderPrivate;
 
