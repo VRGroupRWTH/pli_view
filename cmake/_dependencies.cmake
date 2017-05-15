@@ -6,7 +6,7 @@ find_package(Boost REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
 
 # Include Cuda and Cublas.
-find_package(Cuda REQUIRED)
+find_package(CUDA REQUIRED)
 set(ProjectLibraries ${ProjectLibraries} "${CUDA_CUBLAS_LIBRARIES};${CUDA_cusolver_LIBRARY};${CUDA_cudadevrt_LIBRARY}")
 
 # Include HDF5.
