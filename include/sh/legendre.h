@@ -15,7 +15,7 @@ INLINE COMMON precision associated_legendre(const int l, const int m, const prec
 {
   precision p_mm(1.0);
   if (l > 0)
-    p_mm = (m % 2 == 0 ? 1 : -1) * double_factorial<precision>(fmax(2 * m - 1, 0)) * pow(1 - x * x, m / 2.0);
+    p_mm = (m % 2 == 0 ? 1 : -1) * double_factorial<precision>(fmax(2.0F * m - 1.0F, 0.0F)) * pow(1 - x * x, m / 2.0);
   if (l == m)
     return p_mm;
   
