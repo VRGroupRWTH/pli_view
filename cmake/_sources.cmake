@@ -4,7 +4,6 @@ set(ProjectSources
   
   include/attributes/loggable.hpp
   include/attributes/renderable.hpp
-  include/cuda/launch.h
   include/cuda/odf_field.h
   include/cuda/orthtree.h
   include/cuda/spherical_histogram.h

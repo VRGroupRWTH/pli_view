@@ -10,8 +10,8 @@
 #include <sh/cush.h>
 #include <sh/vector_ops.h>
 
-#include <cuda/launch.h>
 #include <cuda/spherical_histogram.h>
+#include <sh/launch.h>
 
 namespace pli
 {
@@ -62,13 +62,13 @@ void calculate_odfs(
   auto coefficient_vectors_ptr = raw_pointer_cast(&coefficient_vectors[0]);
 
   status_callback("Generating histogram bins.");
-  create_bins<<<grid_size_2d(dim3(histogram_bins.x, histogram_bins.y)), block_size_2d()>>>(
+  create_bins<<<cush::grid_size_2d(dim3(histogram_bins.x, histogram_bins.y)), cush::block_size_2d()>>>(
     histogram_bins       , 
     histogram_vectors_ptr);
   cudaDeviceSynchronize();
 
   status_callback("Calculating spherical harmonics basis matrix.");
-  cush::calculate_matrix<<<grid_size_2d(dim3(histogram_bin_count, coefficient_count)), block_size_2d()>>>(
+  cush::calculate_matrix<<<cush::grid_size_2d(dim3(histogram_bin_count, coefficient_count)), cush::block_size_2d()>>>(
     histogram_bin_count  , 
     coefficient_count    ,
     histogram_vectors_ptr, 
@@ -204,7 +204,7 @@ void calculate_odfs(
           vectors_size.y * dimensions.y,
           vectors_size.z * dimensions.z};
 
-        accumulate<<<grid_size_3d(vectors_size), block_size_3d()>>>(
+        accumulate<<<cush::grid_size_3d(vectors_size), cush::block_size_3d()>>>(
           vectors_size         ,
           offset               ,
           size                 ,
@@ -285,7 +285,7 @@ void sample_odfs(
     if (layer != max_layer)
     {
       status_callback("Calculating the layer " + std::to_string(int(layer)) + " coefficients.");
-      sample_odf_layer<<<grid_size_3d(layer_dimensions), block_size_3d()>>>(
+      sample_odf_layer<<<cush::grid_size_3d(layer_dimensions), cush::block_size_3d()>>>(
         layer_dimensions    ,
         layer_offset        ,
         coefficient_count   ,
@@ -309,7 +309,7 @@ void sample_odfs(
   for (auto layer = max_layer; layer >= 0; layer--)
   {
     status_callback("Sampling sums of the layer " + std::to_string(int(layer)) + " coefficients.");
-    cush::sample_sums<<<grid_size_3d(layer_dimensions), block_size_3d()>>>(
+    cush::sample_sums<<<cush::grid_size_3d(layer_dimensions), cush::block_size_3d()>>>(
       layer_dimensions ,
       coefficient_count,
       tessellations    ,

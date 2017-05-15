@@ -5,7 +5,7 @@
 
 #include <thrust/device_vector.h>
 
-#include <cuda/launch.h>
+#include <sh/launch.h>
 
 namespace pli
 {
@@ -32,7 +32,7 @@ void create_vector_field(
   cudaDeviceSynchronize();
   
   status_callback("Creating vectors.");
-  create_vector_field_internal<<<grid_size_3d(dimensions), block_size_3d()>>>(
+  create_vector_field_internal<<<cush::grid_size_3d(dimensions), cush::block_size_3d()>>>(
     dimensions      , 
     directions_ptr  , 
     inclinations_ptr,
