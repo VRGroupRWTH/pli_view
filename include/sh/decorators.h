@@ -7,7 +7,7 @@
   #define HOST   __host__
   #define DEVICE __device__
   #define SHARED __shared__
-  #define INLINE __forceinline__ inline
+  #define INLINE __forceinline__
   #define CONSTANT  __constant__ const
 
 #else
