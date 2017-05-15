@@ -25,6 +25,7 @@ public:
 
 private:
   void calculate         ();
+  void extract_peaks     ();
   void set_visible_layers() const;
 
   float              threshold_multiplier_ = 0.01;

@@ -173,6 +173,10 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
   {
     calculate();
   });
+  connect(button_extract_peaks       , &QAbstractButton::clicked   , [&]
+  {
+    extract_peaks();
+  });
 }
 
 void fdm_plugin::start    ()
@@ -208,7 +212,7 @@ void fdm_plugin::destroy()
   cublasDestroy    (cublas_  );
 }
 
-void fdm_plugin::calculate()
+void fdm_plugin::calculate    ()
 {
   logger_->info(std::string("Updating viewer..."));
   
@@ -304,6 +308,25 @@ void fdm_plugin::calculate()
   owner_->viewer->update();
 
   logger_->info(std::string("Update successful."));
+}
+void fdm_plugin::extract_peaks()
+{
+  logger_->info(std::string("Extracting peaks..."));
+
+  auto selector = owner_->get_plugin<pli::selector_plugin>();
+
+  owner_->viewer->set_wait_spinner_enabled(true);
+  button_calculate->setEnabled(false);
+  selector        ->setEnabled(false);
+
+  // TODO: Apply peak extraction.
+  
+  selector        ->setEnabled(true);
+  button_calculate->setEnabled(true);
+  owner_->viewer->set_wait_spinner_enabled(false);
+  owner_->viewer->update();
+
+  logger_->info(std::string("Extraction successful."));
 }
 
 void fdm_plugin::set_visible_layers() const
