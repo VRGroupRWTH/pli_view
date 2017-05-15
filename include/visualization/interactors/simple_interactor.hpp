@@ -1,7 +1,7 @@
 #ifndef PLI_VIS_SIMPLE_INTERACTOR_HPP_
 #define PLI_VIS_SIMPLE_INTERACTOR_HPP_
 
-#include <QPoint.h>
+#include <QPoint>
 
 class QKeyEvent;
 class QMouseEvent;

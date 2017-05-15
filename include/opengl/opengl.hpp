@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-#include <third_party/glew/gl/glew.h>
+#include <third_party/glew/GL/glew.h>
 
 namespace opengl
 {

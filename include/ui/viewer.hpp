@@ -6,7 +6,7 @@
 
 #include <opengl/opengl.hpp>
 
-#include <QOpenGLWidget.h>
+#include <QOpenGLWidget>
 
 #include <attributes/loggable.hpp>
 #include <attributes/renderable.hpp>
