@@ -10,9 +10,15 @@ find_package(CUDA REQUIRED)
 set(ProjectLibraries ${ProjectLibraries} "${CUDA_CUBLAS_LIBRARIES};${CUDA_cusolver_LIBRARY};${CUDA_cudadevrt_LIBRARY}")
 
 # Include HDF5.
-find_package(HDF5 REQUIRED NAMES hdf5 COMPONENTS C shared)
-include_directories(${HDF5_INCLUDE_DIR})
-set(ProjectLibraries ${ProjectLibraries} ${HDF5_C_SHARED_LIBRARY})
+set(HDF5_INCLUDE_DIR CACHE STRING "")
+set(HDF5_C_SHARED_LIBRARY CACHE STRING "")
+find_package(HDF5 NAMES hdf5 COMPONENTS C shared)
+if(HDF5_INCLUDE_DIR STREQUAL "" OR HDF5_C_SHARED_LIBRARY STREQUAL "")
+  message(FATAL_ERROR "HDF5 not found! Please set the include directory and libraries manually.")
+elseif()
+  include_directories(${HDF5_INCLUDE_DIR})
+  set(ProjectLibraries ${ProjectLibraries} ${HDF5_C_SHARED_LIBRARY})
+endif()
 
 # Include OpenGL.
 find_package       (OpenGL REQUIRED)

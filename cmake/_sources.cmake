@@ -38,11 +38,11 @@ set(ProjectSources
   include/sh/vector_ops.h
   include/sh/wigner.h
   include/third_party/glew/GL/glew.h
-  include/third_party/qxt/qxtglobal.h
-  include/third_party/qxt/qxtletterboxwidget.h
-  include/third_party/qxt/qxtletterboxwidgetp.h
-  include/third_party/qxt/qxtspanslider.h
-  include/third_party/qxt/qxtspansliderp.h
+  include/third_party/qxt/QxtGlobal.h
+  include/third_party/qxt/QxtLetterBoxWidget.h
+  include/third_party/qxt/QxtLetterBoxWidgetP.h
+  include/third_party/qxt/QxtSpanSlider.h
+  include/third_party/qxt/QxtSpanSliderP.h
   include/ui/plugins/data_plugin.hpp
   include/ui/plugins/fom_plugin.hpp
   include/ui/plugins/fdm_plugin.hpp
@@ -79,8 +79,8 @@ set(ProjectSources
   source/math/camera.cpp
   source/math/transform.cpp
   source/third_party/glew/glew.c
-  source/third_party/qxt/qxtletterboxwidget.cpp
-  source/third_party/qxt/qxtspanslider.cpp
+  source/third_party/qxt/QxtLetterBoxWidget.cpp
+  source/third_party/qxt/QxtSpanSlider.cpp
   source/ui/plugins/data_plugin.cpp
   source/ui/plugins/fom_plugin.cpp
   source/ui/plugins/fdm_plugin.cpp
