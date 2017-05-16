@@ -7,7 +7,6 @@
 #include <boost/optional.hpp>
 
 #include <cuda/odf_field.h>
-#include <sh/spherical_harmonics.h>
 #include <ui/plugins/data_plugin.hpp>
 #include <ui/plugins/selector_plugin.hpp>
 #include <ui/window.hpp>
@@ -257,7 +256,7 @@ void fdm_plugin::calculate    ()
     [coefficient_dimensions.x]
     [coefficient_dimensions.y]
     [coefficient_dimensions.z]
-    [cush::coefficient_count(max_degree)]);
+    [(max_degree + 1) * (max_degree + 1)]);
   future_ = std::async(std::launch::async, [&]
   {
     try

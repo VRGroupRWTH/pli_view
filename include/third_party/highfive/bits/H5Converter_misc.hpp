@@ -186,7 +186,7 @@ struct data_converter< boost::multi_array<T, Dims>, void >{
         (void) array;
     }
 
-    inline typename /* type_of_array<T>::type* */ T* transform_read(MultiArray & array) {
+    inline /* typename type_of_array<T>::type* */ T* transform_read(MultiArray & array) {
             if(std::equal(_dims.begin(), _dims.end(), array.shape()) == false){
                 boost::array<typename MultiArray::index, Dims> ext;
                 std::copy(_dims.begin(), _dims.end(), ext.begin());
@@ -195,7 +195,7 @@ struct data_converter< boost::multi_array<T, Dims>, void >{
             return array.data();
     }
 
-    inline typename /* type_of_array<T>::type* */ T* transform_write(MultiArray & array) { return array.data(); }
+    inline /* typename type_of_array<T>::type* */ T* transform_write(MultiArray & array) { return array.data(); }
 
     inline void process_result(MultiArray & array){
          (void) array;

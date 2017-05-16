@@ -3,7 +3,7 @@
 
 #include <map>
 
-#include <QPoint.h>
+#include <QPoint>
 
 class QKeyEvent;
 class QMouseEvent;

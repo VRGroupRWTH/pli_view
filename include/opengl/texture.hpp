@@ -77,22 +77,19 @@ public:
     glTexParameteri(target, GL_TEXTURE_WRAP_R, mode);
   }
 
-  template<typename = std::enable_if<target == GL_TEXTURE_1D>::type>
   static void set_image  (GLenum internal_format, GLsizei width,                                GLenum format, GLenum type, const void* data = nullptr)
   {
     glTexImage1D(GL_TEXTURE_1D, 0, internal_format, width, 0, format, type, data);
   }
-  template<typename = std::enable_if<target == GL_TEXTURE_2D>::type>
   static void set_image  (GLenum internal_format, GLsizei width, GLsizei height,                GLenum format, GLenum type, const void* data = nullptr)
   {
     glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, format, type, data);
   }
-  template<typename = std::enable_if<target == GL_TEXTURE_3D>::type>
   static void set_image  (GLenum internal_format, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void* data = nullptr)
   {
     glTexImage3D(GL_TEXTURE_3D, 0, internal_format, width, height, depth, 0, format, type, data);
   }
-  template<GLenum buffer_type, typename = std::enable_if<target == GL_TEXTURE_BUFFER>::type>
+  template<GLenum buffer_type>
   static void set_buffer (GLenum internalFormat , const buffer<buffer_type>& buffer)
   {
     glTexBuffer(GL_TEXTURE_BUFFER, internalFormat, buffer.id());

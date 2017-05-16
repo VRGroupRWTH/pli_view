@@ -61,7 +61,6 @@ set(ProjectSources
   include/visualization/interactors/first_person_interactor.hpp
   include/visualization/interactors/orbit_interactor.hpp
   include/visualization/interactors/simple_interactor.hpp
-  include/visualization/linear_tracer.hpp
   include/visualization/odf_field.hpp
   include/visualization/scalar_field.hpp
   include/visualization/vector_field.hpp
