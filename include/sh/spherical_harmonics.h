@@ -19,7 +19,7 @@ namespace cush
 {
 INLINE COMMON unsigned int maximum_degree   (const unsigned int coefficient_count)
 {
-  return sqrtf(coefficient_count) - 1;
+  return unsigned(sqrtf(float(coefficient_count)) - 1);
 }
 INLINE COMMON unsigned int coefficient_count(const unsigned int max_l)
 {
@@ -32,8 +32,8 @@ INLINE COMMON unsigned int coefficient_index(const unsigned int l, const int m)
 INLINE COMMON int2         coefficient_lm   (const unsigned int index)
 {
   int2 lm;
-  lm.x = floor(sqrtf(index));
-  lm.y = index - powf(lm.x, 2) - lm.x;
+  lm.x = int(floor(sqrtf(float(index))));
+  lm.y = index - int(powf(float(lm.x), 2)) - lm.x;
   return lm;
 }
 
@@ -82,7 +82,6 @@ COMMON precision is_zero(
   const unsigned int coefficient_count,
   const precision*   coefficients )
 {
-  precision value = 0;
   for (auto index = 0; index < coefficient_count; index++)
     if (coefficients[index] != precision(0))
       return false;

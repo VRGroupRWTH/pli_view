@@ -92,7 +92,7 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_vector_block_x   , &QLineEdit::editingFinished , [&]
   {
-    slider_vector_block_x->setValue(line_edit_utility::get_text<std::size_t>(line_edit_vector_block_x));
+    slider_vector_block_x->setValue(line_edit_utility::get_text<int>(line_edit_vector_block_x));
   });
   connect(slider_vector_block_y      , &QxtSpanSlider::valueChanged, [&]
   {
@@ -100,7 +100,7 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_vector_block_y   , &QLineEdit::editingFinished , [&]
   {
-    slider_vector_block_y->setValue(line_edit_utility::get_text<std::size_t>(line_edit_vector_block_y));
+    slider_vector_block_y->setValue(line_edit_utility::get_text<int>(line_edit_vector_block_y));
   });
   connect(slider_vector_block_z      , &QxtSpanSlider::valueChanged, [&]
   {
@@ -108,7 +108,7 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_vector_block_z   , &QLineEdit::editingFinished , [&]
   {
-    slider_vector_block_z->setValue(line_edit_utility::get_text<std::size_t>(line_edit_vector_block_z));
+    slider_vector_block_z->setValue(line_edit_utility::get_text<int>(line_edit_vector_block_z));
   });
   connect(slider_histogram_theta     , &QxtSpanSlider::valueChanged, [&]
   {
@@ -116,7 +116,7 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_histogram_theta  , &QLineEdit::editingFinished , [&]
   {
-    slider_histogram_theta->setValue(line_edit_utility::get_text<std::size_t>(line_edit_histogram_theta));
+    slider_histogram_theta->setValue(line_edit_utility::get_text<int>(line_edit_histogram_theta));
   });
   connect(slider_histogram_phi       , &QxtSpanSlider::valueChanged, [&]
   {
@@ -124,7 +124,7 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_histogram_phi    , &QLineEdit::editingFinished , [&]
   {
-    slider_histogram_phi->setValue(line_edit_utility::get_text<std::size_t>(line_edit_histogram_phi));
+    slider_histogram_phi->setValue(line_edit_utility::get_text<int>(line_edit_histogram_phi));
   });
   connect(slider_maximum_sh_degree   , &QxtSpanSlider::valueChanged, [&]
   {
@@ -132,7 +132,7 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_maximum_sh_degree, &QLineEdit::editingFinished , [&]
   {
-    slider_maximum_sh_degree->setValue(line_edit_utility::get_text<std::size_t>(line_edit_maximum_sh_degree));
+    slider_maximum_sh_degree->setValue(line_edit_utility::get_text<int>(line_edit_maximum_sh_degree));
   });
   connect(slider_sampling_theta      , &QxtSpanSlider::valueChanged, [&]
   {
@@ -140,7 +140,7 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_sampling_theta   , &QLineEdit::editingFinished , [&]
   {
-    slider_sampling_theta->setValue(line_edit_utility::get_text<std::size_t>(line_edit_sampling_theta));
+    slider_sampling_theta->setValue(line_edit_utility::get_text<int>(line_edit_sampling_theta));
   });
   connect(slider_sampling_phi        , &QxtSpanSlider::valueChanged, [&]
   {
@@ -148,7 +148,7 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_sampling_phi     , &QLineEdit::editingFinished , [&]
   {
-    slider_sampling_phi->setValue(line_edit_utility::get_text<std::size_t>(line_edit_sampling_phi));
+    slider_sampling_phi->setValue(line_edit_utility::get_text<int>(line_edit_sampling_phi));
   });
 
   connect(checkbox_clustering_enabled, &QCheckBox::stateChanged    , [&](int state)
@@ -230,8 +230,8 @@ void fdm_plugin::calculate    ()
     line_edit_utility::get_text<unsigned>(line_edit_histogram_theta),
     line_edit_utility::get_text<unsigned>(line_edit_histogram_phi  )};
   uint2 sampling_dimensions    = { 
-    line_edit_utility::get_text<std::size_t>(line_edit_sampling_theta),
-    line_edit_utility::get_text<std::size_t>(line_edit_sampling_phi  )};
+    line_edit_utility::get_text<unsigned>(line_edit_sampling_theta),
+    line_edit_utility::get_text<unsigned>(line_edit_sampling_phi  )};
 
   if(io == nullptr || size[0] == 0 || size[1] == 0 || size[2] == 0)
   {
@@ -241,9 +241,9 @@ void fdm_plugin::calculate    ()
 
   size = {size[0] / stride[0], size[1] / stride[1], size[2] / stride[2]};
   uint3 coefficient_dimensions = {
-    size[0] / block_dimensions.x, 
-    size[1] / block_dimensions.y, 
-    size[2] / block_dimensions.z };
+    unsigned(size[0]) / block_dimensions.x, 
+    unsigned(size[1]) / block_dimensions.y, 
+    unsigned(size[2]) / block_dimensions.z };
 
   owner_->viewer->set_wait_spinner_enabled(true);
   button_calculate->setEnabled(false);
@@ -292,12 +292,12 @@ void fdm_plugin::calculate    ()
   if (coefficients.num_elements() > 0)
     odf_field_->set_data(
       cuda_size, 
-      coefficients.shape()[3],
+      unsigned(coefficients.shape()[3]),
       coefficients.data (),
       sampling_dimensions, 
       cuda_spacing,
       block_dimensions, 
-      1.0, 
+      1.0F, 
       checkbox_clustering_enabled->isChecked(),
       threshold_multiplier_ * float(slider_threshold->value()),
       [&] (const std::string& message) { logger_->info(message); });

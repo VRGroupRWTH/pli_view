@@ -31,7 +31,7 @@ public:
 
   bool   is_valid () const
   {
-    return glIsVertexArray(id_);
+    return glIsVertexArray(id_) != 0;
   }
 
   GLuint id       () const

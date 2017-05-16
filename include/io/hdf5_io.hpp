@@ -87,7 +87,7 @@ private:
 
     dataset_path = boost::replace_first_copy(dataset_path, "%Slice%", "%04d");
 
-    for (auto z = 0; z < size[2]; z+= stride[2])
+    for (std::size_t z = 0; z < size[2]; z+= stride[2])
     {
       boost::multi_array<float, 2> slice_data;
       file_
@@ -122,7 +122,7 @@ private:
 
     dataset_path = boost::replace_first_copy(dataset_path, "%Slice%", "%04d");
 
-    for (auto z = 0; z < size[2]; z+= stride[2])
+    for (std::size_t z = 0; z < size[2]; z+= stride[2])
     {
       auto dataset = file_.getDataSet((boost::format(dataset_path) % (z + offset[2])).str());
       auto count   = dataset.getSpace().getDimensions()[2];

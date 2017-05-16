@@ -79,7 +79,7 @@ void calculate_odfs(
   int buffer_size;
   cusolverDnSgesvd_bufferSize(cusolver, histogram_bin_count, coefficient_count, &buffer_size);
   cudaDeviceSynchronize();
-  float complex_buffer_size = buffer_size;
+  auto complex_buffer_size = static_cast<float>(buffer_size);
 
   status_callback("Allocating SVD buffers.");
   thrust::device_vector<float> buffer (buffer_size, 0.0);
@@ -147,7 +147,7 @@ void calculate_odfs(
     {
       if (int(entry) == 0)
         return 0;
-      return entry = 1.0 / entry;
+      return entry = 1.0F / entry;
     });
   cudaDeviceSynchronize();
 
@@ -184,11 +184,11 @@ void calculate_odfs(
   cudaDeviceSynchronize();
 
   status_callback("Accumulating histograms and projecting via V E^-1 U^T * h.");
-  for (auto x = 0; x < dimensions.x; x++)
+  for (unsigned x = 0; x < dimensions.x; x++)
   {
-    for (auto y = 0; y < dimensions.y; y++)
+    for (unsigned y = 0; y < dimensions.y; y++)
     {
-      for (auto z = 0; z < dimensions.z; z++)
+      for (unsigned z = 0; z < dimensions.z; z++)
       {
         auto volume_index        = z + dimensions.z * (y + dimensions.y * x);
         auto coefficients_offset = volume_index * coefficient_count;
@@ -265,7 +265,7 @@ void sample_odfs(
   auto min_dimension    = min(dimensions.x, dimensions.y);
   if (dimension_count == 3)
     min_dimension = min(min_dimension, dimensions.z);
-  auto max_layer        = log(min_dimension) / log(2);
+  auto max_layer        = int(log(min_dimension) / log(2));
   auto voxel_count      = unsigned(base_voxel_count * 
     ((1.0 - pow(1.0 / pow(2, dimension_count), max_layer + 1)) / 
      (1.0 -     1.0 / pow(2, dimension_count))));
@@ -367,18 +367,18 @@ void sample_odfs(
       tessellation_count;
 
     uint3 layer_vectors_size {
-      vector_dimensions.x * pow(2, max_layer - layer),
-      vector_dimensions.y * pow(2, max_layer - layer),
-      vector_dimensions.z * pow(2, max_layer - layer) };
+      vector_dimensions.x * unsigned(pow(2, max_layer - layer)),
+      vector_dimensions.y * unsigned(pow(2, max_layer - layer)),
+      vector_dimensions.z * unsigned(pow(2, max_layer - layer)) };
     float3 layer_position {
-      vector_spacing.x * (layer_vectors_size.x - 1) * 0.5,
-      vector_spacing.y * (layer_vectors_size.y - 1) * 0.5,
-      dimension_count == 3 ? vector_spacing.z * (layer_vectors_size.z - 1) * 0.5 : 0.0 };
+      vector_spacing.x * (layer_vectors_size.x - 1.0F) * 0.5F,
+      vector_spacing.y * (layer_vectors_size.y - 1.0F) * 0.5F,
+      dimension_count == 3 ? vector_spacing.z * (layer_vectors_size.z - 1) * 0.5F : 0.0F };
     float3 layer_spacing {
       vector_spacing.x * layer_vectors_size.x,
       vector_spacing.y * layer_vectors_size.y,
-      dimension_count == 3 ? vector_spacing.z * layer_vectors_size.z : 1.0 };
-    auto layer_scale = scale * min(min(layer_spacing.x, layer_spacing.y), layer_spacing.z) * 0.5;
+      dimension_count == 3 ? vector_spacing.z * layer_vectors_size.z : 1.0F };
+    auto layer_scale = scale * min(min(layer_spacing.x, layer_spacing.y), layer_spacing.z) * 0.5F;
 
     thrust::transform(
       thrust::device,

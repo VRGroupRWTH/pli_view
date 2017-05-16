@@ -44,19 +44,19 @@ __global__ void create_vector_field_internal(
       z >= dimensions.z)
     return;
 
-  auto volume_index = z + dimensions.z * (y + dimensions.y * x);
-  auto longitude    = (90.0F + directions  [volume_index]) * M_PI / 180.0F;
-  auto latitude     = (90.0F - inclinations[volume_index]) * M_PI / 180.0F;
+  auto        volume_index = z + dimensions.z * (y + dimensions.y * x);
+  scalar_type longitude    = (90.0F + directions  [volume_index]) * M_PI / 180.0F;
+  scalar_type latitude     = (90.0F - inclinations[volume_index]) * M_PI / 180.0F;
 
   vector_type position = {
     x * spacing.x,
     y * spacing.y,
     z * spacing.z};
 
-  auto minimum_spacing = min(spacing.x, min(spacing.y, spacing.z));
-  auto vector_start    = cush::to_cartesian_coords(float3{ scale * minimum_spacing / 2.0, longitude, latitude});
-  auto vector_end      = cush::to_cartesian_coords(float3{-scale * minimum_spacing / 2.0, longitude, latitude});
-  auto unscaled        = cush::to_cartesian_coords(float3{1.0, longitude, latitude});
+  auto minimum_spacing = float(min(spacing.x, min(spacing.y, spacing.z)));
+  auto vector_start    = cush::to_cartesian_coords(float3{ scale * minimum_spacing / 2.0F, longitude, latitude});
+  auto vector_end      = cush::to_cartesian_coords(float3{-scale * minimum_spacing / 2.0F, longitude, latitude});
+  auto unscaled        = cush::to_cartesian_coords(float3{1.0F, longitude, latitude});
   // auto color        = make_float4(abs(unscaled.x), abs(unscaled.y), abs(unscaled.z), 1.0); // Default
   auto color           = make_float4(abs(unscaled.x), abs(unscaled.z), abs(unscaled.y), 1.0); // DMRI
 

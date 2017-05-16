@@ -46,7 +46,7 @@ public:
 
     auto status = 0;
     glGetShaderiv(id_, GL_COMPILE_STATUS, &status);
-    return status;
+    return status != 0;
   }
 
   bool   is_valid    () const

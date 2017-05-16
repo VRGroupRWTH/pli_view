@@ -28,7 +28,7 @@ private:
   void extract_peaks     ();
   void set_visible_layers() const;
 
-  float              threshold_multiplier_ = 0.01;
+  float              threshold_multiplier_ = 0.01F;
   odf_field*         odf_field_;
   std::future<void>  future_   ;
   cusolverDnHandle_t cusolver_ ;

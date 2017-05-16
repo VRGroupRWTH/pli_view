@@ -43,7 +43,7 @@ public:
 
     auto status = 0;
     glGetProgramiv(id_, GL_LINK_STATUS, &status);
-    return status;
+    return status != 0;
   }
                                       
   void   bind                         ()
@@ -60,14 +60,14 @@ public:
     auto location = get_attribute_location(name);
     if (location < 0)
       return;
-    glVertexAttribPointer(location, size, type, normalize, stride, reinterpret_cast<GLvoid*>(offset));  
+    glVertexAttribPointer(location, size, type, normalize, stride, reinterpret_cast<GLvoid*>(std::size_t(offset)));
   }
   void   set_attribute_buffer_integer (const std::string& name, GLuint size, GLuint type,                        GLuint stride = 0, GLuint offset = 0)
   {
     auto location = get_attribute_location(name);
     if (location < 0)
       return;
-    glVertexAttribIPointer(location, size, type, stride, reinterpret_cast<GLvoid*>(offset));
+    glVertexAttribIPointer(location, size, type, stride, reinterpret_cast<GLvoid*>(std::size_t(offset)));
 
   }
   void   set_attribute_buffer_double  (const std::string& name, GLuint size, GLuint type,                        GLuint stride = 0, GLuint offset = 0)
@@ -75,7 +75,7 @@ public:
     auto location = get_attribute_location(name);
     if (location < 0)
       return;
-    glVertexAttribLPointer(location, size, type, stride, reinterpret_cast<GLvoid*>(offset));
+    glVertexAttribLPointer(location, size, type, stride, reinterpret_cast<GLvoid*>(std::size_t(offset)));
   }
                                       
   void   enable_attribute_array       (const std::string& name)
@@ -104,7 +104,7 @@ public:
                                       
   bool   is_valid                     () const
   {
-    return glIsProgram(id_);
+    return glIsProgram(id_) != 0;
   }
                                       
   GLuint id                           () const

@@ -41,7 +41,7 @@ void vector_field::render    (const camera* camera)
   
   shader_program_->set_uniform("projection", camera->projection_matrix      ());
   shader_program_->set_uniform("view"      , camera->inverse_absolute_matrix());
-  glDrawArrays(GL_LINES, 0, draw_count_);
+  glDrawArrays(GL_LINES, 0, GLsizei(draw_count_));
 
   vertex_array_  ->unbind();
   shader_program_->unbind();

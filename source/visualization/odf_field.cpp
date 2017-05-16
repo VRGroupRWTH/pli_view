@@ -49,7 +49,7 @@ void odf_field::render    (const camera* camera)
   auto min_dimension    = min(dimensions_.x, dimensions_.y);
   if (dimension_count == 3)
     min_dimension = min(min_dimension, dimensions_.z);
-  auto max_layer        = log(min_dimension) / log(2);
+  auto max_layer        = int(log(min_dimension) / log(2));
   auto layer_offset     = 0;
   auto layer_dimensions = dimensions_;
   auto indices_count    = 6 * tessellations_.x * tessellations_.y;
@@ -104,7 +104,7 @@ void odf_field::set_data(
   auto min_dimension    = min(dimensions_.x, dimensions_.y);
   if (dimension_count == 3)
     min_dimension = min(min_dimension, dimensions_.z);
-  auto max_layer        = log(min_dimension) / log(2);
+  auto max_layer        = int(log(min_dimension) / log(2));
   auto voxel_count      = unsigned(base_voxel_count * 
     ((1.0 - pow(1.0 / pow(2, dimension_count), max_layer + 1)) / 
      (1.0 -     1.0 / pow(2, dimension_count))));

@@ -56,7 +56,7 @@ void scalar_field::render    (const camera* camera)
 
   glEnable       (GL_POLYGON_OFFSET_FILL);
   glPolygonOffset(1.0, 10.0);
-  glDrawArrays   (GL_TRIANGLES, 0, draw_count_);
+  glDrawArrays   (GL_TRIANGLES, 0, GLsizei(draw_count_));
   glDisable      (GL_POLYGON_OFFSET_FILL);
 
   texture_       ->unbind();

@@ -15,8 +15,8 @@ INLINE COMMON precision clebsch_gordan(
   unsigned int m1, unsigned int m2, unsigned int m3)
 {
   return pow (precision(-1.0), m3 + l1 - l2) * 
-         sqrt(2.0 * l3 + 1.0) * 
-         wigner_3j<precision>(2 * l1, 2 * l2, 2 * l3, 2 * m1, 2 * m2, -2 * m3);
+         sqrt(precision(2.0) * l3 + precision(1.0)) *
+         wigner_3j<precision>(precision(2.0) * l1, precision(2.0) * l2, precision(2.0) * l3, precision(2.0) * m1, precision(2.0) * m2, -precision(2.0) * m3);
 }
 }
 
