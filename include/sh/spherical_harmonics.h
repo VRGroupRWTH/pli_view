@@ -33,7 +33,7 @@ INLINE COMMON int2         coefficient_lm   (const unsigned int index)
 {
   int2 lm;
   lm.x = int(floor(sqrtf(float(index))));
-  lm.y = index - int(powf(float(lm.x), 2)) - lm.x;
+  lm.y = int(index - powf(lm.x, 2) - lm.x);
   return lm;
 }
 
