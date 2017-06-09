@@ -1,0 +1,6 @@
+If you encounter a Cuda timeout error i.e. the following:
+
+terminate called after throwing an instance of 'thrust::system::system_error' 
+what(): cudaFree in free: the launch timed out and was terminated
+
+Open /etc/X11/xorg.conf and add the following line under "Videocard0": Option "Interactive" "0"
