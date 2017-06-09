@@ -244,9 +244,10 @@ void fdm_plugin::calculate    ()
     unsigned(size[1]) / block_dimensions.y, 
     unsigned(size[2]) / block_dimensions.z };
 
-  owner_->viewer->set_wait_spinner_enabled(true);
-  button_calculate->setEnabled(false);
-  selector        ->setEnabled(false);
+  owner_->viewer      ->set_wait_spinner_enabled(true);
+  button_calculate    ->setEnabled(false);
+  button_extract_peaks->setEnabled(false);
+  selector            ->setEnabled(false);
 
   // Load data from hard drive (on another thread).
   std::array<float, 3>                          spacing    ;
@@ -301,10 +302,11 @@ void fdm_plugin::calculate    ()
       threshold_multiplier_ * float(slider_threshold->value()),
       [&] (const std::string& message) { logger_->info(message); });
   
-  selector        ->setEnabled(true);
-  button_calculate->setEnabled(true);
-  owner_->viewer->set_wait_spinner_enabled(false);
-  owner_->viewer->update();
+  selector            ->setEnabled(true);
+  button_extract_peaks->setEnabled(true);
+  button_calculate    ->setEnabled(true);
+  owner_->viewer      ->set_wait_spinner_enabled(false);
+  owner_->viewer      ->update();
 
   logger_->info(std::string("Update successful."));
 }
@@ -314,16 +316,18 @@ void fdm_plugin::extract_peaks()
 
   auto selector = owner_->get_plugin<pli::selector_plugin>();
 
-  owner_->viewer->set_wait_spinner_enabled(true);
-  button_calculate->setEnabled(false);
-  selector        ->setEnabled(false);
+  owner_->viewer      ->set_wait_spinner_enabled(true);
+  button_calculate    ->setEnabled(false);
+  button_extract_peaks->setEnabled(false);
+  selector            ->setEnabled(false);
 
   // TODO: Apply peak extraction.
   
-  selector        ->setEnabled(true);
-  button_calculate->setEnabled(true);
-  owner_->viewer->set_wait_spinner_enabled(false);
-  owner_->viewer->update();
+  selector            ->setEnabled(true);
+  button_calculate    ->setEnabled(true);
+  button_extract_peaks->setEnabled(true);
+  owner_->viewer      ->set_wait_spinner_enabled(false);
+  owner_->viewer      ->update();
 
   logger_->info(std::string("Extraction successful."));
 }
