@@ -5,6 +5,8 @@
 
 #include <cusolverDn.h>
 
+#include <boost/multi_array.hpp>
+
 #include <attributes/loggable.hpp>
 #include <ui/plugins/plugin.hpp>
 #include <ui_fdm_toolbox.h>
@@ -28,11 +30,12 @@ private:
   void extract_peaks     ();
   void set_visible_layers() const;
 
-  float              threshold_multiplier_ = 0.01F;
-  odf_field*         odf_field_;
-  std::future<void>  future_   ;
-  cusolverDnHandle_t cusolver_ ;
-  cublasHandle_t     cublas_   ;
+  float                        threshold_multiplier_ = 0.01F;
+  boost::multi_array<float, 4> coefficients_;
+  odf_field*                   odf_field_   ;                              
+  std::future<void>            future_      ;                                          
+  cusolverDnHandle_t           cusolver_    ;
+  cublasHandle_t               cublas_      ;
 
 };
 }

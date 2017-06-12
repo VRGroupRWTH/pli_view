@@ -254,7 +254,7 @@ void fdm_plugin::calculate    ()
   boost::optional<boost::multi_array<float, 3>> direction  ;
   boost::optional<boost::multi_array<float, 3>> inclination;
   boost::optional<boost::multi_array<float, 4>> unit_vector;
-  boost::multi_array<float, 4> coefficients(boost::extents
+  coefficients_.resize(boost::extents
     [coefficient_dimensions.x]
     [coefficient_dimensions.y]
     [coefficient_dimensions.z]
@@ -274,9 +274,9 @@ void fdm_plugin::calculate    ()
         block_dimensions,
         histogram_dimensions,
         max_degree,
-        direction   .get().data(),
-        inclination .get().data(),
-        coefficients.data(),
+        direction    .get().data(),
+        inclination  .get().data(),
+        coefficients_.data(),
         [&](const std::string& message) { logger_->info(message); });
     }
     catch (std::exception& exception)
@@ -294,7 +294,7 @@ void fdm_plugin::calculate    ()
           histogram_dimensions,
           max_degree,
           reinterpret_cast<float3*>(unit_vector.get().data()),
-          coefficients.data(),
+          coefficients_.data(),
           [&](const std::string& message) { logger_->info(message); });
       }
       catch (std::exception& exception2)
@@ -309,11 +309,11 @@ void fdm_plugin::calculate    ()
   // Upload data to GPU.
   uint3  cuda_size    {unsigned(coefficient_dimensions.x), unsigned(coefficient_dimensions.y), unsigned(coefficient_dimensions.z)};
   float3 cuda_spacing {spacing[0], spacing[1], spacing[2]};
-  if (coefficients.num_elements() > 0)
+  if (coefficients_.num_elements() > 0)
     odf_field_->set_data(
       cuda_size, 
-      unsigned(coefficients.shape()[3]),
-      coefficients.data (),
+      unsigned(coefficients_.shape()[3]),
+      coefficients_.data(),
       sampling_dimensions, 
       cuda_spacing,
       block_dimensions, 
@@ -342,6 +342,25 @@ void fdm_plugin::extract_peaks()
   selector            ->setEnabled(false);
 
   // TODO: Apply peak extraction.
+  auto shape = coefficients_.shape();
+  for(auto x = 0; x < shape[0]; x++)
+    for(auto y = 0; y < shape[1]; y++)
+      for(auto z = 0; z < shape[2]; z++)
+      {
+        logger_->info("[" + boost::lexical_cast<std::string>(x) + "," + boost::lexical_cast<std::string>(y) + "," + boost::lexical_cast<std::string>(z) + "]: ");
+        
+        // Given H(theta, phi), the Hessian of ODF F(theta, phi):
+        // [ F_theta,theta(theta, phi), F_theta,phi(theta, phi) ]
+        // [ F_theta,phi  (theta, phi), F_phi  ,phi(theta, phi) ]
+
+        // The following guarantee that (theta, phi) is either a maxima or minima of the ODF:
+        // - ODF_theta(theta, phi) = 0.
+        // - ODF_phi  (theta, phi) = 0.
+
+        // Furthermore, the following guarantee that (theta, phi) is a maxima:
+        // - det(H(theta, phi)) >= 0. -> Filters saddle points.
+        // - tr (H(theta, phi)) <= 0. -> Filters local minima.
+      }
   
   selector            ->setEnabled(true);
   button_calculate    ->setEnabled(true);
