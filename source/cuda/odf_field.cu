@@ -244,6 +244,230 @@ void calculate_odfs(
   status_callback("Cuda ODF calculation operations took " + std::to_string(total_elapsed_seconds.count()) + " seconds.");
 }
 
+void calculate_odfs(
+  cublasHandle_t     cublas        , 
+  cusolverDnHandle_t cusolver      , 
+  const uint3&       dimensions    , 
+  const uint3&       vectors_size  , 
+  const uint2&       histogram_bins, 
+  const unsigned     maximum_degree, 
+  const float3*      unit_vectors  , 
+        float*       coefficients  , 
+        std::function<void(const std::string&)> status_callback)
+{
+  auto total_start = std::chrono::system_clock::now();
+
+  status_callback("Allocating and copying vectors.");
+  auto voxel_count        = dimensions  .x * dimensions  .y * dimensions  .z;
+  auto vector_count       = vectors_size.x * vectors_size.y * vectors_size.z;
+  auto total_vector_count = voxel_count * vector_count;
+  thrust::device_vector<float3> vectors(total_vector_count);
+  copy_n(unit_vectors, total_vector_count, vectors.begin());
+  auto vectors_ptr = raw_pointer_cast(&vectors[0]);
+  transform(vectors.begin(), vectors.end(), vectors.begin(), [] COMMON (const float3& value) {
+    return cush::to_spherical_coords(value / length(value));
+  });
+  cudaDeviceSynchronize();
+
+  status_callback("Allocating histogram vector and magnitudes.");
+  auto histogram_bin_count = histogram_bins.x * histogram_bins.y;
+  thrust::device_vector<float3> histogram_vectors   (histogram_bin_count);
+  thrust::device_vector<float > histogram_magnitudes(histogram_bin_count);
+  auto histogram_vectors_ptr    = raw_pointer_cast(&histogram_vectors   [0]);
+  auto histogram_magnitudes_ptr = raw_pointer_cast(&histogram_magnitudes[0]);
+
+  status_callback("Allocating spherical harmonics basis matrix.");
+  auto coefficient_count = cush::coefficient_count(maximum_degree);
+  auto matrix_size       = histogram_bin_count * coefficient_count;
+  thrust::device_vector<float> basis_matrix(matrix_size, 0.0F);
+  auto basis_matrix_ptr = raw_pointer_cast(&basis_matrix[0]);
+
+  status_callback("Allocating spherical harmonics coefficients.");
+  auto total_coefficient_count = voxel_count * coefficient_count;
+  thrust::device_vector<float> coefficient_vectors(total_coefficient_count);
+  auto coefficient_vectors_ptr = raw_pointer_cast(&coefficient_vectors[0]);
+
+  status_callback("Generating histogram bins.");
+  create_bins<<<cush::grid_size_2d(dim3(histogram_bins.x, histogram_bins.y)), cush::block_size_2d()>>>(
+    histogram_bins       , 
+    histogram_vectors_ptr);
+  cudaDeviceSynchronize();
+
+  status_callback("Calculating spherical harmonics basis matrix.");
+  cush::calculate_matrix<<<cush::grid_size_2d(dim3(histogram_bin_count, coefficient_count)), cush::block_size_2d()>>>(
+    histogram_bin_count  , 
+    coefficient_count    ,
+    histogram_vectors_ptr, 
+    basis_matrix_ptr     );
+  cudaDeviceSynchronize();
+
+  status_callback("Calculating SVD work buffer size.");
+  int buffer_size;
+  cusolverDnSgesvd_bufferSize(cusolver, histogram_bin_count, coefficient_count, &buffer_size);
+  cudaDeviceSynchronize();
+  auto complex_buffer_size = static_cast<float>(buffer_size);
+
+  status_callback("Allocating SVD buffers.");
+  thrust::device_vector<float> buffer (buffer_size, 0.0);
+  thrust::device_vector<int>   info   (1);
+  thrust::device_vector<float> U      (histogram_bin_count * histogram_bin_count);
+  thrust::device_vector<float> E      (coefficient_count                        );
+  thrust::device_vector<float> VT     (coefficient_count   * coefficient_count  );
+  thrust::device_vector<float> UT     (histogram_bin_count * histogram_bin_count);
+  thrust::device_vector<float> EI_UT  (histogram_bin_count * coefficient_count  );
+  thrust::device_vector<float> V_EI_UT(histogram_bin_count * coefficient_count  );
+  auto alpha       = 1.0F;
+  auto beta        = 0.0F;
+  auto buffer_ptr  = raw_pointer_cast(&buffer [0]);
+  auto info_ptr    = raw_pointer_cast(&info   [0]);
+  auto U_ptr       = raw_pointer_cast(&U      [0]);
+  auto E_ptr       = raw_pointer_cast(&E      [0]);
+  auto VT_ptr      = raw_pointer_cast(&VT     [0]);
+  auto UT_ptr      = raw_pointer_cast(&UT     [0]);
+  auto EI_UT_ptr   = raw_pointer_cast(&EI_UT  [0]);
+  auto V_EI_UT_ptr = raw_pointer_cast(&V_EI_UT[0]);
+
+  status_callback("Applying SVD.");
+  cusolverDnSgesvd(
+    cusolver            ,
+    'A'                 ,
+    'A'                 ,
+    histogram_bin_count ,
+    coefficient_count   ,
+    basis_matrix_ptr    ,
+    histogram_bin_count ,
+    E_ptr               ,
+    U_ptr               ,
+    histogram_bin_count ,
+    VT_ptr              ,
+    coefficient_count   ,
+    buffer_ptr          ,
+    buffer_size         ,
+    &complex_buffer_size,
+    info_ptr);
+  cudaDeviceSynchronize();
+
+  status_callback("Transposing U to U^T.");
+  cublasSgeam(
+    cublas              ,
+    CUBLAS_OP_T         ,
+    CUBLAS_OP_N         ,
+    histogram_bin_count ,
+    histogram_bin_count ,
+    &alpha              ,
+    U_ptr               ,
+    histogram_bin_count ,
+    &beta               ,
+    nullptr             ,
+    histogram_bin_count ,
+    UT_ptr              ,
+    histogram_bin_count);
+  cudaDeviceSynchronize();
+
+  status_callback("Inverting E to E^-1.");
+  thrust::transform(
+    E.begin(),
+    E.end  (),
+    E.begin(),
+    [] COMMON (float& entry) -> float
+    {
+      if (int(entry) == 0)
+        return 0;
+      return entry = 1.0F / entry;
+    });
+  cudaDeviceSynchronize();
+
+  status_callback("Computing E^-1 * U^T.");
+  cublasSdgmm(
+    cublas             ,
+    CUBLAS_SIDE_LEFT   ,
+    coefficient_count  ,
+    histogram_bin_count,
+    UT_ptr             ,
+    histogram_bin_count,
+    E_ptr              ,
+    1                  ,
+    EI_UT_ptr          ,
+    coefficient_count);
+  cudaDeviceSynchronize();
+
+  status_callback("Computing V * E^-1 U^T.");
+  cublasSgemm(
+    cublas             ,
+    CUBLAS_OP_T        ,
+    CUBLAS_OP_N        ,
+    coefficient_count  ,
+    histogram_bin_count,
+    coefficient_count  ,
+    &alpha             ,
+    VT_ptr             ,
+    coefficient_count  ,
+    EI_UT_ptr          ,
+    coefficient_count  ,
+    &beta              ,
+    V_EI_UT_ptr        ,
+    coefficient_count);
+  cudaDeviceSynchronize();
+
+  status_callback("Accumulating histograms and projecting via V E^-1 U^T * h.");
+  for (unsigned x = 0; x < dimensions.x; x++)
+  {
+    for (unsigned y = 0; y < dimensions.y; y++)
+    {
+      for (unsigned z = 0; z < dimensions.z; z++)
+      {
+        auto volume_index        = z + dimensions.z * (y + dimensions.y * x);
+        auto coefficients_offset = volume_index * coefficient_count;
+
+        fill(histogram_magnitudes.begin(), histogram_magnitudes.end(), 0.0F);
+
+        uint3 offset {
+          vectors_size.x * x,
+          vectors_size.y * y,
+          vectors_size.z * z};
+        uint3 size  {
+          vectors_size.x * dimensions.x,
+          vectors_size.y * dimensions.y,
+          vectors_size.z * dimensions.z};
+
+        accumulate<<<cush::grid_size_3d(vectors_size), cush::block_size_3d()>>>(
+          vectors_size         ,
+          offset               ,
+          size                 ,
+          vectors_ptr          ,
+          histogram_bins       , 
+          histogram_vectors_ptr, 
+          histogram_magnitudes_ptr);
+
+        cublasSgemv(
+          cublas                                        ,
+          CUBLAS_OP_N                                   ,
+          coefficient_count                             ,
+          histogram_bin_count                           ,
+          &alpha                                        ,
+          V_EI_UT_ptr                                   ,
+          coefficient_count                             ,
+          histogram_magnitudes_ptr                      , 
+          1                                             ,
+          &beta                                         ,
+          coefficient_vectors_ptr  + coefficients_offset,
+          1                                             );
+
+        cudaDeviceSynchronize();
+
+        status_callback(std::to_string(volume_index + 1) + "/" + std::to_string(voxel_count));
+      }
+    }
+  }
+
+  status_callback("Copying coefficients to CPU.");
+  cudaMemcpy(coefficients, coefficient_vectors_ptr, sizeof(float) * total_coefficient_count, cudaMemcpyDeviceToHost);
+
+  auto total_end = std::chrono::system_clock::now();
+  std::chrono::duration<double> total_elapsed_seconds = total_end - total_start;
+  status_callback("Cuda ODF calculation operations took " + std::to_string(total_elapsed_seconds.count()) + " seconds.");
+}
+
 void sample_odfs(
   const uint3&       dimensions       ,
   const unsigned     coefficient_count,

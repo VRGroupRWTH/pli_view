@@ -24,6 +24,17 @@ void calculate_odfs(
         float*       coefficients  ,
         std::function<void(const std::string&)> status_callback = [](const std::string&){});
 
+void calculate_odfs(
+  cublasHandle_t     cublas        ,
+  cusolverDnHandle_t cusolver      ,
+  const uint3&       dimensions    ,
+  const uint3&       vectors_size  , 
+  const uint2&       histogram_bins,
+  const unsigned     maximum_degree,
+  const float3*      unit_vectors  ,
+        float*       coefficients  ,
+        std::function<void(const std::string&)> status_callback = [](const std::string&){});
+
 void sample_odfs(
   const uint3&       dimensions        ,
   const unsigned     coefficient_count ,

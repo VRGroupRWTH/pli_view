@@ -253,6 +253,7 @@ void fdm_plugin::calculate    ()
   std::array<float, 3>                          spacing    ;
   boost::optional<boost::multi_array<float, 3>> direction  ;
   boost::optional<boost::multi_array<float, 3>> inclination;
+  boost::optional<boost::multi_array<float, 4>> unit_vector;
   boost::multi_array<float, 4> coefficients(boost::extents
     [coefficient_dimensions.x]
     [coefficient_dimensions.y]
@@ -280,7 +281,26 @@ void fdm_plugin::calculate    ()
     }
     catch (std::exception& exception)
     {
-      logger_->error(std::string(exception.what()));
+      try
+      {
+        logger_->warn(std::string("Unable to load direction maps. Attempting to load unit vectors instead."));
+        unit_vector.reset(io->load_fiber_unit_vectors_dataset(offset, size, stride, false));
+
+        calculate_odfs(
+          cublas_,
+          cusolver_,
+          coefficient_dimensions,
+          block_dimensions,
+          histogram_dimensions,
+          max_degree,
+          reinterpret_cast<float3*>(unit_vector.get().data()),
+          coefficients.data(),
+          [&](const std::string& message) { logger_->info(message); });
+      }
+      catch (std::exception& exception2)
+      {
+        logger_->error(std::string(exception2.what()));
+      }
     }
   });
   while (future_.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
