@@ -20,7 +20,7 @@
       <bool>false</bool>
      </property>
      <property name="text">
-      <string>Unit Vectors</string>
+      <string>Unit Vector</string>
      </property>
     </widget>
    </item>
