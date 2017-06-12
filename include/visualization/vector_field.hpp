@@ -26,6 +26,13 @@ public:
     float         scale       = 1.0,
     std::function<void(const std::string&)> status_callback = [](const std::string&){});
 
+  void set_data(
+    const uint3&  dimensions  , 
+    const float3* unit_vectors, 
+    const float3& spacing     , 
+    float         scale       , 
+    std::function<void(const std::string&)> status_callback = [](const std::string&){});
+
 private:
   std::unique_ptr<gl::program>      shader_program_;
   std::unique_ptr<gl::vertex_array> vertex_array_  ;

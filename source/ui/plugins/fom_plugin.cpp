@@ -85,17 +85,26 @@ void fom_plugin::upload()
   std::array<float, 3>                          spacing    ;
   boost::optional<boost::multi_array<float, 3>> direction  ;
   boost::optional<boost::multi_array<float, 3>> inclination;
+  boost::optional<boost::multi_array<float, 4>> unit_vector;
   future_ = std::async(std::launch::async, [&]
   {
     try
     {
       spacing = io->load_vector_spacing();
-      direction  .reset(io->load_fiber_direction_dataset  (offset, size, stride, false));
-      inclination.reset(io->load_fiber_inclination_dataset(offset, size, stride, false));
+      direction  .reset(io->load_fiber_direction_dataset   (offset, size, stride, false));
+      inclination.reset(io->load_fiber_inclination_dataset (offset, size, stride, false));
     }
     catch (std::exception& exception)
     {
-      logger_->error(std::string(exception.what()));
+      try
+      {
+        logger_->warn(std::string("Unable to load direction maps. Attempting to load unit vectors instead."));
+        unit_vector.reset(io->load_fiber_unit_vectors_dataset(offset, size, stride, false));
+      }
+      catch (std::exception& exception2)
+      {
+        logger_->error(std::string(exception2.what()));
+      }
     }
   });
   while(future_.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
@@ -111,6 +120,13 @@ void fom_plugin::upload()
       inclination.get().data(), 
       cuda_spacing, 
       scale, 
+      [&] (const std::string& message) { logger_->info(message); });
+  if (unit_vector.is_initialized() && unit_vector.get().num_elements() > 0)
+    vector_field_->set_data(
+      cuda_size,
+      reinterpret_cast<float3*>(unit_vector.get().data()),
+      cuda_spacing,
+      scale,
       [&] (const std::string& message) { logger_->info(message); });
 
   selector->setEnabled(true);

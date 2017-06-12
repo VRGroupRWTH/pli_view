@@ -104,7 +104,7 @@ private:
       return boost::multi_array<float, 4>();
 
     auto dataset = file_.getDataSet(dataset_path);
-    auto count   = dataset.getSpace().getDimensions()[2];
+    auto count   = dataset.getSpace().getDimensions()[1];
 
     boost::multi_array<float, 4> misordered_data;
     dataset
