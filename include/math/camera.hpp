@@ -36,8 +36,8 @@ private:
   bool  orthographic_      = false;
  
   /// Shared parameters.
-  float	near_clip_plane_   = 0.00001F;
-  float	far_clip_plane_    = 10000.0F;
+  float	near_clip_plane_   = 0.0001F;
+  float	far_clip_plane_    = 1000.0F;
   float	aspect_ratio_      = 4.0F / 3.0F;
 
   /// When camera is perspective , camera's viewing volume is defined by vertical fov.
