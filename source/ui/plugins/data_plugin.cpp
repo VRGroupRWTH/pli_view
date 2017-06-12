@@ -17,12 +17,46 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
   connect(radio_button_slice_by_slice, &QRadioButton::clicked     , [&]()
   {
     logger_->info(std::string("Toggled sliced (Vervet1818 style) data type."));
+
+    line_edit_file          ->setPlaceholderText("C:/Vervet1818.h5");
+    line_edit_vector_spacing->setPlaceholderText("VectorSpacing");
+    line_edit_transmittance ->setPlaceholderText("%Slice%/Microscope/Processed/Registered/NTransmittance");
+    line_edit_retardation   ->setPlaceholderText("%Slice%/Microscope/Processed/Registered/Retardation");
+    line_edit_direction     ->setPlaceholderText("%Slice%/Microscope/Processed/Registered/Direction");
+    line_edit_inclination   ->setPlaceholderText("%Slice%/Microscope/Processed/Registered/Inclination");
+    line_edit_unit_vector   ->setPlaceholderText("%Slice%/Microscope/Processed/Registered/UnitVector");
+
+    label_direction      ->setEnabled(true );
+    label_inclination    ->setEnabled(true );
+    label_unit_vector    ->setEnabled(false);
+
+    line_edit_direction  ->setEnabled(true );
+    line_edit_inclination->setEnabled(true );
+    line_edit_unit_vector->setEnabled(false);
+
     if (radio_button_slice_by_slice->isChecked())
       set_file(line_edit_file->text().toStdString());
   });
   connect(radio_button_volume        , &QRadioButton::clicked     , [&]()
   {
     logger_->info(std::string("Toggled volumetric (MSA0309 style) data type."));
+    
+    line_edit_file          ->setPlaceholderText("C:/MSA0309_s0536-0695.h5");
+    line_edit_vector_spacing->setPlaceholderText("Voxelsize");
+    line_edit_transmittance ->setPlaceholderText("Transmittance");
+    line_edit_retardation   ->setPlaceholderText("Retardation");
+    line_edit_direction     ->setPlaceholderText("Direction");
+    line_edit_inclination   ->setPlaceholderText("Inclination");
+    line_edit_unit_vector   ->setPlaceholderText("UnitVector");
+
+    label_direction      ->setEnabled(false);
+    label_inclination    ->setEnabled(false);
+    label_unit_vector    ->setEnabled(true );
+
+    line_edit_direction  ->setEnabled(false);
+    line_edit_inclination->setEnabled(false);
+    line_edit_unit_vector->setEnabled(true );
+
     if (radio_button_volume->isChecked())
       set_file(line_edit_file->text().toStdString());
   });
@@ -103,7 +137,7 @@ void data_plugin::set_file(const std::string& filename)
         line_edit_utility::get_text(line_edit_retardation   ),
         line_edit_utility::get_text(line_edit_direction     ),
         line_edit_utility::get_text(line_edit_inclination   ),
-        ""                                                   ,
+        line_edit_utility::get_text(line_edit_unit_vector   ),
         ""
       ));
     else
@@ -116,7 +150,7 @@ void data_plugin::set_file(const std::string& filename)
         line_edit_utility::get_text(line_edit_retardation   ),
         line_edit_utility::get_text(line_edit_direction     ),
         line_edit_utility::get_text(line_edit_inclination   ),
-        ""                                                   ,
+        line_edit_utility::get_text(line_edit_unit_vector   ),
         ""
       ));
     logger_->info("Successfully opened file: {}.", filename);
