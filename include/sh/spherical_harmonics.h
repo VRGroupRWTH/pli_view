@@ -119,7 +119,8 @@ GLOBAL void calculate_matrix(
   const unsigned int vector_count     ,
   const unsigned int coefficient_count,
   const vector_type* vectors          , 
-  precision*         output_matrix    )
+  precision*         output_matrix    ,
+  bool               even_only        = true)
 {
   auto vector_index      = blockIdx.x * blockDim.x + threadIdx.x;
   auto coefficient_index = blockIdx.y * blockDim.y + threadIdx.y;
@@ -128,9 +129,10 @@ GLOBAL void calculate_matrix(
       coefficient_index >= coefficient_count)
     return;
 
-  atomicAdd(
-    &output_matrix[vector_index + vector_count * coefficient_index], 
-    evaluate(coefficient_index, vectors[vector_index].y, vectors[vector_index].z));
+  if(!even_only || coefficient_index % 2 == 0)
+    atomicAdd(
+      &output_matrix[vector_index + vector_count * coefficient_index], 
+      evaluate(coefficient_index, vectors[vector_index].y, vectors[vector_index].z));
 }
 // Call on a dimensions.x x dimensions.y x dimensions.z 3D grid.
 template<typename vector_type, typename precision>
