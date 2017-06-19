@@ -184,7 +184,7 @@ void calculate_odfs(
     coefficient_count);
   cudaDeviceSynchronize();
 
-  status_callback("Accumulating histograms and projecting via V E^-1 U^T * h.");
+  status_callback("Accumulating histograms and projecting via V E^-1 U^T * h. This might take a while.");
   for (unsigned x = 0; x < dimensions.x; x++)
   {
     for (unsigned y = 0; y < dimensions.y; y++)
@@ -231,7 +231,7 @@ void calculate_odfs(
 
         cudaDeviceSynchronize();
 
-        status_callback(std::to_string(volume_index + 1) + "/" + std::to_string(voxel_count));
+        //status_callback(std::to_string(volume_index + 1) + "/" + std::to_string(voxel_count));
       }
     }
   }
@@ -409,7 +409,7 @@ void calculate_odfs(
     coefficient_count);
   cudaDeviceSynchronize();
 
-  status_callback("Accumulating histograms and projecting via V E^-1 U^T * h.");
+  status_callback("Accumulating histograms and projecting via V E^-1 U^T * h. This might take a while.");
   for (unsigned x = 0; x < dimensions.x; x++)
   {
     for (unsigned y = 0; y < dimensions.y; y++)
@@ -455,7 +455,7 @@ void calculate_odfs(
 
         cudaDeviceSynchronize();
 
-        status_callback(std::to_string(volume_index + 1) + "/" + std::to_string(voxel_count));
+        //status_callback(std::to_string(volume_index + 1) + "/" + std::to_string(voxel_count));
       }
     }
   }
