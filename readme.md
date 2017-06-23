@@ -2,8 +2,8 @@
 - Go to the project root directory.
 - Run "source utility/load_modules.sh".
 - Then make a directory for the build, go into it.
-- Run "ccmake ..". Most dependencies should pick up automatically (but you might need to set HDF5 by hand). 
-- Ignore the warnings during generate.
+- Run "ccmake ..". Most dependencies should pick up automatically (you might need to set HDF5 by hand).
+- Configure and generate. Ignore the warnings.
 - Run "make".
 
 **Preparation**:
@@ -26,4 +26,4 @@
 
 **Limitations**:
 - For the hierarchical ODF tree to work correctly, one must use power-of-2 selections.
-- Peak extraction and tractography plugin is not implemented at the moment.
+- Peak extraction and tractography plugin are not implemented at the moment.
