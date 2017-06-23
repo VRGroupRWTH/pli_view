@@ -342,25 +342,12 @@ void fdm_plugin::extract_peaks()
   selector            ->setEnabled(false);
 
   // TODO: Apply peak extraction.
-  auto shape = coefficients_.shape();
-  for(auto x = 0; x < shape[0]; x++)
-    for(auto y = 0; y < shape[1]; y++)
-      for(auto z = 0; z < shape[2]; z++)
-      {
-        logger_->info("[" + boost::lexical_cast<std::string>(x) + "," + boost::lexical_cast<std::string>(y) + "," + boost::lexical_cast<std::string>(z) + "]: ");
-        
-        // Given H(theta, phi), the Hessian of ODF F(theta, phi):
-        // [ F_theta,theta(theta, phi), F_theta,phi(theta, phi) ]
-        // [ F_theta,phi  (theta, phi), F_phi  ,phi(theta, phi) ]
-
-        // The following guarantee that (theta, phi) is either a maxima or minima of the ODF:
-        // - ODF_theta(theta, phi) = 0.
-        // - ODF_phi  (theta, phi) = 0.
-
-        // Furthermore, the following guarantee that (theta, phi) is a maxima:
-        // - det(H(theta, phi)) >= 0. -> Filters saddle points.
-        // - tr (H(theta, phi)) <= 0. -> Filters local minima.
-      }
+  //auto shape = coefficients_.shape();
+  //for(auto x = 0; x < shape[0]; x++)
+  //  for(auto y = 0; y < shape[1]; y++)
+  //    for(auto z = 0; z < shape[2]; z++)
+  //      for(auto v = 0; v < shape[3]; v++)
+  //        logger_->info("[" + boost::lexical_cast<std::string>(x) + "," + boost::lexical_cast<std::string>(y) + "," + boost::lexical_cast<std::string>(z) + "]: ");
   
   selector            ->setEnabled(true);
   button_calculate    ->setEnabled(true);
