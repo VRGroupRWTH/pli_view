@@ -1,18 +1,22 @@
 #include /* implements */ <visualization/basic_tracer.hpp>
 
+#include <math/camera.hpp>
 #include <shaders/vector_field.vert.glsl>
 #include <shaders/vector_field.frag.glsl>
-#include <math/camera.hpp>
 
 namespace pli
 {
-void basic_tracer::trace(const boost::multi_array<float, 4>& vectors)
+void basic_tracer::set_data(const std::vector<float3>& points, const std::vector<float4>& colors)
 {
-  // TODO: Run tangent, create connected lines, pass to GL.
-
-  //linear_tracer tracer;
-  //tracer.SetData(vectors.data());
-  //tracer.
+  draw_count_ = points.size();
+  
+  vertex_buffer_->bind    ();
+  vertex_buffer_->set_data(draw_count_ * sizeof(float3), points.data());
+  vertex_buffer_->unbind  ();
+  
+  color_buffer_ ->bind    ();
+  color_buffer_ ->set_data(draw_count_ * sizeof(float4), colors.data());
+  color_buffer_ ->unbind  ();
 }
 
 void basic_tracer::initialize()

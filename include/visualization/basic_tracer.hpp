@@ -5,12 +5,6 @@
 
 #include <boost/multi_array.hpp>
 
-#include <tangent-base/basic_trilinear_interpolator.hpp>
-#include <tangent-base/cartesian_grid.hpp>
-#include <tangent-base/dummy_recorder.hpp>
-#include <tangent-base/runge_kutta_4_integrator.hpp>
-#include <tangent-base/simple_tracer.hpp>
-
 #include <attributes/renderable.hpp>
 #include <opengl/all.hpp>
 
@@ -19,20 +13,7 @@ namespace pli
 class basic_tracer : public renderable
 {
 public:
-  struct trilinear_interpolation_trait
-  {
-    using Data         = tangent::CartesianGrid;
-    using Interpolator = tangent::BasicTrilinearInterpolator;
-  };
-  struct linear_tracer_trait
-  {
-    using Data       = tangent::CartesianGrid;
-    using Integrator = tangent::RungeKutta4Integrator<trilinear_interpolation_trait>;
-    using Recorder   = tangent::DummyRecorder;
-  };
-  using  linear_tracer = tangent::SimpleTracer<linear_tracer_trait>;
-
-  void trace(const boost::multi_array<float, 4>& vectors);
+  void set_data(const std::vector<float3>& points, const std::vector<float4>& colors);
 
   void initialize()                     override;
   void render    (const camera* camera) override;
