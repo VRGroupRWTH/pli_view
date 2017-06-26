@@ -5,7 +5,7 @@
 
 namespace shaders
 {
-std::string odf_field_vert = R"(\
+static std::string odf_field_vert = R"(\
 #version 400
 
 uniform mat4 projection;
