@@ -61,6 +61,7 @@ set(ProjectSources
   include/visualization/interactors/first_person_interactor.hpp
   include/visualization/interactors/orbit_interactor.hpp
   include/visualization/interactors/simple_interactor.hpp
+  include/visualization/basic_tracer.hpp
   include/visualization/odf_field.hpp
   include/visualization/scalar_field.hpp
   include/visualization/vector_field.hpp
@@ -95,6 +96,7 @@ set(ProjectSources
   source/visualization/interactors/first_person_interactor.cpp
   source/visualization/interactors/orbit_interactor.cpp
   source/visualization/interactors/simple_interactor.cpp
+  source/visualization/basic_tracer.cpp
   source/visualization/odf_field.cpp
   source/visualization/scalar_field.cpp
   source/visualization/vector_field.cpp
