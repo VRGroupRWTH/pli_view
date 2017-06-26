@@ -1,5 +1,6 @@
 #include /* implements */ <ui/plugins/tractography_plugin.hpp>
 
+#include <boost/format.hpp>
 #include <tangent-base/default_tracers.hpp>
 
 #include <sh/vector_ops.h>
@@ -14,7 +15,34 @@ namespace pli
 tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
 {
   setupUi(this);
-  
+
+  line_edit_integration_step->setValidator(new QDoubleValidator(0, std::numeric_limits<double>::max(), 10, this));
+  line_edit_iterations      ->setValidator(new QIntValidator   (0, std::numeric_limits<int>   ::max(),     this));
+
+  connect(checkbox_enabled          , &QCheckBox::stateChanged      , [&] (bool state)
+  {
+    logger_      ->info(std::string(state ? "Enabled." : "Disabled."));
+    basic_tracer_->set_active(state);
+  });
+  connect(slider_integration_step   , &QxtSpanSlider::valueChanged  , [&]
+  {
+    auto scale = float(slider_integration_step->value()) / slider_integration_step->maximum();
+    line_edit_integration_step->setText(QString::fromStdString((boost::format("%.4f") % scale).str()));
+  });
+  connect(line_edit_integration_step, &QLineEdit::editingFinished   , [&]
+  {
+    auto scale = line_edit_utility::get_text<double>(line_edit_integration_step);
+    slider_integration_step->setValue(scale * slider_integration_step->maximum());
+  });
+  connect(slider_iterations         , &QxtSpanSlider::valueChanged  , [&]
+  {
+    line_edit_iterations->setText(QString::fromStdString(boost::lexical_cast<std::string>(slider_iterations->value())));
+  });
+  connect(line_edit_iterations, &QLineEdit::editingFinished   , [&]
+  {
+    slider_iterations->setValue(line_edit_utility::get_text<int>(line_edit_iterations));
+  });
+
   connect(button_trace_selection, &QPushButton::clicked, [&]
   {
     trace();
@@ -40,6 +68,7 @@ void tractography_plugin::trace()
   auto stride   = selector->selection_stride();
       
   selector->setEnabled(false);
+  button_trace_selection->setEnabled(false);
   owner_->viewer->set_wait_spinner_enabled(true);
   owner_->viewer->update();
 
@@ -62,29 +91,24 @@ void tractography_plugin::trace()
       unit_vectors.reset(io->load_fiber_unit_vectors_dataset(offset, size, stride, true));
 
       auto shape = unit_vectors.get().shape();
-      tangent::CartesianGrid data(tangent::grid_dim_t{ { shape[0], shape[1], shape[2] } }, spacing);
+      tangent::CartesianGrid data(tangent::grid_dim_t{{shape[0], shape[1], shape[2]}}, spacing);
+      std::vector<tangent::point_t> seeds;
       auto data_ptr = data.GetVectorPointer(0);
       for (auto x = 0; x < shape[0]; x++)
         for (auto y = 0; y < shape[1]; y++)
           for (auto z = 0; z < shape[2]; z++)
           {
             auto vector = unit_vectors.get()[x][y][z];
-            data_ptr[z + shape[2] * (y + shape[1] * x)] = tangent::vector_t{ { vector[0], vector[1], vector[2] } };
+            data_ptr[x + shape[0] * (y + shape[1] * z)] = tangent::vector_t{{vector[0], vector[1], vector[2]}};
+            seeds.push_back({{spacing[0] * x, spacing[1] * y, spacing[2] * z, 0.0F}});
           }
 
-      // Seed with a 16x16x16 subgrid for now.
-      std::vector<tangent::point_t> input;
-      for (auto i = 0; i < 16; i++)
-        for (auto j = 0; j < 16; j++)
-          for (auto k = 0; k < 16; k++)
-            input.push_back({{spacing[0] * i, spacing[1] * j, spacing[2] * k, 0.0F}});
-
       tangent::TraceRecorder recorder;
-      tangent::SimpleCartGridStreamlineTracer tracer(&recorder);
+      tangent::OmpCartGridStreamlineTracer tracer(&recorder);
       tracer.SetData(&data);
       tracer.SetIntegrationStep(0.001);
       tracer.SetNumberOfIterations(1000);
-      auto output = tracer.TraceSeeds(input);
+      auto output = tracer.TraceSeeds(seeds);
 
       auto& population = recorder.GetPopulation();
       for(auto i = 0; i < population.GetNumberOfTraces(); i++)
@@ -92,8 +116,8 @@ void tractography_plugin::trace()
         auto& path = population[i];
         for(auto j = 0; j < path.size() - 1; j++)
         {
-          float3 start      = {path[j]  [0], path[j]    [1], path[j][2]};
-          float3 end        = {path[j+1][0], path[j + 1][1], path[j][2]};
+          float3 start      = {path[j]    [0], path[j]    [1], path[j]    [2]};
+          float3 end        = {path[j + 1][0], path[j + 1][1], path[j + 1][2]};
           auto   difference = fabs(end - start);
           auto   normalized = normalize(difference);
           points.push_back(start);
@@ -120,6 +144,7 @@ void tractography_plugin::trace()
   }
 
   selector->setEnabled(true);
+  button_trace_selection->setEnabled(true);
   owner_->viewer->set_wait_spinner_enabled(false);
   owner_->viewer->update();
 
