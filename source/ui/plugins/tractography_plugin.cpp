@@ -19,31 +19,30 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
   line_edit_integration_step->setValidator(new QDoubleValidator(0, std::numeric_limits<double>::max(), 10, this));
   line_edit_iterations      ->setValidator(new QIntValidator   (0, std::numeric_limits<int>   ::max(),     this));
 
-  connect(checkbox_enabled          , &QCheckBox::stateChanged      , [&] (bool state)
+  connect(checkbox_enabled          , &QCheckBox::stateChanged    , [&] (bool state)
   {
     logger_      ->info(std::string(state ? "Enabled." : "Disabled."));
     basic_tracer_->set_active(state);
   });
-  connect(slider_integration_step   , &QxtSpanSlider::valueChanged  , [&]
+  connect(slider_integration_step   , &QxtSpanSlider::valueChanged, [&]
   {
     auto scale = float(slider_integration_step->value()) / slider_integration_step->maximum();
     line_edit_integration_step->setText(QString::fromStdString((boost::format("%.4f") % scale).str()));
   });
-  connect(line_edit_integration_step, &QLineEdit::editingFinished   , [&]
+  connect(line_edit_integration_step, &QLineEdit::editingFinished , [&]
   {
     auto scale = line_edit_utility::get_text<double>(line_edit_integration_step);
     slider_integration_step->setValue(scale * slider_integration_step->maximum());
   });
-  connect(slider_iterations         , &QxtSpanSlider::valueChanged  , [&]
+  connect(slider_iterations         , &QxtSpanSlider::valueChanged, [&]
   {
     line_edit_iterations->setText(QString::fromStdString(boost::lexical_cast<std::string>(slider_iterations->value())));
   });
-  connect(line_edit_iterations, &QLineEdit::editingFinished   , [&]
+  connect(line_edit_iterations      , &QLineEdit::editingFinished , [&]
   {
     slider_iterations->setValue(line_edit_utility::get_text<int>(line_edit_iterations));
   });
-
-  connect(button_trace_selection, &QPushButton::clicked, [&]
+  connect(button_trace_selection    , &QPushButton::clicked       , [&]
   {
     trace();
   });
@@ -54,6 +53,9 @@ void tractography_plugin::start()
   set_sink(std::make_shared<qt_text_browser_sink>(owner_->console));
 
   basic_tracer_ = owner_->viewer->add_renderable<basic_tracer>();
+
+  line_edit_integration_step->setText(QString::fromStdString((boost::format("%.4f") % (float(slider_integration_step->value()) / slider_integration_step->maximum())).str()));
+  line_edit_iterations      ->setText(QString::fromStdString(boost::lexical_cast<std::string>(slider_iterations->value())));
 
   logger_->info(std::string("Start successful."));
 }
@@ -105,9 +107,9 @@ void tractography_plugin::trace()
 
       tangent::TraceRecorder recorder;
       tangent::OmpCartGridStreamlineTracer tracer(&recorder);
-      tracer.SetData(&data);
-      tracer.SetIntegrationStep(0.001);
-      tracer.SetNumberOfIterations(1000);
+      tracer.SetData              (&data);
+      tracer.SetIntegrationStep   (float(slider_integration_step->value()) / slider_integration_step->maximum());
+      tracer.SetNumberOfIterations(slider_iterations->value());
       auto output = tracer.TraceSeeds(seeds);
 
       auto& population = recorder.GetPopulation();
