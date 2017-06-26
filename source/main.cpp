@@ -6,12 +6,15 @@ extern "C"
 }
 #endif
 
+#include <omp.h>
 #include <QApplication>
 
 #include <ui/window.hpp>
 
 int main(int argc, char** argv)
 {
+  omp_set_num_threads(8);
+
   QSurfaceFormat format;
   format.setProfile     (QSurfaceFormat::CompatibilityProfile);
   format.setSwapBehavior(QSurfaceFormat::DoubleBuffer        );
