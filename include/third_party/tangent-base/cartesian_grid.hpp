@@ -98,7 +98,7 @@ public:
    * that vector data will be handled as contiguous chunk of interleaved data
    * tuples of the form [u,v,w,u,v,w,...]
    */
-  const vector_t *GetVectorPointer(const point_id_t ptId) const {
+  vector_t *GetVectorPointer(const point_id_t ptId) {
     assert(ptId < data_.size());
     return &(data_[ptId]);
   }
