@@ -69,16 +69,16 @@ void tractography_plugin::trace()
   auto size     = selector->selection_size  ();
   auto stride   = selector->selection_stride();
       
-  selector->setEnabled(false);
-  button_trace_selection->setEnabled(false);
-  owner_->viewer->set_wait_spinner_enabled(true);
-  owner_->viewer->update();
-
   if(io == nullptr)
   {
     logger_->info(std::string("Trace failed: No data."));
     return;
   }
+
+  selector->setEnabled(false);
+  button_trace_selection->setEnabled(false);
+  owner_->viewer->set_wait_spinner_enabled(true);
+  owner_->viewer->update();
 
   // Load data from hard drive (on another thread).
   std::array<float, 3>                          spacing;
@@ -118,14 +118,14 @@ void tractography_plugin::trace()
         auto& path = population[i];
         for(auto j = 0; j < path.size() - 1; j++)
         {
-          float3 start      = {path[j]    [0], path[j]    [1], path[j]    [2]};
-          float3 end        = {path[j + 1][0], path[j + 1][1], path[j + 1][2]};
-          auto   difference = fabs(end - start);
-          auto   normalized = normalize(difference);
+          float3 start      = {path[j]    [0], -path[j]    [1], path[j]    [2]};
+          float3 end        = {path[j + 1][0], -path[j + 1][1], path[j + 1][2]};
+          auto   difference = fabs     (end - start);
+          auto   normalized = normalize(difference );
           points.push_back(start);
           points.push_back(end  );
-          colors.push_back(float4{normalized.x, normalized.y, normalized.z, 1.0});
-          colors.push_back(float4{normalized.x, normalized.y, normalized.z, 1.0});
+          for(auto k = 0; k < 2; ++k)
+            colors.push_back(float4{normalized.x, normalized.z, normalized.y, 1.0});
         }
       }
     }
@@ -137,19 +137,19 @@ void tractography_plugin::trace()
   while (future_.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
     QApplication::processEvents();
 
-  if (unit_vectors.is_initialized() && unit_vectors.get().num_elements() > 0)
-    basic_tracer_->set_data(points, colors);
-  else
-  {
-    logger_->info(std::string("Trace failed: Tractography only supports unit vectors (MSA-0309 style) at the moment."));
-    return;
-  }
-
   selector->setEnabled(true);
   button_trace_selection->setEnabled(true);
   owner_->viewer->set_wait_spinner_enabled(false);
   owner_->viewer->update();
 
-  logger_->info(std::string("Trace successful."));
+  if (unit_vectors.is_initialized() && unit_vectors.get().num_elements() > 0)
+  {
+    logger_->info(std::string("Trace successful."));
+    basic_tracer_->set_data(points, colors);
+  }
+  else
+  {
+    logger_->info(std::string("Trace failed: Tractography only supports unit vectors (MSA-0309 style) at the moment."));
+  }
 }
 }
