@@ -239,10 +239,22 @@ void fdm_plugin::calculate    ()
   }
 
   size = {size[0] / stride[0], size[1] / stride[1], size[2] / stride[2]};
+
+  // Roll to the previous power of 2.
+  //size = {
+  //  std::size_t(pow(2, floor(log(size[0]) / log(2)))),
+  //  std::size_t(pow(2, floor(log(size[1]) / log(2)))),
+  //  std::size_t(pow(2, floor(log(size[2]) / log(2)))) };
+
   uint3 coefficient_dimensions = {
-    unsigned(size[0]) / block_dimensions.x, 
-    unsigned(size[1]) / block_dimensions.y, 
+    unsigned(size[0]) / block_dimensions.x,
+    unsigned(size[1]) / block_dimensions.y,
     unsigned(size[2]) / block_dimensions.z };
+
+  size = {
+    block_dimensions.x * coefficient_dimensions.x,
+    block_dimensions.y * coefficient_dimensions.y,
+    block_dimensions.z * coefficient_dimensions.z };
 
   owner_->viewer      ->set_wait_spinner_enabled(true);
   button_calculate    ->setEnabled(false);
