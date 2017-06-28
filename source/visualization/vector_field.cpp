@@ -39,9 +39,18 @@ void vector_field::render    (const camera* camera)
   shader_program_->bind  ();
   vertex_array_  ->bind  ();
   
+  glEnable    (GL_LINE_SMOOTH);
+  glHint      (GL_LINE_SMOOTH_HINT, GL_NICEST);
+
+  glEnable    (GL_BLEND);
+  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
   shader_program_->set_uniform("projection", camera->projection_matrix      ());
   shader_program_->set_uniform("view"      , camera->inverse_absolute_matrix());
   glDrawArrays(GL_LINES, 0, GLsizei(draw_count_));
+  
+  glDisable   (GL_BLEND);
+  glDisable   (GL_LINE_SMOOTH);
 
   vertex_array_  ->unbind();
   shader_program_->unbind();

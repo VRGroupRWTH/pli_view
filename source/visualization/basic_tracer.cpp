@@ -55,8 +55,17 @@ void basic_tracer::render    (const camera* camera)
 
   shader_program_->set_uniform("projection", camera->projection_matrix      ());
   shader_program_->set_uniform("view"      , camera->inverse_absolute_matrix());
+  
+  glEnable    (GL_LINE_SMOOTH);
+  glHint      (GL_LINE_SMOOTH_HINT, GL_NICEST);
+
+  glEnable    (GL_BLEND);
+  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   glDrawArrays(GL_LINES, 0, GLsizei(draw_count_));
+
+  glDisable   (GL_BLEND);
+  glDisable   (GL_LINE_SMOOTH);
 
   index_buffer_  ->unbind();
   vertex_array_  ->unbind();
