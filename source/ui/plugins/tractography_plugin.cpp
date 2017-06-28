@@ -16,15 +16,42 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
 {
   setupUi(this);
 
+  line_edit_x               ->setValidator(new QIntValidator   (0, std::numeric_limits<int>   ::max(),     this));
+  line_edit_y               ->setValidator(new QIntValidator   (0, std::numeric_limits<int>   ::max(),     this));
+  line_edit_z               ->setValidator(new QIntValidator   (0, std::numeric_limits<int>   ::max(),     this));
   line_edit_integration_step->setValidator(new QDoubleValidator(0, std::numeric_limits<double>::max(), 10, this));
   line_edit_iterations      ->setValidator(new QIntValidator   (0, std::numeric_limits<int>   ::max(),     this));
-
+ 
   connect(checkbox_enabled          , &QCheckBox::stateChanged    , [&] (bool state)
   {
     logger_      ->info(std::string(state ? "Enabled." : "Disabled."));
     basic_tracer_->set_active(state);
   });
-  connect(slider_integration_step   , &QxtSpanSlider::valueChanged, [&]
+  connect(slider_x                  , &QSlider::valueChanged      , [&]
+  {
+    line_edit_x->setText(QString::fromStdString(boost::lexical_cast<std::string>(slider_x->value())));
+  });
+  connect(line_edit_x               , &QLineEdit::editingFinished , [&]
+  {
+    slider_x->setValue(line_edit_utility::get_text<int>(line_edit_x));
+  });
+  connect(slider_y                  , &QSlider::valueChanged      , [&]
+  {
+    line_edit_y->setText(QString::fromStdString(boost::lexical_cast<std::string>(slider_y->value())));
+  });
+  connect(line_edit_y               , &QLineEdit::editingFinished , [&]
+  {
+    slider_y->setValue(line_edit_utility::get_text<int>(line_edit_y));
+  });
+  connect(slider_z                  , &QSlider::valueChanged      , [&]
+  {
+    line_edit_z->setText(QString::fromStdString(boost::lexical_cast<std::string>(slider_z->value())));
+  });
+  connect(line_edit_z               , &QLineEdit::editingFinished , [&]
+  {
+    slider_z->setValue(line_edit_utility::get_text<int>(line_edit_z));
+  });
+  connect(slider_integration_step   , &QSlider::valueChanged      , [&]
   {
     auto scale = float(slider_integration_step->value()) / slider_integration_step->maximum();
     line_edit_integration_step->setText(QString::fromStdString((boost::format("%.4f") % scale).str()));
@@ -34,7 +61,7 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
     auto scale = line_edit_utility::get_text<double>(line_edit_integration_step);
     slider_integration_step->setValue(scale * slider_integration_step->maximum());
   });
-  connect(slider_iterations         , &QxtSpanSlider::valueChanged, [&]
+  connect(slider_iterations         , &QSlider::valueChanged      , [&]
   {
     line_edit_iterations->setText(QString::fromStdString(boost::lexical_cast<std::string>(slider_iterations->value())));
   });
@@ -56,6 +83,9 @@ void tractography_plugin::start()
 
   line_edit_integration_step->setText(QString::fromStdString((boost::format("%.4f") % (float(slider_integration_step->value()) / slider_integration_step->maximum())).str()));
   line_edit_iterations      ->setText(QString::fromStdString(boost::lexical_cast<std::string>(slider_iterations->value())));
+  line_edit_x               ->setText(QString::fromStdString(boost::lexical_cast<std::string>(slider_x         ->value())));
+  line_edit_y               ->setText(QString::fromStdString(boost::lexical_cast<std::string>(slider_y         ->value())));
+  line_edit_z               ->setText(QString::fromStdString(boost::lexical_cast<std::string>(slider_z         ->value())));
 
   logger_->info(std::string("Start successful."));
 }
@@ -94,7 +124,6 @@ void tractography_plugin::trace()
 
       auto shape = unit_vectors.get().shape();
       tangent::CartesianGrid data(tangent::grid_dim_t{{shape[0], shape[1], shape[2]}}, spacing);
-      std::vector<tangent::point_t> seeds;
       auto data_ptr = data.GetVectorPointer(0);
       for (auto x = 0; x < shape[0]; x++)
         for (auto y = 0; y < shape[1]; y++)
@@ -102,8 +131,13 @@ void tractography_plugin::trace()
           {
             auto vector = unit_vectors.get()[x][y][z];
             data_ptr[x + shape[0] * (y + shape[1] * z)] = tangent::vector_t{{vector[0], vector[1], vector[2]}};
-            seeds.push_back({{spacing[0] * x, spacing[1] * y, spacing[2] * z, 0.0F}});
           }
+
+      std::vector<tangent::point_t> seeds;
+      for (auto x = 0; x < slider_x->value(); x++)
+        for (auto y = 0; y < slider_y->value(); y++)
+          for (auto z = 0; z < slider_z->value(); z++)
+            seeds.push_back({{spacing[0] * x, spacing[1] * y, spacing[2] * z, 0.0F}});
 
       tangent::TraceRecorder recorder;
       tangent::OmpCartGridStreamlineTracer tracer(&recorder);
