@@ -42,6 +42,21 @@ set(ProjectSources
   include/third_party/qxt/QxtLetterBoxWidgetP.h
   include/third_party/qxt/QxtSpanSlider.h
   include/third_party/qxt/QxtSpanSliderP.h
+  include/third_party/tangent-base/analytic_orbit_interpolator.hpp
+  include/third_party/tangent-base/base_operations.hpp
+  include/third_party/tangent-base/base_types.hpp
+  include/third_party/tangent-base/basic_trilinear_interpolator.hpp
+  include/third_party/tangent-base/cartesian_grid.hpp
+  include/third_party/tangent-base/cartesian_locator.hpp
+  include/third_party/tangent-base/default_tracers.hpp
+  include/third_party/tangent-base/dummy_recorder.hpp
+  include/third_party/tangent-base/omp_pos_tracer.hpp
+  include/third_party/tangent-base/particle_population.hpp
+  include/third_party/tangent-base/raw_binary_reader.hpp
+  include/third_party/tangent-base/runge_kutta_4_integrator.hpp
+  include/third_party/tangent-base/simple_tracer.hpp
+  include/third_party/tangent-base/trace_recorder.hpp
+  include/third_party/tangent-base/tracer_base.hpp
   include/ui/plugins/data_plugin.hpp
   include/ui/plugins/fom_plugin.hpp
   include/ui/plugins/fdm_plugin.hpp
