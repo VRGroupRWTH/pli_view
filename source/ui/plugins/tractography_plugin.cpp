@@ -22,6 +22,12 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
   line_edit_integration_step->setValidator(new QDoubleValidator(0, std::numeric_limits<double>::max(), 10, this));
   line_edit_iterations      ->setValidator(new QIntValidator   (0, std::numeric_limits<int>   ::max(),     this));
  
+  line_edit_integration_step->setText(QString::fromStdString((boost::format("%.4f") % (float(slider_integration_step->value()) / slider_integration_step->maximum())).str()));
+  line_edit_iterations      ->setText(QString::fromStdString(boost::lexical_cast<std::string>(slider_iterations->value())));
+  line_edit_x               ->setText(QString::fromStdString(boost::lexical_cast<std::string>(slider_x         ->value())));
+  line_edit_y               ->setText(QString::fromStdString(boost::lexical_cast<std::string>(slider_y         ->value())));
+  line_edit_z               ->setText(QString::fromStdString(boost::lexical_cast<std::string>(slider_z         ->value())));
+
   connect(checkbox_enabled          , &QCheckBox::stateChanged    , [&] (bool state)
   {
     logger_      ->info(std::string(state ? "Enabled." : "Disabled."));
@@ -80,12 +86,6 @@ void tractography_plugin::start()
   set_sink(std::make_shared<qt_text_browser_sink>(owner_->console));
 
   basic_tracer_ = owner_->viewer->add_renderable<basic_tracer>();
-
-  line_edit_integration_step->setText(QString::fromStdString((boost::format("%.4f") % (float(slider_integration_step->value()) / slider_integration_step->maximum())).str()));
-  line_edit_iterations      ->setText(QString::fromStdString(boost::lexical_cast<std::string>(slider_iterations->value())));
-  line_edit_x               ->setText(QString::fromStdString(boost::lexical_cast<std::string>(slider_x         ->value())));
-  line_edit_y               ->setText(QString::fromStdString(boost::lexical_cast<std::string>(slider_y         ->value())));
-  line_edit_z               ->setText(QString::fromStdString(boost::lexical_cast<std::string>(slider_z         ->value())));
 
   logger_->info(std::string("Start successful."));
 }
