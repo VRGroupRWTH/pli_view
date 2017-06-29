@@ -14,6 +14,10 @@ public:
   void initialize()                     override;
   void render    (const camera* camera) override;
 
+  void set_data(const uint3&  dimensions ,
+                const float3& spacing    ,
+                const float*  retardation);
+
 private:
   std::unique_ptr<gl::program>      shader_program_;
   std::unique_ptr<gl::vertex_array> vertex_array_  ;
