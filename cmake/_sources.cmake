@@ -50,6 +50,7 @@ set(ProjectSources
   include/ui/plugins/scalar_plugin.hpp
   include/ui/plugins/selector_plugin.hpp
   include/ui/plugins/tractography_plugin.hpp
+  include/ui/plugins/volume_rendering_plugin.hpp
   include/ui/overview_image.hpp
   include/ui/selection_square.hpp
   include/ui/viewer.hpp
@@ -64,6 +65,7 @@ set(ProjectSources
   include/visualization/odf_field.hpp
   include/visualization/scalar_field.hpp
   include/visualization/vector_field.hpp
+  include/visualization/volume_renderer.hpp
   
   shaders/odf_field.frag.glsl
   shaders/odf_field.vert.glsl
@@ -87,6 +89,7 @@ set(ProjectSources
   source/ui/plugins/scalar_plugin.cpp
   source/ui/plugins/selector_plugin.cpp
   source/ui/plugins/tractography_plugin.cpp
+  source/ui/plugins/volume_rendering_plugin.cpp
   source/ui/overview_image.cpp
   source/ui/selection_square.cpp
   source/ui/viewer.cpp
@@ -98,5 +101,6 @@ set(ProjectSources
   source/visualization/odf_field.cpp
   source/visualization/scalar_field.cpp
   source/visualization/vector_field.cpp
+  source/visualization/volume_renderer.cpp
   source/main.cpp
 )
