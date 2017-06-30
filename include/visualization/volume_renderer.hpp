@@ -19,11 +19,24 @@ public:
                 const float*  retardation);
 
 private:
-  std::unique_ptr<gl::program>      shader_program_;
-  std::unique_ptr<gl::vertex_array> vertex_array_  ;
-  std::unique_ptr<gl::array_buffer> vertex_buffer_ ;
-  std::unique_ptr<gl::array_buffer> color_buffer_  ;
-  std::size_t                       draw_count_    = 0;
+  std::unique_ptr<gl::program>      prepass_shader_program_   ;
+  std::unique_ptr<gl::program>      shader_program_           ;
+
+  std::unique_ptr<gl::vertex_array> prepass_vertex_array_     ;
+  std::unique_ptr<gl::vertex_array> vertex_array_             ;
+
+  std::unique_ptr<gl::array_buffer> vertex_buffer_            ;
+  std::unique_ptr<gl::array_buffer> color_buffer_             ;
+  std::unique_ptr<gl::index_buffer> index_buffer_             ;
+
+  std::unique_ptr<gl::texture_1d>   transfer_function_texture_;
+  std::unique_ptr<gl::texture_3d>   volume_texture_           ;
+  
+  std::unique_ptr<gl::framebuffer>  framebuffer_              ;
+  std::unique_ptr<gl::texture_2d>   exit_points_color_texture_;
+  std::unique_ptr<gl::texture_2d>   exit_points_depth_texture_;
+
+  std::size_t                       draw_count_               = 0;
 };
 }
 

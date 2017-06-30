@@ -73,6 +73,10 @@ set(ProjectSources
   shaders/scalar_field.vert.glsl
   shaders/vector_field.frag.glsl
   shaders/vector_field.vert.glsl
+  shaders/volume_renderer_prepass.frag.glsl
+  shaders/volume_renderer_prepass.vert.glsl
+  shaders/volume_renderer.frag.glsl
+  shaders/volume_renderer.vert.glsl
 
   source/cuda/odf_field.cu
   source/cuda/vector_field.cu
