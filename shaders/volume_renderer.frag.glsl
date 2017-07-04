@@ -8,9 +8,9 @@ namespace shaders
 std::string volume_renderer_frag = R"(\
 #version 400
 
-const   uint      iterations       = 100u;
-uniform vec4      background_color = vec4(0.0, 0.0, 0.0, 1.0);
-uniform float     step_size        = 0.01;
+const   uint      iterations       = 1000u;
+uniform vec4      background_color = vec4(0.0, 0.0, 0.0, 0.0);
+uniform float     step_size        = 0.1;
 uniform uvec2     screen_size      ;
 uniform sampler1D transfer_function;
 uniform sampler2D exit_points      ;
@@ -20,7 +20,7 @@ out     vec4      frag_color       ;
 
 void main()
 {
-  vec3 exit_point = texture(exit_points, gl_FragCoord.st / screen_size).xyz;
+  vec3 exit_point = texture(exit_points, vec2(gl_FragCoord.x / screen_size.x, gl_FragCoord.y / screen_size.y)).xyz;
 
   if(vert_color == exit_point)
     discard;
@@ -49,10 +49,10 @@ void main()
       frag_color.rgb += (1.0 - frag_color.a) * transfer_function_sample.rgb * transfer_function_sample.a;
       frag_color.a   += (1.0 - frag_color.a) * transfer_function_sample.a;
     }
-
+  
     current_step   += delta;
     current_length += delta_length;
-
+  
     // Early termination.
     if(current_length >= ray_length)
     {
@@ -65,6 +65,10 @@ void main()
       break;
     }
   }
+
+  //frag_color = vec4(vert_color, 1.0);
+  //frag_color = vec4(exit_point, 1.0);
+  //frag_color = vec4(normalize(ray), 1.0);
 }
 )";
 }

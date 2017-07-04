@@ -8,8 +8,8 @@ namespace shaders
 std::string volume_renderer_prepass_frag = R"(\
 #version 400
 
-in  vec3 vert_color;
-out vec4 frag_color;
+                      in  vec3 vert_color;
+layout (location = 0) out vec4 frag_color;
 
 void main()
 {
