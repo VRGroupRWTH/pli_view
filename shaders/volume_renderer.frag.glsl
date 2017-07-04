@@ -52,7 +52,7 @@ void main()
 
     current_step   += delta;
     current_length += delta_length;
-    
+
     // Early termination.
     if(current_length >= ray_length)
     {
