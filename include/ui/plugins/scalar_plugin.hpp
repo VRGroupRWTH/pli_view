@@ -3,7 +3,7 @@
 
 #include <future>
 
-#include <attributes/loggable.hpp>
+#include <aspects/loggable.hpp>
 #include <ui/plugins/plugin.hpp>
 #include <ui_scalar_toolbox.h>
 

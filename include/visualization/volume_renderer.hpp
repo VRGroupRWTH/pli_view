@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include <attributes/renderable.hpp>
+#include <aspects/renderable.hpp>
 #include <opengl/all.hpp>
 
 namespace pli

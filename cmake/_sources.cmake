@@ -2,8 +2,20 @@ set(ProjectSources
   cmake/_dependencies.cmake
   cmake/_sources.cmake
   
-  include/attributes/loggable.hpp
-  include/attributes/renderable.hpp
+  include/aspects/loggable.hpp
+  include/aspects/renderable.hpp
+  include/cuda/sh/choose.h
+  include/cuda/sh/clebsch_gordan.h
+  include/cuda/sh/convert.h
+  include/cuda/sh/cush.h
+  include/cuda/sh/decorators.h
+  include/cuda/sh/factorial.h
+  include/cuda/sh/launch.h
+  include/cuda/sh/legendre.h
+  include/cuda/sh/sign.h
+  include/cuda/sh/spherical_harmonics.h
+  include/cuda/sh/vector_ops.h
+  include/cuda/sh/wigner.h
   include/cuda/odf_field.h
   include/cuda/orthtree.h
   include/cuda/spherical_histogram.h
@@ -24,18 +36,6 @@ set(ProjectSources
   include/opengl/shader.hpp
   include/opengl/texture.hpp
   include/opengl/vertex_array.hpp
-  include/sh/choose.h
-  include/sh/clebsch_gordan.h
-  include/sh/convert.h
-  include/sh/cush.h
-  include/sh/decorators.h
-  include/sh/factorial.h
-  include/sh/launch.h
-  include/sh/legendre.h
-  include/sh/sign.h
-  include/sh/spherical_harmonics.h
-  include/sh/vector_ops.h
-  include/sh/wigner.h
   include/third_party/glew/GL/glew.h
   include/third_party/qxt/QxtGlobal.h
   include/third_party/qxt/QxtLetterBoxWidget.h

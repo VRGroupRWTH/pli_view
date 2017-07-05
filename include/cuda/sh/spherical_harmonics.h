@@ -9,10 +9,10 @@
 #include <device_launch_parameters.h>
 #include <vector_types.h>
 
-#include <sh/clebsch_gordan.h>
-#include <sh/decorators.h>
-#include <sh/launch.h>
-#include <sh/legendre.h>
+#include <cuda/sh/clebsch_gordan.h>
+#include <cuda/sh/decorators.h>
+#include <cuda/sh/launch.h>
+#include <cuda/sh/legendre.h>
 
 // Based on "Spherical Harmonic Lighting: The Gritty Details" by Robin Green.
 namespace cush

@@ -5,7 +5,7 @@
 
 #include <thrust/device_vector.h>
 
-#include <sh/launch.h>
+#include <cuda/sh/launch.h>
 
 namespace pli
 {

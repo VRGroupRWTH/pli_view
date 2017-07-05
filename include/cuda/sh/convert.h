@@ -5,7 +5,7 @@
 
 #include <vector_types.h>
 
-#include <sh/decorators.h>
+#include <cuda/sh/decorators.h>
 
 namespace cush
 {

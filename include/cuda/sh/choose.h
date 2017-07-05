@@ -1,8 +1,8 @@
 #ifndef CUSH_CHOOSE_H_
 #define CUSH_CHOOSE_H_
 
-#include <sh/decorators.h>
-#include <sh/factorial.h>
+#include <cuda/sh/decorators.h>
+#include <cuda/sh/factorial.h>
 
 namespace cush
 {

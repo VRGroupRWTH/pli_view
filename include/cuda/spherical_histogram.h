@@ -1,6 +1,10 @@
 #ifndef PLI_ODF_SPHERICAL_HISTOGRAM_H_
 #define PLI_ODF_SPHERICAL_HISTOGRAM_H_
 
+#define _USE_MATH_DEFINES
+
+#include <math.h>
+
 #include <device_launch_parameters.h>
 #include <vector_types.h>
 

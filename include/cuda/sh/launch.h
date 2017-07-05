@@ -5,7 +5,7 @@
 
 #include <device_launch_parameters.h>
 
-#include <sh/decorators.h>
+#include <cuda/sh/decorators.h>
 
 namespace cush
 {

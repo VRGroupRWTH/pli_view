@@ -1,7 +1,7 @@
 #ifndef CUSH_SIGN_H_
 #define CUSH_SIGN_H_
 
-#include <sh/decorators.h>
+#include <cuda/sh/decorators.h>
 
 namespace cush
 {

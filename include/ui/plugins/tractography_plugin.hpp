@@ -1,7 +1,7 @@
 #ifndef PLI_VIS_TRACTOGRAPHY_PLUGIN_HPP_
 #define PLI_VIS_TRACTOGRAPHY_PLUGIN_HPP_
 
-#include <attributes/loggable.hpp>
+#include <aspects/loggable.hpp>
 #include <ui/plugins/plugin.hpp>
 #include <ui_tractography_toolbox.h>
 

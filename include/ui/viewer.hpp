@@ -8,8 +8,8 @@
 
 #include <QOpenGLWidget>
 
-#include <attributes/loggable.hpp>
-#include <attributes/renderable.hpp>
+#include <aspects/loggable.hpp>
+#include <aspects/renderable.hpp>
 #include <math/camera.hpp>
 #include <ui/wait_spinner.hpp>
 #include <visualization/interactors/simple_interactor.hpp>

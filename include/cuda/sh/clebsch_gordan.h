@@ -3,8 +3,8 @@
 
 #include <math.h>
 
-#include <sh/decorators.h>
-#include <sh/wigner.h>
+#include <cuda/sh/decorators.h>
+#include <cuda/sh/wigner.h>
 
 namespace cush
 {

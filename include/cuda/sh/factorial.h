@@ -3,7 +3,7 @@
 
 #include <math.h>
 
-#include <sh/decorators.h>
+#include <cuda/sh/decorators.h>
 
 namespace cush
 {

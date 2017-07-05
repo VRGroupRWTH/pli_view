@@ -4,7 +4,7 @@
 #include <array>
 #include <cstddef>
 
-#include <attributes/loggable.hpp>
+#include <aspects/loggable.hpp>
 #include <ui/plugins/plugin.hpp>
 #include <ui_selector_toolbox.h>
 
