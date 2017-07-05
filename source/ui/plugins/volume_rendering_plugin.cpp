@@ -46,14 +46,19 @@ void volume_rendering_plugin::start ()
   {
     upload();
   });
-  
+ 
+  auto step_size = double(slider_step_size->value()) / slider_step_size->maximum();
+
   volume_renderer_ = owner_->viewer->add_renderable<volume_renderer>();
-  volume_renderer_->set_active(checkbox_enabled->isChecked());
+  volume_renderer_->set_active   (checkbox_enabled->isChecked());
+  volume_renderer_->set_step_size(step_size);
+  
+  line_edit_step_size->setText(QString::fromStdString((boost::format("%.4f") % step_size).str()));
 
   // TODO: CREATE TRANSFER FUNCTION EDITOR AND PROVIDE THIS FROM THERE.
-  std::vector<float4> transfer_function(256, float4{ 0.0F, 0.0F, 0.0F, 0.0F });
-  for (auto i = 0; i < 256; i++)
-    transfer_function[i] = float4{ 1.0, 1.0, 1.0, float(i) / 256 };
+  std::vector<float4> transfer_function(256, float4{0.0F, 0.0F, 0.0F, 0.0F});
+  for (auto i = 85 ; i < 255; i++)
+    transfer_function[i] = float4{float(i) / 255.0F, float(i) / 255.0F, float(i) / 255.0F, float(i) / 255.0F};
   volume_renderer_->set_transfer_function(transfer_function);
 
   logger_->info(std::string("Start successful."));

@@ -8,7 +8,7 @@ namespace shaders
 std::string volume_renderer_frag = R"(\
 #version 400
 
-const   uint      iterations       = 2000u;
+const   uint      iterations       = 10000u;
 uniform vec4      background_color = vec4(0.0, 0.0, 0.0, 0.0);
 uniform float     step_size        = 0.001;
 uniform uvec2     screen_size      ;
