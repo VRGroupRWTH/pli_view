@@ -10,6 +10,13 @@ namespace pli
 {
 void volume_renderer::initialize()
 {
+  GLint default_framebuffer_id;
+  glGetIntegerv(GL_FRAMEBUFFER_BINDING, &default_framebuffer_id);
+  gl::framebuffer default_framebuffer(default_framebuffer_id);
+
+  glm::ivec4 viewport;
+  glGetIntegerv(GL_VIEWPORT, reinterpret_cast<GLint*>(&viewport));
+
   prepass_shader_program_   .reset(new gl::program     );
   shader_program_           .reset(new gl::program     );
   prepass_vertex_array_     .reset(new gl::vertex_array);
@@ -78,18 +85,11 @@ void volume_renderer::initialize()
   draw_count_ = indices.size();
 
   // Set textures.
-  glm::ivec4 viewport;
-  glGetIntegerv(GL_VIEWPORT, reinterpret_cast<GLint*>(&viewport));
-
-  std::vector<float4> transfer_function(256, float4{0.0F, 0.0F, 0.0F, 0.0F});
-  for(auto i = 0; i < 256; i++)
-    transfer_function[i] = float4{float(i) / 256, float(i) / 256, float(i) / 256, float(i) / 256};
-
   transfer_function_texture_->bind      ();
   transfer_function_texture_->wrap_s    (GL_REPEAT );
   transfer_function_texture_->min_filter(GL_NEAREST);
   transfer_function_texture_->mag_filter(GL_NEAREST);
-  transfer_function_texture_->set_image (GL_RGBA32F, 256, GL_RGBA, GL_FLOAT, transfer_function.data());
+  transfer_function_texture_->set_image (GL_RGBA32F, 256, GL_RGBA, GL_FLOAT);
   transfer_function_texture_->unbind    ();
 
   exit_points_color_texture_->bind      ();
@@ -118,9 +118,6 @@ void volume_renderer::initialize()
   volume_texture_           ->unbind    ();
   
   // Setup the framebuffer.
-  GLint default_framebuffer_id;
-  glGetIntegerv(GL_FRAMEBUFFER_BINDING, &default_framebuffer_id);
-  gl::framebuffer default_framebuffer(default_framebuffer_id);
   framebuffer_->bind           ();
   framebuffer_->set_texture    (GL_COLOR_ATTACHMENT0, *exit_points_color_texture_.get());
   framebuffer_->set_texture    (GL_DEPTH_ATTACHMENT , *exit_points_depth_texture_.get());
@@ -129,21 +126,21 @@ void volume_renderer::initialize()
 }
 void volume_renderer::render    (const camera* camera)
 {
+  GLint default_framebuffer_id;
+  glGetIntegerv(GL_FRAMEBUFFER_BINDING, &default_framebuffer_id);
+  gl::framebuffer default_framebuffer(default_framebuffer_id);
+
   glm::ivec4 viewport;
   glGetIntegerv(GL_VIEWPORT, reinterpret_cast<GLint*>(&viewport));
 
+  // Apply prepass.
   exit_points_color_texture_->bind     ();
-  exit_points_color_texture_->set_image(GL_RGBA32F          , viewport[2], viewport[3], GL_RGBA           , GL_FLOAT);
+  exit_points_color_texture_->set_image(GL_RGBA32F, viewport[2], viewport[3], GL_RGBA, GL_FLOAT);
   exit_points_color_texture_->unbind   ();
   exit_points_depth_texture_->bind     ();
   exit_points_depth_texture_->set_image(GL_DEPTH_COMPONENT24, viewport[2], viewport[3], GL_DEPTH_COMPONENT, GL_FLOAT);
   exit_points_depth_texture_->unbind   ();
   
-  // Apply prepass.
-  GLint default_framebuffer_id;
-  glGetIntegerv(GL_FRAMEBUFFER_BINDING, &default_framebuffer_id);
-  gl::framebuffer default_framebuffer(default_framebuffer_id);
-
   framebuffer_              ->bind();
   prepass_shader_program_   ->bind();
   prepass_vertex_array_     ->bind();
@@ -178,7 +175,6 @@ void volume_renderer::render    (const camera* camera)
                        
   shader_program_           ->set_uniform("projection"       , camera->projection_matrix      ());
   shader_program_           ->set_uniform("view"             , camera->inverse_absolute_matrix());
-  shader_program_           ->set_uniform("step_size"        , 0.001F);
   shader_program_           ->set_uniform("screen_size"      , glm::uvec2(viewport[2], viewport[3]));
   shader_program_           ->set_uniform("transfer_function", 0);
   shader_program_           ->set_uniform("exit_points"      , 1);
@@ -203,11 +199,20 @@ void volume_renderer::render    (const camera* camera)
 
 void volume_renderer::set_data  (const uint3& dimensions, const float3& spacing, const float* retardation)
 {
-  // Set volume.
-  volume_texture_->bind     ();
-  volume_texture_->set_image(GL_R32F, dimensions.x, dimensions.y, dimensions.z, GL_RED, GL_FLOAT, retardation);
-  volume_texture_->unbind   ();
+  std::vector<float4> transfer_function(256, float4{0.0F, 0.0F, 0.0F, 0.0F});
+  for (auto i = 0; i < 256; i++)
+    transfer_function[i] = float4{1.0, 1.0, 1.0, float(i) / 256};
 
-  // TODO: Also set transfer function, step size.
+  volume_texture_           ->bind       ();
+  volume_texture_           ->set_image  (GL_R32F, dimensions.x, dimensions.y, dimensions.z, GL_RED, GL_FLOAT, retardation);
+  volume_texture_           ->unbind     ();
+                                         
+  transfer_function_texture_->bind       ();
+  transfer_function_texture_->set_image  (GL_RGBA32F, 256, GL_RGBA, GL_FLOAT, transfer_function.data());
+  transfer_function_texture_->unbind     ();
+
+  shader_program_           ->bind       ();
+  shader_program_           ->set_uniform("step_size", 0.001F);
+  shader_program_           ->unbind     ();
 }
 }
