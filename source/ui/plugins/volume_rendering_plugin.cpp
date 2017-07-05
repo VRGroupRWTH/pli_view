@@ -2,6 +2,7 @@
 
 #include <boost/format.hpp>
 
+#include <third_party/qwt/qwt_plot_curve.h>
 #include <third_party/qwt/qwt_plot_grid.h>
 #include <third_party/qwt/qwt_plot_histogram.h>
 #include <ui/window.hpp>
@@ -56,6 +57,24 @@ volume_rendering_plugin::volume_rendering_plugin(QWidget* parent) : plugin(paren
   histogram_->setStyle   (QwtPlotHistogram::HistogramStyle::Columns);
   grid      ->attach     (transfer_function_widget);
   histogram_->attach     (transfer_function_widget);
+
+  for (auto i = 0; i < 4; i++)
+  {
+    curves_[i] = new QwtPlotCurve();
+    curves_[i]->setStyle(QwtPlotCurve::CurveStyle::Lines);
+    curves_[i]->attach  (transfer_function_widget);
+  }
+  curves_[0]->setPen(Qt::red  );
+  curves_[1]->setPen(Qt::green);
+  curves_[2]->setPen(Qt::blue );
+  curves_[3]->setPen(Qt::gray );
+
+  //QVector<QPointF> values;
+  //values.push_back(QPointF(rand() % 255, rand() % 1000));
+  //values.push_back(QPointF(rand() % 255, rand() % 1000));
+  //values.push_back(QPointF(rand() % 255, rand() % 1000));
+  //values.push_back(QPointF(rand() % 255, rand() % 1000));
+  //curves_[i]->setSamples(values);
 }
 void volume_rendering_plugin::start ()
 {
@@ -80,8 +99,8 @@ void volume_rendering_plugin::start ()
 
   // TODO: CREATE TRANSFER FUNCTION EDITOR AND PROVIDE THIS FROM THERE.
   std::vector<float4> transfer_function(256, float4{0.0F, 0.0F, 0.0F, 0.0F});
-  for (auto i = 125; i < 255; i++)
-    transfer_function[i] = float4{float(i) / 255.0F, float(i) / 255.0F, float(i) / 255.0F, float(i) / 255.0F};
+  for (auto i = 0; i < 125; i++)
+    transfer_function[i] = float4{float(i * 2) / 255.0F, float(i * 2) / 255.0F, float(i * 2) / 255.0F, float(i * 2) / 255.0F};
   volume_renderer_->set_transfer_function(transfer_function);
 
   logger_->info(std::string("Start successful."));
@@ -127,12 +146,6 @@ void volume_rendering_plugin::upload()
   while(future_.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
     QApplication::processEvents();
     
-  // Update transfer function widget.
-  QVector<QwtIntervalSample> samples;
-  for (auto i = 0; i < 255; i++)
-    samples.push_back(QwtIntervalSample(quantified_retardation[i], i, i + 1));
-  histogram_->setSamples(samples);
-
   uint3  cuda_size   {unsigned(size[0]), unsigned(size[1]), unsigned(size[2])};
   float3 cuda_spacing{spacing[0], spacing[1], spacing[2]};
   volume_renderer_->set_data(cuda_size, cuda_spacing, retardation.get().data());
@@ -140,6 +153,12 @@ void volume_rendering_plugin::upload()
   selector      ->setEnabled(true);
   owner_->viewer->set_wait_spinner_enabled(false);
   owner_->viewer->update();
+
+  // Update transfer function widget.
+  QVector<QwtIntervalSample> samples;
+  for (auto i = 0; i < 255; i++)
+    samples.push_back(QwtIntervalSample(quantified_retardation[i], i, i + 1));
+  histogram_->setSamples(samples);
 
   logger_->info(std::string("Update successful."));
 }
