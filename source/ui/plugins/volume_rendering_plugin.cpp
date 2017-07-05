@@ -94,8 +94,17 @@ void volume_rendering_plugin::upload()
     {
       spacing = io->load_vector_spacing();
       retardation.reset(io->load_retardation_dataset(offset, size, stride, false));
-      std::for_each (retardation->origin(), retardation->origin() + retardation->num_elements(), [&quantified_retardation] (const float& value) { quantified_retardation[value]++; });
-      //std::transform(quantified_retardation.begin(), quantified_retardation.end(), )
+      std::for_each (retardation->origin(), retardation->origin() + retardation->num_elements(), 
+      [&quantified_retardation] (const float& value)
+      {
+        quantified_retardation[value]++;
+      });
+      auto normalization_ratio = 255.0F / *std::max_element(quantified_retardation.begin(), quantified_retardation.end());
+      std::transform(quantified_retardation.begin(), quantified_retardation.end(), quantified_retardation.begin(),
+      [&normalization_ratio] (const std::size_t& value)
+      {
+        return float(value) * normalization_ratio;
+      });
     }
     catch (std::exception& exception)
     {
