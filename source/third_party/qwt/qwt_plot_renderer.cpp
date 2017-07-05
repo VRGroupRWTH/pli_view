@@ -20,13 +20,13 @@
 #include <qpainter.h>
 #include <qpaintengine.h>
 #include <qtransform.h>
-#include <qprinter.h>
-#include <qprintdialog.h>
 #include <qfiledialog.h>
 #include <qfileinfo.h>
 #include <qstyle.h>
 #include <qstyleoption.h>
 #include <qimagewriter.h>
+#include <QtPrintSupport/qprinter.h>
+#include <QtPrintSupport/qprintdialog.h>
 #ifndef QWT_NO_SVG
 #ifdef QT_SVG_LIB
 #include <qsvggenerator.h>

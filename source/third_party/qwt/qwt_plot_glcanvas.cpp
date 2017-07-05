@@ -15,6 +15,7 @@
 #include <qdrawutil.h>
 #include <qstyle.h>
 #include <qstyleoption.h>
+#include <QtOpenGL/QGLFormat>
 
 #define FIX_GL_TRANSLATION 0
 
@@ -72,7 +73,7 @@ public:
   \sa QwtPlot::setCanvas()
 */
 QwtPlotGLCanvas::QwtPlotGLCanvas( QwtPlot *plot ):
-    QGLWidget( QwtPlotGLCanvasFormat(), plot )
+    QOpenGLWidget( plot )
 {
     d_data = new PrivateData;
 
@@ -258,7 +259,7 @@ void QwtPlotGLCanvas::paintEvent( QPaintEvent *event )
 */
 bool QwtPlotGLCanvas::event( QEvent *event )
 {
-    const bool ok = QGLWidget::event( event );
+    const bool ok = QOpenGLWidget::event( event );
 
     if ( event->type() == QEvent::PolishRequest ||
         event->type() == QEvent::StyleChange )

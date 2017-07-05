@@ -12,7 +12,8 @@
 
 #include "third_party/qwt/qwt_global.h"
 #include <qframe.h>
-#include <qgl.h>
+#include <qopengl.h>
+#include <qopenglwidget.h>
 
 class QwtPlot;
 
@@ -34,7 +35,7 @@ class QwtPlot;
         QPaintEngine::OpenGL2 shows very basic problems like translated
         geometries.
 */
-class QWT_EXPORT QwtPlotGLCanvas: public QGLWidget
+class QWT_EXPORT QwtPlotGLCanvas: public QOpenGLWidget
 {
     Q_OBJECT
 

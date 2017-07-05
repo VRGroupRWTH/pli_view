@@ -11,7 +11,7 @@
 #include "third_party/qwt/qwt_scale_map.h"
 #include "third_party/qwt/qwt_painter.h"
 #include <qpainter.h>
-#include <qsvgrenderer.h>
+#include <QtSvg/qsvgrenderer.h>
 
 class QwtPlotSvgItem::PrivateData
 {

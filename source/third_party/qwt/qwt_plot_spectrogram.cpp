@@ -20,7 +20,7 @@
 #if QT_VERSION >= 0x040400
 #include <qthread.h>
 #include <qfuture.h>
-#include <qtconcurrentrun.h>
+#include <QtConcurrent/qtconcurrentrun.h>
 #endif
 
 #define DEBUG_RENDER 0
