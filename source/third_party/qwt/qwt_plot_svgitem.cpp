@@ -11,6 +11,9 @@
 #include "third_party/qwt/qwt_scale_map.h"
 #include "third_party/qwt/qwt_painter.h"
 #include <qpainter.h>
+
+#ifndef QT_NO_SVG
+
 #include <QtSvg/qsvgrenderer.h>
 
 class QwtPlotSvgItem::PrivateData
@@ -217,3 +220,5 @@ QRectF QwtPlotSvgItem::viewBox( const QRectF &rect ) const
 
     return QRectF( x1, y1, x2 - x1, y2 - y1 );
 }
+
+#endif

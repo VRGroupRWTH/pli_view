@@ -14,6 +14,8 @@
 #include "third_party/qwt/qwt_plot_item.h"
 #include <qstring.h>
 
+#ifndef QT_NO_SVG
+
 class QSvgRenderer;
 class QByteArray;
 
@@ -57,5 +59,7 @@ private:
     class PrivateData;
     PrivateData *d_data;
 };
+
+#endif
 
 #endif

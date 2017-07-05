@@ -22,7 +22,7 @@ assign_source_group(${ProjectSources})
 cuda_add_executable(${ProjectName} ${ProjectSources})
 
 # Set compile definitions.
-add_definitions(-DQWT_NO_SVG)
+add_definitions(-DQWT_NO_SVG -DQT_NO_SVG -DQT_NO_PRINTER -DQT_NO_PRINTDIALOG)
 
 # Link libraries.
 target_link_libraries(${ProjectName} ${ProjectLibraries})
