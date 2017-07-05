@@ -157,7 +157,7 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
-       <widget class="QwtPlot" name="transfer_function_widget" native="true"/>
+       <widget class="pli::transfer_function_widget" name="transfer_function_widget" native="true"/>
       </item>
      </layout>
     </widget>
@@ -166,9 +166,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QwtPlot</class>
+   <class>pli::transfer_function_widget</class>
    <extends>QWidget</extends>
-   <header location="global">third_party/qwt/qwt_plot.h</header>
+   <header location="global">ui/widgets/transfer_function_widget.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

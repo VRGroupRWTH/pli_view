@@ -7,9 +7,6 @@
 #include <ui/plugins/plugin.hpp>
 #include <ui_volume_rendering_toolbox.h>
 
-class QwtPlotCurve;
-class QwtPlotHistogram;
-
 namespace pli
 {
 class volume_renderer;
@@ -26,8 +23,6 @@ public:
 private:
   void upload();
   
-  QwtPlotCurve*     curves_[4]      ;
-  QwtPlotHistogram* histogram_      ;
   volume_renderer*  volume_renderer_;
   std::future<void> future_         ;
 };

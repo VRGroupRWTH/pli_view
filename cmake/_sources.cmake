@@ -149,6 +149,7 @@ set(ProjectSources
   include/ui/plugins/selector_plugin.hpp
   include/ui/plugins/tractography_plugin.hpp
   include/ui/plugins/volume_rendering_plugin.hpp
+  include/ui/widgets/transfer_function_widget.hpp
   include/ui/overview_image.hpp
   include/ui/selection_square.hpp
   include/ui/viewer.hpp
@@ -287,6 +288,7 @@ set(ProjectSources
   source/ui/plugins/selector_plugin.cpp
   source/ui/plugins/tractography_plugin.cpp
   source/ui/plugins/volume_rendering_plugin.cpp
+  source/ui/widgets/transfer_function_widget.cpp
   source/ui/overview_image.cpp
   source/ui/selection_square.cpp
   source/ui/viewer.cpp

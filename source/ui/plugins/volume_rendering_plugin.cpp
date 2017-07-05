@@ -2,9 +2,6 @@
 
 #include <boost/format.hpp>
 
-#include <third_party/qwt/qwt_plot_curve.h>
-#include <third_party/qwt/qwt_plot_grid.h>
-#include <third_party/qwt/qwt_plot_histogram.h>
 #include <ui/window.hpp>
 #include <utility/line_edit_utility.hpp>
 #include <utility/qt_text_browser_sink.hpp>
@@ -36,45 +33,6 @@ volume_rendering_plugin::volume_rendering_plugin(QWidget* parent) : plugin(paren
     slider_step_size->setValue(step_size * slider_step_size->maximum());
     volume_renderer_->set_step_size(step_size);
   });
-
-  // Setup transfer function widget.
-  auto font = transfer_function_widget->axisFont(0);
-  font.setPointSize(8);
-  transfer_function_widget->setAxisFont     (0, font);
-  transfer_function_widget->setAxisFont     (2, font);
-  transfer_function_widget->setAxisAutoScale(0);
-  transfer_function_widget->setAxisScale    (2, 0, 255);
-  transfer_function_widget->setAutoReplot   (true);
-
-  auto grid  = new QwtPlotGrid;
-  histogram_ = new QwtPlotHistogram;
-  grid      ->enableXMin (true);
-  grid      ->enableYMin (true);
-  grid      ->setMajorPen(QPen  (Qt::black, 0, Qt::DotLine  ));
-  grid      ->setMinorPen(QPen  (Qt::gray , 0, Qt::DotLine  ));
-  histogram_->setPen     (QPen  (Qt::gray , 0));
-  histogram_->setBrush   (QBrush(Qt::gray));
-  histogram_->setStyle   (QwtPlotHistogram::HistogramStyle::Columns);
-  grid      ->attach     (transfer_function_widget);
-  histogram_->attach     (transfer_function_widget);
-
-  for (auto i = 0; i < 4; i++)
-  {
-    curves_[i] = new QwtPlotCurve();
-    curves_[i]->setStyle(QwtPlotCurve::CurveStyle::Lines);
-    curves_[i]->attach  (transfer_function_widget);
-  }
-  curves_[0]->setPen(Qt::red  );
-  curves_[1]->setPen(Qt::green);
-  curves_[2]->setPen(Qt::blue );
-  curves_[3]->setPen(Qt::gray );
-
-  //QVector<QPointF> values;
-  //values.push_back(QPointF(rand() % 255, rand() % 1000));
-  //values.push_back(QPointF(rand() % 255, rand() % 1000));
-  //values.push_back(QPointF(rand() % 255, rand() % 1000));
-  //values.push_back(QPointF(rand() % 255, rand() % 1000));
-  //curves_[i]->setSamples(values);
 }
 void volume_rendering_plugin::start ()
 {
@@ -150,15 +108,11 @@ void volume_rendering_plugin::upload()
   float3 cuda_spacing{spacing[0], spacing[1], spacing[2]};
   volume_renderer_->set_data(cuda_size, cuda_spacing, retardation.get().data());
 
+  transfer_function_widget->set_histogram_entries(quantified_retardation);
+
   selector      ->setEnabled(true);
   owner_->viewer->set_wait_spinner_enabled(false);
   owner_->viewer->update();
-
-  // Update transfer function widget.
-  QVector<QwtIntervalSample> samples;
-  for (auto i = 0; i < 255; i++)
-    samples.push_back(QwtIntervalSample(quantified_retardation[i], i, i + 1));
-  histogram_->setSamples(samples);
 
   logger_->info(std::string("Update successful."));
 }
