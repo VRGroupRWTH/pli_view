@@ -1,8 +1,6 @@
 #ifndef PLI_VIS_TRANSFER_FUNCTION_WIDGET_
 #define PLI_VIS_TRANSFER_FUNCTION_WIDGET_
 
-#include <QWidget>
-
 #include <qwt/qwt_plot.h>
 
 class QwtPlotCurve;

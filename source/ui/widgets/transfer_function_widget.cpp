@@ -8,7 +8,6 @@ namespace pli
 {
 transfer_function_widget::transfer_function_widget(QWidget* parent) : QwtPlot(parent)
 {
-  // Setup transfer function widget.
   auto font = axisFont(0);
   font.setPointSize(8);
   setAxisFont     (0, font);
@@ -17,17 +16,18 @@ transfer_function_widget::transfer_function_widget(QWidget* parent) : QwtPlot(pa
   setAxisScale    (2, 0, 255);
   setAutoReplot   (true);
 
-  auto grid  = new QwtPlotGrid;
+  auto grid = new QwtPlotGrid;
+  grid->enableXMin (true);
+  grid->enableYMin (true);
+  grid->setMajorPen(QPen(Qt::black, 0, Qt::DotLine));
+  grid->setMinorPen(QPen(Qt::gray , 0, Qt::DotLine));
+  grid->attach     (this);
+
   histogram_ = new QwtPlotHistogram;
-  grid      ->enableXMin (true);
-  grid      ->enableYMin (true);
-  grid      ->setMajorPen(QPen  (Qt::black, 0, Qt::DotLine  ));
-  grid      ->setMinorPen(QPen  (Qt::gray , 0, Qt::DotLine  ));
-  histogram_->setPen     (QPen  (Qt::gray , 0));
-  histogram_->setBrush   (QBrush(Qt::gray));
-  histogram_->setStyle   (QwtPlotHistogram::HistogramStyle::Columns);
-  grid      ->attach     (this);
-  histogram_->attach     (this);
+  histogram_->setPen  (QPen  (Qt::gray, 0));
+  histogram_->setBrush(QBrush(Qt::gray));
+  histogram_->setStyle(QwtPlotHistogram::HistogramStyle::Columns);
+  histogram_->attach  (this);
 
   for (auto i = 0; i < 4; i++)
   {
