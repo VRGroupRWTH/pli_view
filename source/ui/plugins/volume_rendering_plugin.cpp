@@ -1,6 +1,9 @@
 #include /* implements */ <ui/plugins/volume_rendering_plugin.hpp>
 
+#include <boost/format.hpp>
+
 #include <ui/window.hpp>
+#include <utility/line_edit_utility.hpp>
 #include <utility/qt_text_browser_sink.hpp>
 #include <visualization/volume_renderer.hpp>
 
@@ -10,21 +13,48 @@ volume_rendering_plugin::volume_rendering_plugin(QWidget* parent) : plugin(paren
 {
   setupUi(this);
 
-  connect(checkbox_enabled, &QCheckBox::stateChanged, [&](bool state)
+  connect(checkbox_enabled   , &QCheckBox::stateChanged   , [&](bool state)
   {
     logger_->info(std::string(state ? "Enabled." : "Disabled."));
     volume_renderer_->set_active(state);
   });
-  connect(button_trace    , &QAbstractButton::clicked, [&]
+  connect(slider_step_size   , &QSlider::valueChanged     , [&]
   {
-    upload();
+    auto step_size = float(slider_step_size->value()) / slider_step_size->maximum();
+    line_edit_step_size->setText(QString::fromStdString((boost::format("%.4f") % step_size).str()));
+  });
+  connect(slider_step_size   , &QSlider::sliderReleased   , [&]
+  {
+    volume_renderer_->set_step_size(line_edit_utility::get_text<double>(line_edit_step_size));
+  });
+  connect(line_edit_step_size, &QLineEdit::editingFinished, [&]
+  {
+    auto step_size = line_edit_utility::get_text<double>(line_edit_step_size);
+    slider_step_size->setValue(step_size * slider_step_size->maximum());
+    volume_renderer_->set_step_size(step_size);
   });
 }
 void volume_rendering_plugin::start ()
 {
   set_sink(std::make_shared<qt_text_browser_sink>(owner_->console));
 
+  connect(owner_->get_plugin<data_plugin>    (), &data_plugin::on_change    , [&]
+  {
+    upload();
+  });
+  connect(owner_->get_plugin<selector_plugin>(), &selector_plugin::on_change, [&]
+  {
+    upload();
+  });
+  
   volume_renderer_ = owner_->viewer->add_renderable<volume_renderer>();
+  volume_renderer_->set_active(checkbox_enabled->isChecked());
+
+  // TODO: CREATE TRANSFER FUNCTION EDITOR AND PROVIDE THIS FROM THERE.
+  std::vector<float4> transfer_function(256, float4{ 0.0F, 0.0F, 0.0F, 0.0F });
+  for (auto i = 0; i < 256; i++)
+    transfer_function[i] = float4{ 1.0, 1.0, 1.0, float(i) / 256 };
+  volume_renderer_->set_transfer_function(transfer_function);
 
   logger_->info(std::string("Start successful."));
 }
@@ -47,8 +77,7 @@ void volume_rendering_plugin::upload()
   size = {size[0] / stride[0], size[1] / stride[1], size[2] / stride[2]};
 
   owner_->viewer->set_wait_spinner_enabled(true);
-  button_trace->setEnabled(false);
-  selector    ->setEnabled(false);
+  selector      ->setEnabled(false);
 
   // Load data from hard drive (on another thread).
   std::array<float, 3>                          spacing    ;
@@ -72,8 +101,7 @@ void volume_rendering_plugin::upload()
   float3 cuda_spacing{spacing[0], spacing[1], spacing[2]};
   volume_renderer_->set_data(cuda_size, cuda_spacing, retardation.get().data());
 
-  selector    ->setEnabled(true);
-  button_trace->setEnabled(true);
+  selector      ->setEnabled(true);
   owner_->viewer->set_wait_spinner_enabled(false);
   owner_->viewer->update();
 
