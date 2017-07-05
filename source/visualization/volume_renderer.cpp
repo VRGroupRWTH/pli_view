@@ -197,22 +197,22 @@ void volume_renderer::render    (const camera* camera)
   index_buffer_             ->unbind();
 }
 
-void volume_renderer::set_data  (const uint3& dimensions, const float3& spacing, const float* retardation)
+void volume_renderer::set_data             (const uint3& dimensions, const float3& spacing, const float* data)
 {
-  std::vector<float4> transfer_function(256, float4{0.0F, 0.0F, 0.0F, 0.0F});
-  for (auto i = 0; i < 256; i++)
-    transfer_function[i] = float4{1.0, 1.0, 1.0, float(i) / 256};
-
-  volume_texture_           ->bind       ();
-  volume_texture_           ->set_image  (GL_R32F, dimensions.x, dimensions.y, dimensions.z, GL_RED, GL_FLOAT, retardation);
-  volume_texture_           ->unbind     ();
-                                         
-  transfer_function_texture_->bind       ();
-  transfer_function_texture_->set_image  (GL_RGBA32F, 256, GL_RGBA, GL_FLOAT, transfer_function.data());
-  transfer_function_texture_->unbind     ();
-
-  shader_program_           ->bind       ();
-  shader_program_           ->set_uniform("step_size", 0.001F);
-  shader_program_           ->unbind     ();
+  volume_texture_->bind     ();
+  volume_texture_->set_image(GL_R32F, dimensions.x, dimensions.y, dimensions.z, GL_RED, GL_FLOAT, data);
+  volume_texture_->unbind   ();
+}
+void volume_renderer::set_transfer_function(const std::vector<float4>& transfer_function)
+{                                    
+  transfer_function_texture_->bind     ();
+  transfer_function_texture_->set_image(GL_RGBA32F, 256, GL_RGBA, GL_FLOAT, transfer_function.data());
+  transfer_function_texture_->unbind   ();
+}
+void volume_renderer::set_step_size        (float step_size)
+{
+  shader_program_->bind       ();
+  shader_program_->set_uniform("step_size", step_size);
+  shader_program_->unbind     ();
 }
 }

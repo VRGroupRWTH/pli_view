@@ -14,9 +14,9 @@ public:
   void initialize()                     override;
   void render    (const camera* camera) override;
 
-  void set_data(const uint3&  dimensions ,
-                const float3& spacing    ,
-                const float*  retardation);
+  void set_data             (const uint3& dimensions, const float3& spacing, const float* data);
+  void set_transfer_function(const std::vector<float4>& transfer_function);
+  void set_step_size        (float step_size);
 
 private:
   std::unique_ptr<gl::program>      prepass_shader_program_   ;
