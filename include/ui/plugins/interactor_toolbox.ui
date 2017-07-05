@@ -64,7 +64,7 @@
       <number>10000</number>
      </property>
      <property name="value">
-      <number>1000</number>
+      <number>2000</number>
      </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -150,10 +150,10 @@
       <number>10000</number>
      </property>
      <property name="value">
-      <number>10</number>
+      <number>100</number>
      </property>
      <property name="sliderPosition">
-      <number>10</number>
+      <number>100</number>
      </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
