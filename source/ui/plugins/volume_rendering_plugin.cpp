@@ -94,7 +94,8 @@ void volume_rendering_plugin::upload()
     {
       spacing = io->load_vector_spacing();
       retardation.reset(io->load_retardation_dataset(offset, size, stride, false));
-      std::for_each(retardation->origin(), retardation->origin() + retardation->num_elements(), [&quantified_retardation] (const float& value) { quantified_retardation[value]++; });
+      std::for_each (retardation->origin(), retardation->origin() + retardation->num_elements(), [&quantified_retardation] (const float& value) { quantified_retardation[value]++; });
+      //std::transform(quantified_retardation.begin(), quantified_retardation.end(), )
     }
     catch (std::exception& exception)
     {

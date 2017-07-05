@@ -10,11 +10,11 @@ transfer_function_widget::transfer_function_widget(QWidget* parent) : QwtPlot(pa
 {
   auto font = axisFont(0);
   font.setPointSize(8);
-  setAxisFont     (0, font);
-  setAxisFont     (2, font);
-  setAxisAutoScale(0);
-  setAxisScale    (2, 0, 255);
-  setAutoReplot   (true);
+  setAxisFont  (0, font);
+  setAxisFont  (2, font);
+  setAxisScale (0, 0, 255);
+  setAxisScale (2, 0, 255);
+  setAutoReplot(true);
 
   auto grid = new QwtPlotGrid;
   grid->enableXMin (true);
@@ -37,10 +37,12 @@ transfer_function_widget::transfer_function_widget(QWidget* parent) : QwtPlot(pa
 
     // TESTING.
     QVector<QPointF> values;
-    values.push_back(QPointF(rand() % 255, rand() % 1000));
-    values.push_back(QPointF(rand() % 255, rand() % 1000));
-    values.push_back(QPointF(rand() % 255, rand() % 1000));
-    values.push_back(QPointF(rand() % 255, rand() % 1000));
+    values.push_back(QPointF(0  , rand() % 1000));
+    values.push_back(QPointF(50 , rand() % 1000));
+    values.push_back(QPointF(100, rand() % 1000));
+    values.push_back(QPointF(150, rand() % 1000));
+    values.push_back(QPointF(200, rand() % 1000));
+    values.push_back(QPointF(250, rand() % 1000));
     curves_[i]->setSamples(values);
   }
   curves_[0]->setPen(Qt::red  );
