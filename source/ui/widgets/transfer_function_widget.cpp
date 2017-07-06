@@ -1,5 +1,6 @@
 #include /* implements */ <ui/widgets/transfer_function_widget.hpp>
 
+#include <third_party/qwt/qwt_curve_fitter.h>
 #include <third_party/qwt/qwt_plot_curve.h>
 #include <third_party/qwt/qwt_plot_grid.h>
 #include <third_party/qwt/qwt_plot_histogram.h>
@@ -32,6 +33,7 @@ transfer_function_widget::transfer_function_widget(QWidget* parent) : QwtPlot(pa
   histogram_->setStyle(QwtPlotHistogram::HistogramStyle::Columns);
   histogram_->attach  (this);
 
+  QwtSplineCurveFitter fitter;
   for (auto i = 0; i < 4; i++)
   {
     curves_[i] = new QwtPlotCurve();
@@ -46,7 +48,7 @@ transfer_function_widget::transfer_function_widget(QWidget* parent) : QwtPlot(pa
     values.push_back(QPointF(150, rand() % 255));
     values.push_back(QPointF(200, rand() % 255));
     values.push_back(QPointF(250, 0));
-    curves_[i]->setSamples(values);
+    curves_[i]->setSamples(fitter.fitCurve(values));
   }
   curves_[0]->setPen   (Qt::red);
   curves_[0]->setSymbol(new QwtSymbol(QwtSymbol::Ellipse, QBrush(Qt::red  ), QPen(Qt::red  , 1), QSize(4, 4)));
