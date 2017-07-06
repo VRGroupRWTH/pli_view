@@ -5,7 +5,6 @@
 
 #include <third_party/qwt/qwt_plot.h>
 #include <third_party/qwt/qwt_symbol.h>
-#include <third_party/qwt/qwt_scale_map.h>
 #include <third_party/qwt/qwt_plot_canvas.h>
 #include <third_party/qwt/qwt_plot_curve.h>
 #include <third_party/qwt/qwt_plot_directpainter.h>
@@ -210,6 +209,8 @@ void picker::select_or_add(const QPoint& pos)
       curve->setSamples(samples);
     }
   }
+
+  on_change();
 }
 void picker::remove       (const QPoint& pos)
 {
@@ -247,6 +248,8 @@ void picker::remove       (const QPoint& pos)
         samples.push_back(curve->sample(i));
     curve->setSamples(samples);
   }
+
+  on_change();
 }
 void picker::move         (const QPoint& pos)
 {
@@ -279,6 +282,8 @@ void picker::move         (const QPoint& pos)
   plotCanvas->setPaintAttribute(QwtPlotCanvas::ImmediatePaint, false);
 
   show_cursor(true);
+
+  on_change();
 }
 void picker::move_by      (int dx, int dy)
 {
@@ -290,6 +295,8 @@ void picker::move_by      (int dx, int dy)
   const auto x      = plot()->transform(selected_curve_->xAxis(), sample.x());
   const auto y      = plot()->transform(selected_curve_->yAxis(), sample.y());
   move(QPoint(qRound(x + dx), qRound(y + dy)));
+
+  on_change();
 }
 
 void picker::show_cursor       (bool enable)

@@ -21,6 +21,9 @@ public:
   virtual bool eventFilter(QObject* sender, QEvent* event);
   virtual bool event      (QEvent* event);
 
+signals:
+  void on_change();
+
 private:
   void select_or_add     (const QPoint& point);
   void remove            (const QPoint& point);

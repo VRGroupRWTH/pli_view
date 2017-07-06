@@ -46,15 +46,11 @@ transfer_function_widget::transfer_function_widget(QWidget* parent) : QwtPlot(pa
     curve_fitter->setSplineSize (100);
     curves_[i]  ->setCurveFitter(curve_fitter);
 
-    // TESTING.
     QVector<QPointF> values;
-    values.push_back(QPointF(0  , 0));
-    values.push_back(QPointF(50 , rand() % 255));
-    values.push_back(QPointF(100, rand() % 255));
-    values.push_back(QPointF(150, rand() % 255));
-    values.push_back(QPointF(200, rand() % 255));
-    values.push_back(QPointF(250, 0));
-    curves_[i]->setSamples(values); // fitter.fitCurve(values)
+    values.push_back(QPointF(0  , 0     ));
+    values.push_back(QPointF(125, 10 * i));
+    values.push_back(QPointF(250, 0     ));
+    curves_[i]->setSamples(values); 
   }
   curves_[0]->setPen   (Qt::red);
   curves_[0]->setSymbol(new QwtSymbol(QwtSymbol::Ellipse, QBrush(Qt::red  ), QPen(Qt::red  , 1), QSize(4, 4)));
@@ -65,24 +61,25 @@ transfer_function_widget::transfer_function_widget(QWidget* parent) : QwtPlot(pa
   curves_[3]->setPen   (Qt::black);
   curves_[3]->setSymbol(new QwtSymbol(QwtSymbol::Ellipse, QBrush(Qt::black), QPen(Qt::black, 1), QSize(4, 4)));
 
-  new picker(this);
+  auto point_picker = new picker(this);
+  connect(point_picker, SIGNAL(on_change()), this, SIGNAL(on_change()));
 }
 
 std::vector<float4> transfer_function_widget::get_function()
 {
   std::vector<float4> function(256, float4{0.0, 0.0, 0.0, 0.0});
-  for (auto i = 0; i < 125; i++)
-    function[i] = float4{ float(i * 2) / 255.0F, float(i * 2) / 255.0F, float(i * 2) / 255.0F, float(i * 2) / 255.0F };
+  QwtSplineCurveFitter fitter;
+  fitter.setFitMode   (QwtSplineCurveFitter::FitMode::ParametricSpline);
+  fitter.setSplineSize(256);
+  QVector<QPointF> red_points  ; for (auto i = 0; i < curves_[0]->dataSize(); i++) red_points  .push_back(curves_[0]->sample(i)); auto reds   = fitter.fitCurve(red_points  );
+  QVector<QPointF> green_points; for (auto i = 0; i < curves_[1]->dataSize(); i++) green_points.push_back(curves_[1]->sample(i)); auto greens = fitter.fitCurve(green_points);
+  QVector<QPointF> blue_points ; for (auto i = 0; i < curves_[2]->dataSize(); i++) blue_points .push_back(curves_[2]->sample(i)); auto blues  = fitter.fitCurve(blue_points );
+  QVector<QPointF> alpha_points; for (auto i = 0; i < curves_[3]->dataSize(); i++) alpha_points.push_back(curves_[3]->sample(i)); auto alphas = fitter.fitCurve(alpha_points);
+  for (auto i = 0; i < 256; i++)
+    function[i] = float4{float(reds[i].y()) / 255.0F, float(greens[i].y()) / 255.0F, float(blues[i].y()) / 255.0F, float(alphas[i].y()) / 255.0F};
   return function;
 }
 
-void transfer_function_widget::set_curve            (std::size_t index, const std::vector<std::size_t>& curve)
-{
-  QVector<QPointF> samples;
-  for (auto i = 0; i < curve.size(); i++)
-    samples.push_back(QPointF(i, curve[i]));
-  curves_[index]->setSamples(samples);
-}
 void transfer_function_widget::set_histogram_entries(const std::vector<std::size_t>& histogram_entries)
 {
   QVector<QwtIntervalSample> samples;

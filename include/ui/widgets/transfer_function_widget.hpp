@@ -20,7 +20,6 @@ public:
 
   std::vector<float4> get_function();
 
-  void set_curve            (std::size_t index, const std::vector<std::size_t>& curve);
   void set_histogram_entries(const std::vector<std::size_t>& histogram_entries);
 
 signals:
