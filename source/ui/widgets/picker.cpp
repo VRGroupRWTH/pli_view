@@ -172,7 +172,7 @@ void picker::select (const QPoint &pos)
 
       double d;
       auto idx = c->closestPoint(pos, &d);
-      if (d < dist)
+      if (d < dist && idx != 0 && idx != c->dataSize() - 1)
       {
         curve = c;
         index = idx;
@@ -185,7 +185,7 @@ void picker::select (const QPoint &pos)
   selected_curve_ = nullptr;
   selected_point_ = -1;
 
-  if (curve && dist < 10) // 10 pixels tolerance
+  if (curve && dist < 10)
   {
     selected_curve_ = curve;
     selected_point_ = index;

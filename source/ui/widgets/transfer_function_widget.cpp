@@ -40,12 +40,12 @@ transfer_function_widget::transfer_function_widget(QWidget* parent) : QwtPlot(pa
 
     // TESTING.
     QVector<QPointF> values;
-    values.push_back(QPointF(0  , rand() % 255));
+    values.push_back(QPointF(0  , 0));
     values.push_back(QPointF(50 , rand() % 255));
     values.push_back(QPointF(100, rand() % 255));
     values.push_back(QPointF(150, rand() % 255));
     values.push_back(QPointF(200, rand() % 255));
-    values.push_back(QPointF(250, rand() % 255));
+    values.push_back(QPointF(250, 0));
     curves_[i]->setSamples(values);
   }
   curves_[0]->setPen   (Qt::red);
