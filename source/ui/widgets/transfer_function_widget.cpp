@@ -33,12 +33,18 @@ transfer_function_widget::transfer_function_widget(QWidget* parent) : QwtPlot(pa
   histogram_->setStyle(QwtPlotHistogram::HistogramStyle::Columns);
   histogram_->attach  (this);
 
-  QwtSplineCurveFitter fitter;
   for (auto i = 0; i < 4; i++)
   {
     curves_[i] = new QwtPlotCurve();
-    curves_[i]->setStyle(QwtPlotCurve::CurveStyle::Lines);
-    curves_[i]->attach  (this);
+    curves_[i]->setStyle         (QwtPlotCurve::CurveStyle::Lines);
+    curves_[i]->setCurveAttribute(QwtPlotCurve::CurveAttribute::Fitted);
+    curves_[i]->setRenderHint    (QwtPlotItem::RenderHint::RenderAntialiased);
+    curves_[i]->attach           (this);
+
+    auto curve_fitter = new QwtSplineCurveFitter;
+    curve_fitter->setFitMode    (QwtSplineCurveFitter::FitMode::ParametricSpline);
+    curve_fitter->setSplineSize (100);
+    curves_[i]  ->setCurveFitter(curve_fitter);
 
     // TESTING.
     QVector<QPointF> values;
@@ -48,7 +54,7 @@ transfer_function_widget::transfer_function_widget(QWidget* parent) : QwtPlot(pa
     values.push_back(QPointF(150, rand() % 255));
     values.push_back(QPointF(200, rand() % 255));
     values.push_back(QPointF(250, 0));
-    curves_[i]->setSamples(fitter.fitCurve(values));
+    curves_[i]->setSamples(values); // fitter.fitCurve(values)
   }
   curves_[0]->setPen   (Qt::red);
   curves_[0]->setSymbol(new QwtSymbol(QwtSymbol::Ellipse, QBrush(Qt::red  ), QPen(Qt::red  , 1), QSize(4, 4)));

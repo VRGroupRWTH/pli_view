@@ -22,9 +22,10 @@ public:
   virtual bool event      (QEvent* event);
 
 private:
-  void select (const QPoint& point);
-  void move   (const QPoint& point);
-  void move_by(int x, int y);
+  void select_or_add     (const QPoint& point);
+  void remove            (const QPoint& point);
+  void move              (const QPoint& point);
+  void move_by           (int x, int y);
 
   void show_cursor       (bool enable);
   void shift_point_cursor(bool up    );

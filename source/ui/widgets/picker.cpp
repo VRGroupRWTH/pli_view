@@ -52,7 +52,11 @@ bool picker::eventFilter(QObject* object, QEvent* event)
   case QEvent::MouseButtonPress:
   {
     const QMouseEvent* mouse_event = static_cast<QMouseEvent *>(event);
-    select(mouse_event->pos());
+
+    if (mouse_event->buttons() == Qt::LeftButton)
+      select_or_add(mouse_event->pos());
+    else if (mouse_event->buttons() == Qt::RightButton)
+      remove(mouse_event->pos());
     return true;
   }
   case QEvent::MouseMove:
@@ -157,7 +161,57 @@ bool picker::event      (QEvent*  event)
   return QObject::event(event);
 }
 
-void picker::select (const QPoint &pos)
+void picker::select_or_add(const QPoint& pos)
+{
+  QwtPlotCurve* curve = nullptr;
+  auto dist  = 10e10;
+  auto index = -1;
+
+  const auto& item_list = plot()->itemList();
+  for (auto it = item_list.begin(); it != item_list.end(); ++it)
+  {
+    if ((*it)->rtti() == QwtPlotItem::Rtti_PlotCurve)
+    {
+      auto c = static_cast<QwtPlotCurve*>(*it);
+      
+      double d;
+      auto idx = c->closestPoint(pos, &d);
+      if (d < dist && idx != 0 && idx != c->dataSize() - 1)
+      {
+        curve = c;
+        index = idx;
+        dist  = d;
+      }
+    }
+  }
+
+  show_cursor(false);
+  selected_curve_ = nullptr;
+  selected_point_ = -1;
+
+  if (curve)
+  {
+    selected_curve_ = curve;
+    selected_point_ = index;
+    show_cursor(true);
+
+    if(dist >= 8)
+    {
+      auto x = plot()->invTransform(selected_curve_->xAxis(), pos.x());
+      auto y = plot()->invTransform(selected_curve_->yAxis(), pos.y());
+      QPointF sample(x, y);
+
+      selected_point_ = curve->sample(index).x() < sample.x() ? index + 1 : index;
+
+      QVector<QPointF> samples;
+      for (auto i = 0; i < curve->dataSize(); ++i)
+        samples.push_back(curve->sample(i));
+      samples.insert(selected_point_, sample);
+      curve->setSamples(samples);
+    }
+  }
+}
+void picker::remove       (const QPoint& pos)
 {
   QwtPlotCurve* curve = nullptr;
   auto dist  = 10e10;
@@ -185,14 +239,16 @@ void picker::select (const QPoint &pos)
   selected_curve_ = nullptr;
   selected_point_ = -1;
 
-  if (curve && dist < 10)
+  if (curve && dist < 4)
   {
-    selected_curve_ = curve;
-    selected_point_ = index;
-    show_cursor(true);
+    QVector<QPointF> samples;
+    for(auto i = 0; i < curve->dataSize(); ++i)
+      if(i != index)
+        samples.push_back(curve->sample(i));
+    curve->setSamples(samples);
   }
 }
-void picker::move   (const QPoint &pos)
+void picker::move         (const QPoint& pos)
 {
   if (!selected_curve_)
     return;
@@ -224,7 +280,7 @@ void picker::move   (const QPoint &pos)
 
   show_cursor(true);
 }
-void picker::move_by(int dx, int dy)
+void picker::move_by      (int dx, int dy)
 {
   if (dx == 0 && dy == 0)
     return;

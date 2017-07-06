@@ -27,8 +27,8 @@ signals:
   void on_change();
 
 protected:
-  std::array<QwtPlotCurve*, 4>  curves_   ;
-  QwtPlotHistogram*             histogram_;
+  std::array<QwtPlotCurve*, 4> curves_   ;
+  QwtPlotHistogram*            histogram_;
 };
 }
 
