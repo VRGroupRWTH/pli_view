@@ -38,28 +38,27 @@ void volume_rendering_plugin::start ()
 {
   set_sink(std::make_shared<qt_text_browser_sink>(owner_->console));
 
-  connect(owner_->get_plugin<data_plugin>    (), &data_plugin::on_change    , [&]
+  connect(owner_->get_plugin<data_plugin>    (), &data_plugin::on_change             , [&]
   {
     upload();
   });
-  connect(owner_->get_plugin<selector_plugin>(), &selector_plugin::on_change, [&]
+  connect(owner_->get_plugin<selector_plugin>(), &selector_plugin::on_change         , [&]
   {
     upload();
+  });
+  connect(transfer_function_widget             , &transfer_function_widget::on_change, [&]
+  {
+    volume_renderer_->set_transfer_function(transfer_function_widget->get_function());
   });
  
   auto step_size = double(slider_step_size->value()) / slider_step_size->maximum();
 
   volume_renderer_ = owner_->viewer->add_renderable<volume_renderer>();
-  volume_renderer_->set_active   (checkbox_enabled->isChecked());
-  volume_renderer_->set_step_size(step_size);
-  
-  line_edit_step_size->setText(QString::fromStdString((boost::format("%.4f") % step_size).str()));
+  volume_renderer_->set_active           (checkbox_enabled->isChecked());
+  volume_renderer_->set_step_size        (step_size);
+  volume_renderer_->set_transfer_function(transfer_function_widget->get_function());
 
-  // TODO: CREATE TRANSFER FUNCTION EDITOR AND PROVIDE THIS FROM THERE.
-  std::vector<float4> transfer_function(256, float4{0.0F, 0.0F, 0.0F, 0.0F});
-  for (auto i = 0; i < 125; i++)
-    transfer_function[i] = float4{float(i * 2) / 255.0F, float(i * 2) / 255.0F, float(i * 2) / 255.0F, float(i * 2) / 255.0F};
-  volume_renderer_->set_transfer_function(transfer_function);
+  line_edit_step_size->setText(QString::fromStdString((boost::format("%.4f") % step_size).str()));
 
   logger_->info(std::string("Start successful."));
 }

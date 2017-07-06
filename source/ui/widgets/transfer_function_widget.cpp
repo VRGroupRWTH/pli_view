@@ -3,6 +3,9 @@
 #include <third_party/qwt/qwt_plot_curve.h>
 #include <third_party/qwt/qwt_plot_grid.h>
 #include <third_party/qwt/qwt_plot_histogram.h>
+#include <third_party/qwt/qwt_symbol.h>
+
+#include <ui/widgets/picker.hpp>
 
 namespace pli
 {
@@ -37,20 +40,41 @@ transfer_function_widget::transfer_function_widget(QWidget* parent) : QwtPlot(pa
 
     // TESTING.
     QVector<QPointF> values;
-    values.push_back(QPointF(0  , rand() % 1000));
-    values.push_back(QPointF(50 , rand() % 1000));
-    values.push_back(QPointF(100, rand() % 1000));
-    values.push_back(QPointF(150, rand() % 1000));
-    values.push_back(QPointF(200, rand() % 1000));
-    values.push_back(QPointF(250, rand() % 1000));
+    values.push_back(QPointF(0  , rand() % 255));
+    values.push_back(QPointF(50 , rand() % 255));
+    values.push_back(QPointF(100, rand() % 255));
+    values.push_back(QPointF(150, rand() % 255));
+    values.push_back(QPointF(200, rand() % 255));
+    values.push_back(QPointF(250, rand() % 255));
     curves_[i]->setSamples(values);
   }
-  curves_[0]->setPen(Qt::red  );
-  curves_[1]->setPen(Qt::green);
-  curves_[2]->setPen(Qt::blue );
-  curves_[3]->setPen(Qt::gray );
+  curves_[0]->setPen   (Qt::red);
+  curves_[0]->setSymbol(new QwtSymbol(QwtSymbol::Ellipse, QBrush(Qt::red  ), QPen(Qt::red  , 1), QSize(4, 4)));
+  curves_[1]->setPen   (Qt::green);
+  curves_[1]->setSymbol(new QwtSymbol(QwtSymbol::Ellipse, QBrush(Qt::green), QPen(Qt::green, 1), QSize(4, 4)));
+  curves_[2]->setPen   (Qt::blue );
+  curves_[2]->setSymbol(new QwtSymbol(QwtSymbol::Ellipse, QBrush(Qt::blue ), QPen(Qt::blue , 1), QSize(4, 4)));
+  curves_[3]->setPen   (Qt::black);
+  curves_[3]->setSymbol(new QwtSymbol(QwtSymbol::Ellipse, QBrush(Qt::black), QPen(Qt::black, 1), QSize(4, 4)));
+
+  new picker(this);
 }
 
+std::vector<float4> transfer_function_widget::get_function()
+{
+  std::vector<float4> function(256, float4{0.0, 0.0, 0.0, 0.0});
+  for (auto i = 0; i < 125; i++)
+    function[i] = float4{ float(i * 2) / 255.0F, float(i * 2) / 255.0F, float(i * 2) / 255.0F, float(i * 2) / 255.0F };
+  return function;
+}
+
+void transfer_function_widget::set_curve            (std::size_t index, const std::vector<std::size_t>& curve)
+{
+  QVector<QPointF> samples;
+  for (auto i = 0; i < curve.size(); i++)
+    samples.push_back(QPointF(i, curve[i]));
+  curves_[index]->setSamples(samples);
+}
 void transfer_function_widget::set_histogram_entries(const std::vector<std::size_t>& histogram_entries)
 {
   QVector<QwtIntervalSample> samples;
