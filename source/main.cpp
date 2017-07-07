@@ -10,7 +10,7 @@ extern "C"
 #include <QApplication>
 #include <QSurfaceFormat>
 
-#include <pli_vis/ui/window.hpp>
+#include <pli_vis/ui/application.hpp>
 
 int main(int argc, char** argv)
 {
@@ -25,7 +25,7 @@ int main(int argc, char** argv)
 
   QApplication application(argc, argv);
   
-  pli::window window;
+  pli::application window;
   
   application.exec();
 

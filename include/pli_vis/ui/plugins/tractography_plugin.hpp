@@ -4,7 +4,7 @@
 #include <future>
 
 #include <pli_vis/aspects/loggable.hpp>
-#include <pli_vis/ui/plugins/plugin.hpp>
+#include <pli_vis/ui/plugin.hpp>
 #include <pli_vis/visualization/basic_tracer.hpp>
 
 #include <ui_tractography_toolbox.h>

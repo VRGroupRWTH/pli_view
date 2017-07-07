@@ -5,13 +5,13 @@
 #include <cstddef>
 
 #include <pli_vis/aspects/loggable.hpp>
-#include <pli_vis/ui/plugins/plugin.hpp>
+#include <pli_vis/ui/plugin.hpp>
 
 #include <ui_selector_toolbox.h>
 
 namespace pli
 {
-class window;
+class application;
 
 class selector_plugin : public plugin, public Ui_selector_toolbox, public loggable<selector_plugin>
 {

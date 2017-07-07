@@ -7,7 +7,7 @@
 #include <boost/multi_array.hpp>
 
 #include <pli_vis/aspects/loggable.hpp>
-#include <pli_vis/ui/plugins/plugin.hpp>
+#include <pli_vis/ui/plugin.hpp>
 
 #include <ui_fdm_toolbox.h>
 

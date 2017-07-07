@@ -171,7 +171,6 @@ set(PROJECT_SOURCES
   include/pli_vis/ui/plugins/fom_plugin.hpp
   include/pli_vis/ui/plugins/fdm_plugin.hpp
   include/pli_vis/ui/plugins/interactor_plugin.hpp
-  include/pli_vis/ui/plugins/plugin.hpp
   include/pli_vis/ui/plugins/scalar_plugin.hpp
   include/pli_vis/ui/plugins/selector_plugin.hpp
   include/pli_vis/ui/plugins/tractography_plugin.hpp
@@ -182,7 +181,8 @@ set(PROJECT_SOURCES
   include/pli_vis/ui/widgets/transfer_function_editor.hpp
   include/pli_vis/ui/widgets/viewer.hpp
   include/pli_vis/ui/widgets/wait_spinner.hpp
-  include/pli_vis/ui/window.hpp
+  include/pli_vis/ui/application.hpp
+  include/pli_vis/ui/plugin.hpp
   include/pli_vis/utility/line_edit_utility.hpp
   include/pli_vis/utility/qt_text_browser_sink.hpp
   include/pli_vis/visualization/interactors/first_person_interactor.hpp
@@ -309,7 +309,6 @@ set(PROJECT_SOURCES
   source/ui/plugins/fom_plugin.cpp
   source/ui/plugins/fdm_plugin.cpp
   source/ui/plugins/interactor_plugin.cpp
-  source/ui/plugins/plugin.cpp
   source/ui/plugins/scalar_plugin.cpp
   source/ui/plugins/selector_plugin.cpp
   source/ui/plugins/tractography_plugin.cpp
@@ -320,7 +319,8 @@ set(PROJECT_SOURCES
   source/ui/widgets/transfer_function_editor.cpp
   source/ui/widgets/viewer.cpp
   source/ui/widgets/wait_spinner.cpp
-  source/ui/window.cpp
+  source/ui/application.cpp
+  source/ui/plugin.cpp
   source/visualization/interactors/first_person_interactor.cpp
   source/visualization/interactors/orbit_interactor.cpp
   source/visualization/interactors/simple_interactor.cpp

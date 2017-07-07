@@ -5,7 +5,7 @@
 
 #include <pli_vis/aspects/loggable.hpp>
 #include <pli_vis/io/hdf5_io_base.hpp>
-#include <pli_vis/ui/plugins/plugin.hpp>
+#include <pli_vis/ui/plugin.hpp>
 
 #include <ui_data_toolbox.h>
 

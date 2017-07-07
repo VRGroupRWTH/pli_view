@@ -1,4 +1,4 @@
-#include <pli_vis/ui/plugins/plugin.hpp>
+#include <pli_vis/ui/plugin.hpp>
 
 namespace pli
 {
@@ -7,7 +7,7 @@ plugin::plugin(QWidget* parent) : QWidget(parent)
 
 }
 
-void plugin::set_owner(pli::window* owner)
+void plugin::set_owner(pli::application* owner)
 {
   owner_ = owner;
 }

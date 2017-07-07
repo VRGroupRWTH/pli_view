@@ -4,7 +4,7 @@
 #include <future>
 
 #include <pli_vis/aspects/loggable.hpp>
-#include <pli_vis/ui/plugins/plugin.hpp>
+#include <pli_vis/ui/plugin.hpp>
 
 #include <ui_fom_toolbox.h>
 

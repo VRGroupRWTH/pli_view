@@ -1,13 +1,12 @@
-#include <pli_vis/ui/window.hpp>
+#include <pli_vis/ui/application.hpp>
 
 #include <cuda_runtime_api.h>
 
-#include <pli_vis/ui/plugins/plugin.hpp>
 #include <pli_vis/utility/qt_text_browser_sink.hpp>
 
 namespace pli
 {
-window:: window()
+application:: application()
 {
   setupUi(this);
   showMaximized();
@@ -28,13 +27,13 @@ window:: window()
   action_help_version ->trigger();
   action_help_gpu_info->trigger();
 }
-window::~window()
+application::~application()
 {
   for (auto plugin : plugins_)
     plugin->destroy();
 }
 
-void window::bind_actions     ()
+void application::bind_actions     ()
 {  
   connect(action_fullscreen   , &QAction::triggered, [&] 
   {
@@ -43,7 +42,7 @@ void window::bind_actions     ()
   });
   connect(action_file_exit    , &QAction::triggered, [&] 
   {
-    logger_->info(std::string("Closing window."));
+    logger_->info(std::string("Closing application."));
     close();
   });
   connect(action_help_version , &QAction::triggered, [&] 

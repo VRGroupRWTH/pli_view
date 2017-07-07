@@ -5,21 +5,21 @@
 
 namespace pli
 {
-class window;
+class application;
 
 class plugin : public QWidget
 {
 public:
   plugin(QWidget* parent = nullptr);
 
-  void set_owner(pli::window* owner);
+  void set_owner(pli::application* owner);
   
   virtual void awake  ();
   virtual void start  ();
   virtual void destroy();
 
 protected:
-  pli::window* owner_ = nullptr;
+  pli::application* owner_ = nullptr;
 };
 }
 

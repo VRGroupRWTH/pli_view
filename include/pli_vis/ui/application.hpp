@@ -6,18 +6,19 @@
 #include <QMainWindow>
 
 #include <pli_vis/aspects/loggable.hpp>
-#include <pli_vis/ui/plugins/plugin.hpp>
+#include <pli_vis/ui/plugin.hpp>
+
 #include <ui_window.h>
 
 namespace pli
 {
 class plugin;
 
-class window : public QMainWindow, public Ui_window, public loggable<window>
+class application : public QMainWindow, public Ui_window, public loggable<application>
 {
 public:
-   window();
-  ~window();
+   application();
+  ~application();
 
   template<typename plugin_type>
   plugin_type* get_plugin()
