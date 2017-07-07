@@ -99,7 +99,7 @@ selector_plugin::selector_plugin(QWidget* parent) : plugin(parent)
     on_change(selection_offset(), selection_size(), selection_stride());
   });
 
-  connect(image, &overview_image::on_selection_change, [&](const std::array<float, 2> offset_perc, const std::array<float, 2> size_perc)
+  connect(image, &roi_selector::on_selection_change, [&](const std::array<float, 2> offset_perc, const std::array<float, 2> size_perc)
   {
     std::array<int, 2> offset { int(offset_perc[0] * slider_x->maximum()), int(offset_perc[1] * slider_y->maximum()) };
     std::array<int, 2> size   { int(size_perc  [0] * slider_x->maximum()), int(size_perc  [1] * slider_y->maximum()) };

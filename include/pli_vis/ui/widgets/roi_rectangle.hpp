@@ -8,10 +8,10 @@
 
 namespace pli
 {
-class selection_square : public QWidget
+class roi_rectangle : public QWidget
 {
 public:
-  selection_square(QWidget* parent = nullptr);
+  roi_rectangle(QWidget* parent = nullptr);
 
 private:
   void resizeEvent(QResizeEvent* event) override;

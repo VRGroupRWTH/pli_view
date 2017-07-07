@@ -1,11 +1,11 @@
-#include <pli_vis/ui/widgets/selection_square.hpp>
+#include <pli_vis/ui/widgets/roi_rectangle.hpp>
 
 #include <QHBoxLayout>
 #include <QSizeGrip>
 
 namespace pli
 {
-selection_square::selection_square(QWidget* parent) : QWidget(parent), rubber_band_(new QRubberBand(QRubberBand::Rectangle, this))
+roi_rectangle::roi_rectangle(QWidget* parent) : QWidget(parent), rubber_band_(new QRubberBand(QRubberBand::Rectangle, this))
 {
   setWindowFlags(Qt::SubWindow);
   
@@ -23,7 +23,7 @@ selection_square::selection_square(QWidget* parent) : QWidget(parent), rubber_ba
   move(0, 0);
   show();
 }
-void selection_square::resizeEvent(QResizeEvent* event)
+void roi_rectangle::resizeEvent(QResizeEvent* event)
 {
   rubber_band_->resize(size());
 }

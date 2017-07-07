@@ -6,16 +6,16 @@
 
 #include <QLabel>
 
-#include <pli_vis/ui/widgets/selection_square.hpp>
+#include <pli_vis/ui/widgets/roi_rectangle.hpp>
 
 namespace pli
 {
-class overview_image : public QLabel
+class roi_selector : public QLabel
 {
   Q_OBJECT
 
 public:
-  overview_image(QWidget* parent = nullptr);
+  roi_selector(QWidget* parent = nullptr);
 
   void set_selection_offset_percentage(const std::array<float, 2>& perc);
   void set_selection_size_percentage  (const std::array<float, 2>& perc);
@@ -31,7 +31,7 @@ private:
   void mouseReleaseEvent(QMouseEvent* event) override;
   void mouseMoveEvent   (QMouseEvent* event) override;
 
-  std::unique_ptr<selection_square> selection_square_;
+  std::unique_ptr<roi_rectangle> selection_square_;
   bool dragging_ = false;
 };
 }

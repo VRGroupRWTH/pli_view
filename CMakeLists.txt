@@ -176,8 +176,8 @@ set(PROJECT_SOURCES
   include/pli_vis/ui/plugins/tractography_plugin.hpp
   include/pli_vis/ui/plugins/volume_rendering_plugin.hpp
   include/pli_vis/ui/utility/plot_interactor.hpp
-  include/pli_vis/ui/widgets/overview_image.hpp
-  include/pli_vis/ui/widgets/selection_square.hpp
+  include/pli_vis/ui/widgets/roi_rectangle.hpp
+  include/pli_vis/ui/widgets/roi_selector.hpp
   include/pli_vis/ui/widgets/transfer_function_editor.hpp
   include/pli_vis/ui/widgets/viewer.hpp
   include/pli_vis/ui/widgets/wait_spinner.hpp
@@ -314,8 +314,8 @@ set(PROJECT_SOURCES
   source/ui/plugins/tractography_plugin.cpp
   source/ui/plugins/volume_rendering_plugin.cpp
   source/ui/utility/plot_interactor.cpp
-  source/ui/widgets/overview_image.cpp
-  source/ui/widgets/selection_square.cpp
+  source/ui/widgets/roi_rectangle.cpp
+  source/ui/widgets/roi_selector.cpp
   source/ui/widgets/transfer_function_editor.cpp
   source/ui/widgets/viewer.cpp
   source/ui/widgets/wait_spinner.cpp

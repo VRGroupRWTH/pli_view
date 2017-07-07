@@ -48,7 +48,7 @@
        <number>0</number>
       </property>
       <item row="0" column="0">
-       <widget class="pli::overview_image" name="image">
+       <widget class="pli::roi_selector" name="image">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
           <horstretch>0</horstretch>
@@ -1053,9 +1053,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>pli::overview_image</class>
+   <class>pli::roi_selector</class>
    <extends>QLabel</extends>
-   <header location="global">pli_vis/ui/widgets/overview_image.hpp</header>
+   <header location="global">pli_vis/ui/widgets/roi_selector.hpp</header>
   </customwidget>
  </customwidgets>
  <resources/>
