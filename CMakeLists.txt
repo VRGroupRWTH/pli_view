@@ -1,7 +1,7 @@
 ##################################################    Project     ##################################################
 cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
 cmake_policy          (SET CMP0023 OLD)
-project               (pli_vis VERSION 1.0 LANGUAGES CXX)
+project               (pli_vis VERSION 1.0 LANGUAGES C CXX)
 list                  (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 set_property          (GLOBAL PROPERTY USE_FOLDERS ON)
 set                   (CMAKE_CXX_VISIBILITY_PRESET hidden)
