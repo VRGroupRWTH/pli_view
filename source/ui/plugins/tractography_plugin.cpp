@@ -105,6 +105,8 @@ void tractography_plugin::trace()
     return;
   }
 
+  size = { size[0] / stride[0], size[1] / stride[1], size[2] / stride[2] };
+
   selector->setEnabled(false);
   button_trace_selection->setEnabled(false);
   owner_->viewer->set_wait_spinner_enabled(true);
