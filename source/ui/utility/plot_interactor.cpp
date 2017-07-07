@@ -1,4 +1,4 @@
-﻿#include <pli_vis/ui/utility/picker.hpp>
+﻿#include <pli_vis/ui/utility/plot_interactor.hpp>
 
 #include <qapplication.h>
 #include <qevent.h>
@@ -13,7 +13,7 @@
 
 namespace pli
 {
-picker::picker(QwtPlot* plot) : QObject(plot), selected_curve_(nullptr), selected_point_(-1)
+plot_interactor::plot_interactor(QwtPlot* plot) : QObject(plot), selected_curve_(nullptr), selected_point_(-1)
 {
   auto canvas = qobject_cast<QwtPlotCanvas*>(plot->canvas());
   canvas->installEventFilter(this);
@@ -26,7 +26,7 @@ picker::picker(QwtPlot* plot) : QObject(plot), selected_curve_(nullptr), selecte
   shift_curve_cursor(true);
 }
 
-bool picker::eventFilter(QObject* object, QEvent* event)
+bool plot_interactor::eventFilter(QObject* object, QEvent* event)
 {
   if (plot() == nullptr || object != plot()->canvas())
     return false;
@@ -150,7 +150,7 @@ bool picker::eventFilter(QObject* object, QEvent* event)
 
   return QObject::eventFilter(object, event);
 }
-bool picker::event      (QEvent*  event)
+bool plot_interactor::event      (QEvent*  event)
 {
   if (event->type() == QEvent::User)
   {
@@ -160,7 +160,7 @@ bool picker::event      (QEvent*  event)
   return QObject::event(event);
 }
 
-void picker::select_or_add(const QPoint& pos)
+void plot_interactor::select_or_add(const QPoint& pos)
 {
   QwtPlotCurve* curve = nullptr;
   auto dist  = 10e10;
@@ -212,7 +212,7 @@ void picker::select_or_add(const QPoint& pos)
 
   on_change();
 }
-void picker::remove       (const QPoint& pos)
+void plot_interactor::remove       (const QPoint& pos)
 {
   QwtPlotCurve* curve = nullptr;
   auto dist  = 10e10;
@@ -251,7 +251,7 @@ void picker::remove       (const QPoint& pos)
 
   on_change();
 }
-void picker::move         (const QPoint& pos)
+void plot_interactor::move         (const QPoint& pos)
 {
   if (!selected_curve_)
     return;
@@ -285,7 +285,7 @@ void picker::move         (const QPoint& pos)
 
   on_change();
 }
-void picker::move_by      (int dx, int dy)
+void plot_interactor::move_by      (int dx, int dy)
 {
   if (dx == 0 && dy == 0)
     return;
@@ -299,7 +299,7 @@ void picker::move_by      (int dx, int dy)
   on_change();
 }
 
-void picker::show_cursor       (bool enable)
+void plot_interactor::show_cursor       (bool enable)
 {
   if (!selected_curve_)
     return;
@@ -316,7 +316,7 @@ void picker::show_cursor       (bool enable)
   if (enable)
     symbol->setBrush(brush);
 }
-void picker::shift_curve_cursor(bool up    )
+void plot_interactor::shift_curve_cursor(bool up    )
 {
   QwtPlotItemIterator it;
 
@@ -362,7 +362,7 @@ void picker::shift_curve_cursor(bool up    )
   selected_curve_ = static_cast<QwtPlotCurve *>(*it);
   show_cursor(true );
 }
-void picker::shift_point_cursor(bool up    )
+void plot_interactor::shift_point_cursor(bool up    )
 {
   if (!selected_curve_)
     return;
@@ -378,11 +378,11 @@ void picker::shift_point_cursor(bool up    )
   }
 }
   
-      QwtPlot* picker::plot()
+      QwtPlot* plot_interactor::plot()
 {
   return qobject_cast<QwtPlot*>(parent());
 }
-const QwtPlot* picker::plot() const
+const QwtPlot* plot_interactor::plot() const
 {
   return qobject_cast<const QwtPlot *>(parent());
 }

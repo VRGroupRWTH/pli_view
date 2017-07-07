@@ -6,7 +6,7 @@
 #include <qwt/qwt_plot_histogram.h>
 #include <qwt/qwt_symbol.h>
 
-#include <pli_vis/ui/utility/picker.hpp>
+#include <pli_vis/ui/utility/plot_interactor.hpp>
 
 namespace pli
 {
@@ -61,7 +61,7 @@ transfer_function_editor::transfer_function_editor(QWidget* parent) : QwtPlot(pa
   curves_[3]->setPen   (Qt::black);
   curves_[3]->setSymbol(new QwtSymbol(QwtSymbol::Ellipse, QBrush(Qt::black), QPen(Qt::black, 1), QSize(4, 4)));
 
-  auto point_picker = new picker(this);
+  auto point_picker = new plot_interactor(this);
   connect(point_picker, SIGNAL(on_change()), this, SIGNAL(on_change()));
 }
 

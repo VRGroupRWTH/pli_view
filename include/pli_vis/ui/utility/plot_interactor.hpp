@@ -11,12 +11,12 @@ class QwtPlotCurve;
 
 namespace pli
 {
-class picker : public QObject
+class plot_interactor : public QObject
 {
   Q_OBJECT
 
 public:
-  picker(QwtPlot* plot);
+  plot_interactor(QwtPlot* plot);
 
   virtual bool eventFilter(QObject* sender, QEvent* event);
   virtual bool event      (QEvent* event);

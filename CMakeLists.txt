@@ -175,7 +175,7 @@ set(PROJECT_SOURCES
   include/pli_vis/ui/plugins/selector_plugin.hpp
   include/pli_vis/ui/plugins/tractography_plugin.hpp
   include/pli_vis/ui/plugins/volume_rendering_plugin.hpp
-  include/pli_vis/ui/utility/picker.hpp
+  include/pli_vis/ui/utility/plot_interactor.hpp
   include/pli_vis/ui/widgets/overview_image.hpp
   include/pli_vis/ui/widgets/selection_square.hpp
   include/pli_vis/ui/widgets/transfer_function_editor.hpp
@@ -313,7 +313,7 @@ set(PROJECT_SOURCES
   source/ui/plugins/selector_plugin.cpp
   source/ui/plugins/tractography_plugin.cpp
   source/ui/plugins/volume_rendering_plugin.cpp
-  source/ui/utility/picker.cpp
+  source/ui/utility/plot_interactor.cpp
   source/ui/widgets/overview_image.cpp
   source/ui/widgets/selection_square.cpp
   source/ui/widgets/transfer_function_editor.cpp
