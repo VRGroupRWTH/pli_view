@@ -5,7 +5,7 @@
 
 #include <boost/multi_array.hpp>
 
-#include <attributes/renderable.hpp>
+#include <aspects/renderable.hpp>
 #include <opengl/all.hpp>
 
 namespace pli
