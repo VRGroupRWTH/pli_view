@@ -74,7 +74,7 @@ void scalar_plugin::upload()
     return;
   }
 
-  size = {size[0] / stride[0], size[1] / stride[1], size[2] / stride[2]};
+  size = {size[0] / stride[0], size[1] / stride[1], 1};
 
   owner_->viewer->set_wait_spinner_enabled(true);
   selector->setEnabled(false);
