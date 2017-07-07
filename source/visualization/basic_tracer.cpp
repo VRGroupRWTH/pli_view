@@ -1,8 +1,8 @@
 #include <pli_vis/visualization/basic_tracer.hpp>
 
 #include <pli_vis/visualization/camera.hpp>
-#include <shaders/vector_field.vert.glsl>
-#include <shaders/vector_field.frag.glsl>
+#include <shaders/simple_color.vert.glsl>
+#include <shaders/simple_color.frag.glsl>
 
 namespace pli
 {
@@ -27,8 +27,8 @@ void basic_tracer::initialize()
   color_buffer_  .reset(new gl::array_buffer);
   index_buffer_  .reset(new gl::index_buffer);
 
-  shader_program_->attach_shader(gl::vertex_shader  (shaders::vector_field_vert));
-  shader_program_->attach_shader(gl::fragment_shader(shaders::vector_field_frag));
+  shader_program_->attach_shader(gl::vertex_shader  (shaders::simple_color_vert));
+  shader_program_->attach_shader(gl::fragment_shader(shaders::simple_color_frag));
   shader_program_->link();
   
   shader_program_->bind();

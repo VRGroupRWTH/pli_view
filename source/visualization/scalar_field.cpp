@@ -2,8 +2,8 @@
 
 #include <pli_vis/cuda/sh/vector_ops.h>
 #include <pli_vis/visualization/camera.hpp>
-#include <shaders/scalar_field.vert.glsl>
-#include <shaders/scalar_field.frag.glsl>
+#include <shaders/simple_texture.vert.glsl>
+#include <shaders/simple_texture.frag.glsl>
 
 namespace pli
 {
@@ -15,8 +15,8 @@ void scalar_field::initialize()
   texcoord_buffer_.reset(new gl::array_buffer);
   texture_        .reset(new gl::texture_2d  );
 
-  shader_program_ ->attach_shader(gl::vertex_shader  (shaders::scalar_field_vert));
-  shader_program_ ->attach_shader(gl::fragment_shader(shaders::scalar_field_frag));
+  shader_program_ ->attach_shader(gl::vertex_shader  (shaders::simple_texture_vert));
+  shader_program_ ->attach_shader(gl::fragment_shader(shaders::simple_texture_frag));
   shader_program_ ->link();
   
   shader_program_ ->bind();

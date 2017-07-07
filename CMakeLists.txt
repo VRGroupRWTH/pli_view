@@ -196,12 +196,10 @@ set(PROJECT_SOURCES
   include/pli_vis/visualization/vector_field.hpp
   include/pli_vis/visualization/volume_renderer.hpp
   
-  shaders/odf_field.frag.glsl
-  shaders/odf_field.vert.glsl
-  shaders/scalar_field.frag.glsl
-  shaders/scalar_field.vert.glsl
-  shaders/vector_field.frag.glsl
-  shaders/vector_field.vert.glsl
+  shaders/simple_color.frag.glsl
+  shaders/simple_color.vert.glsl
+  shaders/simple_texture.frag.glsl
+  shaders/simple_texture.vert.glsl
   shaders/volume_renderer_prepass.frag.glsl
   shaders/volume_renderer_prepass.vert.glsl
   shaders/volume_renderer.frag.glsl

@@ -2,8 +2,8 @@
 
 #include <pli_vis/cuda/odf_field.h>
 #include <pli_vis/visualization/camera.hpp>
-#include <shaders/odf_field.vert.glsl>
-#include <shaders/odf_field.frag.glsl>
+#include <shaders/simple_color.vert.glsl>
+#include <shaders/simple_color.frag.glsl>
 
 namespace pli
 {
@@ -15,8 +15,8 @@ void odf_field::initialize()
   color_buffer_  .reset(new gl::array_buffer);
   index_buffer_  .reset(new gl::index_buffer);
 
-  shader_program_->attach_shader(gl::vertex_shader  (shaders::odf_field_vert));
-  shader_program_->attach_shader(gl::fragment_shader(shaders::odf_field_frag));
+  shader_program_->attach_shader(gl::vertex_shader  (shaders::simple_color_vert));
+  shader_program_->attach_shader(gl::fragment_shader(shaders::simple_color_frag));
   shader_program_->link();
   
   shader_program_->bind();

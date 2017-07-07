@@ -5,7 +5,7 @@
 
 namespace shaders
 {
-static std::string scalar_field_frag = R"(\
+static std::string simple_texture_frag = R"(\
 #version 400
 
 uniform sampler2D texture_unit  ;
