@@ -10,7 +10,7 @@
 
 namespace pli
 {
-class basic_tracer : public renderable
+class streamline_tracer : public renderable
 {
 public:
   void set_data(const std::vector<float3>& points, const std::vector<float4>& colors);

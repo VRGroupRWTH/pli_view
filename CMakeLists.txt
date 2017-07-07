@@ -188,10 +188,10 @@ set(PROJECT_SOURCES
   include/pli_vis/visualization/interactors/first_person_interactor.hpp
   include/pli_vis/visualization/interactors/orbit_interactor.hpp
   include/pli_vis/visualization/interactors/simple_interactor.hpp
-  include/pli_vis/visualization/basic_tracer.hpp
   include/pli_vis/visualization/camera.hpp
   include/pli_vis/visualization/odf_field.hpp
   include/pli_vis/visualization/scalar_field.hpp
+  include/pli_vis/visualization/streamline_tracer.hpp
   include/pli_vis/visualization/transform.hpp
   include/pli_vis/visualization/vector_field.hpp
   include/pli_vis/visualization/volume_renderer.hpp
@@ -324,10 +324,10 @@ set(PROJECT_SOURCES
   source/visualization/interactors/first_person_interactor.cpp
   source/visualization/interactors/orbit_interactor.cpp
   source/visualization/interactors/simple_interactor.cpp
-  source/visualization/basic_tracer.cpp
   source/visualization/camera.cpp
   source/visualization/odf_field.cpp
   source/visualization/scalar_field.cpp
+  source/visualization/streamline_tracer.cpp
   source/visualization/transform.cpp
   source/visualization/vector_field.cpp
   source/visualization/volume_renderer.cpp

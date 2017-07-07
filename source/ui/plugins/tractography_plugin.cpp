@@ -32,7 +32,7 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
   connect(checkbox_enabled          , &QCheckBox::stateChanged    , [&] (bool state)
   {
     logger_      ->info(std::string(state ? "Enabled." : "Disabled."));
-    basic_tracer_->set_active(state);
+    streamline_tracer_->set_active(state);
   });
   connect(slider_x                  , &QSlider::valueChanged      , [&]
   {
@@ -86,7 +86,7 @@ void tractography_plugin::start()
 {
   set_sink(std::make_shared<qt_text_browser_sink>(owner_->console));
 
-  basic_tracer_ = owner_->viewer->add_renderable<basic_tracer>();
+  streamline_tracer_ = owner_->viewer->add_renderable<streamline_tracer>();
 
   logger_->info(std::string("Start successful."));
 }
@@ -182,7 +182,7 @@ void tractography_plugin::trace()
   if (unit_vectors.is_initialized() && unit_vectors.get().num_elements() > 0)
   {
     logger_->info(std::string("Trace successful."));
-    basic_tracer_->set_data(points, colors);
+    streamline_tracer_->set_data(points, colors);
   }
   else
   {
