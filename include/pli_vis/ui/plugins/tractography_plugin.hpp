@@ -5,7 +5,7 @@
 
 #include <pli_vis/aspects/loggable.hpp>
 #include <pli_vis/ui/plugin.hpp>
-#include <pli_vis/visualization/streamline_tracer.hpp>
+#include <pli_vis/visualization/streamline_renderer.hpp>
 
 #include <ui_tractography_toolbox.h>
 
@@ -20,7 +20,7 @@ public:
 private:
   void trace ();
 
-  streamline_tracer* streamline_tracer_;
+  streamline_renderer* streamline_renderer_;
   std::future<void>  future_;
 };
 }

@@ -1,4 +1,4 @@
-#include <pli_vis/visualization/streamline_tracer.hpp>
+#include <pli_vis/visualization/streamline_renderer.hpp>
 
 #include <pli_vis/visualization/camera.hpp>
 #include <shaders/simple_color.vert.glsl>
@@ -6,7 +6,7 @@
 
 namespace pli
 {
-void streamline_tracer::set_data(const std::vector<float3>& points, const std::vector<float4>& colors)
+void streamline_renderer::set_data(const std::vector<float3>& points, const std::vector<float4>& colors)
 {
   draw_count_ = points.size();
   
@@ -19,7 +19,7 @@ void streamline_tracer::set_data(const std::vector<float3>& points, const std::v
   color_buffer_ ->unbind  ();
 }
 
-void streamline_tracer::initialize()
+void streamline_renderer::initialize()
 {
   shader_program_.reset(new gl::program     );
   vertex_array_  .reset(new gl::vertex_array);
@@ -47,7 +47,7 @@ void streamline_tracer::initialize()
   vertex_array_  ->unbind();
   shader_program_->unbind();
 }
-void streamline_tracer::render    (const camera* camera)
+void streamline_renderer::render    (const camera* camera)
 {
   shader_program_->bind();
   vertex_array_  ->bind();
