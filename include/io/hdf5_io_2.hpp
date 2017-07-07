@@ -73,7 +73,7 @@ private:
     boost::multi_array<float, 3> misordered_data;
     file_
       .getDataSet(dataset_path)
-      .select    ({offset[2], offset[0], offset[1]}, {size[2], size[0], size[1]}, std::vector<std::size_t>{stride[0], stride[1], stride[2]})
+      .select    ({offset[2], offset[0], offset[1]}, {size[2], size[0], size[1]}, std::vector<std::size_t>{stride[2], stride[0], stride[1]})
       .read      (misordered_data);
 
     // Convert ZXY to XYZ.

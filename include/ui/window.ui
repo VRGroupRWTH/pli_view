@@ -195,7 +195,7 @@
           <x>0</x>
           <y>0</y>
           <width>117</width>
-          <height>406</height>
+          <height>385</height>
          </rect>
         </property>
         <property name="font">
@@ -213,8 +213,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>28</height>
+          <width>117</width>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
@@ -226,8 +226,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>28</height>
+          <width>117</width>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
@@ -239,8 +239,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>28</height>
+          <width>117</width>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
@@ -252,8 +252,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>28</height>
+          <width>117</width>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
@@ -266,8 +266,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>28</height>
+          <width>117</width>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
@@ -280,12 +280,25 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>28</height>
+          <width>117</width>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
          <string>Tractography</string>
+        </attribute>
+       </widget>
+       <widget class="pli::volume_rendering_plugin" name="plugin_volume_rendering">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>117</width>
+          <height>385</height>
+         </rect>
+        </property>
+        <attribute name="label">
+         <string>Volume Rendering</string>
         </attribute>
        </widget>
       </widget>
@@ -414,6 +427,12 @@
    <class>pli::selector_plugin</class>
    <extends>QWidget</extends>
    <header location="global">ui/plugins/selector_plugin.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>pli::volume_rendering_plugin</class>
+   <extends>QWidget</extends>
+   <header location="global">ui/plugins/volume_rendering_plugin.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

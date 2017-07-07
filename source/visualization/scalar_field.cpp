@@ -1,7 +1,7 @@
 #include /* implements */ <visualization/scalar_field.hpp>
 
 #include <math/camera.hpp>
-#include <sh/vector_ops.h>
+#include <cuda/sh/vector_ops.h>
 #include <shaders/scalar_field.vert.glsl>
 #include <shaders/scalar_field.frag.glsl>
 
@@ -57,6 +57,7 @@ void scalar_field::render    (const camera* camera)
   glEnable       (GL_POLYGON_OFFSET_FILL);
   glPolygonOffset(1.0, 10.0);
   glDrawArrays   (GL_TRIANGLES, 0, GLsizei(draw_count_));
+  glPolygonOffset(1.0, 0.0);
   glDisable      (GL_POLYGON_OFFSET_FILL);
 
   texture_       ->unbind();

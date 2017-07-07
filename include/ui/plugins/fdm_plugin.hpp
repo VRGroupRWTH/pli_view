@@ -7,7 +7,7 @@
 
 #include <boost/multi_array.hpp>
 
-#include <attributes/loggable.hpp>
+#include <aspects/loggable.hpp>
 #include <ui/plugins/plugin.hpp>
 #include <ui_fdm_toolbox.h>
 

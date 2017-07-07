@@ -1,7 +1,7 @@
 #ifndef PLI_VIS_INTERACTOR_PLUGIN_HPP_
 #define PLI_VIS_INTERACTOR_PLUGIN_HPP_
 
-#include <attributes/loggable.hpp>
+#include <aspects/loggable.hpp>
 #include <ui/plugins/plugin.hpp>
 #include <ui_interactor_toolbox.h>
 

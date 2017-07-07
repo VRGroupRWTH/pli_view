@@ -3,7 +3,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-#include <sh/convert.h>
+#include <cuda/sh/convert.h>
 #include <ui/plugins/data_plugin.hpp>
 #include <ui/plugins/selector_plugin.hpp>
 #include <ui/window.hpp>

@@ -7,7 +7,7 @@
 
 #include <vector_types.h>
 
-#include <attributes/renderable.hpp>
+#include <aspects/renderable.hpp>
 #include <opengl/all.hpp>
 
 namespace pli

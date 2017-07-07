@@ -7,12 +7,11 @@
 #include <thrust/device_vector.h>
 #include <thrust/extrema.h>
 
-#include <sh/cush.h>
-#include <sh/vector_ops.h>
-
 #include <cuda/spherical_histogram.h>
-#include <sh/launch.h>
-#include <sh/spherical_harmonics.h>
+#include <cuda/sh/convert.h>
+#include <cuda/sh/launch.h>
+#include <cuda/sh/spherical_harmonics.h>
+#include <cuda/sh/vector_ops.h>
 
 namespace pli
 {

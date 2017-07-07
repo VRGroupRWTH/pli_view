@@ -8,7 +8,7 @@
 #include <device_launch_parameters.h>
 #include <vector_types.h>
 
-#include <sh/vector_ops.h>
+#include <cuda/sh/vector_ops.h>
 
 namespace pli
 {
