@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>fdm_toolbox</class>
- <widget class="QWidget" name="fdm_toolbox">
+ <class>odf_toolbox</class>
+ <widget class="QWidget" name="odf_toolbox">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Fiber Distribution Map Toolbox</string>
+   <string>Orientation Distribution Function Toolbox</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="1">

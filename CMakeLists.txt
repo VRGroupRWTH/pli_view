@@ -169,8 +169,8 @@ set(PROJECT_SOURCES
   include/pli_vis/third_party/tangent-base/tracer_base.hpp
   include/pli_vis/ui/plugins/data_plugin.hpp
   include/pli_vis/ui/plugins/fom_plugin.hpp
-  include/pli_vis/ui/plugins/fdm_plugin.hpp
   include/pli_vis/ui/plugins/interactor_plugin.hpp
+  include/pli_vis/ui/plugins/odf_plugin.hpp
   include/pli_vis/ui/plugins/scalar_plugin.hpp
   include/pli_vis/ui/plugins/selector_plugin.hpp
   include/pli_vis/ui/plugins/tractography_plugin.hpp
@@ -307,8 +307,8 @@ set(PROJECT_SOURCES
   source/third_party/qxt/QxtSpanSlider.cpp
   source/ui/plugins/data_plugin.cpp
   source/ui/plugins/fom_plugin.cpp
-  source/ui/plugins/fdm_plugin.cpp
   source/ui/plugins/interactor_plugin.cpp
+  source/ui/plugins/odf_plugin.cpp
   source/ui/plugins/scalar_plugin.cpp
   source/ui/plugins/selector_plugin.cpp
   source/ui/plugins/tractography_plugin.cpp

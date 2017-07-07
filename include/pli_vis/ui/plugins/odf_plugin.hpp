@@ -9,16 +9,16 @@
 #include <pli_vis/aspects/loggable.hpp>
 #include <pli_vis/ui/plugin.hpp>
 
-#include <ui_fdm_toolbox.h>
+#include <ui_odf_toolbox.h>
 
 namespace pli
 {
 class odf_field;
 
-class fdm_plugin : public plugin, public loggable<fdm_plugin>, public Ui_fdm_toolbox
+class odf_plugin : public plugin, public loggable<odf_plugin>, public Ui_odf_toolbox
 {
 public:
-  fdm_plugin(QWidget* parent = nullptr);
+  odf_plugin(QWidget* parent = nullptr);
   void start  () override;
   void destroy() override;
 

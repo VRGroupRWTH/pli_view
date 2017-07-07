@@ -1,4 +1,4 @@
-#include <pli_vis/ui/plugins/fdm_plugin.hpp>
+#include <pli_vis/ui/plugins/odf_plugin.hpp>
 
 #include <limits>
 #include <string>
@@ -16,7 +16,7 @@
 
 namespace pli
 {
-fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
+odf_plugin::odf_plugin(QWidget* parent) : plugin(parent)
 {
   setupUi(this);
   
@@ -178,7 +178,7 @@ fdm_plugin::fdm_plugin(QWidget* parent) : plugin(parent)
   });
 }
 
-void fdm_plugin::start    ()
+void odf_plugin::start    ()
 {
   set_sink(std::make_shared<qt_text_browser_sink>(owner_->console));
 
@@ -204,14 +204,14 @@ void fdm_plugin::start    ()
 
   logger_->info(std::string("Start successful."));
 }
-void fdm_plugin::destroy()
+void odf_plugin::destroy()
 {
   logger_->info(std::string("Destroying cusolver and cublas."));
   cusolverDnDestroy(cusolver_);
   cublasDestroy    (cublas_  );
 }
 
-void fdm_plugin::calculate    ()
+void odf_plugin::calculate    ()
 {
   logger_->info(std::string("Updating viewer..."));
   
@@ -342,7 +342,7 @@ void fdm_plugin::calculate    ()
 
   logger_->info(std::string("Update successful."));
 }
-void fdm_plugin::extract_peaks()
+void odf_plugin::extract_peaks()
 {
   logger_->info(std::string("Extracting peaks..."));
 
@@ -370,7 +370,7 @@ void fdm_plugin::extract_peaks()
   logger_->info(std::string("Extraction successful."));
 }
 
-void fdm_plugin::set_visible_layers() const
+void odf_plugin::set_visible_layers() const
 {
   odf_field_->set_visible_layers({
     checkbox_depth_0->isChecked(),

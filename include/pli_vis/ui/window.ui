@@ -181,7 +181,7 @@
         <number>2</number>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>5</number>
        </property>
        <property name="tabSpacing">
         <number>0</number>
@@ -213,8 +213,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>28</height>
+          <width>117</width>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
@@ -226,8 +226,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>28</height>
+          <width>117</width>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
@@ -239,8 +239,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>28</height>
+          <width>117</width>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
@@ -252,8 +252,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>28</height>
+          <width>117</width>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
@@ -261,17 +261,17 @@
         </attribute>
         <layout class="QGridLayout" name="grid_layout_fom"/>
        </widget>
-       <widget class="pli::fdm_plugin" name="plugin_fdm">
+       <widget class="pli::odf_plugin" name="plugin_odf">
         <property name="geometry">
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>28</height>
+          <width>117</width>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
-         <string>Fiber Distribution Maps</string>
+         <string>ODF Maps</string>
         </attribute>
         <layout class="QGridLayout" name="grid_layout_fdm"/>
        </widget>
@@ -280,8 +280,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>28</height>
+          <width>117</width>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
@@ -293,8 +293,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>28</height>
+          <width>117</width>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
@@ -394,9 +394,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>pli::fdm_plugin</class>
+   <class>pli::odf_plugin</class>
    <extends>QWidget</extends>
-   <header location="global">pli_vis/ui/plugins/fdm_plugin.hpp</header>
+   <header location="global">pli_vis/ui/plugins/odf_plugin.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
