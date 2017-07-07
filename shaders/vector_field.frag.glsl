@@ -5,7 +5,7 @@
 
 namespace shaders
 {
-std::string vector_field_frag = R"(\
+static std::string vector_field_frag = R"(\
 #version 400
 
 in  vec4 vert_color;

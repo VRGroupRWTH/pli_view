@@ -1,0 +1,74 @@
+#include /* implements */ <visualization/basic_tracer.hpp>
+
+#include <math/camera.hpp>
+#include <shaders/vector_field.vert.glsl>
+#include <shaders/vector_field.frag.glsl>
+
+namespace pli
+{
+void basic_tracer::set_data(const std::vector<float3>& points, const std::vector<float4>& colors)
+{
+  draw_count_ = points.size();
+  
+  vertex_buffer_->bind    ();
+  vertex_buffer_->set_data(draw_count_ * sizeof(float3), points.data());
+  vertex_buffer_->unbind  ();
+  
+  color_buffer_ ->bind    ();
+  color_buffer_ ->set_data(draw_count_ * sizeof(float4), colors.data());
+  color_buffer_ ->unbind  ();
+}
+
+void basic_tracer::initialize()
+{
+  shader_program_.reset(new gl::program     );
+  vertex_array_  .reset(new gl::vertex_array);
+  vertex_buffer_ .reset(new gl::array_buffer);
+  color_buffer_  .reset(new gl::array_buffer);
+  index_buffer_  .reset(new gl::index_buffer);
+
+  shader_program_->attach_shader(gl::vertex_shader  (shaders::vector_field_vert));
+  shader_program_->attach_shader(gl::fragment_shader(shaders::vector_field_frag));
+  shader_program_->link();
+  
+  shader_program_->bind();
+  vertex_array_  ->bind();
+
+  vertex_buffer_ ->bind();
+  shader_program_->set_attribute_buffer  ("vertex", 3, GL_FLOAT);
+  shader_program_->enable_attribute_array("vertex");
+  vertex_buffer_ ->unbind();
+
+  color_buffer_  ->bind();
+  shader_program_->set_attribute_buffer  ("color" , 4, GL_FLOAT);
+  shader_program_->enable_attribute_array("color");
+  color_buffer_  ->unbind();
+
+  vertex_array_  ->unbind();
+  shader_program_->unbind();
+}
+void basic_tracer::render    (const camera* camera)
+{
+  shader_program_->bind();
+  vertex_array_  ->bind();
+  index_buffer_  ->bind();
+
+  shader_program_->set_uniform("projection", camera->projection_matrix      ());
+  shader_program_->set_uniform("view"      , camera->inverse_absolute_matrix());
+  
+  glEnable    (GL_LINE_SMOOTH);
+  glHint      (GL_LINE_SMOOTH_HINT, GL_NICEST);
+
+  glEnable    (GL_BLEND);
+  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  glDrawArrays(GL_LINES, 0, GLsizei(draw_count_));
+
+  glDisable   (GL_BLEND);
+  glDisable   (GL_LINE_SMOOTH);
+
+  index_buffer_  ->unbind();
+  vertex_array_  ->unbind();
+  shader_program_->unbind();
+}
+}
