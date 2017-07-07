@@ -7,9 +7,9 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_plot_glcanvas.h"
-#include "third_party/qwt/qwt_plot.h"
-#include "third_party/qwt/qwt_painter.h"
+#include "qwt/qwt_plot_glcanvas.h"
+#include "qwt/qwt_plot.h"
+#include "qwt/qwt_painter.h"
 #include <qevent.h>
 #include <qpainter.h>
 #include <qdrawutil.h>

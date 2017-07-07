@@ -7,7 +7,7 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_point_3d.h"
+#include "qwt/qwt_point_3d.h"
 
 #ifndef QT_NO_DEBUG_STREAM
 

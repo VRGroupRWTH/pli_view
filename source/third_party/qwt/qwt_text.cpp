@@ -7,9 +7,9 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_text.h"
-#include "third_party/qwt/qwt_painter.h"
-#include "third_party/qwt/qwt_text_engine.h"
+#include "qwt/qwt_text.h"
+#include "qwt/qwt_painter.h"
+#include "qwt/qwt_text_engine.h"
 #include <qmap.h>
 #include <qfont.h>
 #include <qcolor.h>

@@ -1,6 +1,6 @@
-#include /* implements */ <visualization/volume_renderer.hpp>
+#include <pli_vis/visualization/volume_renderer.hpp>
 
-#include <math/camera.hpp>
+#include <pli_vis/visualization/camera.hpp>
 #include <shaders/volume_renderer_prepass.vert.glsl>
 #include <shaders/volume_renderer_prepass.frag.glsl>
 #include <shaders/volume_renderer.vert.glsl>

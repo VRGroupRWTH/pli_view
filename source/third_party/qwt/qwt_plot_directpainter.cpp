@@ -7,11 +7,11 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_plot_directpainter.h"
-#include "third_party/qwt/qwt_scale_map.h"
-#include "third_party/qwt/qwt_plot.h"
-#include "third_party/qwt/qwt_plot_canvas.h"
-#include "third_party/qwt/qwt_plot_seriesitem.h"
+#include "qwt/qwt_plot_directpainter.h"
+#include "qwt/qwt_scale_map.h"
+#include "qwt/qwt_plot.h"
+#include "qwt/qwt_plot_canvas.h"
+#include "qwt/qwt_plot_seriesitem.h"
 #include <qpainter.h>
 #include <qevent.h>
 #include <qapplication.h>

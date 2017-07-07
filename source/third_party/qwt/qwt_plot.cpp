@@ -7,15 +7,15 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_plot.h"
-#include "third_party/qwt/qwt_plot_dict.h"
-#include "third_party/qwt/qwt_plot_layout.h"
-#include "third_party/qwt/qwt_scale_widget.h"
-#include "third_party/qwt/qwt_scale_engine.h"
-#include "third_party/qwt/qwt_text_label.h"
-#include "third_party/qwt/qwt_legend.h"
-#include "third_party/qwt/qwt_legend_data.h"
-#include "third_party/qwt/qwt_plot_canvas.h"
+#include "qwt/qwt_plot.h"
+#include "qwt/qwt_plot_dict.h"
+#include "qwt/qwt_plot_layout.h"
+#include "qwt/qwt_scale_widget.h"
+#include "qwt/qwt_scale_engine.h"
+#include "qwt/qwt_text_label.h"
+#include "qwt/qwt_legend.h"
+#include "qwt/qwt_legend_data.h"
+#include "qwt/qwt_plot_canvas.h"
 #include <qmath.h>
 #include <qpainter.h>
 #include <qpointer.h>

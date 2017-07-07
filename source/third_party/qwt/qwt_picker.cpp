@@ -7,11 +7,11 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_picker.h"
-#include "third_party/qwt/qwt_picker_machine.h"
-#include "third_party/qwt/qwt_painter.h"
-#include "third_party/qwt/qwt_math.h"
-#include "third_party/qwt/qwt_widget_overlay.h"
+#include "qwt/qwt_picker.h"
+#include "qwt/qwt_picker_machine.h"
+#include "qwt/qwt_painter.h"
+#include "qwt/qwt_math.h"
+#include "qwt/qwt_widget_overlay.h"
 #include <qapplication.h>
 #include <qevent.h>
 #include <qpainter.h>

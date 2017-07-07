@@ -7,8 +7,8 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_analog_clock.h"
-#include "third_party/qwt/qwt_round_scale_draw.h"
+#include "qwt/qwt_analog_clock.h"
+#include "qwt/qwt_round_scale_draw.h"
 #include <qmath.h>
 #include <qlocale.h>
 

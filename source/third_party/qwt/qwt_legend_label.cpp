@@ -7,12 +7,12 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_legend_label.h"
-#include "third_party/qwt/qwt_legend_data.h"
-#include "third_party/qwt/qwt_math.h"
-#include "third_party/qwt/qwt_painter.h"
-#include "third_party/qwt/qwt_symbol.h"
-#include "third_party/qwt/qwt_graphic.h"
+#include "qwt/qwt_legend_label.h"
+#include "qwt/qwt_legend_data.h"
+#include "qwt/qwt_math.h"
+#include "qwt/qwt_painter.h"
+#include "qwt/qwt_symbol.h"
+#include "qwt/qwt_graphic.h"
 #include <qpainter.h>
 #include <qdrawutil.h>
 #include <qstyle.h>

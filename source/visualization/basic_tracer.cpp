@@ -1,6 +1,6 @@
-#include /* implements */ <visualization/basic_tracer.hpp>
+#include <pli_vis/visualization/basic_tracer.hpp>
 
-#include <math/camera.hpp>
+#include <pli_vis/visualization/camera.hpp>
 #include <shaders/vector_field.vert.glsl>
 #include <shaders/vector_field.frag.glsl>
 

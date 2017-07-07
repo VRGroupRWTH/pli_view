@@ -7,9 +7,9 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_compass_rose.h"
-#include "third_party/qwt/qwt_point_polar.h"
-#include "third_party/qwt/qwt_painter.h"
+#include "qwt/qwt_compass_rose.h"
+#include "qwt/qwt_point_polar.h"
+#include "qwt/qwt_painter.h"
 #include <qpainter.h>
 
 static QPointF qwtIntersection( 

@@ -1,8 +1,8 @@
-#include /* implements */ <visualization/interactors/orbit_interactor.hpp>
+#include <pli_vis/visualization/interactors/orbit_interactor.hpp>
 
 #include <QKeyEvent>
 
-#include <math/transform.hpp>
+#include <pli_vis/visualization/transform.hpp>
 
 namespace pli
 {
@@ -37,9 +37,9 @@ void orbit_interactor::mouse_move_handler (QMouseEvent* event)
   {
     auto translation = transform_->translation();
     transform_->translate(-translation);
-    transform_->rotate   (angleAxis(radians(-look_speed_ * dx), vec3f(0.0, 0.0, 1.0)));
-    transform_->rotate   (angleAxis(radians(-look_speed_ * dy), transform_->right()));
-    transform_->translate(length(translation) * transform_->forward());
+    transform_->rotate   (glm::angleAxis(glm::radians(-look_speed_ * dx), glm::vec3(0.0, 0.0, 1.0)));
+    transform_->rotate   (glm::angleAxis(glm::radians(-look_speed_ * dy), transform_->right()));
+    transform_->translate(glm::length(translation) * transform_->forward());
   }
   if (event->buttons() & Qt::RightButton)
   {

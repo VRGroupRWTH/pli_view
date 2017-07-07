@@ -1,15 +1,15 @@
-#include /* implements */ <ui/plugins/tractography_plugin.hpp>
+#include <pli_vis/ui/plugins/tractography_plugin.hpp>
 
 #include <boost/format.hpp>
 #include <tangent-base/default_tracers.hpp>
 
-#include <cuda/sh/convert.h>
-#include <cuda/sh/vector_ops.h>
-#include <ui/plugins/data_plugin.hpp>
-#include <ui/plugins/selector_plugin.hpp>
-#include <ui/window.hpp>
-#include <utility/line_edit_utility.hpp>
-#include <utility/qt_text_browser_sink.hpp>
+#include <pli_vis/cuda/sh/convert.h>
+#include <pli_vis/cuda/sh/vector_ops.h>
+#include <pli_vis/ui/plugins/data_plugin.hpp>
+#include <pli_vis/ui/plugins/selector_plugin.hpp>
+#include <pli_vis/ui/window.hpp>
+#include <pli_vis/utility/line_edit_utility.hpp>
+#include <pli_vis/utility/qt_text_browser_sink.hpp>
 
 namespace pli
 {

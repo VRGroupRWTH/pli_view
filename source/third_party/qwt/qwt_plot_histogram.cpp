@@ -7,11 +7,11 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_plot_histogram.h"
-#include "third_party/qwt/qwt_plot.h"
-#include "third_party/qwt/qwt_painter.h"
-#include "third_party/qwt/qwt_column_symbol.h"
-#include "third_party/qwt/qwt_scale_map.h"
+#include "qwt/qwt_plot_histogram.h"
+#include "qwt/qwt_plot.h"
+#include "qwt/qwt_painter.h"
+#include "qwt/qwt_column_symbol.h"
+#include "qwt/qwt_scale_map.h"
 #include <qstring.h>
 #include <qpainter.h>
 

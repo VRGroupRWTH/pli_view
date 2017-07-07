@@ -7,8 +7,8 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_raster_data.h"
-#include "third_party/qwt/qwt_point_3d.h"
+#include "qwt/qwt_raster_data.h"
+#include "qwt/qwt_point_3d.h"
 #include <qnumeric.h>
 
 class QwtRasterData::ContourPlane

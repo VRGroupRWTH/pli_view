@@ -1,10 +1,10 @@
-#include /* implements */ <ui/plugins/interactor_plugin.hpp>
+#include <pli_vis/ui/plugins/interactor_plugin.hpp>
 
 #include <boost/format.hpp>
 
-#include <ui/window.hpp>
-#include <utility/line_edit_utility.hpp>
-#include <utility/qt_text_browser_sink.hpp>
+#include <pli_vis/ui/window.hpp>
+#include <pli_vis/utility/line_edit_utility.hpp>
+#include <pli_vis/utility/qt_text_browser_sink.hpp>
 
 namespace pli
 {

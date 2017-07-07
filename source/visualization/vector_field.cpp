@@ -1,7 +1,7 @@
-#include /* implements */ <visualization/vector_field.hpp>
+#include <pli_vis/visualization/vector_field.hpp>
 
-#include <cuda/vector_field.h>
-#include <math/camera.hpp>
+#include <pli_vis/cuda/vector_field.h>
+#include <pli_vis/visualization/camera.hpp>
 #include <shaders/vector_field.vert.glsl>
 #include <shaders/vector_field.frag.glsl>
 

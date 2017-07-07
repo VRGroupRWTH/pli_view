@@ -1,7 +1,7 @@
-#include /* implements */ <visualization/odf_field.hpp>
+#include <pli_vis/visualization/odf_field.hpp>
 
-#include <cuda/odf_field.h>
-#include <math/camera.hpp>
+#include <pli_vis/cuda/odf_field.h>
+#include <pli_vis/visualization/camera.hpp>
 #include <shaders/odf_field.vert.glsl>
 #include <shaders/odf_field.frag.glsl>
 

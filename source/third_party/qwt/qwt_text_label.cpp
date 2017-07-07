@@ -7,9 +7,9 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_text_label.h"
-#include "third_party/qwt/qwt_text.h"
-#include "third_party/qwt/qwt_painter.h"
+#include "qwt/qwt_text_label.h"
+#include "qwt/qwt_text.h"
+#include "qwt/qwt_painter.h"
 #include <qpainter.h>
 #include <qevent.h>
 #include <qmath.h>

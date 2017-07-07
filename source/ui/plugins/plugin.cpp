@@ -1,4 +1,4 @@
-#include /* implements */ <ui/plugins/plugin.hpp>
+#include <pli_vis/ui/plugins/plugin.hpp>
 
 namespace pli
 {

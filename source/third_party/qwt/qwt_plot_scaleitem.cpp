@@ -7,10 +7,10 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_plot_scaleitem.h"
-#include "third_party/qwt/qwt_plot.h"
-#include "third_party/qwt/qwt_scale_map.h"
-#include "third_party/qwt/qwt_interval.h"
+#include "qwt/qwt_plot_scaleitem.h"
+#include "qwt/qwt_plot.h"
+#include "qwt/qwt_scale_map.h"
+#include "qwt/qwt_interval.h"
 #include <qpalette.h>
 #include <qpainter.h>
 

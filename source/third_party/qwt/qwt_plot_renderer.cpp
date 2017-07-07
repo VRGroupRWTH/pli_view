@@ -7,16 +7,16 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_plot_renderer.h"
-#include "third_party/qwt/qwt_plot.h"
-#include "third_party/qwt/qwt_painter.h"
-#include "third_party/qwt/qwt_plot_layout.h"
-#include "third_party/qwt/qwt_abstract_legend.h"
-#include "third_party/qwt/qwt_scale_widget.h"
-#include "third_party/qwt/qwt_scale_engine.h"
-#include "third_party/qwt/qwt_text.h"
-#include "third_party/qwt/qwt_text_label.h"
-#include "third_party/qwt/qwt_math.h"
+#include "qwt/qwt_plot_renderer.h"
+#include "qwt/qwt_plot.h"
+#include "qwt/qwt_painter.h"
+#include "qwt/qwt_plot_layout.h"
+#include "qwt/qwt_abstract_legend.h"
+#include "qwt/qwt_scale_widget.h"
+#include "qwt/qwt_scale_engine.h"
+#include "qwt/qwt_text.h"
+#include "qwt/qwt_text_label.h"
+#include "qwt/qwt_math.h"
 #include <qpainter.h>
 #include <qpaintengine.h>
 #include <qtransform.h>

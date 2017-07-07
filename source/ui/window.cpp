@@ -1,9 +1,9 @@
-#include /* implements */ <ui/window.hpp>
+#include <pli_vis/ui/window.hpp>
 
 #include <cuda_runtime_api.h>
 
-#include <ui/plugins/plugin.hpp>
-#include <utility/qt_text_browser_sink.hpp>
+#include <pli_vis/ui/plugins/plugin.hpp>
+#include <pli_vis/utility/qt_text_browser_sink.hpp>
 
 namespace pli
 {

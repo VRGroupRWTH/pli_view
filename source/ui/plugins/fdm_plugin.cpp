@@ -1,4 +1,4 @@
-#include /* implements */ <ui/plugins/fdm_plugin.hpp>
+#include <pli_vis/ui/plugins/fdm_plugin.hpp>
 
 #include <limits>
 #include <string>
@@ -6,13 +6,13 @@
 #include <boost/format.hpp>
 #include <boost/optional.hpp>
 
-#include <cuda/odf_field.h>
-#include <ui/plugins/data_plugin.hpp>
-#include <ui/plugins/selector_plugin.hpp>
-#include <ui/window.hpp>
-#include <utility/line_edit_utility.hpp>
-#include <utility/qt_text_browser_sink.hpp>
-#include <visualization/odf_field.hpp>
+#include <pli_vis/cuda/odf_field.h>
+#include <pli_vis/ui/plugins/data_plugin.hpp>
+#include <pli_vis/ui/plugins/selector_plugin.hpp>
+#include <pli_vis/ui/window.hpp>
+#include <pli_vis/utility/line_edit_utility.hpp>
+#include <pli_vis/utility/qt_text_browser_sink.hpp>
+#include <pli_vis/visualization/odf_field.hpp>
 
 namespace pli
 {

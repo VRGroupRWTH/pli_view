@@ -1,11 +1,11 @@
-#include /* implements */ <ui/plugins/volume_rendering_plugin.hpp>
+#include <pli_vis/ui/plugins/volume_rendering_plugin.hpp>
 
 #include <boost/format.hpp>
 
-#include <ui/window.hpp>
-#include <utility/line_edit_utility.hpp>
-#include <utility/qt_text_browser_sink.hpp>
-#include <visualization/volume_renderer.hpp>
+#include <pli_vis/ui/window.hpp>
+#include <pli_vis/utility/line_edit_utility.hpp>
+#include <pli_vis/utility/qt_text_browser_sink.hpp>
+#include <pli_vis/visualization/volume_renderer.hpp>
 
 namespace pli
 {
@@ -46,9 +46,9 @@ void volume_rendering_plugin::start ()
   {
     upload();
   });
-  connect(transfer_function_widget             , &transfer_function_widget::on_change, [&]
+  connect(transfer_function_editor             , &transfer_function_editor::on_change, [&]
   {
-    volume_renderer_->set_transfer_function(transfer_function_widget->get_function());
+    volume_renderer_->set_transfer_function(transfer_function_editor->get_function());
   });
  
   auto step_size = double(slider_step_size->value()) / slider_step_size->maximum();
@@ -56,7 +56,7 @@ void volume_rendering_plugin::start ()
   volume_renderer_ = owner_->viewer->add_renderable<volume_renderer>();
   volume_renderer_->set_active           (checkbox_enabled->isChecked());
   volume_renderer_->set_step_size        (step_size);
-  volume_renderer_->set_transfer_function(transfer_function_widget->get_function());
+  volume_renderer_->set_transfer_function(transfer_function_editor->get_function());
 
   line_edit_step_size->setText(QString::fromStdString((boost::format("%.4f") % step_size).str()));
 
@@ -117,7 +117,7 @@ void volume_rendering_plugin::upload()
   float3 cuda_spacing{spacing[0], spacing[1], spacing[2]};
   volume_renderer_->set_data(cuda_size, cuda_spacing, retardation.get().data());
 
-  transfer_function_widget->set_histogram_entries(quantified_retardation);
+  transfer_function_editor->set_histogram_entries(quantified_retardation);
 
   selector      ->setEnabled(true);
   owner_->viewer->set_wait_spinner_enabled(false);

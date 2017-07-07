@@ -7,7 +7,7 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_date.h"
+#include "qwt/qwt_date.h"
 #include <qdebug.h>
 #include <qlocale.h>
 #include <math.h>

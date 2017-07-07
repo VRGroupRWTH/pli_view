@@ -8,8 +8,9 @@ extern "C"
 
 #include <omp.h>
 #include <QApplication>
+#include <QSurfaceFormat>
 
-#include <ui/window.hpp>
+#include <pli_vis/ui/window.hpp>
 
 int main(int argc, char** argv)
 {

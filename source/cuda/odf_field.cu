@@ -1,4 +1,4 @@
-#include /* implements */ <cuda/odf_field.h>
+#include <pli_vis/cuda/odf_field.h>
 
 #include <chrono>
 #include <string>
@@ -7,11 +7,11 @@
 #include <thrust/device_vector.h>
 #include <thrust/extrema.h>
 
-#include <cuda/spherical_histogram.h>
-#include <cuda/sh/convert.h>
-#include <cuda/sh/launch.h>
-#include <cuda/sh/spherical_harmonics.h>
-#include <cuda/sh/vector_ops.h>
+#include <pli_vis/cuda/sh/convert.h>
+#include <pli_vis/cuda/sh/launch.h>
+#include <pli_vis/cuda/sh/spherical_harmonics.h>
+#include <pli_vis/cuda/sh/vector_ops.h>
+#include <pli_vis/cuda/spherical_histogram.h>
 
 namespace pli
 {
@@ -51,7 +51,7 @@ void calculate_odfs(
   auto histogram_magnitudes_ptr = raw_pointer_cast(&histogram_magnitudes[0]);
 
   status_callback("Allocating spherical harmonics basis matrix.");
-  auto coefficient_count = cush::coefficient_count(maximum_degree);
+  auto coefficient_count = pli::coefficient_count(maximum_degree);
   auto matrix_size       = histogram_bin_count * coefficient_count;
   thrust::device_vector<float> basis_matrix(matrix_size, 0.0F);
   auto basis_matrix_ptr = raw_pointer_cast(&basis_matrix[0]);
@@ -62,13 +62,13 @@ void calculate_odfs(
   auto coefficient_vectors_ptr = raw_pointer_cast(&coefficient_vectors[0]);
 
   status_callback("Generating histogram bins.");
-  create_bins<<<cush::grid_size_2d(dim3(histogram_bins.x, histogram_bins.y)), cush::block_size_2d()>>>(
+  create_bins<<<pli::grid_size_2d(dim3(histogram_bins.x, histogram_bins.y)), pli::block_size_2d()>>>(
     histogram_bins       , 
     histogram_vectors_ptr);
   cudaDeviceSynchronize();
 
   status_callback("Calculating spherical harmonics basis matrix.");
-  cush::calculate_matrix<<<cush::grid_size_2d(dim3(histogram_bin_count, coefficient_count)), cush::block_size_2d()>>>(
+  pli::calculate_matrix<<<pli::grid_size_2d(dim3(histogram_bin_count, coefficient_count)), pli::block_size_2d()>>>(
     histogram_bin_count  , 
     coefficient_count    ,
     histogram_vectors_ptr, 
@@ -204,7 +204,7 @@ void calculate_odfs(
           vectors_size.y * dimensions.y,
           vectors_size.z * dimensions.z};
 
-        accumulate<<<cush::grid_size_3d(vectors_size), cush::block_size_3d()>>>(
+        accumulate<<<pli::grid_size_3d(vectors_size), pli::block_size_3d()>>>(
           vectors_size         ,
           offset               ,
           size                 ,
@@ -264,7 +264,7 @@ void calculate_odfs(
   copy_n(unit_vectors, total_vector_count, vectors.begin());
   auto vectors_ptr = raw_pointer_cast(&vectors[0]);
   transform(vectors.begin(), vectors.end(), vectors.begin(), [] COMMON (const float3& value) {
-    return cush::to_spherical_coords(value / length(value));
+    return pli::to_spherical_coords(value / length(value));
   });
   cudaDeviceSynchronize();
 
@@ -276,7 +276,7 @@ void calculate_odfs(
   auto histogram_magnitudes_ptr = raw_pointer_cast(&histogram_magnitudes[0]);
 
   status_callback("Allocating spherical harmonics basis matrix.");
-  auto coefficient_count = cush::coefficient_count(maximum_degree);
+  auto coefficient_count = pli::coefficient_count(maximum_degree);
   auto matrix_size       = histogram_bin_count * coefficient_count;
   thrust::device_vector<float> basis_matrix(matrix_size, 0.0F);
   auto basis_matrix_ptr = raw_pointer_cast(&basis_matrix[0]);
@@ -287,13 +287,13 @@ void calculate_odfs(
   auto coefficient_vectors_ptr = raw_pointer_cast(&coefficient_vectors[0]);
 
   status_callback("Generating histogram bins.");
-  create_bins<<<cush::grid_size_2d(dim3(histogram_bins.x, histogram_bins.y)), cush::block_size_2d()>>>(
+  create_bins<<<pli::grid_size_2d(dim3(histogram_bins.x, histogram_bins.y)), pli::block_size_2d()>>>(
     histogram_bins       , 
     histogram_vectors_ptr);
   cudaDeviceSynchronize();
 
   status_callback("Calculating spherical harmonics basis matrix.");
-  cush::calculate_matrix<<<cush::grid_size_2d(dim3(histogram_bin_count, coefficient_count)), cush::block_size_2d()>>>(
+  pli::calculate_matrix<<<pli::grid_size_2d(dim3(histogram_bin_count, coefficient_count)), pli::block_size_2d()>>>(
     histogram_bin_count  , 
     coefficient_count    ,
     histogram_vectors_ptr, 
@@ -429,7 +429,7 @@ void calculate_odfs(
           vectors_size.y * dimensions.y,
           vectors_size.z * dimensions.z};
 
-        accumulate<<<cush::grid_size_3d(vectors_size), cush::block_size_3d()>>>(
+        accumulate<<<pli::grid_size_3d(vectors_size), pli::block_size_3d()>>>(
           vectors_size         ,
           offset               ,
           size                 ,
@@ -509,7 +509,7 @@ void sample_odfs(
     if (layer != max_layer)
     {
       status_callback("Calculating the layer " + std::to_string(int(layer)) + " coefficients.");
-      sample_odf_layer<<<cush::grid_size_3d(layer_dimensions), cush::block_size_3d()>>>(
+      sample_odf_layer<<<pli::grid_size_3d(layer_dimensions), pli::block_size_3d()>>>(
         layer_dimensions    ,
         layer_offset        ,
         coefficient_count   ,
@@ -533,7 +533,7 @@ void sample_odfs(
   for (auto layer = max_layer; layer >= 0; layer--)
   {
     status_callback("Sampling sums of the layer " + std::to_string(int(layer)) + " coefficients.");
-    cush::sample_sums<<<cush::grid_size_3d(layer_dimensions), cush::block_size_3d()>>>(
+    pli::sample_sums<<<pli::grid_size_3d(layer_dimensions), pli::block_size_3d()>>>(
       layer_dimensions ,
       coefficient_count,
       tessellations    ,
@@ -559,7 +559,7 @@ void sample_odfs(
     points,
     [] COMMON (const float3& point)
     {
-      return cush::to_cartesian_coords(point);
+      return pli::to_cartesian_coords(point);
     });
   cudaDeviceSynchronize();
 
@@ -689,8 +689,8 @@ __global__ void sample_odf_layer(
         for (auto k = 0; k < dimension_count - 1; k++)
         {
           auto other_offset = coefficient_count * (lower_layer_offset + (2 * z + k) + lower_layer_dimensions.z * ((2 * y + j) + lower_layer_dimensions.y * (2 * x + i)));
-          if (cush::is_zero(coefficient_count, coefficients + other_offset) ||
-            cush::l2_distance(coefficient_count, coefficients + offset, coefficients + other_offset) > cluster_threshold)
+          if (pli::is_zero(coefficient_count, coefficients + other_offset) ||
+            pli::l2_distance(coefficient_count, coefficients + offset, coefficients + other_offset) > cluster_threshold)
             is_similar = false;
         }
 

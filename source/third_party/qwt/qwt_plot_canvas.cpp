@@ -7,11 +7,11 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_plot_canvas.h"
-#include "third_party/qwt/qwt_painter.h"
-#include "third_party/qwt/qwt_null_paintdevice.h"
-#include "third_party/qwt/qwt_math.h"
-#include "third_party/qwt/qwt_plot.h"
+#include "qwt/qwt_plot_canvas.h"
+#include "qwt/qwt_painter.h"
+#include "qwt/qwt_null_paintdevice.h"
+#include "qwt/qwt_math.h"
+#include "qwt/qwt_plot.h"
 #include <qpainter.h>
 #include <qstyle.h>
 #include <qstyleoption.h>

@@ -7,9 +7,9 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_panner.h"
-#include "third_party/qwt/qwt_picker.h"
-#include "third_party/qwt/qwt_painter.h"
+#include "qwt/qwt_panner.h"
+#include "qwt/qwt_picker.h"
+#include "qwt/qwt_painter.h"
 #include <qpainter.h>
 #include <qpixmap.h>
 #include <qevent.h>

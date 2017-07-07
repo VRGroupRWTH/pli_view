@@ -7,16 +7,16 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_plot_curve.h"
-#include "third_party/qwt/qwt_point_data.h"
-#include "third_party/qwt/qwt_math.h"
-#include "third_party/qwt/qwt_clipper.h"
-#include "third_party/qwt/qwt_painter.h"
-#include "third_party/qwt/qwt_scale_map.h"
-#include "third_party/qwt/qwt_plot.h"
-#include "third_party/qwt/qwt_curve_fitter.h"
-#include "third_party/qwt/qwt_symbol.h"
-#include "third_party/qwt/qwt_point_mapper.h"
+#include "qwt/qwt_plot_curve.h"
+#include "qwt/qwt_point_data.h"
+#include "qwt/qwt_math.h"
+#include "qwt/qwt_clipper.h"
+#include "qwt/qwt_painter.h"
+#include "qwt/qwt_scale_map.h"
+#include "qwt/qwt_plot.h"
+#include "qwt/qwt_curve_fitter.h"
+#include "qwt/qwt_symbol.h"
+#include "qwt/qwt_point_mapper.h"
 #include <qpainter.h>
 #include <qpixmap.h>
 #include <qalgorithms.h>

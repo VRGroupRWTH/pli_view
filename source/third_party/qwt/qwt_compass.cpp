@@ -7,12 +7,12 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_compass.h"
-#include "third_party/qwt/qwt_compass_rose.h"
-#include "third_party/qwt/qwt_math.h"
-#include "third_party/qwt/qwt_scale_draw.h"
-#include "third_party/qwt/qwt_painter.h"
-#include "third_party/qwt/qwt_dial_needle.h"
+#include "qwt/qwt_compass.h"
+#include "qwt/qwt_compass_rose.h"
+#include "qwt/qwt_math.h"
+#include "qwt/qwt_scale_draw.h"
+#include "qwt/qwt_painter.h"
+#include "qwt/qwt_dial_needle.h"
 #include <qpainter.h>
 #include <qpixmap.h>
 #include <qevent.h>

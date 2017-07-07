@@ -7,11 +7,11 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_thermo.h"
-#include "third_party/qwt/qwt_scale_engine.h"
-#include "third_party/qwt/qwt_scale_draw.h"
-#include "third_party/qwt/qwt_scale_map.h"
-#include "third_party/qwt/qwt_color_map.h"
+#include "qwt/qwt_thermo.h"
+#include "qwt/qwt_scale_engine.h"
+#include "qwt/qwt_scale_draw.h"
+#include "qwt/qwt_scale_map.h"
+#include "qwt/qwt_color_map.h"
 #include <qpainter.h>
 #include <qevent.h>
 #include <qdrawutil.h>

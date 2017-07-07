@@ -1,12 +1,12 @@
-#include /* implements */ <ui/plugins/scalar_plugin.hpp>
+#include <pli_vis/ui/plugins/scalar_plugin.hpp>
 
 #include <boost/optional.hpp>
 
-#include <ui/plugins/data_plugin.hpp>
-#include <ui/plugins/selector_plugin.hpp>
-#include <ui/window.hpp>
-#include <utility/qt_text_browser_sink.hpp>
-#include <visualization/scalar_field.hpp>
+#include <pli_vis/ui/plugins/data_plugin.hpp>
+#include <pli_vis/ui/plugins/selector_plugin.hpp>
+#include <pli_vis/ui/window.hpp>
+#include <pli_vis/utility/qt_text_browser_sink.hpp>
+#include <pli_vis/visualization/scalar_field.hpp>
 
 namespace pli
 {

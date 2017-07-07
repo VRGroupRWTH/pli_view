@@ -7,10 +7,10 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_plot_panner.h"
-#include "third_party/qwt/qwt_scale_div.h"
-#include "third_party/qwt/qwt_plot.h"
-#include "third_party/qwt/qwt_painter.h"
+#include "qwt/qwt_plot_panner.h"
+#include "qwt/qwt_scale_div.h"
+#include "qwt/qwt_plot.h"
+#include "qwt/qwt_painter.h"
 #include <qbitmap.h>
 #include <qstyle.h>
 #include <qstyleoption.h>

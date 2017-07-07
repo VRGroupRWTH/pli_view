@@ -7,9 +7,9 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_interval_symbol.h"
-#include "third_party/qwt/qwt_painter.h"
-#include "third_party/qwt/qwt_math.h"
+#include "qwt/qwt_interval_symbol.h"
+#include "qwt/qwt_painter.h"
+#include "qwt/qwt_math.h"
 #include <qpainter.h>
 
 #if QT_VERSION < 0x040601

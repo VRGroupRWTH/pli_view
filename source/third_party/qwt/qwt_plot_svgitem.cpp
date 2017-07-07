@@ -7,9 +7,9 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_plot_svgitem.h"
-#include "third_party/qwt/qwt_scale_map.h"
-#include "third_party/qwt/qwt_painter.h"
+#include "qwt/qwt_plot_svgitem.h"
+#include "qwt/qwt_scale_map.h"
+#include "qwt/qwt_painter.h"
 #include <qpainter.h>
 
 #ifndef QT_NO_SVG

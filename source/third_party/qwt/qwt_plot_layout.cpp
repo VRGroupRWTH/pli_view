@@ -7,11 +7,11 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_plot_layout.h"
-#include "third_party/qwt/qwt_text.h"
-#include "third_party/qwt/qwt_text_label.h"
-#include "third_party/qwt/qwt_scale_widget.h"
-#include "third_party/qwt/qwt_abstract_legend.h"
+#include "qwt/qwt_plot_layout.h"
+#include "qwt/qwt_text.h"
+#include "qwt/qwt_text_label.h"
+#include "qwt/qwt_scale_widget.h"
+#include "qwt/qwt_abstract_legend.h"
 #include <qscrollbar.h>
 #include <qmath.h>
 

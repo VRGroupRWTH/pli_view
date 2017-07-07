@@ -7,8 +7,8 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_plot_abstract_barchart.h"
-#include "third_party/qwt/qwt_scale_map.h"
+#include "qwt/qwt_plot_abstract_barchart.h"
+#include "qwt/qwt_scale_map.h"
 
 static inline double qwtTransformWidth(
     const QwtScaleMap &map, double value, double width )

@@ -7,11 +7,11 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_plot_shapeitem.h"
-#include "third_party/qwt/qwt_scale_map.h"
-#include "third_party/qwt/qwt_painter.h"
-#include "third_party/qwt/qwt_curve_fitter.h"
-#include "third_party/qwt/qwt_clipper.h"
+#include "qwt/qwt_plot_shapeitem.h"
+#include "qwt/qwt_scale_map.h"
+#include "qwt/qwt_painter.h"
+#include "qwt/qwt_curve_fitter.h"
+#include "qwt/qwt_clipper.h"
 
 static QPainterPath qwtTransformPath( const QwtScaleMap &xMap,
         const QwtScaleMap &yMap, const QPainterPath &path, bool doAlign )

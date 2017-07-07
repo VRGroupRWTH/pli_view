@@ -1,11 +1,10 @@
-#include /* implements */ <cuda/vector_field.h>
+#include <pli_vis/cuda/vector_field.h>
 
 #include <chrono>
-#include <iostream>
 
 #include <thrust/device_vector.h>
 
-#include <cuda/sh/launch.h>
+#include <pli_vis/cuda/sh/launch.h>
 
 namespace pli
 {
@@ -32,7 +31,7 @@ void create_vector_field(
   cudaDeviceSynchronize();
   
   status_callback("Creating vectors.");
-  create_vector_field_internal<<<cush::grid_size_3d(dimensions), cush::block_size_3d()>>>(
+  create_vector_field_internal<<<pli::grid_size_3d(dimensions), pli::block_size_3d()>>>(
     dimensions      , 
     directions_ptr  , 
     inclinations_ptr,
@@ -66,7 +65,7 @@ void create_vector_field(
   cudaDeviceSynchronize();
   
   status_callback("Creating vectors.");
-  create_vector_field_internal<<<cush::grid_size_3d(dimensions), cush::block_size_3d()>>>(
+  create_vector_field_internal<<<pli::grid_size_3d(dimensions), pli::block_size_3d()>>>(
     dimensions      , 
     unit_vectors_ptr,
     spacing         , 
