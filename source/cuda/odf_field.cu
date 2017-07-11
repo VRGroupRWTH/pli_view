@@ -3,6 +3,8 @@
 #include <chrono>
 #include <string>
 
+#include <cuda_runtime.h>
+#include <cublas_v2.h>
 #include <cusolverDn.h>
 #include <thrust/device_vector.h>
 #include <thrust/extrema.h>
@@ -12,6 +14,16 @@
 #include <pli_vis/cuda/sh/spherical_harmonics.h>
 #include <pli_vis/cuda/sh/vector_ops.h>
 #include <pli_vis/cuda/spherical_histogram.h>
+
+#define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
+inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort = false)
+{
+  if (code != cudaSuccess)
+  {
+    fprintf(stderr, "GPUassert: %s %s %d\n", cudaGetErrorString(code), file, line);
+    if (abort) exit(code);
+  }
+}
 
 namespace pli
 {
@@ -271,9 +283,7 @@ void calculate_odfs(
   status_callback("Allocating histogram vector and magnitudes.");
   auto histogram_bin_count = histogram_bins.x * histogram_bins.y;
   thrust::device_vector<float3> histogram_vectors   (histogram_bin_count);
-  thrust::device_vector<float > histogram_magnitudes(histogram_bin_count);
   auto histogram_vectors_ptr    = raw_pointer_cast(&histogram_vectors   [0]);
-  auto histogram_magnitudes_ptr = raw_pointer_cast(&histogram_magnitudes[0]);
 
   status_callback("Allocating spherical harmonics basis matrix.");
   auto coefficient_count = pli::coefficient_count(maximum_degree);
@@ -409,55 +419,16 @@ void calculate_odfs(
   cudaDeviceSynchronize();
 
   status_callback("Accumulating histograms and projecting via V E^-1 U^T * h. This might take a while.");
-  for (unsigned x = 0; x < dimensions.x; x++)
-  {
-    for (unsigned y = 0; y < dimensions.y; y++)
-    {
-      for (unsigned z = 0; z < dimensions.z; z++)
-      {
-        auto volume_index        = z + dimensions.z * (y + dimensions.y * x);
-        auto coefficients_offset = volume_index * coefficient_count;
-
-        fill(histogram_magnitudes.begin(), histogram_magnitudes.end(), 0.0F);
-
-        uint3 offset {
-          vectors_size.x * x,
-          vectors_size.y * y,
-          vectors_size.z * z};
-        uint3 size  {
-          vectors_size.x * dimensions.x,
-          vectors_size.y * dimensions.y,
-          vectors_size.z * dimensions.z};
-
-        accumulate<<<pli::grid_size_3d(vectors_size), pli::block_size_3d()>>>(
-          vectors_size         ,
-          offset               ,
-          size                 ,
-          vectors_ptr          ,
-          histogram_bins       , 
-          histogram_vectors_ptr, 
-          histogram_magnitudes_ptr);
-
-        cublasSgemv(
-          cublas                                        ,
-          CUBLAS_OP_N                                   ,
-          coefficient_count                             ,
-          histogram_bin_count                           ,
-          &alpha                                        ,
-          V_EI_UT_ptr                                   ,
-          coefficient_count                             ,
-          histogram_magnitudes_ptr                      , 
-          1                                             ,
-          &beta                                         ,
-          coefficient_vectors_ptr  + coefficients_offset,
-          1                                             );
-
-        cudaDeviceSynchronize();
-
-        //status_callback(std::to_string(volume_index + 1) + "/" + std::to_string(voxel_count));
-      }
-    }
-  }
+  quantify_and_project<<<dimensions, dim3(1, 1, 1)>>> (
+    dimensions             ,
+    vectors_size           ,
+    vectors_ptr            ,
+    histogram_bins         ,
+    histogram_vectors_ptr  ,
+    maximum_degree         ,
+    V_EI_UT_ptr            ,
+    coefficient_vectors_ptr);
+  cudaDeviceSynchronize();
 
   status_callback("Copying coefficients to CPU.");
   cudaMemcpy(coefficients, coefficient_vectors_ptr, sizeof(float) * total_coefficient_count, cudaMemcpyDeviceToHost);
@@ -710,4 +681,82 @@ __global__ void sample_odf_layer(
         coefficients[offset + c] = 0.0;
   }
 }
+
+template<typename vector_type, typename scalar_type>
+__global__ void quantify_and_project(
+  // Input related parameters.
+        uint3          dimensions         ,
+        uint3          vectors_size       ,
+  // Quantification related parameters. 
+  const vector_type*   vectors            , 
+        uint2          histogram_bins     ,
+        vector_type*   histogram_vectors  ,
+  // Projection related parameters.     
+        unsigned       maximum_degree     ,
+  const scalar_type*   inverse_transform  ,
+        scalar_type*   coefficient_vectors)
+{
+  auto x = blockIdx.x * blockDim.x + threadIdx.x;
+  auto y = blockIdx.y * blockDim.y + threadIdx.y;
+  auto z = blockIdx.z * blockDim.z + threadIdx.z;
+
+  if (x >= dimensions.x || y >= dimensions.y || z >= dimensions.z)
+    return;
+
+  cublasHandle_t cublas;
+  cublasCreate(&cublas);
+
+  auto   histogram_bin_count  = histogram_bins.x * histogram_bins.y;
+  float* histogram_magnitudes ; cudaMalloc(&histogram_magnitudes, histogram_bin_count * sizeof(float));
+  for(auto i = 0; i < histogram_bin_count; ++i)
+    histogram_magnitudes[i] = 0.0F;
+
+  uint3 offset {
+    vectors_size.x * x,
+    vectors_size.y * y,
+    vectors_size.z * z };
+  uint3 size {
+    vectors_size.x * dimensions.x,
+    vectors_size.y * dimensions.y,
+    vectors_size.z * dimensions.z };
+
+  accumulate<<<grid_size_3d(vectors_size), block_size_3d()>>>(
+    vectors_size        ,
+    offset              ,
+    size                ,
+    vectors             ,
+    histogram_bins      , 
+    histogram_vectors   ,
+    histogram_magnitudes);
+  __syncthreads();
+  cudaDeviceSynchronize();
+  __syncthreads();
+
+  auto volume_index              = z + dimensions.z * (y + dimensions.y * x);
+  auto coefficient_count         = pli::coefficient_count(maximum_degree);
+  auto coefficient_vector_offset = volume_index * coefficient_count;
+  auto alpha                     = 1.0F;
+  auto beta                      = 0.0F;
+  cublasSgemv(
+    cublas                                         ,
+    CUBLAS_OP_N                                    ,
+    coefficient_count                              ,
+    histogram_bin_count                            ,
+    &alpha                                         ,
+    inverse_transform                              ,
+    coefficient_count                              ,
+    histogram_magnitudes                           ,
+    1                                              ,
+    &beta                                          ,
+    coefficient_vectors + coefficient_vector_offset,
+    1                                              );
+  __syncthreads();
+  cudaDeviceSynchronize();
+  __syncthreads();
+
+  cudaFree(histogram_magnitudes);
+
+  cublasDestroy(cublas);
+}
+
 }

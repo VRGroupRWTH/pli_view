@@ -21,17 +21,18 @@ INLINE COMMON dim3     block_size_3d()
 {
   return {16, 16, 4};
 }
-
+  
 INLINE COMMON unsigned grid_size_1d(unsigned target_dimension )
 {
-  return unsigned(ceil(float(target_dimension) / block_size_1d()));
+  auto block_size = block_size_1d();
+  return unsigned((target_dimension + block_size - 1) / block_size);
 }
 INLINE COMMON dim3     grid_size_2d(dim3     target_dimensions)
 {
   auto block_size = block_size_2d();
   return {
-    unsigned(ceil(float(target_dimensions.x) / block_size.x)),
-    unsigned(ceil(float(target_dimensions.y) / block_size.y)),
+    unsigned((target_dimensions.x + block_size.x - 1) / block_size.x),
+    unsigned((target_dimensions.y + block_size.y - 1) / block_size.y),
     1u
   };
 }
@@ -39,9 +40,9 @@ INLINE COMMON dim3     grid_size_3d(dim3     target_dimensions)
 {
   auto block_size = block_size_3d();
   return {
-    unsigned(ceil(float(target_dimensions.x) / block_size.x)),
-    unsigned(ceil(float(target_dimensions.y) / block_size.y)),
-    unsigned(ceil(float(target_dimensions.z) / block_size.z))
+    unsigned((target_dimensions.x + block_size.x - 1) / block_size.x),
+    unsigned((target_dimensions.y + block_size.y - 1) / block_size.y),
+    unsigned((target_dimensions.z + block_size.z - 1) / block_size.z)
   };
 }
 }

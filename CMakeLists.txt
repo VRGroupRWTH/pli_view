@@ -7,10 +7,12 @@ set_property          (GLOBAL PROPERTY USE_FOLDERS ON)
 set                   (CMAKE_CXX_VISIBILITY_PRESET hidden)
 set                   (CMAKE_VISIBILITY_INLINES_HIDDEN 1)
 set                   (CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++11 -fopenmp -lgomp")
-set                   (CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} "--expt-extended-lambda" 
-                                                          "-gencode=arch=compute_35,code=sm_35" 
-                                                          "-gencode=arch=compute_50,code=sm_50" 
-                                                          "-gencode=arch=compute_61,code=sm_61")
+set                   (CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} "--expt-extended-lambda"
+                                                          "-lcublas"
+                                                          "-lcublas_device"
+                                                          "-lcudadevrt"
+                                                         #"-gencode=arch=compute_50,code=sm_50")
+                                                          "-gencode=arch=compute_60,code=sm_60")
 
 ##################################################    Options     ##################################################
 option(BUILD_TESTS "Build tests." OFF)

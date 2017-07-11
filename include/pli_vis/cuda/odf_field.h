@@ -4,6 +4,8 @@
 #include <functional>
 #include <math.h>
 
+#include <cuda_runtime.h>
+#include <cublas_v2.h>
 #include <cusolverDn.h>
 #include <device_launch_parameters.h>
 #include <vector_types.h>
@@ -59,6 +61,20 @@ __global__ void sample_odf_layer(
   bool           is_2d             ,
   bool           clustering        ,
   float          cluster_threshold );
+
+template<typename vector_type, typename scalar_type>
+__global__ void quantify_and_project(
+  // Input related parameters.
+        uint3          dimensions         ,
+        uint3          vectors_size       ,
+  // Quantification related parameters. 
+  const vector_type*   vectors            , 
+        uint2          histogram_bins     ,
+        vector_type*   histogram_vectors  ,
+  // Projection related parameters.     
+        unsigned       maximum_degree     ,
+  const scalar_type*   inverse_transform  ,
+        scalar_type*   coefficient_vectors);
 }
 
 #endif
