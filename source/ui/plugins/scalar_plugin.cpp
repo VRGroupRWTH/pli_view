@@ -4,8 +4,8 @@
 
 #include <pli_vis/ui/plugins/data_plugin.hpp>
 #include <pli_vis/ui/plugins/selector_plugin.hpp>
+#include <pli_vis/ui/utility/text_browser_sink.hpp>
 #include <pli_vis/ui/application.hpp>
-#include <pli_vis/utility/qt_text_browser_sink.hpp>
 #include <pli_vis/visualization/scalar_field.hpp>
 
 namespace pli
@@ -43,8 +43,6 @@ scalar_plugin::scalar_plugin(QWidget* parent) : plugin(parent)
 
 void scalar_plugin::start ()
 {
-  set_sink(std::make_shared<qt_text_browser_sink>(owner_->console));
-
   connect(owner_->get_plugin<data_plugin>    (), &data_plugin    ::on_change, [&]
   {
     upload();
@@ -56,6 +54,7 @@ void scalar_plugin::start ()
   
   scalar_field_ = owner_->viewer->add_renderable<scalar_field>();
 
+  set_sink(std::make_shared<text_browser_sink>(owner_->console));
   logger_->info(std::string("Start successful."));
 }
 void scalar_plugin::upload()

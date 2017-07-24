@@ -6,13 +6,12 @@
 #include <QMainWindow>
 
 #include <pli_vis/aspects/loggable.hpp>
-#include <pli_vis/ui/plugin.hpp>
-
+#include <pli_vis/ui/plugin_base.hpp>
 #include <ui_window.h>
 
 namespace pli
 {
-class plugin;
+//class plugin_base;
 
 class application : public QMainWindow, public Ui_window, public loggable<application>
 {
@@ -32,7 +31,7 @@ public:
 private:
   void bind_actions();
 
-  std::vector<plugin*> plugins_;
+  std::vector<plugin_base*> plugins_;
 };
 }
 

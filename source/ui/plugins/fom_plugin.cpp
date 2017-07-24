@@ -7,9 +7,9 @@
 
 #include <pli_vis/ui/plugins/data_plugin.hpp>
 #include <pli_vis/ui/plugins/selector_plugin.hpp>
+#include <pli_vis/ui/utility/line_edit.hpp>
+#include <pli_vis/ui/utility/text_browser_sink.hpp>
 #include <pli_vis/ui/application.hpp>
-#include <pli_vis/utility/line_edit_utility.hpp>
-#include <pli_vis/utility/qt_text_browser_sink.hpp>
 #include <pli_vis/visualization/vector_field.hpp>
 
 namespace pli
@@ -36,7 +36,7 @@ fom_plugin::fom_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_fiber_scale, &QLineEdit::editingFinished   , [&]
   {
-    auto scale = line_edit_utility::get_text<double>(line_edit_fiber_scale);
+    auto scale = line_edit::get_text<double>(line_edit_fiber_scale);
     slider_fiber_scale->setValue(scale * slider_fiber_scale->maximum());
     upload();
   });
@@ -44,8 +44,6 @@ fom_plugin::fom_plugin(QWidget* parent) : plugin(parent)
 
 void fom_plugin::start ()
 {
-  set_sink(std::make_shared<qt_text_browser_sink>(owner_->console));
-
   connect(owner_->get_plugin<data_plugin>    (), &data_plugin::on_change    , [&]
   {
     upload();
@@ -57,6 +55,7 @@ void fom_plugin::start ()
   
   vector_field_ = owner_->viewer->add_renderable<vector_field>();
 
+  set_sink(std::make_shared<text_browser_sink>(owner_->console));
   logger_->info(std::string("Start successful."));
 }
 void fom_plugin::upload()
@@ -68,7 +67,7 @@ void fom_plugin::upload()
   auto offset   = selector->selection_offset();
   auto size     = selector->selection_size  ();
   auto stride   = selector->selection_stride();
-  auto scale    = line_edit_utility::get_text<float>(line_edit_fiber_scale);
+  auto scale    = line_edit::get_text<float>(line_edit_fiber_scale);
 
   if  (io == nullptr || size[0] == 0 || size[1] == 0 || size[2] == 0)
   {

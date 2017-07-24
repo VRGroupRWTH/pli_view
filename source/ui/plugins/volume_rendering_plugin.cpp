@@ -13,31 +13,33 @@ volume_rendering_plugin::volume_rendering_plugin(QWidget* parent) : plugin(paren
 {
   setupUi(this);
 
-  connect(checkbox_enabled   , &QCheckBox::stateChanged   , [&](bool state)
+  connect(checkbox_enabled        , &QCheckBox::stateChanged            , [&](bool state)
   {
     logger_->info(std::string(state ? "Enabled." : "Disabled."));
     volume_renderer_->set_active(state);
   });
-  connect(slider_step_size   , &QSlider::valueChanged     , [&]
+  connect(slider_step_size        , &QSlider::valueChanged              , [&]
   {
     auto step_size = float(slider_step_size->value()) / slider_step_size->maximum();
     line_edit_step_size->setText(QString::fromStdString((boost::format("%.4f") % step_size).str()));
   });
-  connect(slider_step_size   , &QSlider::sliderReleased   , [&]
+  connect(slider_step_size        , &QSlider::sliderReleased            , [&]
   {
     volume_renderer_->set_step_size(line_edit::get_text<double>(line_edit_step_size));
   });
-  connect(line_edit_step_size, &QLineEdit::editingFinished, [&]
+  connect(line_edit_step_size     , &QLineEdit::editingFinished         , [&]
   {
     auto step_size = line_edit::get_text<double>(line_edit_step_size);
     slider_step_size->setValue(step_size * slider_step_size->maximum());
     volume_renderer_->set_step_size(step_size);
   });
+  connect(transfer_function_editor, &transfer_function_editor::on_change, [&]
+  {
+    volume_renderer_->set_transfer_function(transfer_function_editor->get_function());
+  });
 }
 void volume_rendering_plugin::start ()
 {
-  set_sink(std::make_shared<text_browser_sink>(owner_->console));
-
   connect(owner_->get_plugin<data_plugin>    (), &data_plugin::on_change             , [&]
   {
     upload();
@@ -46,11 +48,7 @@ void volume_rendering_plugin::start ()
   {
     upload();
   });
-  connect(transfer_function_editor             , &transfer_function_editor::on_change, [&]
-  {
-    volume_renderer_->set_transfer_function(transfer_function_editor->get_function());
-  });
- 
+  
   auto step_size = double(slider_step_size->value()) / slider_step_size->maximum();
 
   volume_renderer_ = owner_->viewer->add_renderable<volume_renderer>();
@@ -60,6 +58,7 @@ void volume_rendering_plugin::start ()
 
   line_edit_step_size->setText(QString::fromStdString((boost::format("%.4f") % step_size).str()));
 
+  set_sink(std::make_shared<text_browser_sink>(owner_->console));
   logger_->info(std::string("Start successful."));
 }
 void volume_rendering_plugin::upload()

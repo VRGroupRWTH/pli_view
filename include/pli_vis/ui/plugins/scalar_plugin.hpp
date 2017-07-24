@@ -3,19 +3,18 @@
 
 #include <future>
 
-#include <pli_vis/aspects/loggable.hpp>
 #include <pli_vis/ui/plugin.hpp>
-
 #include <ui_scalar_toolbox.h>
 
 namespace pli
 {
 class scalar_field;
 
-class scalar_plugin : public plugin, public loggable<scalar_plugin>, public Ui_scalar_toolbox
+class scalar_plugin : public plugin<scalar_plugin, Ui_scalar_toolbox>
 {
 public:
-  scalar_plugin(QWidget* parent = nullptr);
+  explicit scalar_plugin(QWidget* parent = nullptr);
+
   void start () override;
 
 private:

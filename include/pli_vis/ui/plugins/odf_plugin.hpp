@@ -6,19 +6,18 @@
 #include <cusolverDn.h>
 #include <boost/multi_array.hpp>
 
-#include <pli_vis/aspects/loggable.hpp>
 #include <pli_vis/ui/plugin.hpp>
-
 #include <ui_odf_toolbox.h>
 
 namespace pli
 {
 class odf_field;
 
-class odf_plugin : public plugin, public loggable<odf_plugin>, public Ui_odf_toolbox
+class odf_plugin : public plugin<odf_plugin, Ui_odf_toolbox>
 {
 public:
-  odf_plugin(QWidget* parent = nullptr);
+  explicit odf_plugin(QWidget* parent = nullptr);
+
   void start  () override;
   void destroy() override;
 

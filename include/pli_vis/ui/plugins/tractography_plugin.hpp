@@ -3,25 +3,24 @@
 
 #include <future>
 
-#include <pli_vis/aspects/loggable.hpp>
 #include <pli_vis/ui/plugin.hpp>
 #include <pli_vis/visualization/streamline_renderer.hpp>
-
 #include <ui_tractography_toolbox.h>
 
 namespace pli
 {
-class tractography_plugin : public plugin, public loggable<tractography_plugin>, public Ui_tractography_toolbox
+class tractography_plugin : public plugin<tractography_plugin, Ui_tractography_toolbox>
 {
 public:
-  tractography_plugin(QWidget* parent = nullptr);
-  void start () override;
+  explicit tractography_plugin(QWidget* parent = nullptr);
+
+  void start() override;
 
 private:
-  void trace ();
+  void trace();
 
   streamline_renderer* streamline_renderer_;
-  std::future<void>  future_;
+  std::future<void>    future_;
 };
 }
 

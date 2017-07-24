@@ -3,20 +3,19 @@
 
 #include <future>
 
-#include <pli_vis/aspects/loggable.hpp>
 #include <pli_vis/ui/plugin.hpp>
-
 #include <ui_fom_toolbox.h>
 
 namespace pli
 {
 class vector_field;
 
-class fom_plugin : public plugin, public loggable<fom_plugin>, public Ui_fom_toolbox
+class fom_plugin : public plugin<fom_plugin, Ui_fom_toolbox>
 {
 public:
-  fom_plugin(QWidget* parent = nullptr);
-  void start () override;
+  explicit fom_plugin(QWidget* parent = nullptr);
+
+  void start() override;
 
 private:
   void upload();

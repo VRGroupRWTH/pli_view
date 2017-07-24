@@ -38,9 +38,10 @@ set(PROJECT_SOURCES
   include/pli_vis/cuda/odf_field.h
   include/pli_vis/cuda/spherical_histogram.h
   include/pli_vis/cuda/vector_field.h
-  include/pli_vis/io/hdf5_io.hpp
-  include/pli_vis/io/hdf5_io_2.hpp
-  include/pli_vis/io/hdf5_io_base.hpp
+  include/pli_vis/io/io.hpp
+  include/pli_vis/io/io_common_impl.hpp
+  include/pli_vis/io/io_slice_impl.hpp
+  include/pli_vis/io/io_volume_impl.hpp
   include/pli_vis/opengl/auxiliary/glm_uniforms.hpp
   include/pli_vis/opengl/all.hpp
   include/pli_vis/opengl/buffer.hpp
@@ -187,6 +188,7 @@ set(PROJECT_SOURCES
   include/pli_vis/ui/widgets/wait_spinner.hpp
   include/pli_vis/ui/application.hpp
   include/pli_vis/ui/plugin.hpp
+  include/pli_vis/ui/plugin_base.hpp
   include/pli_vis/visualization/interactors/first_person_interactor.hpp
   include/pli_vis/visualization/interactors/orbit_interactor.hpp
   include/pli_vis/visualization/interactors/simple_interactor.hpp
@@ -322,7 +324,6 @@ set(PROJECT_SOURCES
   source/ui/widgets/viewer.cpp
   source/ui/widgets/wait_spinner.cpp
   source/ui/application.cpp
-  source/ui/plugin.cpp
   source/visualization/interactors/first_person_interactor.cpp
   source/visualization/interactors/orbit_interactor.cpp
   source/visualization/interactors/simple_interactor.cpp

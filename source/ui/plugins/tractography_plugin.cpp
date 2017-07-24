@@ -7,9 +7,9 @@
 #include <pli_vis/cuda/sh/vector_ops.h>
 #include <pli_vis/ui/plugins/data_plugin.hpp>
 #include <pli_vis/ui/plugins/selector_plugin.hpp>
+#include <pli_vis/ui/utility/line_edit.hpp>
+#include <pli_vis/ui/utility/text_browser_sink.hpp>
 #include <pli_vis/ui/application.hpp>
-#include <pli_vis/utility/line_edit_utility.hpp>
-#include <pli_vis/utility/qt_text_browser_sink.hpp>
 
 namespace pli
 {
@@ -40,7 +40,7 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_x               , &QLineEdit::editingFinished , [&]
   {
-    slider_x->setValue(line_edit_utility::get_text<int>(line_edit_x));
+    slider_x->setValue(line_edit::get_text<int>(line_edit_x));
   });
   connect(slider_y                  , &QSlider::valueChanged      , [&]
   {
@@ -48,7 +48,7 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_y               , &QLineEdit::editingFinished , [&]
   {
-    slider_y->setValue(line_edit_utility::get_text<int>(line_edit_y));
+    slider_y->setValue(line_edit::get_text<int>(line_edit_y));
   });
   connect(slider_z                  , &QSlider::valueChanged      , [&]
   {
@@ -56,7 +56,7 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_z               , &QLineEdit::editingFinished , [&]
   {
-    slider_z->setValue(line_edit_utility::get_text<int>(line_edit_z));
+    slider_z->setValue(line_edit::get_text<int>(line_edit_z));
   });
   connect(slider_integration_step   , &QSlider::valueChanged      , [&]
   {
@@ -65,7 +65,7 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_integration_step, &QLineEdit::editingFinished , [&]
   {
-    auto scale = line_edit_utility::get_text<double>(line_edit_integration_step);
+    auto scale = line_edit::get_text<double>(line_edit_integration_step);
     slider_integration_step->setValue(scale * slider_integration_step->maximum());
   });
   connect(slider_iterations         , &QSlider::valueChanged      , [&]
@@ -74,7 +74,7 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_iterations      , &QLineEdit::editingFinished , [&]
   {
-    slider_iterations->setValue(line_edit_utility::get_text<int>(line_edit_iterations));
+    slider_iterations->setValue(line_edit::get_text<int>(line_edit_iterations));
   });
   connect(button_trace_selection    , &QPushButton::clicked       , [&]
   {
@@ -84,10 +84,9 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
 
 void tractography_plugin::start()
 {
-  set_sink(std::make_shared<qt_text_browser_sink>(owner_->console));
-
   streamline_renderer_ = owner_->viewer->add_renderable<streamline_renderer>();
 
+  set_sink(std::make_shared<text_browser_sink>(owner_->console));
   logger_->info(std::string("Start successful."));
 }
 void tractography_plugin::trace()

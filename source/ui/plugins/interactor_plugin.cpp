@@ -49,8 +49,6 @@ interactor_plugin::interactor_plugin(QWidget* parent) : plugin(parent)
 
 void interactor_plugin::start()
 {
-  set_sink(std::make_shared<text_browser_sink>(owner_->console));
-
   auto move_value = double(slider_move_speed->value()) / slider_move_speed->maximum();
   auto look_value = double(slider_look_speed->value()) / slider_look_speed->maximum();
 
@@ -61,6 +59,7 @@ void interactor_plugin::start()
   interactor->set_move_speed(move_value);
   interactor->set_look_speed(look_value);
 
+  set_sink(std::make_shared<text_browser_sink>(owner_->console));
   logger_->info(std::string("Start successful."));
 }
 }

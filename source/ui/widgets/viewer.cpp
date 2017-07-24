@@ -3,8 +3,6 @@
 #include <QKeyEvent>
 #include <QTimer>
 
-#include <pli_vis/utility/qt_text_browser_sink.hpp>
-
 namespace pli
 {
 viewer::viewer(QWidget* parent) : QOpenGLWidget(parent), interactor_(&camera_), wait_spinner_(new wait_spinner(this, true, false))

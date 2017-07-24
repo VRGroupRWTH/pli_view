@@ -3,19 +3,18 @@
 
 #include <future>
 
-#include <pli_vis/aspects/loggable.hpp>
 #include <pli_vis/ui/plugin.hpp>
-
 #include <ui_volume_rendering_toolbox.h>
 
 namespace pli
 {
 class volume_renderer;
 
-class volume_rendering_plugin : public plugin, public loggable<volume_rendering_plugin>, public Ui_volume_rendering_toolbox
+class volume_rendering_plugin : public plugin<volume_rendering_plugin, Ui_volume_rendering_toolbox>
 {
 public:
-  volume_rendering_plugin(QWidget* parent = nullptr);
+  explicit volume_rendering_plugin(QWidget* parent = nullptr);
+
   void start () override;
 
 private:

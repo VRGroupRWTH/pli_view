@@ -1,25 +1,28 @@
 #ifndef PLI_VIS_PLUGIN_HPP_
 #define PLI_VIS_PLUGIN_HPP_
 
-#include <QWidget>
+#include <pli_vis/aspects/loggable.hpp>
+#include <pli_vis/ui/plugin_base.hpp>
 
 namespace pli
 {
-class application;
-
-class plugin : public QWidget
+template<typename derived, typename ui_type>
+class plugin : public plugin_base, public loggable<derived>, public ui_type
 {
 public:
-  plugin(QWidget* parent = nullptr);
+  explicit plugin(QWidget* parent = nullptr) : plugin_base(parent) { }
+  virtual ~plugin() = default;
 
-  void set_owner(pli::application* owner);
-  
-  virtual void awake  ();
-  virtual void start  ();
-  virtual void destroy();
+  void set_owner(application* owner) override
+  {
+    owner_ = owner;
+  }
+  void awake    () override {}
+  void start    () override {}
+  void destroy  () override {}
 
 protected:
-  pli::application* owner_ = nullptr;
+  application* owner_ = nullptr;
 };
 }
 

@@ -3,26 +3,27 @@
 #include <cuda_runtime_api.h>
 
 #include <pli_vis/ui/utility/text_browser_sink.hpp>
+#include <pli_vis/ui/plugin_base.hpp>
 
 namespace pli
 {
 application:: application()
 {
-  setupUi(this);
+  setupUi      (this);
   showMaximized();
 
   set_sink    (std::make_shared<text_browser_sink>(console));
   bind_actions();
 
-  splitter_vertical_left->setSizes(QList<int>{height(), 0});
-
-  plugins_ = findChildren<plugin*>(QRegExp("plugin")).toVector().toStdVector();
+  plugins_ = findChildren<plugin_base*>(QRegExp("plugin")).toVector().toStdVector();
   for (auto plugin : plugins_)
     plugin->set_owner(this);
   for (auto plugin : plugins_)
     plugin->awake();
   for (auto plugin : plugins_)
     plugin->start();
+
+  splitter_vertical_left->setSizes(QList<int>{height(), 0});
 
   action_help_version ->trigger();
   action_help_gpu_info->trigger();
@@ -33,7 +34,7 @@ application::~application()
     plugin->destroy();
 }
 
-void application::bind_actions     ()
+void application::bind_actions()
 {  
   connect(action_fullscreen   , &QAction::triggered, [&] 
   {

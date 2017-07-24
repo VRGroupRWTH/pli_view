@@ -180,8 +180,6 @@ odf_plugin::odf_plugin(QWidget* parent) : plugin(parent)
 
 void odf_plugin::start    ()
 {
-  set_sink(std::make_shared<text_browser_sink>(owner_->console));
-
   line_edit_vector_block_x   ->setText(QString::fromStdString(std::to_string(slider_vector_block_x   ->value())));
   line_edit_vector_block_y   ->setText(QString::fromStdString(std::to_string(slider_vector_block_y   ->value())));
   line_edit_vector_block_z   ->setText(QString::fromStdString(std::to_string(slider_vector_block_z   ->value())));
@@ -202,6 +200,7 @@ void odf_plugin::start    ()
   cusolverDnCreate(&cusolver_);
   cublasCreate    (&cublas_  );
 
+  set_sink(std::make_shared<text_browser_sink>(owner_->console));
   logger_->info(std::string("Start successful."));
 }
 void odf_plugin::destroy()

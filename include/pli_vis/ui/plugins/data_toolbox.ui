@@ -6,25 +6,81 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>264</width>
-    <height>289</height>
+    <width>262</width>
+    <height>333</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Data Toolbox</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="13" column="0">
-    <widget class="QLabel" name="label_unit_vector">
-     <property name="enabled">
-      <bool>false</bool>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label_file">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
      </property>
      <property name="text">
-      <string>Unit Vector</string>
+      <string>File</string>
      </property>
     </widget>
    </item>
-   <item row="7" column="1" colspan="2">
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_file_path">
+     <property name="text">
+      <string>Path</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLineEdit" name="line_edit_file">
+     <property name="toolTip">
+      <string>The system path to the root file.</string>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+     <property name="placeholderText">
+      <string>C:/Vervet1818.h5</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QPushButton" name="button_browse">
+     <property name="text">
+      <string>Browse</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_attributes">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Attributes</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_vector_spacing">
+     <property name="toolTip">
+      <string/>
+     </property>
+     <property name="whatsThis">
+      <string/>
+     </property>
+     <property name="text">
+      <string>Vector Spacing</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" colspan="2">
     <widget class="QLineEdit" name="line_edit_vector_spacing">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -42,49 +98,12 @@
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
      </property>
      <property name="placeholderText">
-      <string>VectorSpacing</string>
+      <string>Voxelsize</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QRadioButton" name="radio_button_slice_by_slice">
-     <property name="toolTip">
-      <string>Each slice is represented as a separate dataset, similar to Vervet1818.</string>
-     </property>
-     <property name="text">
-      <string>Slice by slice</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QRadioButton" name="radio_button_volume">
-     <property name="toolTip">
-      <string>The whole data is stored in a single dataset, similar to MSA0309.</string>
-     </property>
-     <property name="text">
-      <string>Volume</string>
-     </property>
-    </widget>
-   </item>
-   <item row="12" column="0">
-    <widget class="QLabel" name="label_inclination">
-     <property name="text">
-      <string>Inclination</string>
-     </property>
-    </widget>
-   </item>
-   <item row="10" column="0">
-    <widget class="QLabel" name="label_retardation">
-     <property name="text">
-      <string>Retardation</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label_file">
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_datasets">
      <property name="font">
       <font>
        <weight>75</weight>
@@ -92,12 +111,19 @@
       </font>
      </property>
      <property name="text">
-      <string>File</string>
+      <string>Datasets</string>
      </property>
     </widget>
    </item>
-   <item row="12" column="1" colspan="2">
-    <widget class="QLineEdit" name="line_edit_inclination">
+   <item row="5" column="0">
+    <widget class="QLabel" name="label_transmittance">
+     <property name="text">
+      <string>Transmittance</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1" colspan="2">
+    <widget class="QLineEdit" name="line_edit_transmittance">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>1</horstretch>
@@ -105,7 +131,7 @@
       </sizepolicy>
      </property>
      <property name="toolTip">
-      <string>The path to the inclination dataset. For &quot;slice by slice&quot; type data, %Slice% acts as a reserved keyword indicating the slice number dataset.</string>
+      <string>The path to the transmittance dataset. For &quot;slice by slice&quot; type data, %Slice% acts as a reserved keyword indicating the slice number dataset.</string>
      </property>
      <property name="text">
       <string/>
@@ -114,45 +140,47 @@
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
      </property>
      <property name="placeholderText">
-      <string>%Slice%/Microscope/Processed/Registered/Inclination</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="2">
-    <widget class="QPushButton" name="button_browse">
-     <property name="text">
-      <string>Browse</string>
+      <string>%Slice%/Microscope/Processed/Registered/NTransmittance</string>
      </property>
     </widget>
    </item>
    <item row="6" column="0">
-    <widget class="QLabel" name="label_attributes">
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
+    <widget class="QLabel" name="label_retardation">
      <property name="text">
-      <string>Attributes</string>
+      <string>Retardation</string>
      </property>
     </widget>
    </item>
-   <item row="11" column="0">
+   <item row="6" column="1" colspan="2">
+    <widget class="QLineEdit" name="line_edit_retardation">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="toolTip">
+      <string>The path to the retardation dataset. For &quot;slice by slice&quot; type data, %Slice% acts as a reserved keyword indicating the slice number dataset.</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="placeholderText">
+      <string>%Slice%/Microscope/Processed/Registered/Retardation</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0">
     <widget class="QLabel" name="label_direction">
      <property name="text">
       <string>Direction</string>
      </property>
     </widget>
    </item>
-   <item row="9" column="0">
-    <widget class="QLabel" name="label_transmittance">
-     <property name="text">
-      <string>Transmittance</string>
-     </property>
-    </widget>
-   </item>
-   <item row="11" column="1" colspan="2">
+   <item row="7" column="1" colspan="2">
     <widget class="QLineEdit" name="line_edit_direction">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -175,27 +203,43 @@
     </widget>
    </item>
    <item row="8" column="0">
-    <widget class="QLabel" name="label_datasets">
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
+    <widget class="QLabel" name="label_inclination">
      <property name="text">
-      <string>Datasets</string>
+      <string>Inclination</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="label_file_path">
+   <item row="8" column="1" colspan="2">
+    <widget class="QLineEdit" name="line_edit_inclination">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="toolTip">
+      <string>The path to the inclination dataset. For &quot;slice by slice&quot; type data, %Slice% acts as a reserved keyword indicating the slice number dataset.</string>
+     </property>
      <property name="text">
-      <string>Path</string>
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="placeholderText">
+      <string>%Slice%/Microscope/Processed/Registered/Inclination</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0">
+    <widget class="QLabel" name="label_mask">
+     <property name="text">
+      <string>Mask</string>
      </property>
     </widget>
    </item>
    <item row="9" column="1" colspan="2">
-    <widget class="QLineEdit" name="line_edit_transmittance">
+    <widget class="QLineEdit" name="line_edit_mask">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>1</horstretch>
@@ -203,7 +247,7 @@
       </sizepolicy>
      </property>
      <property name="toolTip">
-      <string>The path to the transmittance dataset. For &quot;slice by slice&quot; type data, %Slice% acts as a reserved keyword indicating the slice number dataset.</string>
+      <string>The path to the inclination dataset. For &quot;slice by slice&quot; type data, %Slice% acts as a reserved keyword indicating the slice number dataset.</string>
      </property>
      <property name="text">
       <string/>
@@ -212,69 +256,24 @@
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
      </property>
      <property name="placeholderText">
-      <string>%Slice%/Microscope/Processed/Registered/NTransmittance</string>
+      <string>%Slice%/Microscope/Processed/Registered/Inclination</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="0">
+    <widget class="QLabel" name="label_unit_vector">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="text">
+      <string>Unit Vector</string>
      </property>
     </widget>
    </item>
    <item row="10" column="1" colspan="2">
-    <widget class="QLineEdit" name="line_edit_retardation">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="toolTip">
-      <string>The path to the retardation dataset. For &quot;slice by slice&quot; type data, %Slice% acts as a reserved keyword indicating the slice number dataset.</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="placeholderText">
-      <string>%Slice%/Microscope/Processed/Registered/Retardation</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_file_type">
-     <property name="text">
-      <string>Type</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="0">
-    <widget class="QLabel" name="label_vector_spacing">
-     <property name="toolTip">
-      <string/>
-     </property>
-     <property name="whatsThis">
-      <string/>
-     </property>
-     <property name="text">
-      <string>Vector Spacing</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1">
-    <widget class="QLineEdit" name="line_edit_file">
-     <property name="toolTip">
-      <string>The system path to the root file.</string>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-     <property name="placeholderText">
-      <string>C:/Vervet1818.h5</string>
-     </property>
-    </widget>
-   </item>
-   <item row="13" column="1" colspan="2">
     <widget class="QLineEdit" name="line_edit_unit_vector">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -296,7 +295,25 @@
      </property>
     </widget>
    </item>
-   <item row="14" column="0" colspan="4">
+   <item row="11" column="0" colspan="3">
+    <layout class="QHBoxLayout" name="horizontal_layout">
+     <item>
+      <widget class="QPushButton" name="button_vervet_defaults">
+       <property name="text">
+        <string>Vervet Defaults</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="button_msa_defaults">
+       <property name="text">
+        <string>MSA Defaults</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="12" column="1">
     <spacer name="spacer_vertical">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -312,8 +329,6 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>radio_button_slice_by_slice</tabstop>
-  <tabstop>radio_button_volume</tabstop>
   <tabstop>line_edit_file</tabstop>
   <tabstop>line_edit_vector_spacing</tabstop>
   <tabstop>line_edit_transmittance</tabstop>

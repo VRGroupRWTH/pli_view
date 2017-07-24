@@ -4,21 +4,19 @@
 #include <array>
 #include <cstddef>
 
-#include <pli_vis/aspects/loggable.hpp>
 #include <pli_vis/ui/plugin.hpp>
-
 #include <ui_selector_toolbox.h>
 
 namespace pli
 {
 class application;
 
-class selector_plugin : public plugin, public Ui_selector_toolbox, public loggable<selector_plugin>
+class selector_plugin : public plugin<selector_plugin, Ui_selector_toolbox>
 {
   Q_OBJECT
 
 public:
-  selector_plugin(QWidget* parent = nullptr);
+  explicit selector_plugin(QWidget* parent = nullptr);
   
   std::array<std::size_t, 3> selection_offset() const;
   std::array<std::size_t, 3> selection_size  () const;
@@ -31,7 +29,6 @@ signals:
     const std::array<std::size_t, 3>& offset, 
     const std::array<std::size_t, 3>& size  , 
     const std::array<std::size_t, 3>& stride);
-  
 };
 }
 
