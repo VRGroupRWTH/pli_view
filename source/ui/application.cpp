@@ -2,7 +2,7 @@
 
 #include <cuda_runtime_api.h>
 
-#include <pli_vis/utility/qt_text_browser_sink.hpp>
+#include <pli_vis/utility/text_browser_sink.hpp>
 
 namespace pli
 {
@@ -11,7 +11,7 @@ application:: application()
   setupUi(this);
   showMaximized();
 
-  set_sink    (std::make_shared<qt_text_browser_sink>(console));
+  set_sink    (std::make_shared<text_browser_sink>(console));
   bind_actions();
 
   splitter_vertical_left->setSizes(QList<int>{height(), 0});

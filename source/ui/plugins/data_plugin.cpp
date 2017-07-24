@@ -5,8 +5,8 @@
 #include <pli_vis/io/hdf5_io.hpp>
 #include <pli_vis/io/hdf5_io_2.hpp>
 #include <pli_vis/ui/application.hpp>
-#include <pli_vis/utility/line_edit_utility.hpp>
-#include <pli_vis/utility/qt_text_browser_sink.hpp>
+#include <pli_vis/utility/line_edit.hpp>
+#include <pli_vis/utility/text_browser_sink.hpp>
 
 namespace pli
 {
@@ -69,7 +69,7 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_vector_spacing   , &QLineEdit::editingFinished, [&]
   {
-    auto text = line_edit_utility::get_text(line_edit_vector_spacing);
+    auto text = line_edit::get_text(line_edit_vector_spacing);
     logger_->info("Vector spacing attribute path is set to {}.", text);
     if (io_)
       io_->set_attribute_path_vector_spacing(text);
@@ -77,7 +77,7 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_transmittance    , &QLineEdit::editingFinished, [&] 
   {
-    auto text = line_edit_utility::get_text(line_edit_transmittance);
+    auto text = line_edit::get_text(line_edit_transmittance);
     logger_->info("Transmittance dataset path is set to {}.", text);
     if (io_)
       io_->set_dataset_path_transmittance(text);
@@ -85,7 +85,7 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_retardation      , &QLineEdit::editingFinished, [&]
   {
-    auto text = line_edit_utility::get_text(line_edit_retardation);
+    auto text = line_edit::get_text(line_edit_retardation);
     logger_->info("Retardation dataset path is set to {}.", text);
     if (io_)
       io_->set_dataset_path_retardation(text);
@@ -93,7 +93,7 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_direction        , &QLineEdit::editingFinished, [&]
   {
-    auto text = line_edit_utility::get_text(line_edit_direction);
+    auto text = line_edit::get_text(line_edit_direction);
     logger_->info("Fiber direction dataset path is set to {}.", text);
     if (io_)
       io_->set_dataset_path_fiber_direction(text);
@@ -101,7 +101,7 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_inclination      , &QLineEdit::editingFinished, [&]
   {
-    auto text = line_edit_utility::get_text(line_edit_inclination);
+    auto text = line_edit::get_text(line_edit_inclination);
     logger_->info("Fiber inclination dataset path is set to {}.", text);
     if (io_)
       io_->set_dataset_path_fiber_inclination(text);
@@ -110,7 +110,7 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
 }
 void data_plugin::start()
 {
-  set_sink(std::make_shared<qt_text_browser_sink>(owner_->console));
+  set_sink(std::make_shared<text_browser_sink>(owner_->console));
   logger_->info(std::string("Start successful."));
 }
 
@@ -130,27 +130,27 @@ void data_plugin::set_file(const std::string& filename)
     if (radio_button_slice_by_slice->isChecked())
       io_.reset(new hdf5_io(
         filename,
-        line_edit_utility::get_text(line_edit_vector_spacing),
+        line_edit::get_text(line_edit_vector_spacing),
         ""                                                   ,
         ""                                                   ,
-        line_edit_utility::get_text(line_edit_transmittance ),
-        line_edit_utility::get_text(line_edit_retardation   ),
-        line_edit_utility::get_text(line_edit_direction     ),
-        line_edit_utility::get_text(line_edit_inclination   ),
-        line_edit_utility::get_text(line_edit_unit_vector   ),
+        line_edit::get_text(line_edit_transmittance ),
+        line_edit::get_text(line_edit_retardation   ),
+        line_edit::get_text(line_edit_direction     ),
+        line_edit::get_text(line_edit_inclination   ),
+        line_edit::get_text(line_edit_unit_vector   ),
         ""
       ));
     else
       io_.reset(new hdf5_io_2(
         filename,
-        line_edit_utility::get_text(line_edit_vector_spacing),
+        line_edit::get_text(line_edit_vector_spacing),
         ""                                                   ,
         ""                                                   ,
-        line_edit_utility::get_text(line_edit_transmittance ),
-        line_edit_utility::get_text(line_edit_retardation   ),
-        line_edit_utility::get_text(line_edit_direction     ),
-        line_edit_utility::get_text(line_edit_inclination   ),
-        line_edit_utility::get_text(line_edit_unit_vector   ),
+        line_edit::get_text(line_edit_transmittance ),
+        line_edit::get_text(line_edit_retardation   ),
+        line_edit::get_text(line_edit_direction     ),
+        line_edit::get_text(line_edit_inclination   ),
+        line_edit::get_text(line_edit_unit_vector   ),
         ""
       ));
     logger_->info("Successfully opened file: {}.", filename);

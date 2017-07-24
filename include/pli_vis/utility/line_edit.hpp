@@ -1,5 +1,5 @@
-#ifndef PLI_VIS_LINE_EDIT_UTILITY_HPP_
-#define PLI_VIS_LINE_EDIT_UTILITY_HPP_
+#ifndef PLI_VIS_LINE_EDIT_HPP_
+#define PLI_VIS_LINE_EDIT_HPP_
 
 #include <string>
 
@@ -8,7 +8,7 @@
 
 namespace pli
 {
-class line_edit_utility
+class line_edit
 {
 public:
   template<typename type = std::string>

@@ -10,8 +10,8 @@
 #include <pli_vis/ui/plugins/data_plugin.hpp>
 #include <pli_vis/ui/plugins/selector_plugin.hpp>
 #include <pli_vis/ui/application.hpp>
-#include <pli_vis/utility/line_edit_utility.hpp>
-#include <pli_vis/utility/qt_text_browser_sink.hpp>
+#include <pli_vis/utility/line_edit.hpp>
+#include <pli_vis/utility/text_browser_sink.hpp>
 #include <pli_vis/visualization/odf_field.hpp>
 
 namespace pli
@@ -91,7 +91,7 @@ odf_plugin::odf_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_vector_block_x   , &QLineEdit::editingFinished , [&]
   {
-    slider_vector_block_x->setValue(line_edit_utility::get_text<int>(line_edit_vector_block_x));
+    slider_vector_block_x->setValue(line_edit::get_text<int>(line_edit_vector_block_x));
   });
   connect(slider_vector_block_y      , &QxtSpanSlider::valueChanged, [&]
   {
@@ -99,7 +99,7 @@ odf_plugin::odf_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_vector_block_y   , &QLineEdit::editingFinished , [&]
   {
-    slider_vector_block_y->setValue(line_edit_utility::get_text<int>(line_edit_vector_block_y));
+    slider_vector_block_y->setValue(line_edit::get_text<int>(line_edit_vector_block_y));
   });
   connect(slider_vector_block_z      , &QxtSpanSlider::valueChanged, [&]
   {
@@ -107,7 +107,7 @@ odf_plugin::odf_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_vector_block_z   , &QLineEdit::editingFinished , [&]
   {
-    slider_vector_block_z->setValue(line_edit_utility::get_text<int>(line_edit_vector_block_z));
+    slider_vector_block_z->setValue(line_edit::get_text<int>(line_edit_vector_block_z));
   });
   connect(slider_histogram_theta     , &QxtSpanSlider::valueChanged, [&]
   {
@@ -115,7 +115,7 @@ odf_plugin::odf_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_histogram_theta  , &QLineEdit::editingFinished , [&]
   {
-    slider_histogram_theta->setValue(line_edit_utility::get_text<int>(line_edit_histogram_theta));
+    slider_histogram_theta->setValue(line_edit::get_text<int>(line_edit_histogram_theta));
   });
   connect(slider_histogram_phi       , &QxtSpanSlider::valueChanged, [&]
   {
@@ -123,7 +123,7 @@ odf_plugin::odf_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_histogram_phi    , &QLineEdit::editingFinished , [&]
   {
-    slider_histogram_phi->setValue(line_edit_utility::get_text<int>(line_edit_histogram_phi));
+    slider_histogram_phi->setValue(line_edit::get_text<int>(line_edit_histogram_phi));
   });
   connect(slider_maximum_sh_degree   , &QxtSpanSlider::valueChanged, [&]
   {
@@ -131,7 +131,7 @@ odf_plugin::odf_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_maximum_sh_degree, &QLineEdit::editingFinished , [&]
   {
-    slider_maximum_sh_degree->setValue(line_edit_utility::get_text<int>(line_edit_maximum_sh_degree));
+    slider_maximum_sh_degree->setValue(line_edit::get_text<int>(line_edit_maximum_sh_degree));
   });
   connect(slider_sampling_theta      , &QxtSpanSlider::valueChanged, [&]
   {
@@ -139,7 +139,7 @@ odf_plugin::odf_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_sampling_theta   , &QLineEdit::editingFinished , [&]
   {
-    slider_sampling_theta->setValue(line_edit_utility::get_text<int>(line_edit_sampling_theta));
+    slider_sampling_theta->setValue(line_edit::get_text<int>(line_edit_sampling_theta));
   });
   connect(slider_sampling_phi        , &QxtSpanSlider::valueChanged, [&]
   {
@@ -147,7 +147,7 @@ odf_plugin::odf_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_sampling_phi     , &QLineEdit::editingFinished , [&]
   {
-    slider_sampling_phi->setValue(line_edit_utility::get_text<int>(line_edit_sampling_phi));
+    slider_sampling_phi->setValue(line_edit::get_text<int>(line_edit_sampling_phi));
   });
 
   connect(checkbox_clustering_enabled, &QCheckBox::stateChanged    , [&](int state)
@@ -164,7 +164,7 @@ odf_plugin::odf_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_threshold        , &QLineEdit::editingFinished , [&]
   {
-    auto threshold = line_edit_utility::get_text<double>(line_edit_threshold);
+    auto threshold = line_edit::get_text<double>(line_edit_threshold);
     slider_threshold->setValue(threshold / threshold_multiplier_);
   });
 
@@ -180,7 +180,7 @@ odf_plugin::odf_plugin(QWidget* parent) : plugin(parent)
 
 void odf_plugin::start    ()
 {
-  set_sink(std::make_shared<qt_text_browser_sink>(owner_->console));
+  set_sink(std::make_shared<text_browser_sink>(owner_->console));
 
   line_edit_vector_block_x   ->setText(QString::fromStdString(std::to_string(slider_vector_block_x   ->value())));
   line_edit_vector_block_y   ->setText(QString::fromStdString(std::to_string(slider_vector_block_y   ->value())));
@@ -220,17 +220,17 @@ void odf_plugin::calculate    ()
   auto offset     = selector->selection_offset();
   auto size       = selector->selection_size  ();
   auto stride     = selector->selection_stride();
-  auto max_degree = line_edit_utility::get_text<unsigned>(line_edit_maximum_sh_degree);
+  auto max_degree = line_edit::get_text<unsigned>(line_edit_maximum_sh_degree);
   uint3 block_dimensions       = {
-    line_edit_utility::get_text<unsigned>(line_edit_vector_block_x ), 
-    line_edit_utility::get_text<unsigned>(line_edit_vector_block_y ), 
-    line_edit_utility::get_text<unsigned>(line_edit_vector_block_z )};
+    line_edit::get_text<unsigned>(line_edit_vector_block_x ), 
+    line_edit::get_text<unsigned>(line_edit_vector_block_y ), 
+    line_edit::get_text<unsigned>(line_edit_vector_block_z )};
   uint2 histogram_dimensions   = {
-    line_edit_utility::get_text<unsigned>(line_edit_histogram_theta),
-    line_edit_utility::get_text<unsigned>(line_edit_histogram_phi  )};
+    line_edit::get_text<unsigned>(line_edit_histogram_theta),
+    line_edit::get_text<unsigned>(line_edit_histogram_phi  )};
   uint2 sampling_dimensions    = { 
-    line_edit_utility::get_text<unsigned>(line_edit_sampling_theta),
-    line_edit_utility::get_text<unsigned>(line_edit_sampling_phi  )};
+    line_edit::get_text<unsigned>(line_edit_sampling_theta),
+    line_edit::get_text<unsigned>(line_edit_sampling_phi  )};
 
   if(io == nullptr || size[0] == 0 || size[1] == 0 || size[2] == 0)
   {

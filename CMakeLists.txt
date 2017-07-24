@@ -185,8 +185,8 @@ set(PROJECT_SOURCES
   include/pli_vis/ui/widgets/wait_spinner.hpp
   include/pli_vis/ui/application.hpp
   include/pli_vis/ui/plugin.hpp
-  include/pli_vis/utility/line_edit_utility.hpp
-  include/pli_vis/utility/qt_text_browser_sink.hpp
+  include/pli_vis/utility/line_edit.hpp
+  include/pli_vis/utility/text_browser_sink.hpp
   include/pli_vis/visualization/interactors/first_person_interactor.hpp
   include/pli_vis/visualization/interactors/orbit_interactor.hpp
   include/pli_vis/visualization/interactors/simple_interactor.hpp

@@ -3,8 +3,8 @@
 #include <boost/format.hpp>
 
 #include <pli_vis/ui/application.hpp>
-#include <pli_vis/utility/line_edit_utility.hpp>
-#include <pli_vis/utility/qt_text_browser_sink.hpp>
+#include <pli_vis/utility/line_edit.hpp>
+#include <pli_vis/utility/text_browser_sink.hpp>
 
 namespace pli
 {
@@ -29,13 +29,13 @@ interactor_plugin::interactor_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_move_speed, &QLineEdit::editingFinished, [&]
   {
-    auto speed = line_edit_utility::get_text<double>(line_edit_move_speed);
+    auto speed = line_edit::get_text<double>(line_edit_move_speed);
     slider_move_speed->setValue(speed * slider_move_speed->maximum());
     owner_->viewer->interactor()->set_move_speed(speed);
   });
   connect(line_edit_look_speed, &QLineEdit::editingFinished, [&]
   {
-    auto speed = line_edit_utility::get_text<double>(line_edit_look_speed);
+    auto speed = line_edit::get_text<double>(line_edit_look_speed);
     slider_look_speed->setValue(speed * slider_look_speed->maximum());
     owner_->viewer->interactor()->set_look_speed(speed);
   });
@@ -49,7 +49,7 @@ interactor_plugin::interactor_plugin(QWidget* parent) : plugin(parent)
 
 void interactor_plugin::start()
 {
-  set_sink(std::make_shared<qt_text_browser_sink>(owner_->console));
+  set_sink(std::make_shared<text_browser_sink>(owner_->console));
 
   auto move_value = double(slider_move_speed->value()) / slider_move_speed->maximum();
   auto look_value = double(slider_look_speed->value()) / slider_look_speed->maximum();

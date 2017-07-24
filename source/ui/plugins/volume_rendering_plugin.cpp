@@ -3,8 +3,8 @@
 #include <boost/format.hpp>
 
 #include <pli_vis/ui/application.hpp>
-#include <pli_vis/utility/line_edit_utility.hpp>
-#include <pli_vis/utility/qt_text_browser_sink.hpp>
+#include <pli_vis/utility/line_edit.hpp>
+#include <pli_vis/utility/text_browser_sink.hpp>
 #include <pli_vis/visualization/volume_renderer.hpp>
 
 namespace pli
@@ -25,18 +25,18 @@ volume_rendering_plugin::volume_rendering_plugin(QWidget* parent) : plugin(paren
   });
   connect(slider_step_size   , &QSlider::sliderReleased   , [&]
   {
-    volume_renderer_->set_step_size(line_edit_utility::get_text<double>(line_edit_step_size));
+    volume_renderer_->set_step_size(line_edit::get_text<double>(line_edit_step_size));
   });
   connect(line_edit_step_size, &QLineEdit::editingFinished, [&]
   {
-    auto step_size = line_edit_utility::get_text<double>(line_edit_step_size);
+    auto step_size = line_edit::get_text<double>(line_edit_step_size);
     slider_step_size->setValue(step_size * slider_step_size->maximum());
     volume_renderer_->set_step_size(step_size);
   });
 }
 void volume_rendering_plugin::start ()
 {
-  set_sink(std::make_shared<qt_text_browser_sink>(owner_->console));
+  set_sink(std::make_shared<text_browser_sink>(owner_->console));
 
   connect(owner_->get_plugin<data_plugin>    (), &data_plugin::on_change             , [&]
   {
