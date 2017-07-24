@@ -2,7 +2,7 @@
 
 #include <cuda_runtime_api.h>
 
-#include <pli_vis/utility/text_browser_sink.hpp>
+#include <pli_vis/ui/utility/text_browser_sink.hpp>
 
 namespace pli
 {

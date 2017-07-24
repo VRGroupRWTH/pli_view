@@ -177,7 +177,9 @@ set(PROJECT_SOURCES
   include/pli_vis/ui/plugins/selector_plugin.hpp
   include/pli_vis/ui/plugins/tractography_plugin.hpp
   include/pli_vis/ui/plugins/volume_rendering_plugin.hpp
+  include/pli_vis/ui/utility/line_edit.hpp
   include/pli_vis/ui/utility/plot_interactor.hpp
+  include/pli_vis/ui/utility/text_browser_sink.hpp
   include/pli_vis/ui/widgets/roi_rectangle.hpp
   include/pli_vis/ui/widgets/roi_selector.hpp
   include/pli_vis/ui/widgets/transfer_function_editor.hpp
@@ -185,8 +187,6 @@ set(PROJECT_SOURCES
   include/pli_vis/ui/widgets/wait_spinner.hpp
   include/pli_vis/ui/application.hpp
   include/pli_vis/ui/plugin.hpp
-  include/pli_vis/utility/line_edit.hpp
-  include/pli_vis/utility/text_browser_sink.hpp
   include/pli_vis/visualization/interactors/first_person_interactor.hpp
   include/pli_vis/visualization/interactors/orbit_interactor.hpp
   include/pli_vis/visualization/interactors/simple_interactor.hpp

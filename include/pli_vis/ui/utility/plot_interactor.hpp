@@ -1,5 +1,5 @@
-#ifndef PLI_VIS_PICKER_
-#define PLI_VIS_PICKER_
+#ifndef PLI_VIS_PLOT_INTERACTOR_
+#define PLI_VIS_PLOT_INTERACTOR_
 
 #include <QObject>
 
