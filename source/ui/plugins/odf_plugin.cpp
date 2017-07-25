@@ -4,11 +4,12 @@
 #include <string>
 
 #include <boost/format.hpp>
-#include <boost/optional.hpp>
+#include <vector_functions.hpp>
 
+#include <pli_vis/cuda/sh/spherical_harmonics.h>
+#include <pli_vis/cuda/sh/vector_ops.h>
 #include <pli_vis/cuda/odf_field.h>
 #include <pli_vis/ui/plugins/data_plugin.hpp>
-#include <pli_vis/ui/plugins/selector_plugin.hpp>
 #include <pli_vis/ui/utility/line_edit.hpp>
 #include <pli_vis/ui/utility/text_browser_sink.hpp>
 #include <pli_vis/ui/application.hpp>
@@ -18,8 +19,6 @@ namespace pli
 {
 odf_plugin::odf_plugin(QWidget* parent) : plugin(parent)
 {
-  setupUi(this);
-  
   line_edit_vector_block_x   ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
   line_edit_vector_block_x   ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
   line_edit_vector_block_x   ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
@@ -29,6 +28,16 @@ odf_plugin::odf_plugin(QWidget* parent) : plugin(parent)
   line_edit_sampling_theta   ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
   line_edit_sampling_phi     ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
   
+  line_edit_vector_block_x   ->setText(QString::fromStdString(std::to_string(slider_vector_block_x   ->value())));
+  line_edit_vector_block_y   ->setText(QString::fromStdString(std::to_string(slider_vector_block_y   ->value())));
+  line_edit_vector_block_z   ->setText(QString::fromStdString(std::to_string(slider_vector_block_z   ->value())));
+  line_edit_histogram_theta  ->setText(QString::fromStdString(std::to_string(slider_histogram_theta  ->value())));
+  line_edit_histogram_phi    ->setText(QString::fromStdString(std::to_string(slider_histogram_phi    ->value())));
+  line_edit_maximum_sh_degree->setText(QString::fromStdString(std::to_string(slider_maximum_sh_degree->value())));
+  line_edit_sampling_theta   ->setText(QString::fromStdString(std::to_string(slider_sampling_theta   ->value())));
+  line_edit_sampling_phi     ->setText(QString::fromStdString(std::to_string(slider_sampling_phi     ->value())));
+  line_edit_threshold        ->setText(QString::fromStdString((boost::format("%.2f") % (threshold_multiplier_ * slider_threshold->value())).str()));
+
   connect(checkbox_enabled, &QCheckBox::stateChanged, [&](int state)
   {
     logger_->info(std::string(state ? "Enabled." : "Disabled."));
@@ -159,13 +168,11 @@ odf_plugin::odf_plugin(QWidget* parent) : plugin(parent)
   });
   connect(slider_threshold           , &QxtSpanSlider::valueChanged, [&]
   {
-    auto threshold = threshold_multiplier_ * slider_threshold->value();
-    line_edit_threshold->setText(QString::fromStdString((boost::format("%.2f") % threshold).str()));
+    line_edit_threshold->setText(QString::fromStdString((boost::format("%.2f") % (threshold_multiplier_ * slider_threshold->value())).str()));
   });
   connect(line_edit_threshold        , &QLineEdit::editingFinished , [&]
   {
-    auto threshold = line_edit::get_text<double>(line_edit_threshold);
-    slider_threshold->setValue(threshold / threshold_multiplier_);
+    slider_threshold->setValue(line_edit::get_text<double>(line_edit_threshold) / threshold_multiplier_);
   });
 
   connect(button_calculate           , &QAbstractButton::clicked   , [&]
@@ -178,17 +185,9 @@ odf_plugin::odf_plugin(QWidget* parent) : plugin(parent)
   });
 }
 
-void odf_plugin::start    ()
+void odf_plugin::start  ()
 {
-  line_edit_vector_block_x   ->setText(QString::fromStdString(std::to_string(slider_vector_block_x   ->value())));
-  line_edit_vector_block_y   ->setText(QString::fromStdString(std::to_string(slider_vector_block_y   ->value())));
-  line_edit_vector_block_z   ->setText(QString::fromStdString(std::to_string(slider_vector_block_z   ->value())));
-  line_edit_histogram_theta  ->setText(QString::fromStdString(std::to_string(slider_histogram_theta  ->value())));
-  line_edit_histogram_phi    ->setText(QString::fromStdString(std::to_string(slider_histogram_phi    ->value())));
-  line_edit_maximum_sh_degree->setText(QString::fromStdString(std::to_string(slider_maximum_sh_degree->value())));
-  line_edit_sampling_theta   ->setText(QString::fromStdString(std::to_string(slider_sampling_theta   ->value())));
-  line_edit_sampling_phi     ->setText(QString::fromStdString(std::to_string(slider_sampling_phi     ->value())));
-  line_edit_threshold        ->setText(QString::fromStdString((boost::format("%.2f") % (threshold_multiplier_ * slider_threshold->value())).str()));
+  set_sink(std::make_shared<text_browser_sink>(owner_->console));
 
   odf_field_ = owner_->viewer->add_renderable<odf_field>();
   set_visible_layers();
@@ -199,9 +198,6 @@ void odf_plugin::start    ()
   logger_->info(std::string("Initializing cusolver and cublas."));
   cusolverDnCreate(&cusolver_);
   cublasCreate    (&cublas_  );
-
-  set_sink(std::make_shared<text_browser_sink>(owner_->console));
-  logger_->info(std::string("Start successful."));
 }
 void odf_plugin::destroy()
 {
@@ -210,147 +206,80 @@ void odf_plugin::destroy()
   cublasDestroy    (cublas_  );
 }
 
-void odf_plugin::calculate    ()
+void odf_plugin::calculate         ()
 {
   logger_->info(std::string("Updating viewer..."));
   
-  auto io         = owner_->get_plugin<pli::data_plugin>    ()->io();
-  auto selector   = owner_->get_plugin<pli::selector_plugin>();
-  auto offset     = selector->selection_offset();
-  auto size       = selector->selection_size  ();
-  auto stride     = selector->selection_stride();
-  auto max_degree = line_edit::get_text<unsigned>(line_edit_maximum_sh_degree);
+  auto max_degree              = 
+    line_edit::get_text<unsigned>(line_edit_maximum_sh_degree);
   uint3 block_dimensions       = {
-    line_edit::get_text<unsigned>(line_edit_vector_block_x ), 
-    line_edit::get_text<unsigned>(line_edit_vector_block_y ), 
-    line_edit::get_text<unsigned>(line_edit_vector_block_z )};
-  uint2 histogram_dimensions   = {
-    line_edit::get_text<unsigned>(line_edit_histogram_theta),
-    line_edit::get_text<unsigned>(line_edit_histogram_phi  )};
+    line_edit::get_text<unsigned>(line_edit_vector_block_x   ), 
+    line_edit::get_text<unsigned>(line_edit_vector_block_y   ), 
+    line_edit::get_text<unsigned>(line_edit_vector_block_z   )};
+  uint2 histogram_dimensions   = {                           
+    line_edit::get_text<unsigned>(line_edit_histogram_theta  ),
+    line_edit::get_text<unsigned>(line_edit_histogram_phi    )};
   uint2 sampling_dimensions    = { 
-    line_edit::get_text<unsigned>(line_edit_sampling_theta),
-    line_edit::get_text<unsigned>(line_edit_sampling_phi  )};
+    line_edit::get_text<unsigned>(line_edit_sampling_theta   ),
+    line_edit::get_text<unsigned>(line_edit_sampling_phi     )};
 
-  if(io == nullptr || size[0] == 0 || size[1] == 0 || size[2] == 0)
-  {
-    logger_->info(std::string("Update failed: No data."));
-    return;
-  }
-
-  size = {size[0] / stride[0], size[1] / stride[1], size[2] / stride[2]};
-
-  // Roll to the previous power of 2.
-  //size = {
-  //  std::size_t(pow(2, floor(log(size[0]) / log(2)))),
-  //  std::size_t(pow(2, floor(log(size[1]) / log(2)))),
-  //  std::size_t(pow(2, floor(log(size[2]) / log(2)))) };
-
-  uint3 coefficient_dimensions = {
-    unsigned(size[0]) / block_dimensions.x,
-    unsigned(size[1]) / block_dimensions.y,
-    unsigned(size[2]) / block_dimensions.z };
-
-  size = {
-    block_dimensions.x * coefficient_dimensions.x,
-    block_dimensions.y * coefficient_dimensions.y,
-    block_dimensions.z * coefficient_dimensions.z };
-
-  owner_->viewer      ->set_wait_spinner_enabled(true);
-  button_calculate    ->setEnabled(false);
-  button_extract_peaks->setEnabled(false);
-  selector            ->setEnabled(false);
-
-  // Load data from hard drive (on another thread).
-  std::array<float, 3>                          spacing    ;
-  boost::optional<boost::multi_array<float, 3>> direction  ;
-  boost::optional<boost::multi_array<float, 3>> inclination;
-  boost::optional<boost::multi_array<float, 4>> unit_vector;
-  coefficients_.resize(boost::extents
-    [coefficient_dimensions.x]
-    [coefficient_dimensions.y]
-    [coefficient_dimensions.z]
-    [(max_degree + 1) * (max_degree + 1)]);
   future_ = std::async(std::launch::async, [&]
   {
     try
     {
-      spacing = io->load_vector_spacing();
-      direction  .reset(io->load_fiber_direction_dataset  (offset, size, stride, false));
-      inclination.reset(io->load_fiber_inclination_dataset(offset, size, stride, false));
-      
+      auto vectors = owner_->get_plugin<data_plugin>()->generate_vectors(false);
+
+      uint3 coefficient_dimensions = {
+        unsigned(vectors.shape()[0]) / block_dimensions.x,
+        unsigned(vectors.shape()[1]) / block_dimensions.y,
+        unsigned(vectors.shape()[2]) / block_dimensions.z };
+      auto true_size = block_dimensions * coefficient_dimensions;
+
+      vectors      .resize(boost::extents
+        [true_size.x]
+        [true_size.y]
+        [true_size.z]);
+      coefficients_.resize(boost::extents
+        [coefficient_dimensions.x]
+        [coefficient_dimensions.y]
+        [coefficient_dimensions.z]
+        [(max_degree + 1) * (max_degree + 1)]);
+
       calculate_odfs(
-        cublas_,
-        cusolver_,
+        cublas_               ,
+        cusolver_             ,
         coefficient_dimensions,
-        block_dimensions,
-        histogram_dimensions,
-        max_degree,
-        direction    .get().data(),
-        inclination  .get().data(),
-        coefficients_.data(),
-        [&](const std::string& message) { logger_->info(message); });
+        block_dimensions      ,
+        histogram_dimensions  ,
+        max_degree            ,
+        vectors      .data()  ,
+        coefficients_.data()  ,
+        [&] (const std::string& message) { logger_->info(message); });
     }
     catch (std::exception& exception)
     {
-      try
-      {
-        logger_->warn(std::string("Unable to load direction maps. Attempting to load unit vectors instead."));
-        unit_vector.reset(io->load_fiber_unit_vectors_dataset(offset, size, stride, false));
-
-        calculate_odfs(
-          cublas_,
-          cusolver_,
-          coefficient_dimensions,
-          block_dimensions,
-          histogram_dimensions,
-          max_degree,
-          reinterpret_cast<float3*>(unit_vector.get().data()),
-          coefficients_.data(),
-          [&](const std::string& message) { logger_->info(message); });
-      }
-      catch (std::exception& exception2)
-      {
-        logger_->error(std::string(exception2.what()));
-      }
+      logger_->error(std::string(exception.what()));
     }
   });
   while (future_.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
     QApplication::processEvents();
-  
-  // Upload data to GPU.
-  uint3  cuda_size    {unsigned(coefficient_dimensions.x), unsigned(coefficient_dimensions.y), unsigned(coefficient_dimensions.z)};
-  float3 cuda_spacing {spacing[0], spacing[1], spacing[2]};
-  if (coefficients_.num_elements() > 0)
-    odf_field_->set_data(
-      cuda_size, 
-      unsigned(coefficients_.shape()[3]),
-      coefficients_.data(),
-      sampling_dimensions, 
-      cuda_spacing,
-      block_dimensions, 
-      1.0F, 
-      checkbox_clustering_enabled->isChecked(),
-      threshold_multiplier_ * float(slider_threshold->value()),
-      [&] (const std::string& message) { logger_->info(message); });
-  
-  selector            ->setEnabled(true);
-  button_extract_peaks->setEnabled(true);
-  button_calculate    ->setEnabled(true);
-  owner_->viewer      ->set_wait_spinner_enabled(false);
-  owner_->viewer      ->update();
+
+  odf_field_->set_data(
+    make_uint3(coefficients_.shape()[0], coefficients_.shape()[1], coefficients_.shape()[2]),
+    maximum_degree(coefficients_.shape()[3]),
+    coefficients_.data(),
+    sampling_dimensions,
+    block_dimensions,
+    1.0F,
+    checkbox_clustering_enabled->isChecked(),
+    threshold_multiplier_ * float(slider_threshold->value()),
+    [&](const std::string& message) { logger_->info(message); });
 
   logger_->info(std::string("Update successful."));
 }
-void odf_plugin::extract_peaks()
+void odf_plugin::extract_peaks     ()
 {
   logger_->info(std::string("Extracting peaks..."));
-
-  auto selector = owner_->get_plugin<pli::selector_plugin>();
-
-  owner_->viewer      ->set_wait_spinner_enabled(true);
-  button_calculate    ->setEnabled(false);
-  button_extract_peaks->setEnabled(false);
-  selector            ->setEnabled(false);
 
   // TODO: Apply peak extraction.
   //auto shape = coefficients_.shape();
@@ -360,15 +289,8 @@ void odf_plugin::extract_peaks()
   //      for(auto v = 0; v < shape[3]; v++)
   //        logger_->info("[" + boost::lexical_cast<std::string>(x) + "," + boost::lexical_cast<std::string>(y) + "," + boost::lexical_cast<std::string>(z) + "]: ");
   
-  selector            ->setEnabled(true);
-  button_calculate    ->setEnabled(true);
-  button_extract_peaks->setEnabled(true);
-  owner_->viewer      ->set_wait_spinner_enabled(false);
-  owner_->viewer      ->update();
-
   logger_->info(std::string("Extraction successful."));
 }
-
 void odf_plugin::set_visible_layers() const
 {
   odf_field_->set_visible_layers({

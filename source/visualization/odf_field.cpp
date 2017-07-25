@@ -1,5 +1,7 @@
 #include <pli_vis/visualization/odf_field.hpp>
 
+#include <algorithm>
+
 #include <pli_vis/cuda/odf_field.h>
 #include <pli_vis/visualization/camera.hpp>
 #include <shaders/simple_color.vert.glsl>
@@ -46,9 +48,9 @@ void odf_field::render    (const camera* camera)
 
   // Select by visible layers.
   auto dimension_count  = dimensions_.z > 1 ? 3 : 2;
-  auto min_dimension    = min(dimensions_.x, dimensions_.y);
+  auto min_dimension    = std::min(dimensions_.x, dimensions_.y);
   if (dimension_count == 3)
-    min_dimension = min(min_dimension, dimensions_.z);
+    min_dimension = std::min(min_dimension, dimensions_.z);
   auto max_layer        = int(log(min_dimension) / log(2));
   auto layer_offset     = 0;
   auto layer_dimensions = dimensions_;
@@ -86,10 +88,9 @@ void odf_field::render    (const camera* camera)
 
 void odf_field::set_data(
   const uint3&   dimensions       ,
-  const unsigned coefficient_count,
+  const unsigned maximum_degree   ,
   const float*   coefficients     ,
-  const uint2&   tessellations    , 
-  const float3&  vector_spacing   , 
+  const uint2&   tessellations    ,
   const uint3&   vector_dimensions, 
   const float    scale            ,
   const bool     clustering       ,
@@ -101,9 +102,9 @@ void odf_field::set_data(
 
   auto base_voxel_count = dimensions_.x * dimensions_.y * dimensions_.z;
   auto dimension_count  = dimensions_.z > 1 ? 3 : 2;
-  auto min_dimension    = min(dimensions_.x, dimensions_.y);
+  auto min_dimension    = std::min(dimensions_.x, dimensions_.y);
   if (dimension_count == 3)
-    min_dimension = min(min_dimension, dimensions_.z);
+    min_dimension = std::min(min_dimension, dimensions_.z);
   auto max_layer        = int(log(min_dimension) / log(2));
   auto voxel_count      = unsigned(base_voxel_count * 
     ((1.0 - pow(1.0 / pow(2, dimension_count), max_layer + 1)) / 
@@ -134,10 +135,9 @@ void odf_field::set_data(
 
   sample_odfs(
     dimensions_       ,
-    coefficient_count ,
+    maximum_degree    ,
     coefficients      ,
     tessellations     ,
-    vector_spacing    ,
     vector_dimensions ,
     scale             ,
     cuda_vertex_buffer,
@@ -156,8 +156,7 @@ void odf_field::set_data(
   vertex_buffer_->cuda_unregister();
 }
 
-void odf_field::set_visible_layers(
-  const std::vector<bool>& visible_layers)
+void odf_field::set_visible_layers(const std::vector<bool>& visible_layers)
 {
   visible_layers_ = visible_layers;
 }

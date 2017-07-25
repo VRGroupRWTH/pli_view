@@ -197,7 +197,7 @@ void volume_renderer::render    (const camera* camera)
   index_buffer_             ->unbind();
 }
 
-void volume_renderer::set_data             (const uint3& dimensions, const float3& spacing, const float* data)
+void volume_renderer::set_data             (const uint3& dimensions, const float* data)
 {
   volume_texture_->bind     ();
   volume_texture_->set_image(GL_R32F, dimensions.x, dimensions.y, dimensions.z, GL_RED, GL_FLOAT, data);

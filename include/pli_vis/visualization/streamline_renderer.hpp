@@ -2,8 +2,9 @@
 #define PLI_VIS_BASIC_TRACER_HPP_
 
 #include <memory>
+#include <vector>
 
-#include <boost/multi_array.hpp>
+#include <vector_types.h>
 
 #include <pli_vis/aspects/renderable.hpp>
 #include <pli_vis/opengl/all.hpp>

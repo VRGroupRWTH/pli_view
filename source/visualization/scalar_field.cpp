@@ -68,18 +68,17 @@ void scalar_field::render    (const camera* camera)
 
 void scalar_field::set_data(
   const uint3&  dimensions  ,
-  const float*  scalars     ,
-  const float3& spacing     )
+  const float*  scalars     )
 {
   draw_count_ = 6 * dimensions.z;
 
-  float3 size         = {spacing.x * dimensions.x, spacing.y * dimensions.y, spacing.z * dimensions.z};
-  float3 vertices [6] = {{0,0,0}, {size.x,0,0}, {size.x,-size.y,0}, {0,0,0}, {size.x,-size.y,0}, {0,-size.y,0}};
+  float3 size         = {dimensions.x, dimensions.y, dimensions.z};
+  float3 vertices [6] = {{0,0,0}, {size.x,0,0}, {size.x,size.y,0}, {0,0,0}, {size.x,size.y,0}, {0,size.y,0}};
   float2 texcoords[6] = {{0,0}, {0,1}, {1,1}, {0,0}, {1,1}, {1,0}};
 
   // Adjust vertices to offset for the center of the voxels.
   for(auto i = 0; i < 6; i++)
-    vertices[i] = vertices[i] + float3{-spacing.x / 2, spacing.y / 2, 0};
+    vertices[i] = vertices[i] + float3{-0.5, -0.5, 0};
 
   vertex_buffer_  ->bind    ();
   vertex_buffer_  ->set_data(draw_count_ * sizeof(float3), vertices);

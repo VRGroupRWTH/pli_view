@@ -58,44 +58,7 @@ void vector_field::render    (const camera* camera)
 
 void vector_field::set_data(
   const uint3&  dimensions  ,
-  const float*  directions  ,
-  const float*  inclinations,
-  const float3& spacing     ,
-  float         scale       ,
-  std::function<void(const std::string&)> status_callback)
-{
-  draw_count_ = 2 * dimensions.x * dimensions.y * dimensions.z;
-
-  vertex_buffer_->bind         ();
-  vertex_buffer_->allocate     (draw_count_ * sizeof(float3));
-  vertex_buffer_->unbind       ();
-  vertex_buffer_->cuda_register();
-
-  color_buffer_ ->bind         ();
-  color_buffer_ ->allocate     (draw_count_ * sizeof(float4));
-  color_buffer_ ->unbind       ();
-  color_buffer_ ->cuda_register();
-
-  auto cuda_vertex_buffer = vertex_buffer_->cuda_map<float3>();
-  auto cuda_color_buffer  = color_buffer_ ->cuda_map<float4>();
-  create_vector_field(
-    dimensions        ,
-    directions        ,
-    inclinations      ,
-    spacing           ,
-    scale             ,
-    cuda_vertex_buffer,
-    cuda_color_buffer ,
-    status_callback   );
-
-  color_buffer_ ->cuda_unmap();
-  vertex_buffer_->cuda_unmap();
-}
-
-void vector_field::set_data(
-  const uint3&  dimensions  ,
   const float3* unit_vectors,
-  const float3& spacing     ,
   float         scale       ,
   std::function<void(const std::string&)> status_callback)
 {
@@ -116,7 +79,6 @@ void vector_field::set_data(
   create_vector_field(
     dimensions        ,
     unit_vectors      ,
-    spacing           ,
     scale             ,
     cuda_vertex_buffer,
     cuda_color_buffer ,

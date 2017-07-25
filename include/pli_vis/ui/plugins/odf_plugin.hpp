@@ -1,5 +1,5 @@
-#ifndef PLI_VIS_FDM_PLUGIN_HPP_
-#define PLI_VIS_FDM_PLUGIN_HPP_
+#ifndef PLI_VIS_ODF_PLUGIN_HPP_
+#define PLI_VIS_ODF_PLUGIN_HPP_
 
 #include <future>
 

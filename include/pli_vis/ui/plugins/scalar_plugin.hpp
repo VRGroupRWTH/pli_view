@@ -1,8 +1,6 @@
 #ifndef PLI_VIS_SCALAR_PLUGIN_HPP_
 #define PLI_VIS_SCALAR_PLUGIN_HPP_
 
-#include <future>
-
 #include <pli_vis/ui/plugin.hpp>
 #include <ui_scalar_toolbox.h>
 
@@ -15,13 +13,12 @@ class scalar_plugin : public plugin<scalar_plugin, Ui_scalar_toolbox>
 public:
   explicit scalar_plugin(QWidget* parent = nullptr);
 
-  void start () override;
+  void start() override;
 
 private:
   void upload();
 
-  scalar_field*     scalar_field_;
-  std::future<void> future_      ;
+  scalar_field* scalar_field_;
 };
 }
 

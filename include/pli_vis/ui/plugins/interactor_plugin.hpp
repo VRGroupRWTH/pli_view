@@ -2,7 +2,6 @@
 #define PLI_VIS_INTERACTOR_PLUGIN_HPP_
 
 #include <pli_vis/ui/plugin.hpp>
-
 #include <ui_interactor_toolbox.h>
 
 namespace pli

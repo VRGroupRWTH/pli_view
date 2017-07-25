@@ -10,7 +10,10 @@ template<typename derived, typename ui_type>
 class plugin : public plugin_base, public loggable<derived>, public ui_type
 {
 public:
-  explicit plugin(QWidget* parent = nullptr) : plugin_base(parent) { }
+  explicit plugin(QWidget* parent = nullptr) : plugin_base(parent) 
+  {
+    setupUi(this);
+  }
   virtual ~plugin() = default;
 
   void set_owner(application* owner) override

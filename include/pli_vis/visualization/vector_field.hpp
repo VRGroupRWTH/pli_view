@@ -20,17 +20,8 @@ public:
 
   void set_data(
     const uint3&  dimensions  ,
-    const float*  directions  ,
-    const float*  inclinations,
-    const float3& spacing     ,
-    float         scale       = 1.0,
-    std::function<void(const std::string&)> status_callback = [](const std::string&){});
-
-  void set_data(
-    const uint3&  dimensions  , 
-    const float3* unit_vectors, 
-    const float3& spacing     , 
-    float         scale       , 
+    const float3* unit_vectors,
+    float         scale       ,
     std::function<void(const std::string&)> status_callback = [](const std::string&){});
 
 private:

@@ -7,7 +7,7 @@ namespace pli
 {
 viewer::viewer(QWidget* parent) : QOpenGLWidget(parent), interactor_(&camera_), wait_spinner_(new wait_spinner(this, true, false))
 {
-  camera_.set_translation(glm::vec3(0, 0, 1));
+  camera_.set_translation(glm::vec3(0, 0, -10));
 
   setFocusPolicy(Qt::StrongFocus);
 

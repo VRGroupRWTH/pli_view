@@ -18,8 +18,7 @@ public:
 
   void set_data(
     const uint3&  dimensions,
-    const float*  scalars   ,
-    const float3& spacing   );
+    const float*  scalars   );
 
 private:
   std::unique_ptr<gl::program>      shader_program_ ;

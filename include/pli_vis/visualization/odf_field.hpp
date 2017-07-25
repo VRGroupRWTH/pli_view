@@ -20,18 +20,16 @@ public:
 
   void set_data(
     const uint3&   dimensions        ,
-    const unsigned coefficient_count ,
+    const unsigned maximum_degree    ,
     const float*   coefficients      ,
     const uint2&   tessellations     ,
-    const float3&  vector_spacing    ,
     const uint3&   vector_dimensions ,
     const float    scale             = 1.0  ,
     const bool     clustering        = false,
     const float    cluster_threshold = 0.0  ,
     std::function<void(const std::string&)> status_callback = [](const std::string&){});
 
-  void set_visible_layers(
-    const std::vector<bool>& visible_layers);
+  void set_visible_layers(const std::vector<bool>& visible_layers);
 
 private:
   std::unique_ptr<gl::program>      shader_program_ ;

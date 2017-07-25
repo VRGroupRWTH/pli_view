@@ -10,8 +10,6 @@ namespace pli
 {
 interactor_plugin::interactor_plugin(QWidget* parent) : plugin(parent)
 {
-  setupUi(this);
-  
   line_edit_move_speed->setValidator(new QDoubleValidator(0, std::numeric_limits<double>::max(), 4, this));
   line_edit_look_speed->setValidator(new QDoubleValidator(0, std::numeric_limits<double>::max(), 4, this));
 
@@ -42,24 +40,22 @@ interactor_plugin::interactor_plugin(QWidget* parent) : plugin(parent)
   connect(button_reset_camera , &QPushButton::clicked      , [&]
   {
     logger_->info(std::string("Resetting camera transform."));
-    owner_->viewer->camera()->set_translation({0, 0, 1});
-    owner_->viewer->camera()->look_at        ({0, 0, 0});
+    owner_->viewer->camera()->set_translation({0, 0, -10});
+    owner_->viewer->camera()->look_at        ({0, 0,   0});
   });
 }
 
 void interactor_plugin::start()
 {
+  set_sink(std::make_shared<text_browser_sink>(owner_->console));
+
   auto move_value = double(slider_move_speed->value()) / slider_move_speed->maximum();
   auto look_value = double(slider_look_speed->value()) / slider_look_speed->maximum();
-
   line_edit_move_speed->setText(QString::fromStdString((boost::format("%.4f") % move_value).str()));
   line_edit_look_speed->setText(QString::fromStdString((boost::format("%.4f") % look_value).str()));
 
   auto interactor = owner_->viewer->interactor();
   interactor->set_move_speed(move_value);
   interactor->set_look_speed(look_value);
-
-  set_sink(std::make_shared<text_browser_sink>(owner_->console));
-  logger_->info(std::string("Start successful."));
 }
 }

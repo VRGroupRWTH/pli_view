@@ -1,8 +1,13 @@
 #include <pli_vis/ui/plugins/data_plugin.hpp>
 
+#define _USE_MATH_DEFINES
+
+#include <math.h>
+
 #include <QFileDialog>
 
-#include <pli_vis/io/io_slice_impl.hpp>
+#include <pli_vis/cuda/sh/convert.h>
+#include <pli_vis/cuda/sh/vector_ops.h>
 #include <pli_vis/ui/utility/line_edit.hpp>
 #include <pli_vis/ui/utility/text_browser_sink.hpp>
 #include <pli_vis/ui/application.hpp>
@@ -20,8 +25,6 @@ data_plugin::data_plugin(QWidget* parent)
       line_edit::get_text(line_edit_mask          ),
       line_edit::get_text(line_edit_unit_vector   ))
 {
-  setupUi(this);
-  
   connect(button_browse              , &QPushButton::clicked      , [&]
   {
     auto filename = QFileDialog::getOpenFileName(this, tr("Select PLI file."), "C:/", tr("HDF5 Files (*.h5)")).toStdString();
@@ -95,16 +98,102 @@ data_plugin::data_plugin(QWidget* parent)
 void data_plugin::start()
 {
   set_sink(std::make_shared<text_browser_sink>(owner_->console));
-  logger_->info(std::string("Start successful."));
 
   connect(owner_->get_plugin<selector_plugin>(), &selector_plugin::on_change, [&] (
     const std::array<std::size_t, 3>& offset,
     const std::array<std::size_t, 3>& size  ,
     const std::array<std::size_t, 3>& stride)
   {
-    
+    owner_->viewer->set_wait_spinner_enabled(true);
+
+    future_ = std::async(std::launch::async, [&]
+    {
+      try
+      {
+        transmittance_bounds_ = io_.load_transmittance_bounds();
+        retardation_bounds_   = io_.load_retardation_bounds  ();
+        direction_bounds_     = io_.load_direction_bounds    ();
+        inclination_bounds_   = io_.load_inclination_bounds  ();
+        mask_bounds_          = io_.load_mask_bounds         ();
+        unit_vector_bounds_   = io_.load_unit_vector_bounds  ();
+
+        transmittance_        = io_.load_transmittance       (offset, size, stride);
+        retardation_          = io_.load_retardation         (offset, size, stride);
+        direction_            = io_.load_direction           (offset, size, stride);
+        inclination_          = io_.load_inclination         (offset, size, stride);
+        mask_                 = io_.load_mask                (offset, size, stride);
+        unit_vector_          = io_.load_unit_vector         (offset, size, stride);
+      }
+      catch (std::exception& exception)
+      {
+        logger_->error(std::string(exception.what()));
+      }
+    });
+
+    while(future_.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
+      QApplication::processEvents();
 
     on_load();
+
+    owner_->viewer->set_wait_spinner_enabled(false);
+    owner_->viewer->update();
   });
+}
+
+boost::multi_array<unsigned char, 2> data_plugin::generate_preview_image(std::size_t y_resolution)
+{
+  std::array<std::size_t, 3> size   = {1, 1, 1};
+  std::array<std::size_t, 3> stride = {1, 1, 1};
+  size  [0] = std::min(int(retardation_bounds_.second[0]), int(y_resolution));
+  stride[0] = retardation_bounds_.second[0] / size  [0];
+  size  [1] = retardation_bounds_.second[1] / stride[0];
+  stride[1] = stride[0];
+
+  boost::multi_array<unsigned char, 2> preview_image(boost::extents[size[0]][size[1]], boost::fortran_storage_order());
+  auto data = io_.load_retardation(retardation_bounds_.first, size, stride);
+  for (auto x = 0; x < size[0]; x++)
+    for (auto y = 0; y < size[1]; y++)
+      preview_image[x][y] = data[x][y][0] * 255.0;
+  return preview_image;
+}
+boost::multi_array<float3, 3>        data_plugin::generate_vectors      (bool        cartesian   )
+{
+  boost::multi_array<float3, 3> vectors;
+
+  // Generate from direction - inclination pairs.
+  if(direction_bounds_.second[0] != 0 && inclination_bounds_.second[0] != 0)
+  {
+    auto size = direction_bounds_.second;
+    vectors.resize(boost::extents[size[0]][size[1]][size[2]]);
+    
+    std::transform(
+      direction_  .data(), 
+      direction_  .data() + direction_.num_elements(), 
+      inclination_.data(), 
+      vectors     .data(), 
+      [cartesian] (const float& direction, const float& inclination)
+      {
+        float3 vector {1.0, (90.0F + direction) * M_PI / 180.0F, (90.0F - inclination) * M_PI / 180.0F};
+        return cartesian ? to_cartesian_coords(vector) : vector;
+      });
+  }
+  // Generate from unit vectors.
+  else
+  {
+    auto size = unit_vector_bounds_.second;
+    vectors.resize(boost::extents[size[0]][size[1]][size[2]]);
+
+    std::transform(
+      reinterpret_cast<float3*>(unit_vector_.data()), 
+      reinterpret_cast<float3*>(unit_vector_.data() + size[0] * size[1] * size[2]), 
+      vectors.data(), 
+      [cartesian] (const float3& unit_vector)
+      {
+        auto vector = unit_vector / length(unit_vector);
+        return cartesian ? vector : to_spherical_coords(vector);
+      });
+  }
+
+  return vectors;
 }
 }

@@ -1,8 +1,6 @@
 #ifndef PLI_VIS_FOM_PLUGIN_HPP_
 #define PLI_VIS_FOM_PLUGIN_HPP_
 
-#include <future>
-
 #include <pli_vis/ui/plugin.hpp>
 #include <ui_fom_toolbox.h>
 
@@ -20,8 +18,7 @@ public:
 private:
   void upload();
 
-  vector_field*     vector_field_;
-  std::future<void> future_      ;
+  vector_field* vector_field_;
 };
 }
 

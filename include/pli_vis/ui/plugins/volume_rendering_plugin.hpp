@@ -1,8 +1,6 @@
 #ifndef PLI_VIS_VOLUME_RENDERING_PLUGIN_HPP_
 #define PLI_VIS_VOLUME_RENDERING_PLUGIN_HPP_
 
-#include <future>
-
 #include <pli_vis/ui/plugin.hpp>
 #include <ui_volume_rendering_toolbox.h>
 
@@ -20,8 +18,7 @@ public:
 private:
   void upload();
   
-  volume_renderer*  volume_renderer_;
-  std::future<void> future_         ;
+  volume_renderer* volume_renderer_ = nullptr;
 };
 }
 
