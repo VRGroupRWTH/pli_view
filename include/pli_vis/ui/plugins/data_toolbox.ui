@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>262</width>
+    <width>226</width>
     <height>333</height>
    </rect>
   </property>
@@ -256,7 +256,7 @@
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
      </property>
      <property name="placeholderText">
-      <string>%Slice%/Microscope/Processed/Registered/Inclination</string>
+      <string>%Slice%/Microscope/Processed/Registered/Mask</string>
      </property>
     </widget>
    </item>
@@ -291,7 +291,7 @@
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
      </property>
      <property name="placeholderText">
-      <string>%Slice%/Microscope/Processed/Registered/Inclination</string>
+      <string>%Slice%/Microscope/Processed/Registered/UnitVector</string>
      </property>
     </widget>
    </item>

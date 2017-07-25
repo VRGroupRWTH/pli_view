@@ -111,7 +111,7 @@ void tractography_plugin::trace()
       for (auto x = 0; x < slider_x->value(); x++)
         for (auto y = 0; y < slider_y->value(); y++)
           for (auto z = 0; z < slider_z->value(); z++)
-            seeds.push_back({{x, y, z, 0.0F}});
+            seeds.push_back({{float(x), float(y), float(z), 0.0F}});
 
       tangent::TraceRecorder recorder;
       tangent::OmpCartGridStreamlineTracer tracer(&recorder);

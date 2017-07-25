@@ -39,7 +39,6 @@ set(PROJECT_SOURCES
   include/pli_vis/cuda/spherical_histogram.h
   include/pli_vis/cuda/vector_field.h
   include/pli_vis/io/io.hpp
-  include/pli_vis/io/io_common_impl.hpp
   include/pli_vis/io/io_slice_impl.hpp
   include/pli_vis/io/io_volume_impl.hpp
   include/pli_vis/opengl/auxiliary/glm_uniforms.hpp

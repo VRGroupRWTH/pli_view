@@ -15,8 +15,8 @@
 namespace pli
 {
 data_plugin::data_plugin(QWidget* parent) 
-: plugin(parent), 
-  io_(line_edit::get_text(line_edit_file          ), 
+: plugin(parent)
+, io_(line_edit::get_text(line_edit_file          ), 
       line_edit::get_text(line_edit_vector_spacing),
       line_edit::get_text(line_edit_transmittance ),
       line_edit::get_text(line_edit_retardation   ),
@@ -32,9 +32,20 @@ data_plugin::data_plugin(QWidget* parent)
     io_.set_filepath       (filename.c_str());
     line_edit_file->setText(filename.c_str());
 
-    filename.empty() 
-      ? logger_->info(std::string("Failed to open file: No filepath.")) 
-      : logger_->info("Successfully opened file: {}.", filename);
+    if(!filename.empty())
+    {      
+      transmittance_bounds_ = io_.load_transmittance_bounds();
+      retardation_bounds_   = io_.load_retardation_bounds  ();
+      direction_bounds_     = io_.load_direction_bounds    ();
+      inclination_bounds_   = io_.load_inclination_bounds  ();
+      mask_bounds_          = io_.load_mask_bounds         ();
+      unit_vector_bounds_   = io_.load_unit_vector_bounds  ();
+      logger_->info("Successfully opened file: {}.", filename);
+    }
+    else
+    {
+      logger_->info(std::string("Failed to open file: No filepath."));
+    }
 
     on_change();
   });
@@ -110,19 +121,19 @@ void data_plugin::start()
     {
       try
       {
-        transmittance_bounds_ = io_.load_transmittance_bounds();
-        retardation_bounds_   = io_.load_retardation_bounds  ();
-        direction_bounds_     = io_.load_direction_bounds    ();
-        inclination_bounds_   = io_.load_inclination_bounds  ();
-        mask_bounds_          = io_.load_mask_bounds         ();
-        unit_vector_bounds_   = io_.load_unit_vector_bounds  ();
+        transmittance_.resize(boost::extents[size[0]][size[1]][size[2]]);
+        retardation_  .resize(boost::extents[size[0]][size[1]][size[2]]);
+        direction_    .resize(boost::extents[size[0]][size[1]][size[2]]);
+        inclination_  .resize(boost::extents[size[0]][size[1]][size[2]]);
+        mask_         .resize(boost::extents[size[0]][size[1]][size[2]]);
+        //unit_vector_  .resize(boost::extents[size[0]][size[1]][size[2]][3]);
 
-        transmittance_        = io_.load_transmittance       (offset, size, stride);
-        retardation_          = io_.load_retardation         (offset, size, stride);
-        direction_            = io_.load_direction           (offset, size, stride);
-        inclination_          = io_.load_inclination         (offset, size, stride);
-        mask_                 = io_.load_mask                (offset, size, stride);
-        unit_vector_          = io_.load_unit_vector         (offset, size, stride);
+        transmittance_ = io_.load_transmittance       (offset, size, stride);
+        retardation_   = io_.load_retardation         (offset, size, stride);
+        direction_     = io_.load_direction           (offset, size, stride);
+        inclination_   = io_.load_inclination         (offset, size, stride);
+        mask_          = io_.load_mask                (offset, size, stride);
+        //unit_vector_   = io_.load_unit_vector         (offset, size, stride);
       }
       catch (std::exception& exception)
       {
@@ -163,8 +174,7 @@ boost::multi_array<float3, 3>        data_plugin::generate_vectors      (bool   
   // Generate from direction - inclination pairs.
   if(direction_bounds_.second[0] != 0 && inclination_bounds_.second[0] != 0)
   {
-    auto size = direction_bounds_.second;
-    vectors.resize(boost::extents[size[0]][size[1]][size[2]]);
+    vectors.resize(boost::extents[direction_.shape()[0]][direction_.shape()[1]][direction_.shape()[2]]);
     
     std::transform(
       direction_  .data(), 
