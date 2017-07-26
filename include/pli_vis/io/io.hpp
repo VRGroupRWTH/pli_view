@@ -19,7 +19,6 @@ class io
 public:
   explicit io(
     std::string filepath            = std::string(),
-    std::string vector_spacing_path = std::string(),
     std::string transmittance_path  = std::string(),
     std::string retardation_path    = std::string(),
     std::string direction_path      = std::string(),
@@ -28,7 +27,6 @@ public:
     std::string unit_vector_path    = std::string(),
     std::string distribution_path   = std::string())
     : filepath_           (filepath           )
-    , vector_spacing_path_(vector_spacing_path)
     , transmittance_path_ (transmittance_path )
     , retardation_path_   (retardation_path   )
     , direction_path_     (direction_path     )
@@ -47,10 +45,6 @@ public:
     filepath_ = filepath;
     try        { file_ = std::make_unique<HighFive::File>(filepath_, HighFive::File::ReadWrite); }
     catch(...) { file_ = nullptr; std::cout << "Invalid file" << std::endl; }
-  }
-  void set_vector_spacing_path(const std::string& vector_spacing_path)
-  {
-    vector_spacing_path_   = vector_spacing_path;
   }
   void set_transmittance_path (const std::string& transmittance_path )
   {
@@ -84,10 +78,6 @@ public:
   const std::string& filepath           () const
   {
     return filepath_;
-  }
-  const std::string& vector_spacing_path() const
-  {
-    return vector_spacing_path_;
   }
   const std::string& transmittance_path () const
   {
@@ -161,43 +151,43 @@ public:
     catch(...) { try { return io_volume_impl::load_tensor_dataset_bounds(*file_, distribution_path_); } catch(...) { return std::pair<std::array<std::size_t, 4>, std::array<std::size_t, 4>>(); } }
   }
 
-  boost::multi_array<float, 3> load_transmittance(const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = true) const
+  boost::multi_array<float, 3> load_transmittance(const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = true ) const
   {
     if (!file_) return boost::multi_array<float, 3>();
     try        {       return io_slice_impl ::load_scalar_dataset(*file_, transmittance_path_, offset, size, stride, normalize); }
     catch(...) { try { return io_volume_impl::load_scalar_dataset(*file_, transmittance_path_, offset, size, stride, normalize); } catch(...) { return boost::multi_array<float, 3>(); } }
   } 
-  boost::multi_array<float, 3> load_retardation  (const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = true) const
+  boost::multi_array<float, 3> load_retardation  (const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = true ) const
   {
     if (!file_) return boost::multi_array<float, 3>();
     try        {       return io_slice_impl ::load_scalar_dataset(*file_, retardation_path_  , offset, size, stride, normalize); }
     catch(...) { try { return io_volume_impl::load_scalar_dataset(*file_, retardation_path_  , offset, size, stride, normalize); } catch(...) { return boost::multi_array<float, 3>(); } }
   }
-  boost::multi_array<float, 3> load_direction    (const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = true) const
+  boost::multi_array<float, 3> load_direction    (const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = false) const
   {
     if (!file_) return boost::multi_array<float, 3>();
     try        {       return io_slice_impl ::load_scalar_dataset(*file_, direction_path_, offset, size, stride, normalize); }
     catch(...) { try { return io_volume_impl::load_scalar_dataset(*file_, direction_path_, offset, size, stride, normalize); } catch(...) { return boost::multi_array<float, 3>(); } }
   }
-  boost::multi_array<float, 3> load_inclination  (const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = true) const
+  boost::multi_array<float, 3> load_inclination  (const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = false) const
   {
     if (!file_) return boost::multi_array<float, 3>();
     try        {       return io_slice_impl ::load_scalar_dataset(*file_, inclination_path_, offset, size, stride, normalize); }
     catch(...) { try { return io_volume_impl::load_scalar_dataset(*file_, inclination_path_, offset, size, stride, normalize); } catch(...) { return boost::multi_array<float, 3>(); } }
   } 
-  boost::multi_array<float, 3> load_mask         (const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = true) const
+  boost::multi_array<float, 3> load_mask         (const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = false) const
   {
     if (!file_) return boost::multi_array<float, 3>();
     try        {       return io_slice_impl ::load_scalar_dataset(*file_, mask_path_, offset, size, stride, normalize); }
     catch(...) { try { return io_volume_impl::load_scalar_dataset(*file_, mask_path_, offset, size, stride, normalize); } catch(...) { return boost::multi_array<float, 3>(); } }
   }
-  boost::multi_array<float, 4> load_unit_vector  (const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = true) const
+  boost::multi_array<float, 4> load_unit_vector  (const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = true ) const
   {
     if (!file_) return boost::multi_array<float, 4>();
     try        {       return io_slice_impl ::load_vector_dataset(*file_, unit_vector_path_, offset, size, stride, normalize); }
     catch(...) { try { return io_volume_impl::load_vector_dataset(*file_, unit_vector_path_, offset, size, stride, normalize); } catch(...) { return boost::multi_array<float, 4>(); } }
   }
-  boost::multi_array<float, 4> load_distribution (const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = true) const
+  boost::multi_array<float, 4> load_distribution (const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& size, const std::array<std::size_t, 3>& stride = {1,1,1}, bool normalize = true ) const
   {
     if (!file_) return boost::multi_array<float, 4>();
     try        {       return io_slice_impl ::load_tensor_dataset(*file_, distribution_path_, offset, size, stride, normalize); }
@@ -249,7 +239,6 @@ public:
   
 protected:
   std::string filepath_;
-  std::string vector_spacing_path_;
   std::string transmittance_path_;
   std::string retardation_path_;
   std::string direction_path_;

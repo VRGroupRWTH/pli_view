@@ -47,30 +47,30 @@ public:
 
   const boost::multi_array<float, 3>& transmittance() const
   {
-    return transmittance_;
+    return *transmittance_;
   }
   const boost::multi_array<float, 3>& retardation  () const
   {
-    return retardation_;
+    return *retardation_;
   }
   const boost::multi_array<float, 3>& direction    () const
   {
-    return direction_;
+    return *direction_;
   }
   const boost::multi_array<float, 3>& inclination  () const
   {
-    return inclination_;
+    return *inclination_;
   }
   const boost::multi_array<float, 3>& mask         () const
   {
-    return mask_;
+    return *mask_;
   }
   const boost::multi_array<float, 4>& unit_vector  () const
   {
-    return unit_vector_;
+    return *unit_vector_;
   }
   
-  boost::multi_array<unsigned char, 2> generate_preview_image(std::size_t y_resolution = 2048 );
+  boost::multi_array<unsigned char, 2> generate_preview_image(std::size_t x_resolution = 2048 );
   boost::multi_array<float3, 3>        generate_vectors      (bool        cartesian    = false);
 
 signals:
@@ -88,12 +88,12 @@ private:
   std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>> mask_bounds_         ;    
   std::pair<std::array<std::size_t, 4>, std::array<std::size_t, 4>> unit_vector_bounds_  ;
 
-  boost::multi_array<float, 3> transmittance_;
-  boost::multi_array<float, 3> retardation_  ;
-  boost::multi_array<float, 3> direction_    ;
-  boost::multi_array<float, 3> inclination_  ;
-  boost::multi_array<float, 3> mask_         ;
-  boost::multi_array<float, 4> unit_vector_  ;
+  std::unique_ptr<boost::multi_array<float, 3>> transmittance_;
+  std::unique_ptr<boost::multi_array<float, 3>> retardation_  ;
+  std::unique_ptr<boost::multi_array<float, 3>> direction_    ;
+  std::unique_ptr<boost::multi_array<float, 3>> inclination_  ;
+  std::unique_ptr<boost::multi_array<float, 3>> mask_         ;
+  std::unique_ptr<boost::multi_array<float, 4>> unit_vector_  ;
 };
 }
 

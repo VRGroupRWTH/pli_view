@@ -37,7 +37,7 @@ void orbit_interactor::mouse_move_handler (QMouseEvent* event)
   {
     auto translation = transform_->translation();
     transform_->translate(-translation);
-    transform_->rotate   (glm::angleAxis(glm::radians(-look_speed_ * dx), glm::vec3(0.0, 0.0, 1.0)));
+    transform_->rotate   (glm::angleAxis(glm::radians( look_speed_ * dx), glm::vec3(0.0, 0.0, 1.0)));
     transform_->rotate   (glm::angleAxis(glm::radians(-look_speed_ * dy), transform_->right()));
     transform_->translate(glm::length(translation) * transform_->forward());
   }

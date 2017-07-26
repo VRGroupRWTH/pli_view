@@ -25,7 +25,7 @@ public:
   type* add_renderable   (args&&...   arguments );
   void  remove_renderable(renderable* renderable);
 
-  pli::camera*       camera    () { return &camera_    ; }
+  camera*            camera    () { return &camera_    ; }
   simple_interactor* interactor() { return &interactor_; }
 
   void initializeGL   ()                   override;

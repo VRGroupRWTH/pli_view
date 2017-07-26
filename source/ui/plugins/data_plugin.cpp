@@ -16,16 +16,15 @@ namespace pli
 {
 data_plugin::data_plugin(QWidget* parent) 
 : plugin(parent)
-, io_(line_edit::get_text(line_edit_file          ), 
-      line_edit::get_text(line_edit_vector_spacing),
-      line_edit::get_text(line_edit_transmittance ),
-      line_edit::get_text(line_edit_retardation   ),
-      line_edit::get_text(line_edit_direction     ),
-      line_edit::get_text(line_edit_inclination   ),
-      line_edit::get_text(line_edit_mask          ),
-      line_edit::get_text(line_edit_unit_vector   ))
+, io_(line_edit::get_text(line_edit_file         ),
+      line_edit::get_text(line_edit_transmittance),
+      line_edit::get_text(line_edit_retardation  ),
+      line_edit::get_text(line_edit_direction    ),
+      line_edit::get_text(line_edit_inclination  ),
+      line_edit::get_text(line_edit_mask         ),
+      line_edit::get_text(line_edit_unit_vector  ))
 {
-  connect(button_browse              , &QPushButton::clicked      , [&]
+  connect(button_browse          , &QPushButton::clicked      , [&]
   {
     auto filename = QFileDialog::getOpenFileName(this, tr("Select PLI file."), "C:/", tr("HDF5 Files (*.h5)")).toStdString();
     
@@ -49,42 +48,37 @@ data_plugin::data_plugin(QWidget* parent)
 
     on_change();
   });
-  connect(line_edit_vector_spacing   , &QLineEdit::editingFinished, [&]
-  {
-    io_.set_vector_spacing_path(line_edit::get_text(line_edit_vector_spacing));
-    on_change();
-  });
-  connect(line_edit_transmittance    , &QLineEdit::editingFinished, [&] 
+  connect(line_edit_transmittance, &QLineEdit::editingFinished, [&] 
   {
     io_.set_transmittance_path(line_edit::get_text(line_edit_transmittance));
     on_change();
   });
-  connect(line_edit_retardation      , &QLineEdit::editingFinished, [&]
+  connect(line_edit_retardation  , &QLineEdit::editingFinished, [&]
   {
     io_.set_retardation_path(line_edit::get_text(line_edit_retardation));
     on_change();
   });
-  connect(line_edit_direction        , &QLineEdit::editingFinished, [&]
+  connect(line_edit_direction    , &QLineEdit::editingFinished, [&]
   {
     io_.set_direction_path(line_edit::get_text(line_edit_direction));
     on_change();
   });
-  connect(line_edit_inclination      , &QLineEdit::editingFinished, [&]
+  connect(line_edit_inclination  , &QLineEdit::editingFinished, [&]
   {
     io_.set_inclination_path(line_edit::get_text(line_edit_inclination));
     on_change();
   });
-  connect(line_edit_mask             , &QLineEdit::editingFinished, [&]
+  connect(line_edit_mask         , &QLineEdit::editingFinished, [&]
   {
     io_.set_mask_path(line_edit::get_text(line_edit_mask));
     on_change();
   });
-  connect(line_edit_unit_vector      , &QLineEdit::editingFinished, [&]
+  connect(line_edit_unit_vector  , &QLineEdit::editingFinished, [&]
   {
     io_.set_unit_vector_path(line_edit::get_text(line_edit_unit_vector));
     on_change();
   });
-  connect(button_vervet_defaults     , &QPushButton::clicked      , [&]
+  connect(button_vervet_defaults , &QPushButton::clicked      , [&]
   {
     line_edit_file         ->setPlaceholderText("C:/Vervet1818.h5");
     line_edit_transmittance->setPlaceholderText("%Slice%/Microscope/Processed/Registered/NTransmittance");
@@ -93,8 +87,15 @@ data_plugin::data_plugin(QWidget* parent)
     line_edit_inclination  ->setPlaceholderText("%Slice%/Microscope/Processed/Registered/Inclination");
     line_edit_mask         ->setPlaceholderText("%Slice%/Microscope/Processed/Registered/Mask");
     line_edit_unit_vector  ->setPlaceholderText("%Slice%/Microscope/Processed/Registered/UnitVector");
+    io_.set_transmittance_path(line_edit::get_text(line_edit_transmittance));
+    io_.set_retardation_path  (line_edit::get_text(line_edit_retardation  ));
+    io_.set_direction_path    (line_edit::get_text(line_edit_direction    ));
+    io_.set_inclination_path  (line_edit::get_text(line_edit_inclination  ));
+    io_.set_mask_path         (line_edit::get_text(line_edit_mask         ));
+    io_.set_unit_vector_path  (line_edit::get_text(line_edit_unit_vector  ));
+    on_change();
   });
-  connect(button_msa_defaults        , &QPushButton::clicked      , [&]
+  connect(button_msa_defaults    , &QPushButton::clicked      , [&]
   {
     line_edit_file         ->setPlaceholderText("C:/MSA0309_s0536-0695.h5");
     line_edit_transmittance->setPlaceholderText("Transmittance");
@@ -103,6 +104,13 @@ data_plugin::data_plugin(QWidget* parent)
     line_edit_inclination  ->setPlaceholderText("Inclination");
     line_edit_mask         ->setPlaceholderText("Mask");
     line_edit_unit_vector  ->setPlaceholderText("UnitVector");
+    io_.set_transmittance_path(line_edit::get_text(line_edit_transmittance));
+    io_.set_retardation_path  (line_edit::get_text(line_edit_retardation  ));
+    io_.set_direction_path    (line_edit::get_text(line_edit_direction    ));
+    io_.set_inclination_path  (line_edit::get_text(line_edit_inclination  ));
+    io_.set_mask_path         (line_edit::get_text(line_edit_mask         ));
+    io_.set_unit_vector_path  (line_edit::get_text(line_edit_unit_vector  ));
+    on_change();
   });
 }
 
@@ -115,25 +123,26 @@ void data_plugin::start()
     const std::array<std::size_t, 3>& size  ,
     const std::array<std::size_t, 3>& stride)
   {
-    owner_->viewer->set_wait_spinner_enabled(true);
+    owner_->viewer ->set_wait_spinner_enabled(true);
+    owner_->toolbox->setEnabled(false);
 
     future_ = std::async(std::launch::async, [&]
     {
       try
       {
-        transmittance_.resize(boost::extents[size[0]][size[1]][size[2]]);
-        retardation_  .resize(boost::extents[size[0]][size[1]][size[2]]);
-        direction_    .resize(boost::extents[size[0]][size[1]][size[2]]);
-        inclination_  .resize(boost::extents[size[0]][size[1]][size[2]]);
-        mask_         .resize(boost::extents[size[0]][size[1]][size[2]]);
-        //unit_vector_  .resize(boost::extents[size[0]][size[1]][size[2]][3]);
+        transmittance_bounds_ = io_.load_transmittance_bounds();
+        retardation_bounds_   = io_.load_retardation_bounds  ();
+        direction_bounds_     = io_.load_direction_bounds    ();
+        inclination_bounds_   = io_.load_inclination_bounds  ();
+        mask_bounds_          = io_.load_mask_bounds         ();
+        unit_vector_bounds_   = io_.load_unit_vector_bounds  ();
 
-        transmittance_ = io_.load_transmittance       (offset, size, stride);
-        retardation_   = io_.load_retardation         (offset, size, stride);
-        direction_     = io_.load_direction           (offset, size, stride);
-        inclination_   = io_.load_inclination         (offset, size, stride);
-        mask_          = io_.load_mask                (offset, size, stride);
-        //unit_vector_   = io_.load_unit_vector         (offset, size, stride);
+        transmittance_ = std::make_unique<boost::multi_array<float, 3>>(io_.load_transmittance(offset, size, stride));
+        retardation_   = std::make_unique<boost::multi_array<float, 3>>(io_.load_retardation  (offset, size, stride));
+        direction_     = std::make_unique<boost::multi_array<float, 3>>(io_.load_direction    (offset, size, stride));
+        inclination_   = std::make_unique<boost::multi_array<float, 3>>(io_.load_inclination  (offset, size, stride));
+        mask_          = std::make_unique<boost::multi_array<float, 3>>(io_.load_mask         (offset, size, stride));
+        unit_vector_   = std::make_unique<boost::multi_array<float, 4>>(io_.load_unit_vector  (offset, size, stride));
       }
       catch (std::exception& exception)
       {
@@ -146,16 +155,20 @@ void data_plugin::start()
 
     on_load();
 
-    owner_->viewer->set_wait_spinner_enabled(false);
-    owner_->viewer->update();
+    owner_->toolbox->setEnabled(true);
+    owner_->viewer ->set_wait_spinner_enabled(false);
+    owner_->viewer ->update();
   });
 }
 
-boost::multi_array<unsigned char, 2> data_plugin::generate_preview_image(std::size_t y_resolution)
+boost::multi_array<unsigned char, 2> data_plugin::generate_preview_image(std::size_t x_resolution)
 {
+  if (retardation_bounds_.second[0] == 0)
+    return boost::multi_array<unsigned char, 2>();
+
   std::array<std::size_t, 3> size   = {1, 1, 1};
   std::array<std::size_t, 3> stride = {1, 1, 1};
-  size  [0] = std::min(int(retardation_bounds_.second[0]), int(y_resolution));
+  size  [0] = std::min(int(retardation_bounds_.second[0]), int(x_resolution));
   stride[0] = retardation_bounds_.second[0] / size  [0];
   size  [1] = retardation_bounds_.second[1] / stride[0];
   stride[1] = stride[0];
@@ -169,41 +182,40 @@ boost::multi_array<unsigned char, 2> data_plugin::generate_preview_image(std::si
 }
 boost::multi_array<float3, 3>        data_plugin::generate_vectors      (bool        cartesian   )
 {
-  boost::multi_array<float3, 3> vectors;
-
   // Generate from direction - inclination pairs.
   if(direction_bounds_.second[0] != 0 && inclination_bounds_.second[0] != 0)
   {
-    vectors.resize(boost::extents[direction_.shape()[0]][direction_.shape()[1]][direction_.shape()[2]]);
+    boost::multi_array<float3, 3> vectors(boost::extents[direction_->shape()[0]][direction_->shape()[1]][direction_->shape()[2]]);
     
     std::transform(
-      direction_  .data(), 
-      direction_  .data() + direction_.num_elements(), 
-      inclination_.data(), 
-      vectors     .data(), 
+      direction_  ->data(), 
+      direction_  ->data() + direction_->num_elements(), 
+      inclination_->data(), 
+      vectors     . data(), 
       [cartesian] (const float& direction, const float& inclination)
       {
         float3 vector {1.0, (90.0F + direction) * M_PI / 180.0F, (90.0F - inclination) * M_PI / 180.0F};
         return cartesian ? to_cartesian_coords(vector) : vector;
       });
+
+    return vectors;
   }
   // Generate from unit vectors.
   else
   {
-    auto size = unit_vector_bounds_.second;
-    vectors.resize(boost::extents[size[0]][size[1]][size[2]]);
+    boost::multi_array<float3, 3> vectors(boost::extents[unit_vector_->shape()[0]][unit_vector_->shape()[1]][unit_vector_->shape()[2]]);
 
     std::transform(
-      reinterpret_cast<float3*>(unit_vector_.data()), 
-      reinterpret_cast<float3*>(unit_vector_.data() + size[0] * size[1] * size[2]), 
+      reinterpret_cast<float3*>(unit_vector_->data()), 
+      reinterpret_cast<float3*>(unit_vector_->data() + unit_vector_->num_elements()), 
       vectors.data(), 
       [cartesian] (const float3& unit_vector)
       {
         auto vector = unit_vector / length(unit_vector);
         return cartesian ? vector : to_spherical_coords(vector);
       });
-  }
 
-  return vectors;
+    return vectors;
+  }
 }
 }

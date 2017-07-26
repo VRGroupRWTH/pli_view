@@ -58,25 +58,21 @@ void scalar_plugin::upload()
   if (checkbox_transmittance->isChecked())
   {
     auto data = data_plugin->transmittance();
-    data.resize(boost::extents[data.shape()[0]][data.shape()[1]][1]);
     scalar_field_->set_data(make_uint3(data.shape()[0], data.shape()[1], data.shape()[2]), data.data());
   }
   if (checkbox_retardation  ->isChecked())
   {
     auto data = data_plugin->retardation();
-    data.resize(boost::extents[data.shape()[0]][data.shape()[1]][1]);
     scalar_field_->set_data(make_uint3(data.shape()[0], data.shape()[1], data.shape()[2]), data.data());
   }
   if (checkbox_direction    ->isChecked())
   {
     auto data = data_plugin->direction();
-    data.resize(boost::extents[data.shape()[0]][data.shape()[1]][1]);
     scalar_field_->set_data(make_uint3(data.shape()[0], data.shape()[1], data.shape()[2]), data.data());
   }
   if (checkbox_inclination  ->isChecked())
   {
     auto data = data_plugin->inclination();
-    data.resize(boost::extents[data.shape()[0]][data.shape()[1]][1]);
     scalar_field_->set_data(make_uint3(data.shape()[0], data.shape()[1], data.shape()[2]), data.data());
   }
 

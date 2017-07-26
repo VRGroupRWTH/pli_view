@@ -55,7 +55,7 @@ void scalar_field::render    (const camera* camera)
   shader_program_->set_uniform("view"      , camera->inverse_absolute_matrix());
 
   glEnable       (GL_POLYGON_OFFSET_FILL);
-  glPolygonOffset(1.0, 0.5);
+  glPolygonOffset(1.0, 10.0);
   glDrawArrays   (GL_TRIANGLES, 0, GLsizei(draw_count_));
   glPolygonOffset(1.0, 0.0);
   glDisable      (GL_POLYGON_OFFSET_FILL);

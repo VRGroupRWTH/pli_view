@@ -208,6 +208,9 @@ void odf_plugin::destroy()
 
 void odf_plugin::calculate         ()
 {
+  owner_->viewer ->set_wait_spinner_enabled(true );
+  owner_->toolbox->setEnabled              (false);
+
   logger_->info(std::string("Updating viewer..."));
   
   auto max_degree              = 
@@ -276,9 +279,15 @@ void odf_plugin::calculate         ()
     [&](const std::string& message) { logger_->info(message); });
 
   logger_->info(std::string("Update successful."));
+  
+  owner_->toolbox->setEnabled              (true );
+  owner_->viewer ->set_wait_spinner_enabled(false);
 }
 void odf_plugin::extract_peaks     ()
 {
+  owner_->viewer ->set_wait_spinner_enabled(true );
+  owner_->toolbox->setEnabled              (false);
+
   logger_->info(std::string("Extracting peaks..."));
 
   // TODO: Apply peak extraction.
@@ -290,6 +299,9 @@ void odf_plugin::extract_peaks     ()
   //        logger_->info("[" + boost::lexical_cast<std::string>(x) + "," + boost::lexical_cast<std::string>(y) + "," + boost::lexical_cast<std::string>(z) + "]: ");
   
   logger_->info(std::string("Extraction successful."));
+  
+  owner_->toolbox->setEnabled              (true );
+  owner_->viewer ->set_wait_spinner_enabled(false);
 }
 void odf_plugin::set_visible_layers() const
 {

@@ -40,8 +40,8 @@ interactor_plugin::interactor_plugin(QWidget* parent) : plugin(parent)
   connect(button_reset_camera , &QPushButton::clicked      , [&]
   {
     logger_->info(std::string("Resetting camera transform."));
-    owner_->viewer->camera()->set_translation({0, 0, -10});
-    owner_->viewer->camera()->look_at        ({0, 0,   0});
+    owner_->viewer->camera()->set_translation({0, 0, -100});
+    owner_->viewer->camera()->look_at        ({0, 0,    0}, {0, -1, 0});
   });
 }
 

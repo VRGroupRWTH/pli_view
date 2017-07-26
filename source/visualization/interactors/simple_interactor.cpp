@@ -35,7 +35,7 @@ void simple_interactor::mouse_move_handler (QMouseEvent* event)
 
   if (event->buttons() & Qt::LeftButton)
   {
-    transform_->rotate(glm::angleAxis(glm::radians(-look_speed_ * dx), glm::vec3(0.0, 0.0, 1.0)));
+    transform_->rotate(glm::angleAxis(glm::radians( look_speed_ * dx), glm::vec3(0.0, 0.0, 1.0)));
     transform_->rotate(glm::angleAxis(glm::radians(-look_speed_ * dy), transform_->right()));
   }
   if (event->buttons() & Qt::MiddleButton)

@@ -86,6 +86,9 @@ void tractography_plugin::start()
 }
 void tractography_plugin::trace()
 {
+  owner_->viewer ->set_wait_spinner_enabled(true );
+  owner_->toolbox->setEnabled              (false);
+
   logger_->info(std::string("Tracing..."));
 
   std::vector<float3> points;
@@ -153,5 +156,8 @@ void tractography_plugin::trace()
   {
     logger_->info(std::string("Trace failed."));
   }
+
+  owner_->toolbox->setEnabled              (true );
+  owner_->viewer ->set_wait_spinner_enabled(false);
 }
 }
