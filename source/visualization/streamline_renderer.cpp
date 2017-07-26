@@ -25,8 +25,7 @@ void streamline_renderer::initialize()
   vertex_array_  .reset(new gl::vertex_array);
   vertex_buffer_ .reset(new gl::array_buffer);
   color_buffer_  .reset(new gl::array_buffer);
-  index_buffer_  .reset(new gl::index_buffer);
-
+  
   shader_program_->attach_shader(gl::vertex_shader  (shaders::simple_color_vert));
   shader_program_->attach_shader(gl::fragment_shader(shaders::simple_color_frag));
   shader_program_->link();
@@ -51,7 +50,6 @@ void streamline_renderer::render    (const camera* camera)
 {
   shader_program_->bind();
   vertex_array_  ->bind();
-  index_buffer_  ->bind();
 
   shader_program_->set_uniform("projection", camera->projection_matrix      ());
   shader_program_->set_uniform("view"      , camera->inverse_absolute_matrix());
@@ -67,7 +65,6 @@ void streamline_renderer::render    (const camera* camera)
   glDisable   (GL_BLEND);
   glDisable   (GL_LINE_SMOOTH);
 
-  index_buffer_  ->unbind();
   vertex_array_  ->unbind();
   shader_program_->unbind();
 }

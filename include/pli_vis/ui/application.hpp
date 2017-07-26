@@ -11,8 +11,6 @@
 
 namespace pli
 {
-//class plugin_base;
-
 class application : public QMainWindow, public Ui_window, public loggable<application>
 {
 public:

@@ -1,6 +1,7 @@
 #include <pli_vis/ui/application.hpp>
 
 #include <cuda_runtime_api.h>
+#include <QShortcut>
 
 #include <pli_vis/ui/utility/text_browser_sink.hpp>
 #include <pli_vis/ui/plugin_base.hpp>
@@ -36,21 +37,30 @@ application::~application()
 
 void application::bind_actions()
 {  
-  connect(action_fullscreen   , &QAction::triggered, [&] 
+  auto fullscreen_action = new QAction(this);
+  fullscreen_action->setShortcut       (QKeySequence(Qt::Key_F11));
+  fullscreen_action->setShortcutContext(Qt::ApplicationShortcut );
+  addAction(fullscreen_action);
+  connect(fullscreen_action, &QAction::triggered, this, [&]()
   {
     logger_->info(std::string("Toggling fullscreen mode."));
     isFullScreen() ? showNormal() : showFullScreen();
   });
-  connect(action_file_exit    , &QAction::triggered, [&] 
-  {
-    logger_->info(std::string("Closing application."));
-    close();
-  });
-  connect(action_help_version , &QAction::triggered, [&] 
+  
+  auto version_action = new QAction(this);
+  version_action->setShortcut       (QKeySequence(Qt::Key_V));
+  version_action->setShortcutContext(Qt::ApplicationShortcut );
+  addAction(version_action);
+  connect(version_action, &QAction::triggered, this, [&]()
   {
     logger_->info(std::string("Version ") + __DATE__);
   });
-  connect(action_help_gpu_info, &QAction::triggered, [&]
+
+  auto gpu_info_action = new QAction(this);
+  gpu_info_action->setShortcut       (QKeySequence(Qt::Key_G));
+  gpu_info_action->setShortcutContext(Qt::ApplicationShortcut );
+  addAction(gpu_info_action);
+  connect(gpu_info_action, &QAction::triggered, this, [&]()
   {
     std::size_t free, total;
     cudaMemGetInfo(&free, &total);
