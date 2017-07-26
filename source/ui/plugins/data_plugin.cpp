@@ -289,18 +289,23 @@ void data_plugin::setup()
   slider_x->setMinimum(bounds.first[0]); slider_x->setMaximum(bounds.second[0]);
   slider_y->setMinimum(bounds.first[1]); slider_y->setMaximum(bounds.second[1]);
   slider_z->setMinimum(bounds.first[2]); slider_z->setMaximum(bounds.second[2]);
-  slider_z->setSpan(bounds.first[2], bounds.first[2] + 1);
+  slider_z->setSpan   (bounds.first[2], bounds.first[2] + 1);
 
   // Generate preview image.
   auto preview_image = generate_preview_image();
-  auto shape = preview_image.shape();
+  auto shape         = preview_image.shape();
   image->setPixmap(QPixmap::fromImage(QImage(preview_image.data(), shape[0], shape[1], QImage::Format::Format_Grayscale8)));
 
   // Adjust widget size.
   image    ->setSizeIncrement(shape[0], shape[1]);
   letterbox->setWidget(image);
   letterbox->update();
-  image    ->update();
   update();
+
+  // Hack for enforcing a UI update.
+  auto sizes = owner_->splitter->sizes();
+  owner_->splitter->setSizes(QList<int>{0       , sizes[1]});
+  owner_->splitter->setSizes(QList<int>{sizes[0], sizes[1]});
+  owner_->update();
 }
 }
