@@ -391,7 +391,7 @@ void sample_odfs(
       sum_and_cluster_kernel<<<grid_size_3d(layer_dimensions), block_size_3d()>>>(
         layer_dimensions    ,
         layer_offset        ,
-        coefficient_count   ,
+        maximum_degree      ,
         coefficients_ptr    ,
         dimension_count == 2,
         clustering          ,
