@@ -438,7 +438,7 @@ void sample_odfs(
     points,
     [] COMMON (const float3& point)
     {
-      return pli::to_cartesian_coords(point);
+      return to_cartesian_coords(point);
     });
   cudaDeviceSynchronize();
 
@@ -480,7 +480,11 @@ void sample_odfs(
       layer_vectors_size.x,
       layer_vectors_size.y,
       dimension_count == 3 ? layer_vectors_size.z : 1.0F };
-    auto layer_scale = scale * min(min(layer_spacing.x, layer_spacing.y), layer_spacing.z) * 0.5F;
+    float  min_spacing = min(layer_spacing.x, layer_spacing.y);
+    if(dimension_count == 3)
+      min_spacing = min(min_spacing, layer_spacing.z);
+
+    auto layer_scale = scale * min_spacing  * 0.5F;
 
     thrust::transform(
       thrust::device,
