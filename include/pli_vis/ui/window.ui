@@ -195,7 +195,7 @@
           <x>0</x>
           <y>0</y>
           <width>117</width>
-          <height>406</height>
+          <height>427</height>
          </rect>
         </property>
         <property name="font">
@@ -206,19 +206,6 @@
         </property>
         <attribute name="label">
          <string>Data</string>
-        </attribute>
-       </widget>
-       <widget class="pli::selector_plugin" name="plugin_selection">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>98</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <attribute name="label">
-         <string>Selector</string>
         </attribute>
        </widget>
        <widget class="pli::interactor_plugin" name="plugin_interactor">
@@ -408,12 +395,6 @@
    <class>pli::tractography_plugin</class>
    <extends>QWidget</extends>
    <header location="global">pli_vis/ui/plugins/tractography_plugin.hpp</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>pli::selector_plugin</class>
-   <extends>QWidget</extends>
-   <header location="global">pli_vis/ui/plugins/selector_plugin.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

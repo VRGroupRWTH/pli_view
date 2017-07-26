@@ -18,8 +18,6 @@ class data_plugin : public plugin<data_plugin, Ui_data_toolbox>
 public:
   explicit data_plugin(QWidget* parent = nullptr);
 
-  void start() override;
-  
   const std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>& transmittance_bounds() const
   {
     return transmittance_bounds_;
@@ -70,14 +68,20 @@ public:
     return *unit_vector_;
   }
   
+  std::array<std::size_t, 3> selection_offset() const;
+  std::array<std::size_t, 3> selection_size  () const;
+  std::array<std::size_t, 3> selection_stride() const;
+
   boost::multi_array<unsigned char, 2> generate_preview_image(std::size_t x_resolution = 2048 );
   boost::multi_array<float3, 3>        generate_vectors      (bool        cartesian    = false);
-
+  
 signals:
-  void on_change();
-  void on_load  ();
+  void on_load();
 
 private:
+  void start() override;
+  void setup();
+
   io                io_    ;
   std::future<void> future_;
   

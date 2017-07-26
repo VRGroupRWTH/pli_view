@@ -14,114 +14,136 @@
 
 namespace pli
 {
-data_plugin::data_plugin(QWidget* parent) 
-: plugin(parent)
-, io_(line_edit::get_text(line_edit_file         ),
-      line_edit::get_text(line_edit_transmittance),
-      line_edit::get_text(line_edit_retardation  ),
-      line_edit::get_text(line_edit_direction    ),
-      line_edit::get_text(line_edit_inclination  ),
-      line_edit::get_text(line_edit_mask         ),
-      line_edit::get_text(line_edit_unit_vector  ))
+data_plugin::data_plugin(QWidget* parent) : plugin(parent)
 {
-  connect(button_browse          , &QPushButton::clicked      , [&]
+  connect(button_open_slice , &QPushButton::clicked             , [&]
   {
     auto filename = QFileDialog::getOpenFileName(this, tr("Select PLI file."), "C:/", tr("HDF5 Files (*.h5)")).toStdString();
-    
-    io_.set_filepath       (filename.c_str());
-    line_edit_file->setText(filename.c_str());
+    if(filename.empty())
+      return;
 
-    if(!filename.empty())
-    {      
-      transmittance_bounds_ = io_.load_transmittance_bounds();
-      retardation_bounds_   = io_.load_retardation_bounds  ();
-      direction_bounds_     = io_.load_direction_bounds    ();
-      inclination_bounds_   = io_.load_inclination_bounds  ();
-      mask_bounds_          = io_.load_mask_bounds         ();
-      unit_vector_bounds_   = io_.load_unit_vector_bounds  ();
-      logger_->info("Successfully opened file: {}.", filename);
-    }
-    else
-    {
-      logger_->info(std::string("Failed to open file: No filepath."));
-    }
+    io_.set_filepath          (filename.c_str());
+    io_.set_transmittance_path("%Slice%/Microscope/Processed/Registered/NTransmittance");
+    io_.set_retardation_path  ("%Slice%/Microscope/Processed/Registered/Retardation"   );
+    io_.set_direction_path    ("%Slice%/Microscope/Processed/Registered/Direction"     );
+    io_.set_inclination_path  ("%Slice%/Microscope/Processed/Registered/Inclination"   );
+    io_.set_mask_path         ("%Slice%/Microscope/Processed/Registered/Mask"          );
+    io_.set_unit_vector_path  ("%Slice%/Microscope/Processed/Registered/UnitVector"    );
 
-    on_change();
+    setup();
   });
-  connect(line_edit_transmittance, &QLineEdit::editingFinished, [&] 
+  connect(button_open_volume, &QPushButton::clicked             , [&]
   {
-    io_.set_transmittance_path(line_edit::get_text(line_edit_transmittance));
-    on_change();
-  });
-  connect(line_edit_retardation  , &QLineEdit::editingFinished, [&]
-  {
-    io_.set_retardation_path(line_edit::get_text(line_edit_retardation));
-    on_change();
-  });
-  connect(line_edit_direction    , &QLineEdit::editingFinished, [&]
-  {
-    io_.set_direction_path(line_edit::get_text(line_edit_direction));
-    on_change();
-  });
-  connect(line_edit_inclination  , &QLineEdit::editingFinished, [&]
-  {
-    io_.set_inclination_path(line_edit::get_text(line_edit_inclination));
-    on_change();
-  });
-  connect(line_edit_mask         , &QLineEdit::editingFinished, [&]
-  {
-    io_.set_mask_path(line_edit::get_text(line_edit_mask));
-    on_change();
-  });
-  connect(line_edit_unit_vector  , &QLineEdit::editingFinished, [&]
-  {
-    io_.set_unit_vector_path(line_edit::get_text(line_edit_unit_vector));
-    on_change();
-  });
-  connect(button_vervet_defaults , &QPushButton::clicked      , [&]
-  {
-    line_edit_file         ->setPlaceholderText("C:/Vervet1818.h5");
-    line_edit_transmittance->setPlaceholderText("%Slice%/Microscope/Processed/Registered/NTransmittance");
-    line_edit_retardation  ->setPlaceholderText("%Slice%/Microscope/Processed/Registered/Retardation");
-    line_edit_direction    ->setPlaceholderText("%Slice%/Microscope/Processed/Registered/Direction");
-    line_edit_inclination  ->setPlaceholderText("%Slice%/Microscope/Processed/Registered/Inclination");
-    line_edit_mask         ->setPlaceholderText("%Slice%/Microscope/Processed/Registered/Mask");
-    line_edit_unit_vector  ->setPlaceholderText("%Slice%/Microscope/Processed/Registered/UnitVector");
-    io_.set_transmittance_path(line_edit::get_text(line_edit_transmittance));
-    io_.set_retardation_path  (line_edit::get_text(line_edit_retardation  ));
-    io_.set_direction_path    (line_edit::get_text(line_edit_direction    ));
-    io_.set_inclination_path  (line_edit::get_text(line_edit_inclination  ));
-    io_.set_mask_path         (line_edit::get_text(line_edit_mask         ));
-    io_.set_unit_vector_path  (line_edit::get_text(line_edit_unit_vector  ));
-    on_change();
-  });
-  connect(button_msa_defaults    , &QPushButton::clicked      , [&]
-  {
-    line_edit_file         ->setPlaceholderText("C:/MSA0309_s0536-0695.h5");
-    line_edit_transmittance->setPlaceholderText("Transmittance");
-    line_edit_retardation  ->setPlaceholderText("Retardation");
-    line_edit_direction    ->setPlaceholderText("Direction");
-    line_edit_inclination  ->setPlaceholderText("Inclination");
-    line_edit_mask         ->setPlaceholderText("Mask");
-    line_edit_unit_vector  ->setPlaceholderText("UnitVector");
-    io_.set_transmittance_path(line_edit::get_text(line_edit_transmittance));
-    io_.set_retardation_path  (line_edit::get_text(line_edit_retardation  ));
-    io_.set_direction_path    (line_edit::get_text(line_edit_direction    ));
-    io_.set_inclination_path  (line_edit::get_text(line_edit_inclination  ));
-    io_.set_mask_path         (line_edit::get_text(line_edit_mask         ));
-    io_.set_unit_vector_path  (line_edit::get_text(line_edit_unit_vector  ));
-    on_change();
-  });
-}
+    auto filename = QFileDialog::getOpenFileName(this, tr("Select PLI file."), "C:/", tr("HDF5 Files (*.h5)")).toStdString();
+    if (filename.empty())
+      return;
 
-void data_plugin::start()
-{
-  set_sink(std::make_shared<text_browser_sink>(owner_->console));
+    io_.set_filepath          (filename.c_str());
+    io_.set_transmittance_path("Transmittance");
+    io_.set_retardation_path  ("Retardation"  );
+    io_.set_direction_path    ("Direction"    );
+    io_.set_inclination_path  ("Inclination"  );
+    io_.set_mask_path         ("Mask"         );
+    io_.set_unit_vector_path  ("UnitVector"   );
 
-  connect(owner_->get_plugin<selector_plugin>(), &selector_plugin::on_change, [&] (
-    const std::array<std::size_t, 3>& offset,
-    const std::array<std::size_t, 3>& size  ,
-    const std::array<std::size_t, 3>& stride)
+    setup();
+  });
+  connect(image             , &roi_selector::on_selection_change, [&](const std::array<float, 2> offset_perc, const std::array<float, 2> size_perc)
+  {
+    std::array<int, 2> offset { int(offset_perc[0] * slider_x->maximum()), int(offset_perc[1] * slider_y->maximum()) };
+    std::array<int, 2> size   { int(size_perc  [0] * slider_x->maximum()), int(size_perc  [1] * slider_y->maximum()) };
+    line_edit_offset_x->setText      (QString::fromStdString(std::to_string(offset[0])));
+    line_edit_size_x  ->setText      (QString::fromStdString(std::to_string(size  [0])));
+    line_edit_offset_y->setText      (QString::fromStdString(std::to_string(offset[1])));
+    line_edit_size_y  ->setText      (QString::fromStdString(std::to_string(size  [1])));
+    slider_x          ->setLowerValue(offset[0]);
+    slider_x          ->setUpperValue(offset[0] + size[0]);
+    slider_y          ->setLowerValue(offset[1]);
+    slider_y          ->setUpperValue(offset[1] + size[1]);
+  });
+  connect(slider_x          , &QxtSpanSlider::lowerValueChanged , [&](int value)
+  {
+    line_edit_offset_x->setText(QString::fromStdString(std::to_string(value)));
+    line_edit_size_x  ->setText(QString::fromStdString(std::to_string(slider_x->upperValue() - value)));
+  });
+  connect(slider_x          , &QxtSpanSlider::upperValueChanged , [&](int value)
+  {
+    line_edit_size_x->setText(QString::fromStdString(std::to_string(value - slider_x->lowerValue())));
+  });
+  connect(slider_x          , &QxtSpanSlider::sliderReleased    , [&]
+  {
+    image->set_selection_offset_percentage({static_cast<float>(slider_x->lowerValue())                          / slider_x->maximum(), image->selection_offset_percentage()[1]});
+    image->set_selection_size_percentage  ({static_cast<float>(slider_x->upperValue() - slider_x->lowerValue()) / slider_x->maximum(), image->selection_size_percentage  ()[1]});
+  });
+  connect(slider_y          , &QxtSpanSlider::lowerValueChanged , [&](int value)
+  {
+    line_edit_offset_y->setText(QString::fromStdString(std::to_string(value)));
+    line_edit_size_y  ->setText(QString::fromStdString(std::to_string(slider_y->upperValue() - value)));
+  });
+  connect(slider_y          , &QxtSpanSlider::upperValueChanged , [&](int value)
+  {
+    line_edit_size_y->setText(QString::fromStdString(std::to_string(value - slider_y->lowerValue())));
+  });
+  connect(slider_y          , &QxtSpanSlider::sliderReleased    , [&]
+  {
+    image->set_selection_offset_percentage({image->selection_offset_percentage()[0], static_cast<float>(slider_y->lowerValue())                          / slider_y->maximum()});
+    image->set_selection_size_percentage  ({image->selection_size_percentage  ()[0], static_cast<float>(slider_y->upperValue() - slider_y->lowerValue()) / slider_y->maximum()});
+  });
+  connect(slider_z          , &QxtSpanSlider::lowerValueChanged , [&](int value)
+  {
+    line_edit_offset_z->setText(QString::fromStdString(std::to_string(value)));
+    line_edit_size_z  ->setText(QString::fromStdString(std::to_string(slider_z->upperValue() - value)));
+  });
+  connect(slider_z          , &QxtSpanSlider::upperValueChanged , [&](int value)
+  {
+    line_edit_size_z->setText(QString::fromStdString(std::to_string(value - slider_z->lowerValue())));
+  });
+  connect(line_edit_offset_x, &QLineEdit::editingFinished       , [&]
+  {
+    auto value = std::max(std::min(line_edit::get_text<int>(line_edit_offset_x), int(slider_x->maximum())), int(slider_x->minimum()));
+    if (slider_x->upperValue() < value)
+      slider_x->setUpperValue(value);
+    slider_x        ->setLowerValue                  (value);
+    image           ->set_selection_offset_percentage({static_cast<float>(value) / slider_x->maximum(), image->selection_offset_percentage()[1]});
+    image           ->set_selection_size_percentage  ({static_cast<float>(slider_x->upperValue() - slider_x->lowerValue()) / slider_x->maximum(), image->selection_size_percentage()[1]});
+    line_edit_size_x->setText                        (QString::fromStdString(std::to_string(slider_x->upperValue() - value)));
+  });
+  connect(line_edit_size_x  , &QLineEdit::editingFinished       , [&]
+  {
+    auto value = std::max(std::min(line_edit::get_text<int>(line_edit_size_x), int(slider_x->maximum())), int(slider_x->minimum()));
+    slider_x->setUpperValue                (slider_x->lowerValue() + value);
+    image   ->set_selection_size_percentage({static_cast<float>(value) / slider_x->maximum(), image->selection_size_percentage()[1]});
+  });
+  connect(line_edit_offset_y, &QLineEdit::editingFinished       , [&]
+  {
+    auto value = std::max(std::min(line_edit::get_text<int>(line_edit_offset_y), int(slider_y->maximum())), int(slider_y->minimum()));
+    if (slider_y->upperValue() < value)
+      slider_y->setUpperValue(value);
+    slider_y        ->setLowerValue                  (value);
+    image           ->set_selection_offset_percentage({image->selection_offset_percentage()[0], static_cast<float>(value) / slider_y->maximum()});
+    image           ->set_selection_size_percentage  ({image->selection_size_percentage  ()[0], static_cast<float>(slider_y->upperValue() - slider_y->lowerValue()) / slider_y->maximum()});
+    line_edit_size_y->setText                        (QString::fromStdString(std::to_string(slider_y->upperValue() - value)));
+  });
+  connect(line_edit_size_y  , &QLineEdit::editingFinished       , [&]
+  {
+    auto value = std::max(std::min(line_edit::get_text<int>(line_edit_size_y), int(slider_y->maximum())), int(slider_y->minimum()));
+    slider_y->setUpperValue                (slider_y->lowerValue() + value);
+    image   ->set_selection_size_percentage({image->selection_size_percentage()[0], static_cast<float>(value) / slider_y->maximum()});
+  });
+  connect(line_edit_offset_z, &QLineEdit::editingFinished       , [&]
+  {
+    auto value = std::max(std::min(line_edit::get_text<int>(line_edit_offset_z), int(slider_z->maximum())), int(slider_z->minimum()));
+    if (slider_z->upperValue() < value)
+      slider_z->setUpperValue(value + 1);
+    slider_z        ->setLowerValue(value);
+    line_edit_size_z->setText      (QString::fromStdString(std::to_string(slider_z->upperValue() - value)));
+  });
+  connect(line_edit_size_z  , &QLineEdit::editingFinished       , [&]
+  {
+    auto value = std::min(line_edit::get_text<int>(line_edit_size_z), int(slider_z->maximum() - slider_z->minimum()));
+    slider_z->setUpperValue(slider_z->lowerValue() + value);
+  });
+  connect(button_update     , &QAbstractButton::clicked         , [&]
   {
     owner_->viewer ->set_wait_spinner_enabled(true);
     owner_->toolbox->setEnabled(false);
@@ -137,12 +159,12 @@ void data_plugin::start()
         mask_bounds_          = io_.load_mask_bounds         ();
         unit_vector_bounds_   = io_.load_unit_vector_bounds  ();
 
-        transmittance_ = std::make_unique<boost::multi_array<float, 3>>(io_.load_transmittance(offset, size, stride));
-        retardation_   = std::make_unique<boost::multi_array<float, 3>>(io_.load_retardation  (offset, size, stride));
-        direction_     = std::make_unique<boost::multi_array<float, 3>>(io_.load_direction    (offset, size, stride));
-        inclination_   = std::make_unique<boost::multi_array<float, 3>>(io_.load_inclination  (offset, size, stride));
-        mask_          = std::make_unique<boost::multi_array<float, 3>>(io_.load_mask         (offset, size, stride));
-        unit_vector_   = std::make_unique<boost::multi_array<float, 4>>(io_.load_unit_vector  (offset, size, stride));
+        transmittance_        = std::make_unique<boost::multi_array<float, 3>>(io_.load_transmittance(selection_offset(), selection_size(), selection_stride()));
+        retardation_          = std::make_unique<boost::multi_array<float, 3>>(io_.load_retardation  (selection_offset(), selection_size(), selection_stride()));
+        direction_            = std::make_unique<boost::multi_array<float, 3>>(io_.load_direction    (selection_offset(), selection_size(), selection_stride()));
+        inclination_          = std::make_unique<boost::multi_array<float, 3>>(io_.load_inclination  (selection_offset(), selection_size(), selection_stride()));
+        mask_                 = std::make_unique<boost::multi_array<float, 3>>(io_.load_mask         (selection_offset(), selection_size(), selection_stride()));
+        unit_vector_          = std::make_unique<boost::multi_array<float, 4>>(io_.load_unit_vector  (selection_offset(), selection_size(), selection_stride()));
       }
       catch (std::exception& exception)
       {
@@ -159,6 +181,35 @@ void data_plugin::start()
     owner_->viewer ->set_wait_spinner_enabled(false);
     owner_->viewer ->update();
   });
+}
+
+std::array<std::size_t, 3> data_plugin::selection_offset() const
+{
+  return
+  {
+    line_edit::get_text<std::size_t>(line_edit_offset_x),
+    line_edit::get_text<std::size_t>(line_edit_offset_y),
+    line_edit::get_text<std::size_t>(line_edit_offset_z)
+  };
+}
+std::array<std::size_t, 3> data_plugin::selection_size  () const
+{
+  auto stride = selection_stride();
+  return
+  {
+    line_edit::get_text<std::size_t>(line_edit_size_x) / stride[0],
+    line_edit::get_text<std::size_t>(line_edit_size_y) / stride[1],
+    line_edit::get_text<std::size_t>(line_edit_size_z) / stride[2]
+  };
+}
+std::array<std::size_t, 3> data_plugin::selection_stride() const
+{
+  return
+  {
+    line_edit::get_text<std::size_t>(line_edit_stride_x),
+    line_edit::get_text<std::size_t>(line_edit_stride_y),
+    line_edit::get_text<std::size_t>(line_edit_stride_z)
+  };
 }
 
 boost::multi_array<unsigned char, 2> data_plugin::generate_preview_image(std::size_t x_resolution)
@@ -217,5 +268,39 @@ boost::multi_array<float3, 3>        data_plugin::generate_vectors      (bool   
 
     return vectors;
   }
+}
+
+void data_plugin::start()
+{
+  set_sink(std::make_shared<text_browser_sink>(owner_->console));
+}
+void data_plugin::setup()
+{
+  // Load bounds.
+  transmittance_bounds_ = io_.load_transmittance_bounds();
+  retardation_bounds_   = io_.load_retardation_bounds  ();
+  direction_bounds_     = io_.load_direction_bounds    ();
+  inclination_bounds_   = io_.load_inclination_bounds  ();
+  mask_bounds_          = io_.load_mask_bounds         ();
+  unit_vector_bounds_   = io_.load_unit_vector_bounds  ();
+
+  // Adjust slider boundaries.
+  auto bounds = retardation_bounds();
+  slider_x->setMinimum(bounds.first[0]); slider_x->setMaximum(bounds.second[0]);
+  slider_y->setMinimum(bounds.first[1]); slider_y->setMaximum(bounds.second[1]);
+  slider_z->setMinimum(bounds.first[2]); slider_z->setMaximum(bounds.second[2]);
+  slider_z->setSpan(bounds.first[2], bounds.first[2] + 1);
+
+  // Generate preview image.
+  auto preview_image = generate_preview_image();
+  auto shape = preview_image.shape();
+  image->setPixmap(QPixmap::fromImage(QImage(preview_image.data(), shape[0], shape[1], QImage::Format::Format_Grayscale8)));
+
+  // Adjust widget size.
+  image    ->setSizeIncrement(shape[0], shape[1]);
+  letterbox->setWidget(image);
+  letterbox->update();
+  image    ->update();
+  update();
 }
 }
