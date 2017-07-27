@@ -41,7 +41,8 @@ void vector_field::render    (const camera* camera)
 
   shader_program_->set_uniform("projection"    , camera->projection_matrix      ());
   shader_program_->set_uniform("view"          , camera->inverse_absolute_matrix());
-  shader_program_->set_uniform("view_dependent", view_dependent_transparency_);
+  shader_program_->set_uniform("view_dependent", view_dependent_transparency_ );
+  shader_program_->set_uniform("rate_of_decay" , view_dependent_rate_of_decay_);
   
   glEnable    (GL_LINE_SMOOTH);
   glHint      (GL_LINE_SMOOTH_HINT, GL_NICEST);
@@ -90,9 +91,13 @@ void vector_field::set_data(
   vertex_buffer_->cuda_unmap();
 }
 
-void vector_field::set_view_dependent_transparency(bool enabled)
+void vector_field::set_view_dependent_transparency (bool  enabled)
 {
   view_dependent_transparency_ = enabled;
+}
+void vector_field::set_view_dependent_rate_of_decay(float value  )
+{
+  view_dependent_rate_of_decay_ = value;
 }
 }
 

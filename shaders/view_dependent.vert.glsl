@@ -8,12 +8,13 @@ namespace shaders
 static std::string view_dependent_vert = R"(\
 #version 400
 
-uniform mat4 projection    ;
-uniform mat4 view          ;
-uniform bool view_dependent;
-in      vec3 vertex        ;
-in      vec4 color         ;
-out     vec4 vert_color    ;
+uniform mat4  projection    ;
+uniform mat4  view          ;
+uniform bool  view_dependent;
+uniform float rate_of_decay ;
+in      vec3  vertex        ;
+in      vec4  color         ;
+out     vec4  vert_color    ;
 
 void main()
 {
@@ -21,8 +22,7 @@ void main()
 
   if(view_dependent)
   {
-    float alpha = 1.0 - abs(dot(normalize(inverse(view)[2].xyz), normalize(color.xzy)));
-    vert_color = vec4(color.xyz, pow(alpha, 5));
+    vert_color = vec4(color.xyz, pow(1.0 - abs(dot(normalize(inverse(view)[2].xyz), normalize(color.xzy))), rate_of_decay));
   }
   else
   {
