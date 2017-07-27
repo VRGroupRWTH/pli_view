@@ -17,20 +17,25 @@ fom_plugin::fom_plugin(QWidget* parent) : plugin(parent)
 {
   line_edit_fiber_scale->setValidator(new QDoubleValidator(0, std::numeric_limits<double>::max(), 10, this));
 
-  connect(checkbox_enabled     , &QCheckBox::stateChanged      , [&] (bool state)
+  connect(checkbox_enabled                    , &QCheckBox::stateChanged      , [&] (bool state)
   {
     logger_->info(std::string(state ? "Enabled." : "Disabled."));
     vector_field_->set_active(state);
   });
-  connect(slider_fiber_scale   , &QxtSpanSlider::valueChanged  , [&]
+  connect(checkbox_view_dependent_transparency, &QCheckBox::stateChanged      , [&] (bool state)
+  {
+    logger_->info(std::string("View dependent transparency " + state ? "enabled." : "disabled."));
+    vector_field_->set_view_dependent_transparency(state);
+  });
+  connect(slider_fiber_scale                  , &QxtSpanSlider::valueChanged  , [&]
   {
     line_edit_fiber_scale->setText(QString::fromStdString((boost::format("%.4f") % (float(slider_fiber_scale->value()) / slider_fiber_scale->maximum())).str()));
   });
-  connect(slider_fiber_scale   , &QxtSpanSlider::sliderReleased, [&]
+  connect(slider_fiber_scale                  , &QxtSpanSlider::sliderReleased, [&]
   {
     upload();
   });
-  connect(line_edit_fiber_scale, &QLineEdit::editingFinished   , [&]
+  connect(line_edit_fiber_scale               , &QLineEdit::editingFinished   , [&]
   {
     slider_fiber_scale->setValue(line_edit::get_text<double>(line_edit_fiber_scale) * slider_fiber_scale->maximum());
     upload();

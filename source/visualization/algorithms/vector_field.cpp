@@ -2,8 +2,8 @@
 
 #include <pli_vis/cuda/vector_field.h>
 #include <pli_vis/visualization/primitives/camera.hpp>
-#include <shaders/simple_color.vert.glsl>
-#include <shaders/simple_color.frag.glsl>
+#include <shaders/view_dependent.vert.glsl>
+#include <shaders/view_dependent.frag.glsl>
 
 namespace pli
 {
@@ -14,8 +14,8 @@ void vector_field::initialize()
   vertex_buffer_ .reset(new gl::array_buffer);
   color_buffer_  .reset(new gl::array_buffer);
 
-  shader_program_->attach_shader(gl::vertex_shader  (shaders::simple_color_vert));
-  shader_program_->attach_shader(gl::fragment_shader(shaders::simple_color_frag));
+  shader_program_->attach_shader(gl::vertex_shader  (shaders::view_dependent_vert));
+  shader_program_->attach_shader(gl::fragment_shader(shaders::view_dependent_frag));
   shader_program_->link();
   
   shader_program_->bind();
@@ -39,8 +39,9 @@ void vector_field::render    (const camera* camera)
   shader_program_->bind  ();
   vertex_array_  ->bind  ();
 
-  shader_program_->set_uniform("projection", camera->projection_matrix      ());
-  shader_program_->set_uniform("view"      , camera->inverse_absolute_matrix());
+  shader_program_->set_uniform("projection"    , camera->projection_matrix      ());
+  shader_program_->set_uniform("view"          , camera->inverse_absolute_matrix());
+  shader_program_->set_uniform("view_dependent", view_dependent_transparency_);
   
   glEnable    (GL_LINE_SMOOTH);
   glHint      (GL_LINE_SMOOTH_HINT, GL_NICEST);
@@ -87,6 +88,11 @@ void vector_field::set_data(
 
   color_buffer_ ->cuda_unmap();
   vertex_buffer_->cuda_unmap();
+}
+
+void vector_field::set_view_dependent_transparency(bool enabled)
+{
+  view_dependent_transparency_ = enabled;
 }
 }
 

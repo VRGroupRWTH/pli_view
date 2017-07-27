@@ -202,6 +202,8 @@ set(PROJECT_SOURCES
   shaders/simple_color.vert.glsl
   shaders/simple_texture.frag.glsl
   shaders/simple_texture.vert.glsl
+  shaders/view_dependent.frag.glsl
+  shaders/view_dependent.vert.glsl
   shaders/volume_renderer_prepass.frag.glsl
   shaders/volume_renderer_prepass.vert.glsl
   shaders/volume_renderer.frag.glsl
