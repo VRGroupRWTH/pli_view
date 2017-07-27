@@ -11,8 +11,8 @@ set                   (CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} "--expt-extended-lambd
                                                           "-lcublas"
                                                           "-lcublas_device"
                                                           "-lcudadevrt"
-                                                          "-gencode=arch=compute_50,code=sm_50")
-                                                         #"-gencode=arch=compute_60,code=sm_60")
+                                                         #"-gencode=arch=compute_50,code=sm_50")
+                                                          "-gencode=arch=compute_60,code=sm_60")
 
 ##################################################    Options     ##################################################
 option(BUILD_TESTS "Build tests." OFF)
