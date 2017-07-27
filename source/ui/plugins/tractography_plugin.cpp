@@ -21,10 +21,11 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
   line_edit_iterations      ->setValidator(new QIntValidator   (0, std::numeric_limits<int>   ::max(),     this));
  
   line_edit_integration_step->setText(QString::fromStdString((boost::format("%.4f") % (float(slider_integration_step->value()) / slider_integration_step->maximum())).str()));
-  line_edit_iterations      ->setText(QString::fromStdString(boost::lexical_cast<std::string>(slider_iterations->value())));
-  line_edit_x               ->setText(QString::fromStdString(boost::lexical_cast<std::string>(slider_x         ->value())));
-  line_edit_y               ->setText(QString::fromStdString(boost::lexical_cast<std::string>(slider_y         ->value())));
-  line_edit_z               ->setText(QString::fromStdString(boost::lexical_cast<std::string>(slider_z         ->value())));
+  line_edit_iterations      ->setText(QString::fromStdString(std::to_string(slider_iterations->value())));
+  line_edit_x               ->setText(QString::fromStdString(std::to_string(slider_x         ->value())));
+  line_edit_y               ->setText(QString::fromStdString(std::to_string(slider_y         ->value())));
+  line_edit_z               ->setText(QString::fromStdString(std::to_string(slider_z         ->value())));
+  line_edit_rate_of_decay   ->setText(QString::fromStdString(std::to_string(slider_rate_of_decay->value())));
 
   connect(checkbox_enabled          , &QCheckBox::stateChanged    , [&] (bool state)
   {
@@ -71,6 +72,25 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
   {
     slider_iterations->setValue(line_edit::get_text<int>(line_edit_iterations));
   });
+  connect(checkbox_view_dependent   , &QCheckBox::stateChanged    , [&] (bool state)
+  {
+    logger_->info(std::string("View dependent transparency is " + state ? "enabled." : "disabled."));
+    streamline_renderer_->set_view_dependent_transparency(state);
+    label_rate_of_decay    ->setEnabled(state);
+    slider_rate_of_decay   ->setEnabled(state);
+    line_edit_rate_of_decay->setEnabled(state);
+  });
+  connect(slider_rate_of_decay      , &QxtSpanSlider::valueChanged, [&]
+  {
+    line_edit_rate_of_decay->setText(QString::fromStdString(std::to_string(slider_rate_of_decay->value())));
+    streamline_renderer_->set_view_dependent_rate_of_decay(slider_rate_of_decay->value());
+  });
+  connect(line_edit_rate_of_decay   , &QLineEdit::editingFinished , [&]
+  {
+    auto value = line_edit::get_text<int>(line_edit_rate_of_decay);
+    slider_rate_of_decay->setValue(value);
+    streamline_renderer_->set_view_dependent_rate_of_decay(value);
+  });
   connect(button_trace_selection    , &QPushButton::clicked       , [&]
   {
     trace();
@@ -90,8 +110,8 @@ void tractography_plugin::trace()
 
   logger_->info(std::string("Tracing..."));
 
-  std::vector<float3> points;
-  std::vector<float4> colors;
+  std::vector<float3> points    ;
+  std::vector<float3> directions;
   future_ = std::async(std::launch::async, [&]
   {
     try
@@ -130,11 +150,11 @@ void tractography_plugin::trace()
         {
           float3 start {path[j]    [0], path[j]    [1], path[j]    [2]};
           float3 end   {path[j + 1][0], path[j + 1][1], path[j + 1][2]};
-          auto   color = normalize(fabs(end - start));
+          auto   direction = normalize(fabs(end - start));
           points.push_back(start);
           points.push_back(end  );   
           for(auto k = 0; k < 2; ++k)
-            colors.push_back(float4{color.x, color.z, color.y, 1.0});
+            directions.push_back(direction);
         }
       }
     }
@@ -146,10 +166,10 @@ void tractography_plugin::trace()
   while (future_.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
     QApplication::processEvents();
 
-  if (points.size() > 0 && colors.size() > 0)
+  if (points.size() > 0 && directions.size() > 0)
   {
     logger_->info(std::string("Trace successful."));
-    streamline_renderer_->set_data(points, colors);
+    streamline_renderer_->set_data(points, directions);
   }
   else
   {
