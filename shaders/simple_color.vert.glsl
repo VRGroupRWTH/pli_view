@@ -1,5 +1,5 @@
-#ifndef VECTOR_FIELD_VERT_GLSL_
-#define VECTOR_FIELD_VERT_GLSL_
+#ifndef SIMPLE_COLOR_VERT_GLSL_
+#define SIMPLE_COLOR_VERT_GLSL_
 
 #include <string>
 

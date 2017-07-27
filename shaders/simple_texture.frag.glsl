@@ -1,5 +1,5 @@
-#ifndef SCALAR_FIELD_FRAG_GLSL_
-#define SCALAR_FIELD_FRAG_GLSL_
+#ifndef SIMPLE_TEXTURE_FRAG_GLSL_
+#define SIMPLE_TEXTURE_FRAG_GLSL_
 
 #include <string>
 

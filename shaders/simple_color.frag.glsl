@@ -1,5 +1,5 @@
-#ifndef VECTOR_FIELD_FRAG_GLSL_
-#define VECTOR_FIELD_FRAG_GLSL_
+#ifndef SIMPLE_COLOR_FRAG_GLSL_
+#define SIMPLE_COLOR_FRAG_GLSL_
 
 #include <string>
 
