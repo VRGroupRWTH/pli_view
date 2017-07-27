@@ -10,13 +10,13 @@ namespace pli
 {
 // Call on a dimensions.x x dimensions.y x dimensions.z 3D grid.
 // Vectors are in Cartesian coordinates.
-template<typename scalar_type, typename vector_type, typename color_type>
+template<typename scalar_type, typename vector_type>
 __global__ void create_vector_field_kernel(
   const uint3        dimensions,
   const vector_type* vectors   ,
   const scalar_type  scale     ,
         vector_type* points    ,
-        color_type*  colors    )
+        vector_type* directions)
 {
   auto x = blockIdx.x * blockDim.x + threadIdx.x;
   auto y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -29,13 +29,11 @@ __global__ void create_vector_field_kernel(
   auto& vector       = vectors[volume_index];
 
   vector_type position = {x, y, z};
-  auto        color    = make_float4(abs(vector.x), abs(vector.z), abs(vector.y), 1.0);
-  
   auto point_index = 2 * volume_index;
-  points[point_index    ] = position + scale * 0.5F * vector;
-  points[point_index + 1] = position - scale * 0.5F * vector;
-  colors[point_index    ] = color;
-  colors[point_index + 1] = color;
+  points    [point_index    ] = position + scale * 0.5F * vector;
+  points    [point_index + 1] = position - scale * 0.5F * vector;
+  directions[point_index    ] = vector;
+  directions[point_index + 1] = vector;
 }
 
 void create_vector_field(
@@ -43,7 +41,7 @@ void create_vector_field(
   const float3* vectors,
   const float&  scale       ,
         float3* points      ,
-        float4* colors      ,
+        float3* directions  ,
   std::function<void(const std::string&)> status_callback)
 {
   auto voxel_count = dimensions.x * dimensions.y * dimensions.z;
@@ -59,7 +57,7 @@ void create_vector_field(
     gpu_vectors_ptr,
     scale          , 
     points         ,
-    colors         );
+    directions     );
   cudaDeviceSynchronize();
 }
 }

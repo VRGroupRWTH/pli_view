@@ -13,7 +13,7 @@ void create_vector_field(
   const float3* vectors   ,
   const float&  scale     ,
         float3* points    ,
-        float4* colors    ,
+        float3* colors    ,
   std::function<void(const std::string&)> status_callback = [](const std::string&) {});
 }
 

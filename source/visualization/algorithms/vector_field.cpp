@@ -9,10 +9,10 @@ namespace pli
 {
 void vector_field::initialize()
 {
-  shader_program_.reset(new gl::program     );
-  vertex_array_  .reset(new gl::vertex_array);
-  vertex_buffer_ .reset(new gl::array_buffer);
-  color_buffer_  .reset(new gl::array_buffer);
+  shader_program_  .reset(new gl::program     );
+  vertex_array_    .reset(new gl::vertex_array);
+  vertex_buffer_   .reset(new gl::array_buffer);
+  direction_buffer_.reset(new gl::array_buffer);
 
   shader_program_->attach_shader(gl::vertex_shader  (shaders::view_dependent_vert));
   shader_program_->attach_shader(gl::fragment_shader(shaders::view_dependent_frag));
@@ -26,10 +26,10 @@ void vector_field::initialize()
   shader_program_->enable_attribute_array("vertex");
   vertex_buffer_ ->unbind();
 
-  color_buffer_  ->bind();
-  shader_program_->set_attribute_buffer  ("color" , 4, GL_FLOAT);
-  shader_program_->enable_attribute_array("color");
-  color_buffer_  ->unbind();
+  direction_buffer_->bind();
+  shader_program_  ->set_attribute_buffer  ("direction" , 3, GL_FLOAT);
+  shader_program_  ->enable_attribute_array("direction");
+  direction_buffer_->unbind();
 
   vertex_array_  ->unbind();
   shader_program_->unbind();
@@ -72,32 +72,32 @@ void vector_field::set_data(
   vertex_buffer_->unbind       ();
   vertex_buffer_->cuda_register();
 
-  color_buffer_ ->bind         ();
-  color_buffer_ ->allocate     (draw_count_ * sizeof(float4));
-  color_buffer_ ->unbind       ();
-  color_buffer_ ->cuda_register();
+  direction_buffer_->bind         ();
+  direction_buffer_->allocate     (draw_count_ * sizeof(float3));
+  direction_buffer_->unbind       ();
+  direction_buffer_->cuda_register();
 
-  auto cuda_vertex_buffer = vertex_buffer_->cuda_map<float3>();
-  auto cuda_color_buffer  = color_buffer_ ->cuda_map<float4>();
+  auto cuda_vertex_buffer    = vertex_buffer_   ->cuda_map<float3>();
+  auto cuda_direction_buffer = direction_buffer_->cuda_map<float3>();
   create_vector_field(
-    dimensions        ,
-    unit_vectors      ,
-    scale             ,
-    cuda_vertex_buffer,
-    cuda_color_buffer ,
-    status_callback   );
+    dimensions           ,
+    unit_vectors         ,
+    scale                ,
+    cuda_vertex_buffer   ,
+    cuda_direction_buffer,
+    status_callback      );
 
-  color_buffer_ ->cuda_unmap();
-  vertex_buffer_->cuda_unmap();
+  direction_buffer_->cuda_unmap();
+  vertex_buffer_   ->cuda_unmap();
 }
 
 void vector_field::set_view_dependent_transparency (bool  enabled)
 {
-  view_dependent_transparency_ = enabled;
+  view_dependent_transparency_  = enabled;
 }
 void vector_field::set_view_dependent_rate_of_decay(float value  )
 {
-  view_dependent_rate_of_decay_ = value;
+  view_dependent_rate_of_decay_ = value  ;
 }
 }
 
