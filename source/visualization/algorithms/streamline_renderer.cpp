@@ -1,6 +1,6 @@
-#include <pli_vis/visualization/streamline_renderer.hpp>
+#include <pli_vis/visualization/algorithms/streamline_renderer.hpp>
 
-#include <pli_vis/visualization/camera.hpp>
+#include <pli_vis/visualization/primitives/camera.hpp>
 #include <shaders/simple_color.vert.glsl>
 #include <shaders/simple_color.frag.glsl>
 
