@@ -3,7 +3,9 @@
 
 #include <vector>
 
+#include <QLabel>
 #include <QMainWindow>
+#include <QProgressBar>
 
 #include <pli_vis/aspects/loggable.hpp>
 #include <pli_vis/ui/plugin_base.hpp>
@@ -27,9 +29,13 @@ public:
   }
 
 private:
-  void bind_actions();
+  void bind_actions         ();
+  void create_gpu_status_bar();
 
   std::vector<plugin_base*> plugins_;
+
+  QLabel*       gpu_status_label_ = nullptr;
+  QProgressBar* gpu_status_bar_   = nullptr;
 };
 }
 

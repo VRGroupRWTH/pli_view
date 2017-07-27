@@ -13,8 +13,9 @@ application:: application()
   setupUi      (this);
   showMaximized();
 
-  set_sink    (std::make_shared<text_browser_sink>(console));
-  bind_actions();
+  set_sink             (std::make_shared<text_browser_sink>(console));
+  bind_actions         ();
+  create_gpu_status_bar();
 
   plugins_ = findChildren<plugin_base*>(QRegExp("plugin")).toVector().toStdVector();
   for (auto plugin : plugins_)
@@ -66,5 +67,31 @@ void application::bind_actions()
     cudaMemGetInfo(&free, &total);
     logger_->info("Available GPU memory: {} MB. Total GPU memory: {} MB.", free * 1E-6, total * 1E-6);
   });
+}
+
+void application::create_gpu_status_bar()
+{
+  gpu_status_label_ = new QLabel      (this);
+  gpu_status_bar_   = new QProgressBar(this);
+  gpu_status_label_->setText  ("GPU Memory Occupancy ");
+  gpu_status_bar_  ->setFormat(QString("%p% (%v / %m MB)"));
+  status_bar       ->addPermanentWidget(gpu_status_label_);
+  status_bar       ->addPermanentWidget(gpu_status_bar_  );
+
+  auto timer = new QTimer(this);
+  connect(timer, &QTimer::timeout, [&]()
+  {
+    std::size_t free, total;
+    cudaMemGetInfo(&free, &total);
+    auto ratio = (total - free) / float(total);
+    gpu_status_bar_->setMaximum   ( total         * 1e-6);
+    gpu_status_bar_->setValue     ((total - free) * 1e-6);
+    gpu_status_bar_->setStyleSheet(QString::fromStdString(std::string(
+      " QProgressBar { border: 2px solid grey; border-radius: 0px; text-align: center; } "
+      " QProgressBar::chunk {background-color: rgb(") + 
+      std::to_string(std::min(255, int(80 + 255 *         ratio)))   + "," +
+      std::to_string(std::min(255, int(80 + 255 * (1.0F - ratio))))  + ",80); width: 1px;}"));
+  });
+  timer->start(16);
 }
 }
