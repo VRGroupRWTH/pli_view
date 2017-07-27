@@ -22,7 +22,7 @@ void main()
   if(view_dependent)
   {
     float alpha = 1.0 - abs(dot(normalize(inverse(view)[2].xyz), normalize(color.xzy)));
-    vert_color = vec4(color.xyz, alpha);
+    vert_color = vec4(color.xyz, pow(alpha, 5));
   }
   else
   {
