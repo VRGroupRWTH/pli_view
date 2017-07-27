@@ -21,7 +21,7 @@ public:
   void set_data(
     const uint3&  dimensions  ,
     const float3* unit_vectors,
-    float         scale       ,
+    float         scale       = 1.0F,
     std::function<void(const std::string&)> status_callback = [](const std::string&){});
   void set_view_dependent_transparency (bool  enabled);
   void set_view_dependent_rate_of_decay(float value  );
