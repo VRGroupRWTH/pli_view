@@ -2,7 +2,7 @@
 
 #include <QKeyEvent>
 
-#include <pli_vis/visualization/transform.hpp>
+#include <pli_vis/visualization/primitives/transform.hpp>
 
 namespace pli
 {
