@@ -4,7 +4,7 @@
 #include <future>
 
 #include <pli_vis/ui/plugin.hpp>
-#include <pli_vis/visualization/streamline_renderer.hpp>
+#include <pli_vis/visualization/algorithms/streamline_renderer.hpp>
 #include <ui_tractography_toolbox.h>
 
 namespace pli

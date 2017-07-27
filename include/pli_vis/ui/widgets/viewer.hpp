@@ -12,7 +12,7 @@
 #include <pli_vis/aspects/renderable.hpp>
 #include <pli_vis/ui/widgets/wait_spinner.hpp>
 #include <pli_vis/visualization/interactors/simple_interactor.hpp>
-#include <pli_vis/visualization/camera.hpp>
+#include <pli_vis/visualization/primitives/camera.hpp>
 
 namespace pli
 {

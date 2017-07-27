@@ -1,9 +1,9 @@
-#include <pli_vis/visualization/odf_field.hpp>
+#include <pli_vis/visualization/algorithms/odf_field.hpp>
 
 #include <algorithm>
 
 #include <pli_vis/cuda/odf_field.h>
-#include <pli_vis/visualization/camera.hpp>
+#include <pli_vis/visualization/primitives/camera.hpp>
 #include <shaders/simple_color.vert.glsl>
 #include <shaders/simple_color.frag.glsl>
 

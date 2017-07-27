@@ -1,4 +1,4 @@
-#include <pli_vis/visualization/camera.hpp>
+#include <pli_vis/visualization/primitives/camera.hpp>
 
 #include <glm/gtx/transform.hpp>
 

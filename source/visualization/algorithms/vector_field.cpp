@@ -1,7 +1,7 @@
-#include <pli_vis/visualization/vector_field.hpp>
+#include <pli_vis/visualization/algorithms/vector_field.hpp>
 
 #include <pli_vis/cuda/vector_field.h>
-#include <pli_vis/visualization/camera.hpp>
+#include <pli_vis/visualization/primitives/camera.hpp>
 #include <shaders/simple_color.vert.glsl>
 #include <shaders/simple_color.frag.glsl>
 

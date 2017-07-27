@@ -187,16 +187,16 @@ set(PROJECT_SOURCES
   include/pli_vis/ui/application.hpp
   include/pli_vis/ui/plugin.hpp
   include/pli_vis/ui/plugin_base.hpp
+  include/pli_vis/visualization/algorithms/odf_field.hpp
+  include/pli_vis/visualization/algorithms/scalar_field.hpp
+  include/pli_vis/visualization/algorithms/streamline_renderer.hpp
+  include/pli_vis/visualization/algorithms/vector_field.hpp
+  include/pli_vis/visualization/algorithms/volume_renderer.hpp
   include/pli_vis/visualization/interactors/first_person_interactor.hpp
   include/pli_vis/visualization/interactors/orbit_interactor.hpp
   include/pli_vis/visualization/interactors/simple_interactor.hpp
-  include/pli_vis/visualization/camera.hpp
-  include/pli_vis/visualization/odf_field.hpp
-  include/pli_vis/visualization/scalar_field.hpp
-  include/pli_vis/visualization/streamline_renderer.hpp
-  include/pli_vis/visualization/transform.hpp
-  include/pli_vis/visualization/vector_field.hpp
-  include/pli_vis/visualization/volume_renderer.hpp
+  include/pli_vis/visualization/primitives/camera.hpp
+  include/pli_vis/visualization/primitives/transform.hpp
   
   shaders/simple_color.frag.glsl
   shaders/simple_color.vert.glsl
@@ -321,16 +321,16 @@ set(PROJECT_SOURCES
   source/ui/widgets/viewer.cpp
   source/ui/widgets/wait_spinner.cpp
   source/ui/application.cpp
+  source/visualization/algorithms/odf_field.cpp
+  source/visualization/algorithms/scalar_field.cpp
+  source/visualization/algorithms/streamline_renderer.cpp
+  source/visualization/algorithms/vector_field.cpp
+  source/visualization/algorithms/volume_renderer.cpp
   source/visualization/interactors/first_person_interactor.cpp
   source/visualization/interactors/orbit_interactor.cpp
   source/visualization/interactors/simple_interactor.cpp
-  source/visualization/camera.cpp
-  source/visualization/odf_field.cpp
-  source/visualization/scalar_field.cpp
-  source/visualization/streamline_renderer.cpp
-  source/visualization/transform.cpp
-  source/visualization/vector_field.cpp
-  source/visualization/volume_renderer.cpp
+  source/visualization/primitives/camera.cpp
+  source/visualization/primitives/transform.cpp
   source/main.cpp
 )
 include(assign_source_group)

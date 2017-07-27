@@ -9,7 +9,7 @@
 #include <pli_vis/ui/utility/line_edit.hpp>
 #include <pli_vis/ui/utility/text_browser_sink.hpp>
 #include <pli_vis/ui/application.hpp>
-#include <pli_vis/visualization/vector_field.hpp>
+#include <pli_vis/visualization/algorithms/vector_field.hpp>
 
 namespace pli
 {

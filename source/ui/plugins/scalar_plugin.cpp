@@ -5,7 +5,7 @@
 #include <pli_vis/ui/plugins/data_plugin.hpp>
 #include <pli_vis/ui/utility/text_browser_sink.hpp>
 #include <pli_vis/ui/application.hpp>
-#include <pli_vis/visualization/scalar_field.hpp>
+#include <pli_vis/visualization/algorithms/scalar_field.hpp>
 
 namespace pli
 {
