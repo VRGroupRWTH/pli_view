@@ -7,8 +7,8 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_clipper.h"
-#include "third_party/qwt/qwt_point_polar.h"
+#include "qwt/qwt_clipper.h"
+#include "qwt/qwt_point_polar.h"
 #include <qrect.h>
 #include <string.h>
 #include <stdlib.h>

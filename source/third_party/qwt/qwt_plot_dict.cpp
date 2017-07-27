@@ -7,7 +7,7 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_plot_dict.h"
+#include "qwt/qwt_plot_dict.h"
 
 class QwtPlotDict::PrivateData
 {

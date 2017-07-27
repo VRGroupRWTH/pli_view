@@ -7,8 +7,8 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_magnifier.h"
-#include "third_party/qwt/qwt_math.h"
+#include "qwt/qwt_magnifier.h"
+#include "qwt/qwt_math.h"
 #include <qevent.h>
 #include <qwidget.h>
 

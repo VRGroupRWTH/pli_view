@@ -1,17 +1,15 @@
-#include /* implements */ <ui/plugins/interactor_plugin.hpp>
+#include <pli_vis/ui/plugins/interactor_plugin.hpp>
 
 #include <boost/format.hpp>
 
-#include <ui/window.hpp>
-#include <utility/line_edit_utility.hpp>
-#include <utility/qt_text_browser_sink.hpp>
+#include <pli_vis/ui/utility/line_edit.hpp>
+#include <pli_vis/ui/utility/text_browser_sink.hpp>
+#include <pli_vis/ui/application.hpp>
 
 namespace pli
 {
 interactor_plugin::interactor_plugin(QWidget* parent) : plugin(parent)
 {
-  setupUi(this);
-  
   line_edit_move_speed->setValidator(new QDoubleValidator(0, std::numeric_limits<double>::max(), 4, this));
   line_edit_look_speed->setValidator(new QDoubleValidator(0, std::numeric_limits<double>::max(), 4, this));
 
@@ -29,38 +27,35 @@ interactor_plugin::interactor_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_move_speed, &QLineEdit::editingFinished, [&]
   {
-    auto speed = line_edit_utility::get_text<double>(line_edit_move_speed);
+    auto speed = line_edit::get_text<double>(line_edit_move_speed);
     slider_move_speed->setValue(speed * slider_move_speed->maximum());
     owner_->viewer->interactor()->set_move_speed(speed);
   });
   connect(line_edit_look_speed, &QLineEdit::editingFinished, [&]
   {
-    auto speed = line_edit_utility::get_text<double>(line_edit_look_speed);
+    auto speed = line_edit::get_text<double>(line_edit_look_speed);
     slider_look_speed->setValue(speed * slider_look_speed->maximum());
     owner_->viewer->interactor()->set_look_speed(speed);
   });
   connect(button_reset_camera , &QPushButton::clicked      , [&]
   {
     logger_->info(std::string("Resetting camera transform."));
-    owner_->viewer->camera()->set_translation({0, 0, 1});
-    owner_->viewer->camera()->look_at        ({0, 0, 0});
+    owner_->viewer->camera()->set_translation({0, 0, -100});
+    owner_->viewer->camera()->look_at        ({0, 0,    0}, {0, -1, 0});
   });
 }
 
 void interactor_plugin::start()
 {
-  set_sink(std::make_shared<qt_text_browser_sink>(owner_->console));
+  set_sink(std::make_shared<text_browser_sink>(owner_->console));
 
   auto move_value = double(slider_move_speed->value()) / slider_move_speed->maximum();
   auto look_value = double(slider_look_speed->value()) / slider_look_speed->maximum();
-
   line_edit_move_speed->setText(QString::fromStdString((boost::format("%.4f") % move_value).str()));
   line_edit_look_speed->setText(QString::fromStdString((boost::format("%.4f") % look_value).str()));
 
   auto interactor = owner_->viewer->interactor();
   interactor->set_move_speed(move_value);
   interactor->set_look_speed(look_value);
-
-  logger_->info(std::string("Start successful."));
 }
 }

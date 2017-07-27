@@ -7,7 +7,7 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_matrix_raster_data.h"
+#include "qwt/qwt_matrix_raster_data.h"
 #include <qnumeric.h>
 #include <qmath.h>
 

@@ -7,8 +7,8 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_scale_map.h"
-#include "third_party/qwt/qwt_math.h"
+#include "qwt/qwt_scale_map.h"
+#include "qwt/qwt_math.h"
 #include <qrect.h>
 #include <qdebug.h>
 

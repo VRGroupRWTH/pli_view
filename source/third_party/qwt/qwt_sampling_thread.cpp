@@ -7,8 +7,8 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_sampling_thread.h"
-#include "third_party/qwt/qwt_system_clock.h"
+#include "qwt/qwt_sampling_thread.h"
+#include "qwt/qwt_system_clock.h"
 
 class QwtSamplingThread::PrivateData
 {

@@ -7,8 +7,8 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_graphic.h"
-#include "third_party/qwt/qwt_painter_command.h"
+#include "qwt/qwt_graphic.h"
+#include "qwt/qwt_painter_command.h"
 #include <qvector.h>
 #include <qpainter.h>
 #include <qpaintengine.h>

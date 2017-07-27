@@ -6,8 +6,8 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_point_polar.h"
-#include "third_party/qwt/qwt_math.h"
+#include "qwt/qwt_point_polar.h"
+#include "qwt/qwt_math.h"
 
 #if QT_VERSION < 0x040601
 #define qAtan2(y, x) ::atan2(y, x)

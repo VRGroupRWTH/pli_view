@@ -7,8 +7,8 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_widget_overlay.h"
-#include "third_party/qwt/qwt_painter.h"
+#include "qwt/qwt_widget_overlay.h"
+#include "qwt/qwt_painter.h"
 #include <qpainter.h>
 #include <qpaintengine.h>
 #include <qimage.h>

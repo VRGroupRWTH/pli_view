@@ -1,8 +1,8 @@
-#include /* implements */ <visualization/interactors/first_person_interactor.hpp>
+#include <pli_vis/visualization/interactors/first_person_interactor.hpp>
 
 #include <QKeyEvent>
 
-#include <math/transform.hpp>
+#include <pli_vis/visualization/transform.hpp>
 
 namespace pli
 {
@@ -95,8 +95,8 @@ void first_person_interactor::mouse_move_handler (QMouseEvent* event)
   auto dy = event->y() - last_mouse_position_.y();
   if (event->buttons() & Qt::LeftButton)
   {
-    transform_->rotate(angleAxis(radians(-look_speed_ * dx), vec3f(0.0, 0.0, 1.0)));
-    transform_->rotate(angleAxis(radians(-look_speed_ * dy), transform_->right()));
+    transform_->rotate(glm::angleAxis(glm::radians( look_speed_ * dx), glm::vec3(0.0, 0.0, 1.0)));
+    transform_->rotate(glm::angleAxis(glm::radians(-look_speed_ * dy), transform_->right()));
   }
 
   last_mouse_position_ = event->pos();

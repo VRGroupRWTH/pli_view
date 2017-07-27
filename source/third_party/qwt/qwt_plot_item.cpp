@@ -7,12 +7,12 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_plot_item.h"
-#include "third_party/qwt/qwt_text.h"
-#include "third_party/qwt/qwt_plot.h"
-#include "third_party/qwt/qwt_legend_data.h"
-#include "third_party/qwt/qwt_scale_div.h"
-#include "third_party/qwt/qwt_graphic.h"
+#include "qwt/qwt_plot_item.h"
+#include "qwt/qwt_text.h"
+#include "qwt/qwt_plot.h"
+#include "qwt/qwt_legend_data.h"
+#include "qwt/qwt_scale_div.h"
+#include "qwt/qwt_graphic.h"
 #include <qpainter.h>
 
 class QwtPlotItem::PrivateData

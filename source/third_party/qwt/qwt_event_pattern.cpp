@@ -7,7 +7,7 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_event_pattern.h"
+#include "qwt/qwt_event_pattern.h"
 #include <qevent.h>
 
 /*!

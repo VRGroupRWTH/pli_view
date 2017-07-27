@@ -7,9 +7,9 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_column_symbol.h"
-#include "third_party/qwt/qwt_math.h"
-#include "third_party/qwt/qwt_painter.h"
+#include "qwt/qwt_column_symbol.h"
+#include "qwt/qwt_math.h"
+#include "qwt/qwt_painter.h"
 #include <qpainter.h>
 #include <qpalette.h>
 

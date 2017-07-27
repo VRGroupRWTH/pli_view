@@ -7,11 +7,11 @@
  * modify it under the terms of the Qwt License, Version 1.0
  *****************************************************************************/
 
-#include "third_party/qwt/qwt_plot_spectrogram.h"
-#include "third_party/qwt/qwt_painter.h"
-#include "third_party/qwt/qwt_interval.h"
-#include "third_party/qwt/qwt_scale_map.h"
-#include "third_party/qwt/qwt_color_map.h"
+#include "qwt/qwt_plot_spectrogram.h"
+#include "qwt/qwt_painter.h"
+#include "qwt/qwt_interval.h"
+#include "qwt/qwt_scale_map.h"
+#include "qwt/qwt_color_map.h"
 #include <qimage.h>
 #include <qpen.h>
 #include <qpainter.h>

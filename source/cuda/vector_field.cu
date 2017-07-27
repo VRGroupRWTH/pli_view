@@ -1,82 +1,63 @@
-#include /* implements */ <cuda/vector_field.h>
+#include <pli_vis/cuda/vector_field.h>
 
-#include <chrono>
-#include <iostream>
-
+#include <device_launch_parameters.h>
 #include <thrust/device_vector.h>
 
-#include <cuda/sh/launch.h>
+#include <pli_vis/cuda/sh/launch.h>
+#include <pli_vis/cuda/sh/vector_ops.h>
 
 namespace pli
 {
-void create_vector_field(
-  const uint3&  dimensions  ,
-  const float*  directions  ,
-  const float*  inclinations,
-  const float3& spacing     ,
-  const float&  scale       ,
-        float3* points      ,
-        float4* colors      ,
-  std::function<void(const std::string&)> status_callback)
+// Call on a dimensions.x x dimensions.y x dimensions.z 3D grid.
+// Vectors are in Cartesian coordinates.
+template<typename scalar_type, typename vector_type>
+__global__ void create_vector_field_kernel(
+  const uint3        dimensions,
+  const vector_type* vectors   ,
+  const scalar_type  scale     ,
+        vector_type* points    ,
+        vector_type* directions)
 {
-  auto total_start = std::chrono::system_clock::now();
+  auto x = blockIdx.x * blockDim.x + threadIdx.x;
+  auto y = blockIdx.y * blockDim.y + threadIdx.y;
+  auto z = blockIdx.z * blockDim.z + threadIdx.z;
 
-  status_callback("Allocating and copying directions and inclinations.");
-  auto voxel_count = dimensions.x * dimensions.y * dimensions.z;
-  thrust::device_vector<float> directions_vector  (voxel_count);
-  thrust::device_vector<float> inclinations_vector(voxel_count);
-  copy_n(directions  , voxel_count, directions_vector  .begin());
-  copy_n(inclinations, voxel_count, inclinations_vector.begin());
-  auto directions_ptr   = raw_pointer_cast(&directions_vector  [0]);
-  auto inclinations_ptr = raw_pointer_cast(&inclinations_vector[0]);
-  cudaDeviceSynchronize();
+  if (x >= dimensions.x || y >= dimensions.y || z >= dimensions.z)
+    return;
   
-  status_callback("Creating vectors.");
-  create_vector_field_internal<<<cush::grid_size_3d(dimensions), cush::block_size_3d()>>>(
-    dimensions      , 
-    directions_ptr  , 
-    inclinations_ptr,
-    spacing         , 
-    scale           , 
-    points          ,
-    colors          );
-  cudaDeviceSynchronize();
+  auto  volume_index = z + dimensions.z * (y + dimensions.y * x);
+  auto& vector       = vectors[volume_index];
 
-  auto total_end = std::chrono::system_clock::now();
-  std::chrono::duration<double> total_elapsed_seconds = total_end - total_start;
-  status_callback("Cuda operations took " + std::to_string(total_elapsed_seconds.count()) + " seconds.");
+  vector_type position = {x, y, z};
+  auto point_index = 2 * volume_index;
+  points    [point_index    ] = position + scale * 0.5F * vector;
+  points    [point_index + 1] = position - scale * 0.5F * vector;
+  directions[point_index    ] = vector;
+  directions[point_index + 1] = vector;
 }
 
 void create_vector_field(
-  const uint3&  dimensions  , 
-  const float3* unit_vectors, 
-  const float3& spacing     , 
-  const float&  scale       , 
-  float3*       points      , 
-  float4*       colors      , 
+  const uint3&  dimensions  ,
+  const float3* vectors,
+  const float&  scale       ,
+        float3* points      ,
+        float3* directions  ,
   std::function<void(const std::string&)> status_callback)
 {
-  auto total_start = std::chrono::system_clock::now();
-  
-  status_callback("Allocating and copying directions and inclinations.");
   auto voxel_count = dimensions.x * dimensions.y * dimensions.z;
-  thrust::device_vector<float3> unit_vectors_vector(voxel_count);
-  copy_n(unit_vectors, voxel_count, unit_vectors_vector.begin());
-  auto unit_vectors_ptr = raw_pointer_cast(&unit_vectors_vector[0]);
+
+  thrust::device_vector<float3> gpu_vectors(voxel_count);
+  auto gpu_vectors_ptr = raw_pointer_cast(&gpu_vectors[0]);
+
+  copy_n(vectors, voxel_count, gpu_vectors.begin());
   cudaDeviceSynchronize();
   
-  status_callback("Creating vectors.");
-  create_vector_field_internal<<<cush::grid_size_3d(dimensions), cush::block_size_3d()>>>(
-    dimensions      , 
-    unit_vectors_ptr,
-    spacing         , 
-    scale           , 
-    points          ,
-    colors          );
+  create_vector_field_kernel<<<grid_size_3d(dimensions), block_size_3d()>>>(
+    dimensions     , 
+    gpu_vectors_ptr,
+    scale          , 
+    points         ,
+    directions     );
   cudaDeviceSynchronize();
-
-  auto total_end = std::chrono::system_clock::now();
-  std::chrono::duration<double> total_elapsed_seconds = total_end - total_start;
-  status_callback("Cuda operations took " + std::to_string(total_elapsed_seconds.count()) + " seconds.");
 }
 }
