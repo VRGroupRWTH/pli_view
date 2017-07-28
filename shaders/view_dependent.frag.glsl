@@ -8,12 +8,20 @@ namespace shaders
 static std::string view_dependent_frag = R"(\
 #version 400
 
-in  vec4 vert_color;
-out vec4 frag_color;
+uniform float cutoff     = 0.25;
+in      vec4  vert_color ;
+out     vec4  frag_color ;
 
 void main()
 {
-  frag_color = vert_color;
+  if(vert_color.a < cutoff)
+  {
+    discard;
+  }
+  else
+  {
+    frag_color = vert_color;
+  }
 }
 )";
 }
