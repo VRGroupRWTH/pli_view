@@ -30,6 +30,7 @@ void sample_odfs(
         float3*      points            ,
         float4*      colors            ,
         unsigned*    indices           ,
+        bool         hierarchical      = false,
         bool         clustering        = false,
         float        cluster_threshold = 0.0  ,
         std::function<void(const std::string&)> status_callback = [](const std::string&){});
