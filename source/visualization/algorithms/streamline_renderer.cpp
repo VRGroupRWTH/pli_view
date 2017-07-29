@@ -49,7 +49,7 @@ void streamline_renderer::render    (const camera* camera)
   glEnable    (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  glDrawArrays(GL_LINES, 0, GLsizei(draw_count_));
+  //glDrawArrays(GL_LINES, 0, GLsizei(draw_count_));
 
   glDisable   (GL_BLEND);
   glDisable   (GL_LINE_SMOOTH);

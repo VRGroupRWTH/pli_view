@@ -30,12 +30,13 @@ fom_plugin::fom_plugin(QWidget* parent) : plugin(parent)
   });
   connect(slider_fiber_scale                  , &QxtSpanSlider::sliderReleased, [&]
   {
-    upload();
+    vector_field_->set_scale(line_edit::get_text<float>(line_edit_fiber_scale));
   });
   connect(line_edit_fiber_scale               , &QLineEdit::editingFinished   , [&]
   {
-    slider_fiber_scale->setValue(line_edit::get_text<double>(line_edit_fiber_scale) * slider_fiber_scale->maximum());
-    upload();
+    auto value = line_edit::get_text<float>(line_edit_fiber_scale);
+    slider_fiber_scale->setValue (value * slider_fiber_scale->maximum());
+    vector_field_     ->set_scale(value);
   });
   connect(checkbox_view_dependent             , &QCheckBox::stateChanged      , [&] (bool state)
   {
@@ -76,8 +77,7 @@ void fom_plugin::upload()
   auto vectors = owner_->get_plugin<data_plugin>()->generate_vectors(true);
   vector_field_->set_data(
     make_uint3(vectors.shape()[0], vectors.shape()[1], vectors.shape()[2]),
-    vectors.data(), 
-    line_edit::get_text<float>(line_edit_fiber_scale), 
+    vectors.data(),
     [&] (const std::string& message) { logger_->info(message); });
 
   logger_->info(std::string("Update successful."));
