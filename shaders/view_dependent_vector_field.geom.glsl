@@ -5,7 +5,7 @@
 
 namespace shaders
 {
-static std::string view_dependent_geom = R"(\
+static std::string view_dependent_vector_field_geom = R"(\
 #version 450
 
 layout (points) in;

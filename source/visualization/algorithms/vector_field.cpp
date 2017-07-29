@@ -1,9 +1,9 @@
 #include <pli_vis/visualization/algorithms/vector_field.hpp>
 
 #include <pli_vis/visualization/primitives/camera.hpp>
-#include <shaders/view_dependent.vert.glsl>
-#include <shaders/view_dependent.geom.glsl>
-#include <shaders/view_dependent.frag.glsl>
+#include <shaders/view_dependent_vector_field.vert.glsl>
+#include <shaders/view_dependent_vector_field.geom.glsl>
+#include <shaders/view_dependent_vector_field.frag.glsl>
 
 namespace pli
 {
@@ -13,9 +13,9 @@ void vector_field::initialize()
   vertex_array_    .reset(new gl::vertex_array);
   direction_buffer_.reset(new gl::array_buffer);
 
-  shader_program_->attach_shader(gl::vertex_shader  (shaders::view_dependent_vert));
-  shader_program_->attach_shader(gl::geometry_shader(shaders::view_dependent_geom));
-  shader_program_->attach_shader(gl::fragment_shader(shaders::view_dependent_frag));
+  shader_program_->attach_shader(gl::vertex_shader  (shaders::view_dependent_vector_field_vert));
+  shader_program_->attach_shader(gl::geometry_shader(shaders::view_dependent_vector_field_geom));
+  shader_program_->attach_shader(gl::fragment_shader(shaders::view_dependent_vector_field_frag));
   shader_program_->link();
   
   shader_program_->bind();
