@@ -34,6 +34,15 @@ void sample_odfs(
         bool         clustering        = false,
         float        cluster_threshold = 0.0  ,
         std::function<void(const std::string&)> status_callback = [](const std::string&){});
+
+void extract_peaks(
+  const uint3&       dimensions    ,
+  const unsigned     maximum_degree,
+  const float*       coefficients  ,
+  const uint2&       tessellations , 
+  const unsigned     maxima_count  ,
+        float3*      maxima        ,
+        std::function<void(const std::string&)> status_callback = [](const std::string&){});
 }
 
 #endif

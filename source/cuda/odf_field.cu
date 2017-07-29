@@ -518,4 +518,58 @@ void sample_odfs(
   std::chrono::duration<double> elapsed_time = end_time - start_time;
   status_callback("Cuda ODF sampling operations took " + std::to_string(elapsed_time.count()) + " seconds.");
 }
+
+void extract_peaks(
+  const uint3&   dimensions    ,
+  const unsigned maximum_degree,
+  const float*   coefficients  ,
+  const uint2&   tessellations , 
+  const unsigned maxima_count  ,
+        float3*  maxima        ,
+        std::function<void(const std::string&)> status_callback)
+{
+  auto start_time = std::chrono::system_clock::now();
+
+  auto voxel_count       = dimensions.x * dimensions.y * dimensions.z;
+  auto coefficient_count = pli::coefficient_count(maximum_degree);
+
+  status_callback("Allocating and copying the spherical harmonics coefficients.");
+  thrust::device_vector<float> coefficient_vectors(voxel_count * coefficient_count);
+  auto coefficients_ptr = raw_pointer_cast(&coefficient_vectors[0]);
+  copy_n(coefficients, coefficient_vectors.size(), coefficient_vectors.begin());
+  cudaDeviceSynchronize();
+
+  status_callback("Allocating the maxima vectors.");
+  thrust::device_vector<float3> maxima_vectors(voxel_count * maxima_count);
+  auto maxima_ptr = raw_pointer_cast(&maxima_vectors[0]);
+
+  status_callback("Extracting maxima.");
+  extract_maxima<<<grid_size_3d(dimensions), block_size_3d()>>>(
+    dimensions       ,
+    coefficient_count,
+    coefficients_ptr ,
+    tessellations    ,
+    maxima_count     ,
+    maxima_ptr       );
+  cudaDeviceSynchronize();
+
+  status_callback("Converting the maxima to Cartesian coordinates.");
+  thrust::transform(
+    thrust::device,
+    maxima_vectors.begin(),
+    maxima_vectors.end  (),
+    maxima_vectors.begin(),
+    [] COMMON (const float3& point)
+    {
+      return to_cartesian_coords(point);
+    });
+  cudaDeviceSynchronize();
+
+  status_callback("Copying maxima to CPU.");
+  cudaMemcpy(maxima, maxima_ptr, sizeof(float3) * maxima_vectors.size(), cudaMemcpyDeviceToHost);
+
+  auto end_time = std::chrono::system_clock::now();
+  std::chrono::duration<double> elapsed_time = end_time - start_time;
+  status_callback("Cuda ODF sampling operations took " + std::to_string(elapsed_time.count()) + " seconds.");
+}
 }

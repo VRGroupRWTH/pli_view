@@ -297,15 +297,40 @@ void odf_plugin::extract_peaks     ()
   owner_->toolbox->setEnabled              (false);
 
   logger_->info(std::string("Extracting peaks..."));
-
-  // TODO: Apply peak extraction.
-  //auto shape = coefficients_.shape();
-  //for(auto x = 0; x < shape[0]; x++)
-  //  for(auto y = 0; y < shape[1]; y++)
-  //    for(auto z = 0; z < shape[2]; z++)
-  //      for(auto v = 0; v < shape[3]; v++)
-  //        logger_->info("[" + boost::lexical_cast<std::string>(x) + "," + boost::lexical_cast<std::string>(y) + "," + boost::lexical_cast<std::string>(z) + "]: ");
   
+  uint2 sampling_dimensions    = { 
+    line_edit::get_text<unsigned>(line_edit_sampling_theta   ),
+    line_edit::get_text<unsigned>(line_edit_sampling_phi     )};
+
+  future_ = std::async(std::launch::async, [&]
+  {
+    try
+    {
+      maxima_.resize(boost::extents
+        [coefficients_.shape()[0]]
+        [coefficients_.shape()[1]]
+        [coefficients_.shape()[2]]
+        [maxima_count_]);
+
+      pli::extract_peaks(
+        make_uint3    (coefficients_.shape()[0], 
+                       coefficients_.shape()[1], 
+                       coefficients_.shape()[2]),
+        maximum_degree(coefficients_.shape()[3]),
+        coefficients_.data(),
+        sampling_dimensions ,
+        maxima_count_       ,
+        maxima_.data()      ,
+        [&] (const std::string& message) { logger_->info(message); });
+    }
+    catch (std::exception& exception)
+    {
+      logger_->error(std::string(exception.what()));
+    }
+  });
+  while (future_.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
+    QApplication::processEvents();
+
   logger_->info(std::string("Extraction successful."));
   
   owner_->toolbox->setEnabled              (true );
