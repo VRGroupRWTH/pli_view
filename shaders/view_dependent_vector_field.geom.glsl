@@ -30,10 +30,9 @@ void main()
 {
   uvec3 position;
   uint index = gl_PrimitiveIDIn;
-  uint x     = index / (dimensions.y * dimensions.z);
-  index     -= x * dimensions.y * dimensions.z;
-  uint y     = index / dimensions.z;
-  uint z     = index % dimensions.z;
+  uint x     = index / (dimensions.z * dimensions.y);
+  uint y     = index /  dimensions.z % dimensions.y;
+  uint z     = index %  dimensions.z;
 
   vec4 direction   = vec4(gs_in[0].direction * 0.5 * scale, 0.0);
   gs_out.direction = gs_in[0].direction;
