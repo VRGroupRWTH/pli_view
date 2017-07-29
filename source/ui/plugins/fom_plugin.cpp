@@ -77,6 +77,7 @@ void fom_plugin::upload()
   auto vectors = owner_->get_plugin<data_plugin>()->generate_vectors(true);
   vector_field_->set_data(
     make_uint3(vectors.shape()[0], vectors.shape()[1], vectors.shape()[2]),
+    1,
     vectors.data(),
     [&] (const std::string& message) { logger_->info(message); });
 

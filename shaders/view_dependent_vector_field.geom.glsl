@@ -11,10 +11,11 @@ static std::string view_dependent_vector_field_geom = R"(\
 layout (points) in;
 layout (line_strip, max_vertices = 2) out;
 
-uniform float scale      = 1.0;
-uniform uvec3 dimensions ;
-uniform mat4  projection ;
-uniform mat4  view       ;
+uniform uint  vectors_per_point = 1;
+uniform float scale             = 1.0;
+uniform uvec3 dimensions        ;
+uniform mat4  projection        ;
+uniform mat4  view              ;
 
 in  vertex_data {
   vec3 direction;
@@ -30,9 +31,10 @@ void main()
 {
   uvec3 position;
   uint index = gl_PrimitiveIDIn;
-  uint x     = index / (dimensions.z * dimensions.y);
-  uint y     = index /  dimensions.z % dimensions.y;
-  uint z     = index %  dimensions.z;
+  uint t     = index % vectors_per_point;
+  uint z     = ((index - t) / vectors_per_point) % dimensions.z;
+  uint y     = ((index - z * vectors_per_point - t) / (vectors_per_point * dimensions.z)) % dimensions.y;
+  uint x     = ((index - y * dimensions.z * vectors_per_point - z * vectors_per_point - t) / (vectors_per_point * dimensions.z * dimensions.y));
 
   vec4 direction   = vec4(gs_in[0].direction * 0.5 * scale, 0.0);
   gs_out.direction = gs_in[0].direction;

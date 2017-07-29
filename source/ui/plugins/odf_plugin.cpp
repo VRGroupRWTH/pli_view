@@ -297,11 +297,16 @@ void odf_plugin::extract_peaks     ()
   owner_->toolbox->setEnabled              (false);
 
   logger_->info(std::string("Extracting peaks..."));
-  
+    
+  auto dimensions = make_uint3(
+    coefficients_.shape()[0],
+    coefficients_.shape()[1],
+    coefficients_.shape()[2]);
+
   uint2 sampling_dimensions    = { 
     line_edit::get_text<unsigned>(line_edit_sampling_theta   ),
     line_edit::get_text<unsigned>(line_edit_sampling_phi     )};
-
+  
   future_ = std::async(std::launch::async, [&]
   {
     try
@@ -313,9 +318,7 @@ void odf_plugin::extract_peaks     ()
         [maxima_count_]);
 
       pli::extract_peaks(
-        make_uint3    (coefficients_.shape()[0], 
-                       coefficients_.shape()[1], 
-                       coefficients_.shape()[2]),
+        dimensions,
         maximum_degree(coefficients_.shape()[3]),
         coefficients_.data(),
         sampling_dimensions ,
