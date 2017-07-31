@@ -11,8 +11,8 @@ set                   (CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} "--expt-extended-lambd
                                                           "-lcublas"
                                                           "-lcublas_device"
                                                           "-lcudadevrt"
-                                                          "-gencode=arch=compute_50,code=sm_50")
-                                                         #"-gencode=arch=compute_60,code=sm_60")
+                                                         #"-gencode=arch=compute_50,code=sm_50")
+                                                          "-gencode=arch=compute_60,code=sm_60")
 
 ##################################################    Options     ##################################################
 option(BUILD_TESTS "Build tests." OFF)
@@ -35,6 +35,7 @@ set(PROJECT_SOURCES
   include/pli_vis/cuda/sh/spherical_harmonics.h
   include/pli_vis/cuda/sh/vector_ops.h
   include/pli_vis/cuda/sh/wigner.h
+  include/pli_vis/cuda/monte_carlo.h
   include/pli_vis/cuda/odf_field.h
   include/pli_vis/cuda/spherical_histogram.h
   include/pli_vis/io/io.hpp
@@ -210,7 +211,7 @@ set(PROJECT_SOURCES
   shaders/volume_renderer_prepass.vert.glsl
   shaders/volume_renderer.frag.glsl
   shaders/volume_renderer.vert.glsl
-
+  
   source/cuda/odf_field.cu
   source/third_party/glew/glew.c
   source/third_party/qwt/qwt_abstract_legend.cpp
@@ -347,7 +348,11 @@ import_library(boost Boost_INCLUDE_DIR)
 
 set           (CUDA_SEPARABLE_COMPILATION ON)
 find_package  (CUDA REQUIRED)
-list          (APPEND PROJECT_LIBRARIES ${CUDA_CUBLAS_LIBRARIES} ${CUDA_cusolver_LIBRARY} ${CUDA_cudadevrt_LIBRARY})
+list          (APPEND PROJECT_LIBRARIES 
+               ${CUDA_CUBLAS_LIBRARIES} 
+               ${CUDA_cusolver_LIBRARY} 
+               ${CUDA_cudadevrt_LIBRARY} 
+               ${CUDA_curand_LIBRARY})
 
 find_package(HDF5 NAMES hdf5 COMPONENTS C shared)
 if(NOT HDF5_INCLUDE_DIR OR NOT HDF5_C_SHARED_LIBRARY)
