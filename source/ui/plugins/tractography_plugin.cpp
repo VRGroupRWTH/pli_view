@@ -177,24 +177,17 @@ void tractography_plugin::start()
     slider_x->setMinimum(0); slider_x->setMaximum(size[0]);
     slider_y->setMinimum(0); slider_y->setMaximum(size[1]);
     slider_z->setMinimum(0); slider_z->setMaximum(size[2]);
-    slider_z->setSpan   (0, 1);
 
-    // Generate preview image.
-    auto preview_image = data_plugin->generate_selection_image();
-    auto shape         = preview_image.shape();
-    image->setPixmap(QPixmap::fromImage(QImage(preview_image.data(), shape[0], shape[1], QImage::Format::Format_Grayscale8)));
+    // Generate selection image.
+    auto selection_image = data_plugin->generate_selection_image();
+    auto shape           = selection_image.shape();
+    image->setPixmap(QPixmap::fromImage(QImage(selection_image.data(), shape[0], shape[1], QImage::Format::Format_Grayscale8)));
 
     // Adjust widget size.
     image    ->setSizeIncrement(shape[0], shape[1]);
     letterbox->setWidget(image);
     letterbox->update();
     update();
-
-    // Hack for enforcing a UI update.
-    auto sizes = owner_->splitter->sizes();
-    owner_->splitter->setSizes(QList<int>{0       , sizes[1]});
-    owner_->splitter->setSizes(QList<int>{sizes[0], sizes[1]});
-    owner_->update();
   });
 }
 void tractography_plugin::trace()

@@ -2,28 +2,15 @@
 
 #include <QKeyEvent>
 
-#include <pli_vis/visualization/primitives/transform.hpp>
+#include <pli_vis/visualization/primitives/camera.hpp>
 
 namespace pli
 {
-simple_interactor::simple_interactor(transform* transform) : transform_(transform)
+simple_interactor::simple_interactor(camera* camera) : interactor(camera)
 {
   
 }
 
-void simple_interactor::update_transform   ()
-{
-
-}
-
-void simple_interactor::key_press_handler  (QKeyEvent*   event)
-{
-
-}
-void simple_interactor::key_release_handler(QKeyEvent*   event)
-{
-
-}
 void simple_interactor::mouse_press_handler(QMouseEvent* event)
 {
   last_mouse_position_ = event->pos();
@@ -35,16 +22,17 @@ void simple_interactor::mouse_move_handler (QMouseEvent* event)
 
   if (event->buttons() & Qt::LeftButton)
   {
-    transform_->rotate(glm::angleAxis(glm::radians( look_speed_ * dx), glm::vec3(0.0, 0.0, 1.0)));
-    transform_->rotate(glm::angleAxis(glm::radians(-look_speed_ * dy), transform_->right()));
+    camera_->rotate(glm::angleAxis(glm::radians( look_speed_ * dx), glm::vec3(0.0, 0.0, 1.0)));
+    camera_->rotate(glm::angleAxis(glm::radians(-look_speed_ * dy), camera_->right()));
   }
   if (event->buttons() & Qt::MiddleButton)
   {
-    transform_->translate(move_speed_ * (float(dx) * transform_->right() - float(dy) * transform_->up()));
+    camera_->translate(move_speed_ * (float(dx) * camera_->right() - float(dy) * camera_->up()));
   }
   if (event->buttons() & Qt::RightButton)
   {
-    transform_->translate(move_speed_ * dy * transform_->forward());
+    camera_->translate            (move_speed_ * dy * camera_->forward());
+    camera_->set_orthographic_size(camera_->orthographic_size() + move_speed_ * dy);
   }
 
   last_mouse_position_ = event->pos();

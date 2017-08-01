@@ -5,48 +5,26 @@
 
 #include <QPoint>
 
+#include <pli_vis/visualization/interactors/interactor.hpp>
+
 class QKeyEvent;
 class QMouseEvent;
 
 namespace pli
 {
-class transform;
-
-class first_person_interactor
+class first_person_interactor : public interactor
 {
 public:
-  first_person_interactor(transform* transform);
+  first_person_interactor(camera* camera);
 
-  void update_transform();
-
-  void key_press_handler  (QKeyEvent*   event);
-  void key_release_handler(QKeyEvent*   event);
-  void mouse_press_handler(QMouseEvent* event);
-  void mouse_move_handler (QMouseEvent* event);
-
-  float move_speed() const
-  {
-    return move_speed_;
-  }
-  float look_speed() const
-  {
-    return look_speed_;
-  }
-
-  void set_move_speed(float move_speed)
-  {
-    move_speed_ = move_speed;
-  }
-  void set_look_speed(float look_speed)
-  {
-    look_speed_ = look_speed;
-  }
+  void update_transform   ()                   override;
+  void key_press_handler  (QKeyEvent*   event) override;
+  void key_release_handler(QKeyEvent*   event) override;
+  void mouse_press_handler(QMouseEvent* event) override;
+  void mouse_move_handler (QMouseEvent* event) override;
 
 private:
-  transform*          transform_  ;
-  float               move_speed_ = 1.0;
-  float               look_speed_ = 1.0;
-  std::map<int, bool> key_map_    ;
+  std::map<int, bool> key_map_;
 
   QPoint last_mouse_position_;
 };

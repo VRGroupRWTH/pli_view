@@ -2,28 +2,15 @@
 
 #include <QKeyEvent>
 
-#include <pli_vis/visualization/primitives/transform.hpp>
+#include <pli_vis/visualization/primitives/camera.hpp>
 
 namespace pli
 {
-orbit_interactor::orbit_interactor(transform* transform) : transform_(transform)
+orbit_interactor::orbit_interactor(camera* camera) : interactor(camera)
 {
   
 }
 
-void orbit_interactor::update_transform   ()
-{
-
-}
-
-void orbit_interactor::key_press_handler  (QKeyEvent*   event)
-{
-
-}
-void orbit_interactor::key_release_handler(QKeyEvent*   event)
-{
-
-}
 void orbit_interactor::mouse_press_handler(QMouseEvent* event)
 {
   last_mouse_position_ = event->pos();
@@ -35,15 +22,16 @@ void orbit_interactor::mouse_move_handler (QMouseEvent* event)
 
   if (event->buttons() & Qt::LeftButton)
   {
-    auto translation = transform_->translation();
-    transform_->translate(-translation);
-    transform_->rotate   (glm::angleAxis(glm::radians( look_speed_ * dx), glm::vec3(0.0, 0.0, 1.0)));
-    transform_->rotate   (glm::angleAxis(glm::radians(-look_speed_ * dy), transform_->right()));
-    transform_->translate(glm::length(translation) * transform_->forward());
+    auto translation = camera_->translation();
+    camera_->translate(-translation);
+    camera_->rotate   (glm::angleAxis(glm::radians( look_speed_ * dx), glm::vec3(0.0, 0.0, 1.0)));
+    camera_->rotate   (glm::angleAxis(glm::radians(-look_speed_ * dy), camera_->right()));
+    camera_->translate(glm::length(translation) * camera_->forward());
   }
   if (event->buttons() & Qt::RightButton)
   {
-    transform_->translate(move_speed_ * dy * transform_->forward());
+    camera_->translate            (move_speed_ * dy * camera_->forward());
+    camera_->set_orthographic_size(camera_->orthographic_size() + move_speed_ * dy);
   }
 
   last_mouse_position_ = event->pos();

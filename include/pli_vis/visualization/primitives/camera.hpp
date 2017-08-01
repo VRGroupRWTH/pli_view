@@ -46,7 +46,7 @@ private:
   float	vertical_fov_      = glm::radians(68.0F);
   
   /// When camera is orthographic, camera's viewing volume is defined by orthographic size.
-  float	orthographic_size_ = 1;
+  float	orthographic_size_ = 10;
 
   glm::mat4 projection_matrix_;
 };
