@@ -57,27 +57,31 @@ void scalar_plugin::upload()
 
   if (checkbox_transmittance->isChecked())
   {
-    auto data = data_plugin->transmittance();    
-    data.resize(boost::extents[data.shape()[0]][data.shape()[1]][1]);
-    scalar_field_->set_data(make_uint3(data.shape()[0], data.shape()[1], data.shape()[2]), data.data());
+    auto& data    = data_plugin->transmittance();
+    auto  subdata = boost::multi_array<float, 2>(data[boost::indices[boost::multi_array_types::index_range()][boost::multi_array_types::index_range()][data.shape()[2] - 1]]);
+    scalar_field_->set_data       (make_uint3(subdata.shape()[0], subdata.shape()[1], 1), subdata.data());
+    scalar_field_->set_translation(glm::vec3(0, 0, data.shape()[2]));
   }
   if (checkbox_retardation  ->isChecked())
   {
-    auto data = data_plugin->retardation();
-    data.resize(boost::extents[data.shape()[0]][data.shape()[1]][1]);
-    scalar_field_->set_data(make_uint3(data.shape()[0], data.shape()[1], data.shape()[2]), data.data());
+    auto data    = data_plugin->retardation();
+    auto subdata = boost::multi_array<float, 2>(data[boost::indices[boost::multi_array_types::index_range()][boost::multi_array_types::index_range()][data.shape()[2] - 1]]);
+    scalar_field_->set_data       (make_uint3(subdata.shape()[0], subdata.shape()[1], 1), subdata.data());
+    scalar_field_->set_translation(glm::vec3(0, 0, data.shape()[2]));
   }
   if (checkbox_direction    ->isChecked())
   {
-    auto data = data_plugin->direction();
-    data.resize(boost::extents[data.shape()[0]][data.shape()[1]][1]);
-    scalar_field_->set_data(make_uint3(data.shape()[0], data.shape()[1], data.shape()[2]), data.data());
+    auto data    = data_plugin->direction();
+    auto subdata = boost::multi_array<float, 2>(data[boost::indices[boost::multi_array_types::index_range()][boost::multi_array_types::index_range()][data.shape()[2] - 1]]);
+    scalar_field_->set_data       (make_uint3(subdata.shape()[0], subdata.shape()[1], 1), subdata.data());
+    scalar_field_->set_translation(glm::vec3(0, 0, data.shape()[2]));
   }
   if (checkbox_inclination  ->isChecked())
   {
-    auto data = data_plugin->inclination();
-    data.resize(boost::extents[data.shape()[0]][data.shape()[1]][1]);
-    scalar_field_->set_data(make_uint3(data.shape()[0], data.shape()[1], data.shape()[2]), data.data());
+    auto data    = data_plugin->inclination();
+    auto subdata = boost::multi_array<float, 2>(data[boost::indices[boost::multi_array_types::index_range()][boost::multi_array_types::index_range()][data.shape()[2] - 1]]);
+    scalar_field_->set_data       (make_uint3(subdata.shape()[0], subdata.shape()[1], 1), subdata.data());
+    scalar_field_->set_translation(glm::vec3(0, 0, data.shape()[2]));
   }
 
   logger_->info(std::string("Update successful."));
