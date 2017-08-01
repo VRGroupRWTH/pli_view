@@ -249,6 +249,17 @@ boost::multi_array<float3, 3>        data_plugin::generate_vectors      (bool   
         return cartesian ? to_cartesian_coords(vector) : vector;
       });
 
+    if(mask_bounds_.second[0] != 0)
+      std::transform(
+        vectors. data(),
+        vectors. data() + vectors.num_elements(),
+        mask_  ->data(),
+        vectors. data(), 
+        [] (const float3& vector, const float& mask)
+        {
+          return mask ? vector : float3{0.0F, 0.0F, 0.0F};
+        });
+
     return vectors;
   }
   // Generate from unit vectors.
@@ -265,6 +276,17 @@ boost::multi_array<float3, 3>        data_plugin::generate_vectors      (bool   
         auto vector = unit_vector / length(unit_vector);
         return cartesian ? vector : to_spherical_coords(vector);
       });
+      
+    if(mask_bounds_.second[0] != 0)
+      std::transform(
+        vectors. data(),
+        vectors. data() + vectors.num_elements(),
+        mask_  ->data(),
+        vectors. data(), 
+        [] (const float3& vector, const float& mask)
+        {
+          return mask ? vector : float3{0.0F, 0.0F, 0.0F};
+        });
 
     return vectors;
   }
