@@ -400,6 +400,9 @@
   <tabstop>line_edit_integration_step</tabstop>
   <tabstop>slider_iterations</tabstop>
   <tabstop>line_edit_iterations</tabstop>
+  <tabstop>checkbox_view_dependent</tabstop>
+  <tabstop>slider_rate_of_decay</tabstop>
+  <tabstop>line_edit_rate_of_decay</tabstop>
   <tabstop>button_trace_selection</tabstop>
  </tabstops>
  <resources/>
