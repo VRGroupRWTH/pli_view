@@ -212,7 +212,7 @@ std::array<std::size_t, 3> data_plugin::selection_stride() const
   };
 }
 
-boost::multi_array<unsigned char, 2> data_plugin::generate_preview_image(std::size_t x_resolution)
+boost::multi_array<unsigned char, 2> data_plugin::generate_preview_image  (std::size_t x_resolution)
 {
   if (retardation_bounds_.second[0] == 0)
     return boost::multi_array<unsigned char, 2>();
@@ -231,7 +231,25 @@ boost::multi_array<unsigned char, 2> data_plugin::generate_preview_image(std::si
       preview_image[x][y] = data[x][y][0] * 255.0;
   return preview_image;
 }
-boost::multi_array<float3, 3>        data_plugin::generate_vectors      (bool        cartesian   )
+boost::multi_array<unsigned char, 2> data_plugin::generate_selection_image(std::size_t x_resolution)
+{
+  if (retardation_bounds_.second[0] == 0)
+    return boost::multi_array<unsigned char, 2>();
+
+  std::array<std::size_t, 3> size   = {1, 1, 1};
+  std::array<std::size_t, 3> stride = {1, 1, 1};
+  size  [0] = std::min(int(selection_size()[0]), int(x_resolution));
+  stride[0] = selection_size()[0] / size  [0];
+  size  [1] = selection_size()[1] / stride[0];
+  stride[1] = stride[0];
+
+  boost::multi_array<unsigned char, 2> preview_image(boost::extents[size[0]][size[1]], boost::fortran_storage_order());
+  for (auto x = 0; x < size[0]; x++)
+    for (auto y = 0; y < size[1]; y++)
+      preview_image[x][y] = (*retardation_)[x][y][0] * 255.0;
+  return preview_image;
+}
+boost::multi_array<float3, 3>        data_plugin::generate_vectors        (bool        cartesian   )
 {
   // Generate from direction - inclination pairs.
   if(direction_bounds_.second[0] != 0 && inclination_bounds_.second[0] != 0)
