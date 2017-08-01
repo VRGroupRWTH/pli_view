@@ -37,9 +37,10 @@ void streamline_renderer::render    (const camera* camera)
 {
   shader_program_->bind();
   vertex_array_  ->bind();
-
-  shader_program_->set_uniform("projection"    , camera->projection_matrix      ());
+  
+  shader_program_->set_uniform("model"         , absolute_matrix                ());
   shader_program_->set_uniform("view"          , camera->inverse_absolute_matrix());
+  shader_program_->set_uniform("projection"    , camera->projection_matrix      ());
   shader_program_->set_uniform("view_dependent", view_dependent_transparency_     );
   shader_program_->set_uniform("rate_of_decay" , view_dependent_rate_of_decay_    );
   

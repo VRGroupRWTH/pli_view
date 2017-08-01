@@ -50,9 +50,10 @@ void scalar_field::render    (const camera* camera)
   shader_program_->bind  ();
   vertex_array_  ->bind  ();
   texture_       ->bind  ();
-
-  shader_program_->set_uniform("projection", camera->projection_matrix      ());
+  
+  shader_program_->set_uniform("model"     , absolute_matrix                ());
   shader_program_->set_uniform("view"      , camera->inverse_absolute_matrix());
+  shader_program_->set_uniform("projection", camera->projection_matrix      ());
 
   glEnable       (GL_POLYGON_OFFSET_FILL);
   glPolygonOffset(1.0, 10.0);

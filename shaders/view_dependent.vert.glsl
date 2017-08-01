@@ -8,8 +8,9 @@ namespace shaders
 static std::string view_dependent_vert = R"(\
 #version 400
 
-uniform mat4  projection     ;
+uniform mat4  model          ;
 uniform mat4  view           ;
+uniform mat4  projection     ;
 uniform bool  view_dependent = true;
 uniform bool  invert         = true;
 uniform float rate_of_decay  = 1.0 ;
@@ -19,7 +20,7 @@ out     vec4  vert_color     ;
 
 void main()
 {
-  gl_Position = projection * view * vec4(vertex, 1.0);
+  gl_Position = projection * view * model * vec4(vertex, 1.0);
 
   vec3 color = vec3(abs(direction.x), abs(direction.z), abs(direction.y));
 

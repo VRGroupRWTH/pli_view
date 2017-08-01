@@ -11,6 +11,7 @@ static std::string view_dependent_vector_field_vert = R"(\
 uniform bool  view_dependent = true;
 uniform bool  invert         = true;
 uniform float rate_of_decay  = 1.0 ;
+uniform mat4  model          ;
 uniform mat4  view           ;
 in      vec3  direction      ;
 
@@ -27,7 +28,7 @@ void main()
 
   if(view_dependent)
   {
-    float alpha = abs(dot(normalize(inverse(view)[2].xyz), normalize(direction)));
+    float alpha = abs(dot(normalize(inverse(view)[2].xyz), normalize(inverse(model) * vec4(direction, 1.0)).xyz));
     if(invert)
       alpha = 1.0 - alpha;
     vs_out.color.a = pow(alpha, rate_of_decay);

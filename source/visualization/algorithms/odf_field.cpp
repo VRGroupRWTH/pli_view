@@ -43,8 +43,9 @@ void odf_field::render    (const camera* camera)
   vertex_array_  ->bind();
   index_buffer_  ->bind();
 
-  shader_program_->set_uniform("projection", camera->projection_matrix      ());
+  shader_program_->set_uniform("model"     , absolute_matrix                ());
   shader_program_->set_uniform("view"      , camera->inverse_absolute_matrix());
+  shader_program_->set_uniform("projection", camera->projection_matrix      ());
 
   // Select by visible layers.
   auto dimension_count  = dimensions_.z > 1 ? 3 : 2;
