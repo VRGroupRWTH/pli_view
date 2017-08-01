@@ -25,6 +25,7 @@ set(PROJECT_SOURCES
   
   include/pli_vis/aspects/loggable.hpp
   include/pli_vis/aspects/renderable.hpp
+  include/pli_vis/cuda/mc/monte_carlo.h
   include/pli_vis/cuda/sh/choose.h
   include/pli_vis/cuda/sh/clebsch_gordan.h
   include/pli_vis/cuda/sh/config.h
@@ -35,7 +36,6 @@ set(PROJECT_SOURCES
   include/pli_vis/cuda/sh/spherical_harmonics.h
   include/pli_vis/cuda/sh/vector_ops.h
   include/pli_vis/cuda/sh/wigner.h
-  include/pli_vis/cuda/monte_carlo.h
   include/pli_vis/cuda/odf_field.h
   include/pli_vis/cuda/spherical_histogram.h
   include/pli_vis/io/io.hpp
