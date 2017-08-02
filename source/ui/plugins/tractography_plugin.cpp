@@ -188,6 +188,12 @@ void tractography_plugin::start()
     letterbox->setWidget(image);
     letterbox->update();
     update();
+    
+    // Hack for enforcing a UI update.
+    auto sizes = owner_->splitter->sizes();
+    owner_->splitter->setSizes(QList<int>{0       , sizes[1]});
+    owner_->splitter->setSizes(QList<int>{sizes[0], sizes[1]});
+    owner_->update();
   });
 }
 void tractography_plugin::trace()
