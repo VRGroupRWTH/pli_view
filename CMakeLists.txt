@@ -199,6 +199,8 @@ set(PROJECT_SOURCES
   include/pli_vis/visualization/primitives/camera.hpp
   include/pli_vis/visualization/primitives/transform.hpp
   
+  shaders/depth_pass.frag.glsl
+  shaders/depth_pass.vert.glsl
   shaders/simple_color.frag.glsl
   shaders/simple_color.vert.glsl
   shaders/simple_texture.frag.glsl
