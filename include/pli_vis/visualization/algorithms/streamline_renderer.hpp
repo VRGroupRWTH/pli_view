@@ -22,10 +22,16 @@ public:
   void set_view_dependent_rate_of_decay(float value  );
 
 private:
-  std::unique_ptr<gl::program>      shader_program_  ;
-  std::unique_ptr<gl::vertex_array> vertex_array_    ;
-  std::unique_ptr<gl::array_buffer> vertex_buffer_   ;
-  std::unique_ptr<gl::array_buffer> direction_buffer_;
+  std::unique_ptr<gl::program>      depth_pass_program_     ;
+  std::unique_ptr<gl::vertex_array> depth_pass_vertex_array_;
+  std::unique_ptr<gl::framebuffer>  depth_framebuffer_      ;
+  std::unique_ptr<gl::texture_2d>   color_texture_          ;
+  std::unique_ptr<gl::texture_2d>   depth_texture_          ;
+                                                            
+  std::unique_ptr<gl::program>      main_pass_program_      ;
+  std::unique_ptr<gl::vertex_array> main_pass_vertex_array_ ;
+  std::unique_ptr<gl::array_buffer> vertex_buffer_          ;
+  std::unique_ptr<gl::array_buffer> direction_buffer_       ;
   std::size_t                       draw_count_                   = 0;
   bool                              view_dependent_transparency_  = true;
   float                             view_dependent_rate_of_decay_ = 1.0F;
