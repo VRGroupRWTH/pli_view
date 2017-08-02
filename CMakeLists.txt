@@ -11,8 +11,8 @@ set                   (CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} "--expt-extended-lambd
                                                           "-lcublas"
                                                           "-lcublas_device"
                                                           "-lcudadevrt"
-                                                         #"-gencode=arch=compute_50,code=sm_50")
-                                                          "-gencode=arch=compute_60,code=sm_60")
+                                                          "-gencode=arch=compute_50,code=sm_50")
+                                                         #"-gencode=arch=compute_60,code=sm_60")
 
 ##################################################    Options     ##################################################
 option(BUILD_TESTS "Build tests." OFF)
@@ -25,6 +25,7 @@ set(PROJECT_SOURCES
   
   include/pli_vis/aspects/loggable.hpp
   include/pli_vis/aspects/renderable.hpp
+  include/pli_vis/cuda/mc/monte_carlo.h
   include/pli_vis/cuda/sh/choose.h
   include/pli_vis/cuda/sh/clebsch_gordan.h
   include/pli_vis/cuda/sh/config.h
@@ -37,7 +38,6 @@ set(PROJECT_SOURCES
   include/pli_vis/cuda/sh/wigner.h
   include/pli_vis/cuda/odf_field.h
   include/pli_vis/cuda/spherical_histogram.h
-  include/pli_vis/cuda/vector_field.h
   include/pli_vis/io/io.hpp
   include/pli_vis/io/io_slice_impl.hpp
   include/pli_vis/io/io_volume_impl.hpp
@@ -193,6 +193,7 @@ set(PROJECT_SOURCES
   include/pli_vis/visualization/algorithms/vector_field.hpp
   include/pli_vis/visualization/algorithms/volume_renderer.hpp
   include/pli_vis/visualization/interactors/first_person_interactor.hpp
+  include/pli_vis/visualization/interactors/interactor.hpp
   include/pli_vis/visualization/interactors/orbit_interactor.hpp
   include/pli_vis/visualization/interactors/simple_interactor.hpp
   include/pli_vis/visualization/primitives/camera.hpp
@@ -202,15 +203,17 @@ set(PROJECT_SOURCES
   shaders/simple_color.vert.glsl
   shaders/simple_texture.frag.glsl
   shaders/simple_texture.vert.glsl
+  shaders/view_dependent_vector_field.frag.glsl
+  shaders/view_dependent_vector_field.geom.glsl
+  shaders/view_dependent_vector_field.vert.glsl
   shaders/view_dependent.frag.glsl
   shaders/view_dependent.vert.glsl
   shaders/volume_renderer_prepass.frag.glsl
   shaders/volume_renderer_prepass.vert.glsl
   shaders/volume_renderer.frag.glsl
   shaders/volume_renderer.vert.glsl
-
+  
   source/cuda/odf_field.cu
-  source/cuda/vector_field.cu
   source/third_party/glew/glew.c
   source/third_party/qwt/qwt_abstract_legend.cpp
   source/third_party/qwt/qwt_abstract_scale.cpp
@@ -346,7 +349,11 @@ import_library(boost Boost_INCLUDE_DIR)
 
 set           (CUDA_SEPARABLE_COMPILATION ON)
 find_package  (CUDA REQUIRED)
-list          (APPEND PROJECT_LIBRARIES ${CUDA_CUBLAS_LIBRARIES} ${CUDA_cusolver_LIBRARY} ${CUDA_cudadevrt_LIBRARY})
+list          (APPEND PROJECT_LIBRARIES 
+               ${CUDA_CUBLAS_LIBRARIES} 
+               ${CUDA_cusolver_LIBRARY} 
+               ${CUDA_cudadevrt_LIBRARY} 
+               ${CUDA_curand_LIBRARY})
 
 find_package(HDF5 NAMES hdf5 COMPONENTS C shared)
 if(NOT HDF5_INCLUDE_DIR OR NOT HDF5_C_SHARED_LIBRARY)

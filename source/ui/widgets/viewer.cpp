@@ -3,12 +3,13 @@
 #include <QKeyEvent>
 #include <QTimer>
 
+#include <pli_vis/visualization/interactors/simple_interactor.hpp>
+
 namespace pli
 {
-viewer::viewer(QWidget* parent) : QOpenGLWidget(parent), interactor_(&camera_), wait_spinner_(new wait_spinner(this, true, false))
+viewer::viewer(QWidget* parent) : QOpenGLWidget(parent), interactor_(std::make_unique<simple_interactor>(&camera_)), wait_spinner_(new wait_spinner(this, true, false))
 {
-  camera_.set_translation(glm::vec3(0, 0, -100));
-  camera_.look_at        (glm::vec3(0, 0,    0), glm::vec3(0, -1, 0));
+  reset_camera_transform();
 
   setFocusPolicy(Qt::StrongFocus);
 
@@ -27,6 +28,13 @@ void viewer::remove_renderable(renderable* renderable)
       return obj.get() == renderable;
     }), 
     renderables_.end  ());
+}
+
+void viewer::reset_camera_transform()
+{
+  camera_.set_orthographic_size(100);
+  camera_.set_translation      ({ 0, 0, -100 });
+  camera_.look_at              ({ 0, 0,    0 }, { 0, -1, 0 });
 }
 
 void viewer::initializeGL   ()
@@ -48,7 +56,7 @@ void viewer::paintGL        ()
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  interactor_.update_transform();
+  interactor_->update_transform();
   for (auto& renderable : renderables_)
     if (renderable->active())
       renderable->render(&camera_);
@@ -60,22 +68,22 @@ void viewer::resizeGL       (int w, int h)
 }
 void viewer::keyPressEvent  (QKeyEvent*   event)
 {
-  interactor_.key_press_handler(event);
+  interactor_->key_press_handler(event);
   update();
 }
 void viewer::keyReleaseEvent(QKeyEvent*   event)
 {
-  interactor_.key_release_handler(event);
+  interactor_->key_release_handler(event);
   update();
 }
 void viewer::mousePressEvent(QMouseEvent* event)
 {
-  interactor_.mouse_press_handler(event);
+  interactor_->mouse_press_handler(event);
   update();
 }
 void viewer::mouseMoveEvent (QMouseEvent* event)
 {
-  interactor_.mouse_move_handler(event);
+  interactor_->mouse_move_handler(event);
 }
 
 void viewer::set_wait_spinner_enabled(bool enabled) const

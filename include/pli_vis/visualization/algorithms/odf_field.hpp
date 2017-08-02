@@ -25,6 +25,7 @@ public:
     const uint2&   tessellations     ,
     const uint3&   vector_dimensions ,
     const float    scale             = 1.0  ,
+    const bool     hierarchical      = false,
     const bool     clustering        = false,
     const float    cluster_threshold = 0.0  ,
     std::function<void(const std::string&)> status_callback = [](const std::string&){});

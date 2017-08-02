@@ -43,56 +43,6 @@ odf_plugin::odf_plugin(QWidget* parent) : plugin(parent)
     logger_->info(std::string(state ? "Enabled." : "Disabled."));
     odf_field_->set_active(state);
   });
-  connect(checkbox_depth_0, &QCheckBox::stateChanged, [&](int state)
-  {
-    logger_->info("Grid layer 0 is {}.", state ? "enabled" : "disabled");
-    set_visible_layers();
-  });
-  connect(checkbox_depth_1, &QCheckBox::stateChanged, [&](int state)
-  {
-    logger_->info("Grid layer 1 is {}.", state ? "enabled" : "disabled");
-    set_visible_layers();
-  });
-  connect(checkbox_depth_2, &QCheckBox::stateChanged, [&](int state)
-  {
-    logger_->info("Grid layer 2 is {}.", state ? "enabled" : "disabled");
-    set_visible_layers();
-  });
-  connect(checkbox_depth_3, &QCheckBox::stateChanged, [&](int state)
-  {
-    logger_->info("Grid layer 3 is {}.", state ? "enabled" : "disabled");
-    set_visible_layers();
-  });
-  connect(checkbox_depth_4, &QCheckBox::stateChanged, [&](int state)
-  {
-    logger_->info("Grid layer 4 is {}.", state ? "enabled" : "disabled");
-    set_visible_layers();
-  });
-  connect(checkbox_depth_5, &QCheckBox::stateChanged, [&](int state)
-  {
-    logger_->info("Grid layer 5 is {}.", state ? "enabled" : "disabled");
-    set_visible_layers();
-  });
-  connect(checkbox_depth_6, &QCheckBox::stateChanged, [&](int state)
-  {
-    logger_->info("Grid layer 6 is {}.", state ? "enabled" : "disabled");
-    set_visible_layers();
-  });
-  connect(checkbox_depth_7, &QCheckBox::stateChanged, [&](int state)
-  {
-    logger_->info("Grid layer 7 is {}.", state ? "enabled" : "disabled");
-    set_visible_layers();
-  });
-  connect(checkbox_depth_8, &QCheckBox::stateChanged, [&](int state)
-  {
-    logger_->info("Grid layer 8 is {}.", state ? "enabled" : "disabled");
-    set_visible_layers();
-  });
-  connect(checkbox_depth_9, &QCheckBox::stateChanged, [&](int state)
-  {
-    logger_->info("Grid layer 9 is {}.", state ? "enabled" : "disabled");
-    set_visible_layers();
-  });
 
   connect(slider_vector_block_x      , &QxtSpanSlider::valueChanged, [&]
   {
@@ -157,6 +107,63 @@ odf_plugin::odf_plugin(QWidget* parent) : plugin(parent)
   connect(line_edit_sampling_phi     , &QLineEdit::editingFinished , [&]
   {
     slider_sampling_phi->setValue(line_edit::get_text<int>(line_edit_sampling_phi));
+  });
+  
+  connect(checkbox_hierarchical      , &QCheckBox::stateChanged    , [&](int state)
+  {
+    logger_->info("Hierarchical construction is {}.", state ? "enabled" : "disabled");
+    label_layer_checkboxes ->setEnabled(state);
+    layout_layer_checkboxes->setEnabled(state);
+  });
+  connect(checkbox_depth_0           , &QCheckBox::stateChanged    , [&](int state)
+  {
+    logger_->info("Grid layer 0 is {}.", state ? "enabled" : "disabled");
+    set_visible_layers();
+  });
+  connect(checkbox_depth_1           , &QCheckBox::stateChanged    , [&](int state)
+  {
+    logger_->info("Grid layer 1 is {}.", state ? "enabled" : "disabled");
+    set_visible_layers();
+  });
+  connect(checkbox_depth_2           , &QCheckBox::stateChanged    , [&](int state)
+  {
+    logger_->info("Grid layer 2 is {}.", state ? "enabled" : "disabled");
+    set_visible_layers();
+  });
+  connect(checkbox_depth_3           , &QCheckBox::stateChanged    , [&](int state)
+  {
+    logger_->info("Grid layer 3 is {}.", state ? "enabled" : "disabled");
+    set_visible_layers();
+  });
+  connect(checkbox_depth_4           , &QCheckBox::stateChanged    , [&](int state)
+  {
+    logger_->info("Grid layer 4 is {}.", state ? "enabled" : "disabled");
+    set_visible_layers();
+  });
+  connect(checkbox_depth_5           , &QCheckBox::stateChanged    , [&](int state)
+  {
+    logger_->info("Grid layer 5 is {}.", state ? "enabled" : "disabled");
+    set_visible_layers();
+  });
+  connect(checkbox_depth_6           , &QCheckBox::stateChanged    , [&](int state)
+  {
+    logger_->info("Grid layer 6 is {}.", state ? "enabled" : "disabled");
+    set_visible_layers();
+  });
+  connect(checkbox_depth_7           , &QCheckBox::stateChanged    , [&](int state)
+  {
+    logger_->info("Grid layer 7 is {}.", state ? "enabled" : "disabled");
+    set_visible_layers();
+  });
+  connect(checkbox_depth_8           , &QCheckBox::stateChanged    , [&](int state)
+  {
+    logger_->info("Grid layer 8 is {}.", state ? "enabled" : "disabled");
+    set_visible_layers();
+  });
+  connect(checkbox_depth_9           , &QCheckBox::stateChanged    , [&](int state)
+  {
+    logger_->info("Grid layer 9 is {}.", state ? "enabled" : "disabled");
+    set_visible_layers();
   });
 
   connect(checkbox_clustering_enabled, &QCheckBox::stateChanged    , [&](int state)
@@ -274,9 +281,10 @@ void odf_plugin::calculate         ()
     sampling_dimensions,
     block_dimensions,
     1.0F,
+    checkbox_hierarchical      ->isChecked(),
     checkbox_clustering_enabled->isChecked(),
     threshold_multiplier_ * float(slider_threshold->value()),
-    [&](const std::string& message) { logger_->info(message); });
+    [&] (const std::string& message) { logger_->info(message); });
 
   logger_->info(std::string("Update successful."));
   
@@ -289,15 +297,43 @@ void odf_plugin::extract_peaks     ()
   owner_->toolbox->setEnabled              (false);
 
   logger_->info(std::string("Extracting peaks..."));
+    
+  auto dimensions = make_uint3(
+    coefficients_.shape()[0],
+    coefficients_.shape()[1],
+    coefficients_.shape()[2]);
 
-  // TODO: Apply peak extraction.
-  //auto shape = coefficients_.shape();
-  //for(auto x = 0; x < shape[0]; x++)
-  //  for(auto y = 0; y < shape[1]; y++)
-  //    for(auto z = 0; z < shape[2]; z++)
-  //      for(auto v = 0; v < shape[3]; v++)
-  //        logger_->info("[" + boost::lexical_cast<std::string>(x) + "," + boost::lexical_cast<std::string>(y) + "," + boost::lexical_cast<std::string>(z) + "]: ");
+  uint2 sampling_dimensions    = { 
+    line_edit::get_text<unsigned>(line_edit_sampling_theta   ),
+    line_edit::get_text<unsigned>(line_edit_sampling_phi     )};
   
+  future_ = std::async(std::launch::async, [&]
+  {
+    try
+    {
+      maxima_.resize(boost::extents
+        [coefficients_.shape()[0]]
+        [coefficients_.shape()[1]]
+        [coefficients_.shape()[2]]
+        [maxima_count_]);
+
+      pli::extract_peaks(
+        dimensions,
+        maximum_degree(coefficients_.shape()[3]),
+        coefficients_.data(),
+        sampling_dimensions ,
+        maxima_count_       ,
+        maxima_.data()      ,
+        [&] (const std::string& message) { logger_->info(message); });
+    }
+    catch (std::exception& exception)
+    {
+      logger_->error(std::string(exception.what()));
+    }
+  });
+  while (future_.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
+    QApplication::processEvents();
+
   logger_->info(std::string("Extraction successful."));
   
   owner_->toolbox->setEnabled              (true );

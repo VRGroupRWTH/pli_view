@@ -19,6 +19,10 @@ public:
 private:
   void trace();
 
+  std::array<std::size_t, 3> seed_offset() const;
+  std::array<std::size_t, 3> seed_size  () const;
+  std::array<std::size_t, 3> seed_stride() const;
+
   streamline_renderer* streamline_renderer_;
   std::future<void>    future_;
 };

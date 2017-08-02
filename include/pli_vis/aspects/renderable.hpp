@@ -1,11 +1,13 @@
 #ifndef PLI_VIS_RENDERABLE_HPP_
 #define PLI_VIS_RENDERABLE_HPP_
 
+#include <pli_vis/visualization/primitives/transform.hpp>
+
 namespace pli
 {
 class camera;
 
-class renderable
+class renderable : public transform
 {
 public:
   virtual ~renderable() = default;

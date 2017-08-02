@@ -72,8 +72,9 @@ public:
   std::array<std::size_t, 3> selection_size  () const;
   std::array<std::size_t, 3> selection_stride() const;
 
-  boost::multi_array<unsigned char, 2> generate_preview_image(std::size_t x_resolution = 2048 );
-  boost::multi_array<float3, 3>        generate_vectors      (bool        cartesian    = false);
+  boost::multi_array<unsigned char, 2> generate_preview_image  (std::size_t x_resolution = 2048 );
+  boost::multi_array<unsigned char, 2> generate_selection_image(std::size_t x_resolution = 2048 );
+  boost::multi_array<float3, 3>        generate_vectors        (bool        cartesian    = false);
   
 signals:
   void on_load();

@@ -354,21 +354,25 @@ void sample_odfs(
         float3*      points           ,
         float4*      colors           ,
         unsigned*    indices          ,
+        bool         hierarchical     ,
         bool         clustering       ,
         float        cluster_threshold,
         std::function<void(const std::string&)> status_callback)
 {
   auto start_time = std::chrono::system_clock::now();
-  
-  auto base_voxel_count  = dimensions.x * dimensions.y * dimensions.z;
-  auto dimension_count   = dimensions.z > 1 ? 3 : 2;
-  auto min_dimension     = min(dimensions.x, dimensions.y);
+
+  auto base_voxel_count = dimensions.x * dimensions.y * dimensions.z;
+  auto dimension_count  = dimensions.z > 1 ? 3 : 2;
+  auto min_dimension    = min(dimensions.x, dimensions.y);
   if (dimension_count == 3)
-    min_dimension = min(min_dimension, dimensions.z);
-  auto max_layer         = int(log(min_dimension) / log(2));
-  auto voxel_count       = unsigned(base_voxel_count * 
-    ((1.0 - pow(1.0 / pow(2, dimension_count), max_layer + 1)) / 
-     (1.0 -     1.0 / pow(2, dimension_count))));
+    min_dimension       = min(min_dimension, dimensions.z);
+  auto max_layer        = int(log(min_dimension) / log(2));
+
+  auto voxel_count = base_voxel_count;
+  if (hierarchical)
+    voxel_count = unsigned(base_voxel_count * 
+      ((1.0 - pow(1.0 / pow(2, dimension_count), max_layer + 1)) / 
+       (1.0 -     1.0 / pow(2, dimension_count))));
 
   auto coefficient_count  = pli::coefficient_count(maximum_degree);
   auto tessellation_count = tessellations.x * tessellations.y;
@@ -383,7 +387,7 @@ void sample_odfs(
 
   auto layer_offset     = 0;
   auto layer_dimensions = dimensions;
-  for (auto layer = max_layer; layer >= 0; layer--)
+  for (auto layer = max_layer; layer >= (hierarchical ? 0 : max_layer); layer--)
   {
     if (layer != max_layer)
     {
@@ -409,7 +413,7 @@ void sample_odfs(
   
   layer_offset     = 0;
   layer_dimensions = dimensions;
-  for (auto layer = max_layer; layer >= 0; layer--)
+  for (auto layer = max_layer; layer >= (hierarchical ? 0 : max_layer); layer--)
   {
     status_callback("Sampling sums of the layer " + std::to_string(int(layer)) + " coefficients.");
     sample_sums<<<grid_size_3d(layer_dimensions), block_size_3d()>>>(
@@ -457,7 +461,7 @@ void sample_odfs(
   status_callback("Translating and scaling the points.");
   layer_offset     = 0;
   layer_dimensions = dimensions;
-  for (auto layer = max_layer; layer >= 0; layer--)
+  for (auto layer = max_layer; layer >= (hierarchical ? 0 : max_layer); layer--)
   {
     auto layer_point_offset = 
       layer_offset * 
@@ -467,7 +471,7 @@ void sample_odfs(
       layer_dimensions.y * 
       layer_dimensions.z * 
       tessellation_count;
-
+  
     uint3 layer_vectors_size {
       vector_dimensions.x * unsigned(pow(2, max_layer - layer)),
       vector_dimensions.y * unsigned(pow(2, max_layer - layer)),
@@ -483,9 +487,9 @@ void sample_odfs(
     float  min_spacing = min(layer_spacing.x, layer_spacing.y);
     if(dimension_count == 3)
       min_spacing = min(min_spacing, layer_spacing.z);
-
+  
     auto layer_scale = scale * min_spacing  * 0.5F;
-
+  
     thrust::transform(
       thrust::device,
       points + layer_point_offset,
@@ -501,7 +505,7 @@ void sample_odfs(
         return output;
       });
     cudaDeviceSynchronize();
-
+  
     layer_offset += layer_dimensions.x * layer_dimensions.y * layer_dimensions.z;
     layer_dimensions = {
       layer_dimensions.x / 2,
@@ -509,6 +513,60 @@ void sample_odfs(
       dimension_count == 3 ? layer_dimensions.z / 2 : 1
     };
   }
+
+  auto end_time = std::chrono::system_clock::now();
+  std::chrono::duration<double> elapsed_time = end_time - start_time;
+  status_callback("Cuda ODF sampling operations took " + std::to_string(elapsed_time.count()) + " seconds.");
+}
+
+void extract_peaks(
+  const uint3&   dimensions    ,
+  const unsigned maximum_degree,
+  const float*   coefficients  ,
+  const uint2&   tessellations , 
+  const unsigned maxima_count  ,
+        float3*  maxima        ,
+        std::function<void(const std::string&)> status_callback)
+{
+  auto start_time = std::chrono::system_clock::now();
+
+  auto voxel_count       = dimensions.x * dimensions.y * dimensions.z;
+  auto coefficient_count = pli::coefficient_count(maximum_degree);
+
+  status_callback("Allocating and copying the spherical harmonics coefficients.");
+  thrust::device_vector<float> coefficient_vectors(voxel_count * coefficient_count);
+  auto coefficients_ptr = raw_pointer_cast(&coefficient_vectors[0]);
+  copy_n(coefficients, coefficient_vectors.size(), coefficient_vectors.begin());
+  cudaDeviceSynchronize();
+
+  status_callback("Allocating the maxima vectors.");
+  thrust::device_vector<float3> maxima_vectors(voxel_count * maxima_count);
+  auto maxima_ptr = raw_pointer_cast(&maxima_vectors[0]);
+
+  status_callback("Extracting maxima.");
+  extract_maxima<<<grid_size_3d(dimensions), block_size_3d()>>>(
+    dimensions       ,
+    coefficient_count,
+    coefficients_ptr ,
+    tessellations    ,
+    maxima_count     ,
+    maxima_ptr       );
+  cudaDeviceSynchronize();
+
+  status_callback("Converting the maxima to Cartesian coordinates.");
+  thrust::transform(
+    thrust::device,
+    maxima_vectors.begin(),
+    maxima_vectors.end  (),
+    maxima_vectors.begin(),
+    [] COMMON (const float3& point)
+    {
+      return to_cartesian_coords(point);
+    });
+  cudaDeviceSynchronize();
+
+  status_callback("Copying maxima to CPU.");
+  cudaMemcpy(maxima, maxima_ptr, sizeof(float3) * maxima_vectors.size(), cudaMemcpyDeviceToHost);
 
   auto end_time = std::chrono::system_clock::now();
   std::chrono::duration<double> elapsed_time = end_time - start_time;

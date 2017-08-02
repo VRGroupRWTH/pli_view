@@ -198,8 +198,8 @@ GLOBAL void sample_sum(
   const uint2        tessellations       ,
   const precision*   coefficients        ,
   point_type*        output_points       ,
-  unsigned int*      output_indices      ,
-  const unsigned int base_index          = 0)
+  unsigned int*      output_indices      = nullptr,
+  const unsigned int base_index          = 0      )
 {
   auto longitude         = blockIdx.x * blockDim.x + threadIdx.x;
   auto latitude          = blockIdx.y * blockDim.y + threadIdx.y;
@@ -210,10 +210,8 @@ GLOBAL void sample_sum(
       coefficient_index >= coefficient_count)
     return;
 
-  auto point_offset = latitude + longitude * tessellations.y;
-  auto index_offset = 6 * point_offset;
-
-  auto& point = output_points[point_offset];
+  auto  point_offset = latitude + longitude * tessellations.y;
+  auto& point        = output_points[point_offset];
 
   if (coefficient_index == 0)
     point.x = 0;
@@ -222,8 +220,9 @@ GLOBAL void sample_sum(
   point.z =     M_PI * latitude  / (tessellations.y - 1);
   atomicAdd(&point.x, evaluate(coefficient_index, point.y, point.z) * coefficients[coefficient_index]);
 
-  if (coefficient_index == 0)
+  if (output_indices != nullptr && coefficient_index == 0)
   {
+    auto index_offset = 6 * point_offset;
     output_indices[index_offset    ] = base_index +  longitude                        * tessellations.y +  latitude,
     output_indices[index_offset + 1] = base_index +  longitude                        * tessellations.y + (latitude + 1) % tessellations.y,
     output_indices[index_offset + 2] = base_index + (longitude + 1) % tessellations.x * tessellations.y + (latitude + 1) % tessellations.y,
@@ -278,6 +277,53 @@ GLOBAL void sample_sums(
     for (auto i = 0; i < points_size; i++)
       output_points[points_offset + i].x = output_points[points_offset + i].x / maxima;
   }
+}
+// Call on a dimensions.x x dimensions.y x dimensions.z 3D grid.
+template<typename precision, typename vector_type>
+GLOBAL void extract_maxima(
+  // Input data parameters.
+  const uint3        dimensions       ,
+  const unsigned int coefficient_count,
+  const precision*   coefficients     ,
+  // Peak extraction parameters.
+  const uint2        tessellations    ,
+  const unsigned int maxima_count     ,
+  // Output data parameters.
+  vector_type*       maxima           )
+{
+  auto x = blockIdx.x * blockDim.x + threadIdx.x;
+  auto y = blockIdx.y * blockDim.y + threadIdx.y;
+  auto z = blockIdx.z * blockDim.z + threadIdx.z;
+  
+  if (x >= dimensions.x || 
+      y >= dimensions.y || 
+      z >= dimensions.z )
+    return;
+  
+  auto volume_index        = z + dimensions.z * (y + dimensions.y * x);
+  auto coefficients_offset = volume_index * coefficient_count;
+  auto points_size         = tessellations.x * tessellations.y;
+
+  float3* points;
+  cudaMalloc(&points, points_size * sizeof(float3));
+
+  sample_sum<<<grid_size_3d(dim3(tessellations.x, tessellations.y, coefficient_count)), block_size_3d()>>>(
+    coefficient_count                 ,
+    tessellations                     ,
+    coefficients + coefficients_offset,
+    points                            );
+  cudaDeviceSynchronize();
+
+  thrust::sort(thrust::seq, points, points + points_size, 
+  [&] (const float3& lhs, const float3& rhs)
+  {
+    return lhs.x > rhs.x;
+  });
+
+  for(auto i = 0; i < maxima_count; i++)
+    maxima[volume_index * maxima_count + i] = points[i];
+
+  cudaFree(points);
 }
 
 // Call on a coefficient_count x coefficient_count x coefficient_count 3D grid.

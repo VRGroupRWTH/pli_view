@@ -43,8 +43,9 @@ void odf_field::render    (const camera* camera)
   vertex_array_  ->bind();
   index_buffer_  ->bind();
 
-  shader_program_->set_uniform("projection", camera->projection_matrix      ());
+  shader_program_->set_uniform("model"     , absolute_matrix                ());
   shader_program_->set_uniform("view"      , camera->inverse_absolute_matrix());
+  shader_program_->set_uniform("projection", camera->projection_matrix      ());
 
   // Select by visible layers.
   auto dimension_count  = dimensions_.z > 1 ? 3 : 2;
@@ -93,6 +94,7 @@ void odf_field::set_data(
   const uint2&   tessellations    ,
   const uint3&   vector_dimensions, 
   const float    scale            ,
+  const bool     hierarchical     ,
   const bool     clustering       ,
   const float    cluster_threshold,
   std::function<void(const std::string&)> status_callback)
@@ -100,15 +102,18 @@ void odf_field::set_data(
   dimensions_    = dimensions;
   tessellations_ = tessellations;
 
-  auto base_voxel_count = dimensions_.x * dimensions_.y * dimensions_.z;
-  auto dimension_count  = dimensions_.z > 1 ? 3 : 2;
-  auto min_dimension    = std::min(dimensions_.x, dimensions_.y);
-  if (dimension_count == 3)
-    min_dimension = std::min(min_dimension, dimensions_.z);
-  auto max_layer        = int(log(min_dimension) / log(2));
-  auto voxel_count      = unsigned(base_voxel_count * 
-    ((1.0 - pow(1.0 / pow(2, dimension_count), max_layer + 1)) / 
-     (1.0 -     1.0 / pow(2, dimension_count))));
+  auto voxel_count = dimensions_.x * dimensions_.y * dimensions_.z;
+  if(hierarchical)
+  {
+    auto dimension_count  = dimensions_.z > 1 ? 3 : 2;
+    auto min_dimension    = std::min(dimensions_.x, dimensions_.y);
+    if (dimension_count == 3)
+      min_dimension       = std::min(min_dimension, dimensions_.z);
+    auto max_layer        = int(log(min_dimension) / log(2));
+    voxel_count           = unsigned(voxel_count * 
+      ((1.0 - pow(1.0 / pow(2, dimension_count), max_layer + 1)) / 
+       (1.0 -     1.0 / pow(2, dimension_count))));
+  }
 
   auto tessellation_count = tessellations.x * tessellations.y;
   auto point_count        = voxel_count * tessellation_count;
@@ -143,6 +148,7 @@ void odf_field::set_data(
     cuda_vertex_buffer,
     cuda_color_buffer ,
     cuda_index_buffer ,
+    hierarchical      ,
     clustering        ,
     cluster_threshold ,
     status_callback   );
