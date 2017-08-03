@@ -31,7 +31,7 @@ void main()
   else
   {
     float depth = get_linearized_depth();
-    frag_color  = vec4(depth, depth, depth, 1.0);
+    frag_color  = vert_color * vec4(depth, depth, depth, 1.0);
   }
 }
 )";
