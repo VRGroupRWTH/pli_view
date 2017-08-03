@@ -84,7 +84,6 @@ void streamline_renderer::render    (const camera* camera)
   depth_pass_program_     ->set_uniform("model"        , absolute_matrix                ());
   depth_pass_program_     ->set_uniform("view"         , camera->inverse_absolute_matrix());
   depth_pass_program_     ->set_uniform("projection"   , camera->projection_matrix      ());
-  glEnable    (GL_DEPTH_TEST);
   glViewport  (viewport[0], viewport[1], viewport[2], viewport[3]);
   glClear     (GL_DEPTH_BUFFER_BIT);
   glEnable    (GL_LINE_SMOOTH);
@@ -94,7 +93,6 @@ void streamline_renderer::render    (const camera* camera)
   glDrawArrays(GL_LINES, 0, GLsizei(draw_count_));
   glDisable   (GL_BLEND);
   glDisable   (GL_LINE_SMOOTH);
-  glDisable   (GL_DEPTH_TEST);
   depth_pass_program_     ->unbind();
   depth_pass_vertex_array_->unbind();
   default_framebuffer     . bind  ();
