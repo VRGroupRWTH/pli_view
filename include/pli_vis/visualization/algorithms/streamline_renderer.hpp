@@ -25,7 +25,6 @@ private:
   std::unique_ptr<gl::program>      depth_pass_program_     ;
   std::unique_ptr<gl::vertex_array> depth_pass_vertex_array_;
   std::unique_ptr<gl::framebuffer>  depth_framebuffer_      ;
-  std::unique_ptr<gl::texture_2d>   color_texture_          ;
   std::unique_ptr<gl::texture_2d>   depth_texture_          ;
                                                             
   std::unique_ptr<gl::program>      main_pass_program_      ;

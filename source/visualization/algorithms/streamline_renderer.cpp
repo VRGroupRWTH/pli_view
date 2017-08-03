@@ -22,7 +22,6 @@ void streamline_renderer::initialize()
   vertex_buffer_          .reset(new gl::array_buffer);
   direction_buffer_       .reset(new gl::array_buffer);
   depth_framebuffer_      .reset(new gl::framebuffer );
-  color_texture_          .reset(new gl::texture_2d  );
   depth_texture_          .reset(new gl::texture_2d  );
   
   depth_pass_program_->attach_shader(gl::vertex_shader  (shaders::depth_pass_vert));
@@ -33,24 +32,15 @@ void streamline_renderer::initialize()
   main_pass_program_->attach_shader(gl::fragment_shader(shaders::view_dependent_frag));
   main_pass_program_->link();
   
-  color_texture_->bind      ();
-  color_texture_->wrap_s    (GL_CLAMP_TO_EDGE);
-  color_texture_->wrap_t    (GL_CLAMP_TO_EDGE);
-  color_texture_->min_filter(GL_LINEAR);
-  color_texture_->mag_filter(GL_LINEAR);
-  color_texture_->set_image (GL_RGBA, viewport[2], viewport[3], GL_RGBA, GL_UNSIGNED_BYTE);
-  color_texture_->unbind    ();
-  
   depth_texture_->bind      ();
   depth_texture_->wrap_s    (GL_CLAMP_TO_EDGE);
   depth_texture_->wrap_t    (GL_CLAMP_TO_EDGE);
-  depth_texture_->min_filter(GL_LINEAR);
-  depth_texture_->mag_filter(GL_LINEAR);
+  depth_texture_->min_filter(GL_NEAREST);
+  depth_texture_->mag_filter(GL_NEAREST);
   depth_texture_->set_image (GL_DEPTH_COMPONENT32F, viewport[2], viewport[3], GL_DEPTH_COMPONENT, GL_FLOAT);
   depth_texture_->unbind    ();
   
   depth_framebuffer_->bind       ();
-  depth_framebuffer_->set_texture(GL_COLOR_ATTACHMENT0, *color_texture_.get());
   depth_framebuffer_->set_texture(GL_DEPTH_ATTACHMENT , *depth_texture_.get());
   assert(depth_framebuffer_->is_valid() && depth_framebuffer_->is_complete());
   default_framebuffer.bind();
@@ -84,9 +74,6 @@ void streamline_renderer::render    (const camera* camera)
 
   gl::framebuffer default_framebuffer(default_framebuffer_id);
 
-  color_texture_->bind     ();
-  color_texture_->set_image(GL_RGBA, viewport[2], viewport[3], GL_RGBA, GL_UNSIGNED_BYTE);
-  color_texture_->unbind   ();
   depth_texture_->bind     ();
   depth_texture_->set_image(GL_DEPTH_COMPONENT32F, viewport[2], viewport[3], GL_DEPTH_COMPONENT, GL_FLOAT);
   depth_texture_->unbind   ();
@@ -99,8 +86,14 @@ void streamline_renderer::render    (const camera* camera)
   depth_pass_program_     ->set_uniform("projection"   , camera->projection_matrix      ());
   glEnable    (GL_DEPTH_TEST);
   glViewport  (viewport[0], viewport[1], viewport[2], viewport[3]);
-  glClear     (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glClear     (GL_DEPTH_BUFFER_BIT);
+  glEnable    (GL_LINE_SMOOTH);
+  glHint      (GL_LINE_SMOOTH_HINT, GL_NICEST);
+  glEnable    (GL_BLEND);
+  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glDrawArrays(GL_LINES, 0, GLsizei(draw_count_));
+  glDisable   (GL_BLEND);
+  glDisable   (GL_LINE_SMOOTH);
   glDisable   (GL_DEPTH_TEST);
   depth_pass_program_     ->unbind();
   depth_pass_vertex_array_->unbind();
