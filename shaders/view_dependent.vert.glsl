@@ -8,12 +8,12 @@ namespace shaders
 static std::string view_dependent_vert = R"(\
 #version 400
 
-uniform mat4  model          ;
-uniform mat4  view           ;
-uniform mat4  projection     ;
 uniform bool  view_dependent = true;
 uniform bool  invert         = true;
 uniform float rate_of_decay  = 1.0 ;
+uniform mat4  model          ;
+uniform mat4  view           ;
+uniform mat4  projection     ;
 in      vec3  vertex         ;
 in      vec3  direction      ;
 out     vec4  vert_color     ;
