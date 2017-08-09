@@ -8,12 +8,12 @@ namespace shaders
 static std::string view_dependent_vert = R"(\
 #version 400
 
-uniform mat4  projection    ;
-uniform mat4  view          ;
-uniform mat4  model         ;
-in      vec3  vertex        ;
-in      vec3  direction     ;
-out     vec3  vert_direction;
+uniform mat4 model         ;
+uniform mat4 view          ;
+uniform mat4 projection    ;
+in      vec3 vertex        ;
+in      vec3 direction     ;
+out     vec3 vert_direction;
 
 void main()
 {

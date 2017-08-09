@@ -8,18 +8,16 @@ namespace shaders
 static std::string view_dependent_frag = R"(\
 #version 400
 
-uniform bool      view_dependent = true   ;
-uniform bool      invert         = true   ;
-uniform float     rate_of_decay  = 1.0    ;
-uniform float     cutoff         = 0.25   ;
-uniform float     z_near         = 0.1    ;
-uniform float     z_far          = 10000.0;
-uniform sampler2D depth_texture  ;
-uniform uvec2     screen_size    ;
-uniform mat4      view           ;
-uniform mat4      projection     ;
-in      vec3      vert_direction ;
-out     vec4      frag_color     ;
+uniform bool  view_dependent = true   ;
+uniform bool  invert         = true   ;
+uniform float rate_of_decay  = 1.0    ;
+uniform float cutoff         = 0.25   ;
+uniform float far_plane      = 10000.0;
+uniform uvec2 screen_size    ;
+uniform mat4  view           ;
+uniform mat4  projection     ;
+in      vec3  vert_direction ;
+out     vec4  frag_color     ;
 
 vec3  get_world_position  ()
 {
@@ -34,10 +32,9 @@ vec3  get_world_position  ()
 }
 float get_linearized_depth()
 {
-  float depth = texture(depth_texture, vec2(
-    gl_FragCoord.x / screen_size.x, 
-    gl_FragCoord.y / screen_size.y)).x;
-  return (2.0 * z_near) / (z_far + z_near - depth * (z_far - z_near));
+  float normalized_device_depth = (gl_FragCoord.z - 0.5) * 2.0;
+  float clip_depth              = normalized_device_depth / gl_FragCoord.w;
+  return clip_depth / far_plane;
 }
 
 void main()
