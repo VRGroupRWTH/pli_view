@@ -21,7 +21,7 @@ uniform mat4  projection     ;
 in      vec3  vert_direction ;
 out     vec4  frag_color     ;
 
-vec3  get_world_position     ()
+vec3  get_world_position  ()
 {
   vec4 normalized_device_coordinates = vec4(
     2.0 * gl_FragCoord.x / screen_size.x - 1.0,
@@ -32,7 +32,14 @@ vec3  get_world_position     ()
   vec4 world_coordinates = inverse(projection * view) * clip_coordinates;
   return world_coordinates.xyz;
 }
-float get_linearized_depth   ()
+vec3  get_line_normal     ()
+{
+  vec3 T   = normalize(vert_direction);
+  vec3 C   = normalize(inverse(view)[3].xyz - get_world_position());
+  vec3 TxC = cross(T, C);
+  return cross(TxC / length(TxC), T);
+}
+float get_linearized_depth()
 {
   return (2.0 * near_plane) / (near_plane + far_plane - gl_FragCoord.z * (far_plane - near_plane));
 }
