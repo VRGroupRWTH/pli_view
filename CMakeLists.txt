@@ -197,6 +197,10 @@ set(PROJECT_SOURCES
   include/pli_vis/visualization/interactors/orbit_interactor.hpp
   include/pli_vis/visualization/interactors/simple_interactor.hpp
   include/pli_vis/visualization/primitives/camera.hpp
+  include/pli_vis/visualization/primitives/directional_light.hpp
+  include/pli_vis/visualization/primitives/light.hpp
+  include/pli_vis/visualization/primitives/point_light.hpp
+  include/pli_vis/visualization/primitives/spot_light.hpp
   include/pli_vis/visualization/primitives/transform.hpp
   
   shaders/depth_pass.frag.glsl
@@ -337,6 +341,10 @@ set(PROJECT_SOURCES
   source/visualization/interactors/orbit_interactor.cpp
   source/visualization/interactors/simple_interactor.cpp
   source/visualization/primitives/camera.cpp
+  source/visualization/primitives/directional_light.cpp
+  source/visualization/primitives/light.cpp
+  source/visualization/primitives/point_light.cpp
+  source/visualization/primitives/spot_light.cpp
   source/visualization/primitives/transform.cpp
   source/main.cpp
 )
