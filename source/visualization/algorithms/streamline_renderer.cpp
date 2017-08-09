@@ -1,8 +1,6 @@
 #include <pli_vis/visualization/algorithms/streamline_renderer.hpp>
 
 #include <pli_vis/visualization/primitives/camera.hpp>
-#include <shaders/depth_pass.vert.glsl>
-#include <shaders/depth_pass.frag.glsl>
 #include <shaders/view_dependent.vert.glsl>
 #include <shaders/view_dependent.frag.glsl>
 
