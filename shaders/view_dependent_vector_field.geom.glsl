@@ -14,9 +14,9 @@ layout (line_strip, max_vertices = 2) out;
 uniform uint  vectors_per_point = 1;
 uniform float scale             = 1.0;
 uniform uvec3 dimensions        ;
-uniform mat4  projection        ;
-uniform mat4  view              ;
 uniform mat4  model             ;
+uniform mat4  view              ;
+uniform mat4  projection        ;
 
 in  vertex_data {
   vec3 direction;
