@@ -3,9 +3,11 @@
 
 #include <glm/glm.hpp>
 
+#include <pli_vis/visualization/primitives/transform.hpp>
+
 namespace pli
 {
-class light
+class light : public transform
 {
 public:
   const float&     intensity() const;
