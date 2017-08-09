@@ -8,23 +8,28 @@ namespace shaders
 static std::string view_dependent_vector_field_frag = R"(\
 #version 450
 
-uniform float cutoff     = 0.25;
-out     vec4  frag_color ;
+uniform bool  view_dependent = true;
+uniform bool  invert         = true;
+uniform float rate_of_decay  = 1.0 ;
+uniform float cutoff         = 0.25;
+uniform mat4  view           ;
+out     vec4  frag_color     ;
 
 in vertex_data {
-  vec3 direction;
-  vec4 color    ;
+  flat vec3 direction;
 } fs_in;
  
 void main()
 {
-  if(fs_in.color.a < cutoff)
+  frag_color = vec4(abs(fs_in.direction.x), abs(fs_in.direction.z), abs(fs_in.direction.y), 1.0);
+  if(view_dependent)
   {
-    discard;
-  }
-  else
-  {
-    frag_color = fs_in.color;
+    float alpha = abs(dot(normalize(inverse(view)[2].xyz), normalize(fs_in.direction)));
+    if(invert)
+      alpha = 1.0 - alpha;
+    if(alpha < cutoff)
+      discard;
+    frag_color.a = pow(alpha, rate_of_decay);
   }
 }
 )";

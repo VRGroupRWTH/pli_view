@@ -8,15 +8,18 @@ namespace shaders
 static std::string view_dependent_frag = R"(\
 #version 400
 
-uniform float     cutoff       = 0.25;
-uniform float     z_near       = 0.1F;
-uniform float     z_far        = 10000.0F;
-uniform sampler2D depth_texture;
-uniform uvec2     screen_size  ;
-uniform mat4      view         ;
-uniform mat4      projection   ;
-in      vec4      vert_color   ;
-out     vec4      frag_color   ;
+uniform bool      view_dependent = true   ;
+uniform bool      invert         = true   ;
+uniform float     rate_of_decay  = 1.0    ;
+uniform float     cutoff         = 0.25   ;
+uniform float     z_near         = 0.1    ;
+uniform float     z_far          = 10000.0;
+uniform sampler2D depth_texture  ;
+uniform uvec2     screen_size    ;
+uniform mat4      view           ;
+uniform mat4      projection     ;
+in      vec3      vert_direction ;
+out     vec4      frag_color     ;
 
 vec3  get_world_position  ()
 {
@@ -39,14 +42,15 @@ float get_linearized_depth()
 
 void main()
 {
-  if(vert_color.a < cutoff)
+  frag_color = vec4(abs(vert_direction.x), abs(vert_direction.z), abs(vert_direction.y), 1.0);
+  if(view_dependent)
   {
-    discard;
-  }
-  else
-  {
-    float depth = get_linearized_depth();
-    frag_color  = vec4(normalize(get_world_position() - inverse(view)[3].xyz), 1.0); //vert_color * vec4(depth, depth, depth, 1.0);
+    float alpha = abs(dot(normalize(inverse(view)[2].xyz), normalize(vert_direction)));
+    if(invert)
+      alpha = 1.0 - alpha;
+    if(alpha < cutoff)
+      discard;
+    frag_color.a = pow(alpha, rate_of_decay);
   }
 }
 )";
