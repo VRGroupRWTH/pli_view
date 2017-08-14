@@ -157,9 +157,10 @@ void streamline_renderer::render_normal_depth_pass(const camera* camera, const g
 
   normal_depth_vertex_array_->bind  ();
   normal_depth_program_     ->bind  ();
-  normal_depth_program_     ->set_uniform("model"     , absolute_matrix                ());
-  normal_depth_program_     ->set_uniform("view"      , camera->inverse_absolute_matrix());
-  normal_depth_program_     ->set_uniform("projection", camera->projection_matrix      ());
+  normal_depth_program_     ->set_uniform("screen_size", screen_size                      );
+  normal_depth_program_     ->set_uniform("model"      , absolute_matrix                ());
+  normal_depth_program_     ->set_uniform("view"       , camera->inverse_absolute_matrix());
+  normal_depth_program_     ->set_uniform("projection" , camera->projection_matrix      ());
 
   glEnable    (GL_LINE_SMOOTH);
   glHint      (GL_LINE_SMOOTH_HINT, GL_NICEST);
@@ -230,7 +231,7 @@ void streamline_renderer::render_main_pass        (const camera* camera, const g
   program_     ->set_uniform("projection"    , camera->projection_matrix         ());
   program_     ->set_uniform("view_dependent", view_dependent_transparency_        );
   program_     ->set_uniform("rate_of_decay" , view_dependent_rate_of_decay_       );
-
+  
   glEnable    (GL_LINE_SMOOTH);
   glHint      (GL_LINE_SMOOTH_HINT, GL_NICEST);
   glEnable    (GL_BLEND);
