@@ -59,16 +59,16 @@ void render_target::unbind()
   last_framebuffer_.bind();
 }
 
-const gl::framebuffer& render_target::framebuffer  () const
+gl::framebuffer* render_target::framebuffer  ()
 {
-  return framebuffer_;
+  return &framebuffer_;
 }
-const gl::texture_2d&  render_target::color_texture() const
+gl::texture_2d*  render_target::color_texture()
 {
-  return color_texture_;
+  return &color_texture_;
 }
-const gl::texture_2d&  render_target::depth_texture() const
+gl::texture_2d*  render_target::depth_texture()
 {
-  return depth_texture_;
+  return &depth_texture_;
 }
 }

@@ -31,9 +31,9 @@ public:
   void bind  ();
   void unbind();
 
-  const gl::framebuffer& framebuffer  () const;
-  const gl::texture_2d&  color_texture() const;
-  const gl::texture_2d&  depth_texture() const;
+  gl::framebuffer* framebuffer  ();
+  gl::texture_2d*  color_texture();
+  gl::texture_2d*  depth_texture();
 
 protected:
   mode            mode_            ;
