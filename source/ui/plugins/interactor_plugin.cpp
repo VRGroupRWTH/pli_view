@@ -20,16 +20,22 @@ interactor_plugin::interactor_plugin(QWidget* parent) : plugin(parent)
   {
     logger_->info(std::string("VTK-like controls selected."));
     owner_->viewer->set_interactor<simple_interactor>();
+    owner_->viewer->interactor()->set_move_speed(float(slider_move_speed->value()) / slider_move_speed->maximum());
+    owner_->viewer->interactor()->set_look_speed(float(slider_look_speed->value()) / slider_look_speed->maximum());
   });
   connect(radio_button_orbit       , &QRadioButton::clicked     , [&]
   {
     logger_->info(std::string("Orbit controls selected."));
     owner_->viewer->set_interactor<orbit_interactor>();
+    owner_->viewer->interactor()->set_move_speed(float(slider_move_speed->value()) / slider_move_speed->maximum());
+    owner_->viewer->interactor()->set_look_speed(float(slider_look_speed->value()) / slider_look_speed->maximum());
   });
   connect(radio_button_wasd        , &QRadioButton::clicked     , [&]
   {
     logger_->info(std::string("WASD controls selected."));
     owner_->viewer->set_interactor<first_person_interactor>();
+    owner_->viewer->interactor()->set_move_speed(float(slider_move_speed->value()) / slider_move_speed->maximum());
+    owner_->viewer->interactor()->set_look_speed(float(slider_look_speed->value()) / slider_look_speed->maximum());
   });
   connect(radio_button_orthographic, &QRadioButton::clicked     , [&]
   {
