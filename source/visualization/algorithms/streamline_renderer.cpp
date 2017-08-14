@@ -232,6 +232,14 @@ void streamline_renderer::render_main_pass        (const camera* camera, const g
   program_     ->set_uniform("view_dependent", view_dependent_transparency_        );
   program_     ->set_uniform("rate_of_decay" , view_dependent_rate_of_decay_       );
   
+  auto nd_tex    = normal_depth_map_->color_texture();
+  auto color_tex = color_map_       ->color_texture();
+  auto zoom_tex  = zoom_map_        ->color_texture();
+  nd_tex   ->set_active(0); nd_tex   ->bind(); program_->set_uniform("normal_depth_texture", 0);
+  color_tex->set_active(1); color_tex->bind(); program_->set_uniform("color_texture"       , 1);
+  zoom_tex ->set_active(2); zoom_tex ->bind(); program_->set_uniform("zoom_texture"        , 2);
+  zoom_tex ->set_active(0);
+
   glEnable    (GL_LINE_SMOOTH);
   glHint      (GL_LINE_SMOOTH_HINT, GL_NICEST);
   glEnable    (GL_BLEND);
