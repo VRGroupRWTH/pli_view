@@ -31,8 +31,10 @@ void simple_interactor::mouse_move_handler (QMouseEvent* event)
   }
   if (event->buttons() & Qt::RightButton)
   {
-    camera_->translate            (move_speed_ * dy * camera_->forward());
-    camera_->set_orthographic_size(camera_->orthographic_size() + move_speed_ * dy);
+    if(camera_->orthographic())
+      camera_->set_scale(camera_->scale() + glm::vec3(1.0) * ((1.0F / (2.0F * camera_->orthographic_size())) * move_speed_ * dy));
+    else
+      camera_->translate(move_speed_ * dy * camera_->forward());
   }
 
   last_mouse_position_ = event->pos();

@@ -15,15 +15,19 @@ void first_person_interactor::update_transform()
 {
   if (key_map_[Qt::Key_W])
   {
-    camera_->translate            (-camera_->forward          () * (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
-    camera_->set_orthographic_size( camera_->orthographic_size() - (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
+    if (camera_->orthographic())
+      camera_->set_scale(camera_->scale() - glm::vec3(1.0) * ((1.0F / (2.0F * camera_->orthographic_size())) * move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
+    else
+      camera_->translate(-camera_->forward() * (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
   }
   if (key_map_[Qt::Key_A])
     camera_->translate(- camera_->right  () * (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
   if (key_map_[Qt::Key_S])
   {
-    camera_->translate            (camera_->forward          () * (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
-    camera_->set_orthographic_size(camera_->orthographic_size() + (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
+    if(camera_->orthographic())
+      camera_->set_scale(camera_->scale() + glm::vec3(1.0) * ((1.0F / (2.0F * camera_->orthographic_size())) * move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
+    else
+      camera_->translate(camera_->forward() * (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
   }
   if (key_map_[Qt::Key_D])
     camera_->translate(  camera_->right  () * (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
