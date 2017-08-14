@@ -8,11 +8,15 @@ namespace shaders
 static std::string lineao_zoom_pass_frag = R"(\
 #version 400
 
-out vec4 color;
+uniform mat4  model     ;
+uniform mat4  view      ;
+uniform mat4  projection;
+flat in float vert_zoom ;
+out     vec4  frag_color;
 
 void main()
 {
-  color = vec4(0.0, 0.0, 1.0, 1.0);
+  frag_color = vec4(vert_zoom, vert_zoom, vert_zoom, vert_zoom);
 }
 )";
 }

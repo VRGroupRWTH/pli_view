@@ -8,15 +8,18 @@ namespace shaders
 static std::string lineao_zoom_pass_vert = R"(\
 #version 400
 
-uniform mat4 model     ;
-uniform mat4 view      ;
-uniform mat4 projection;
-in      vec3 vertex    ;
-in      vec3 direction ;
+uniform  mat4  model     ;
+uniform  mat4  view      ;
+uniform  mat4  projection;
+in       vec3  vertex    ;
+in       vec3  direction ;
+flat out float vert_zoom ;
 
 void main()
 {
-  gl_Position = projection * view * model * vec4(vertex, 1.0);
+  vec4 position = projection * view * model * vec4(vertex, 1.0);
+  gl_Position   = position;
+  vert_zoom     = length(position);
 }
 )";
 }
