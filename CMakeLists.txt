@@ -208,6 +208,8 @@ set(PROJECT_SOURCES
   shaders/depth_pass.vert.glsl
   shaders/lineao_color_pass.frag.glsl
   shaders/lineao_color_pass.vert.glsl
+  shaders/lineao_main_pass.frag.glsl
+  shaders/lineao_main_pass.vert.glsl
   shaders/lineao_normal_depth_pass.frag.glsl
   shaders/lineao_normal_depth_pass.vert.glsl
   shaders/lineao_zoom_pass.frag.glsl

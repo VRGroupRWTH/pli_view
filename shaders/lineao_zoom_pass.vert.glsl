@@ -12,7 +12,6 @@ uniform  mat4  model     ;
 uniform  mat4  view      ;
 uniform  mat4  projection;
 in       vec3  vertex    ;
-in       vec3  direction ;
 flat out float vert_zoom ;
 
 void main()

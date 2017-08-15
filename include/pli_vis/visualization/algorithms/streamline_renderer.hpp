@@ -19,8 +19,6 @@ public:
   void render    (const camera* camera) override;
   
   void set_data(const std::vector<float3>& points, const std::vector<float3>& directions);
-  void set_view_dependent_transparency (bool  enabled);
-  void set_view_dependent_rate_of_decay(float value  );
 
 private:     
   void initialize_normal_depth_pass(const glm::uvec2& screen_size);
@@ -34,8 +32,6 @@ private:
   void render_main_pass            (const camera* camera, const glm::uvec2& screen_size) const;
   
   std::size_t                       draw_count_                   = 0;
-  bool                              view_dependent_transparency_  = true;
-  float                             view_dependent_rate_of_decay_ = 1.0F;
 
   // Common data.
   std::unique_ptr<gl::array_buffer> vertex_buffer_                ;

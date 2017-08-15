@@ -3,12 +3,12 @@
 #include <pli_vis/visualization/primitives/camera.hpp>
 #include <shaders/lineao_color_pass.vert.glsl>
 #include <shaders/lineao_color_pass.frag.glsl>
+#include <shaders/lineao_main_pass.vert.glsl>
+#include <shaders/lineao_main_pass.frag.glsl>
 #include <shaders/lineao_normal_depth_pass.vert.glsl>
 #include <shaders/lineao_normal_depth_pass.frag.glsl>
 #include <shaders/lineao_zoom_pass.vert.glsl>
 #include <shaders/lineao_zoom_pass.frag.glsl>
-#include <shaders/view_dependent.vert.glsl>
-#include <shaders/view_dependent.frag.glsl>
 
 namespace pli
 {
@@ -49,14 +49,6 @@ void streamline_renderer::set_data(const std::vector<float3>& points, const std:
   direction_buffer_->bind    ();
   direction_buffer_->set_data(draw_count_ * sizeof(float3), directions.data());
   direction_buffer_->unbind  ();
-}
-void streamline_renderer::set_view_dependent_transparency (bool  enabled)
-{
-  view_dependent_transparency_  = enabled;
-}
-void streamline_renderer::set_view_dependent_rate_of_decay(float value  )
-{
-  view_dependent_rate_of_decay_ = value  ;
 }
 
 void streamline_renderer::initialize_normal_depth_pass(const glm::uvec2& screen_size)
@@ -121,39 +113,49 @@ void streamline_renderer::initialize_zoom_pass        (const glm::uvec2& screen_
   zoom_program_     ->set_attribute_buffer  ("vertex", 3, GL_FLOAT);
   zoom_program_     ->enable_attribute_array("vertex");
   vertex_buffer_    ->unbind();
-  direction_buffer_ ->bind  ();
-  zoom_program_     ->set_attribute_buffer  ("direction" , 3, GL_FLOAT);
-  zoom_program_     ->enable_attribute_array("direction");
-  direction_buffer_ ->unbind();
   zoom_program_     ->unbind();
   zoom_vertex_array_->unbind();
 }
 void streamline_renderer::initialize_main_pass        ()
 {
-  program_         .reset(new gl::program     );
-  vertex_array_    .reset(new gl::vertex_array);
+  float3 vertices [6] = {{-1,-1,0}, {1,-1,0}, {1,1,0}, {-1,-1,0}, {1,1,0}, {-1,1,0}};
+  gl::array_buffer vertex_buffer;
+  vertex_buffer.bind    ();
+  vertex_buffer.set_data(6 * sizeof(float3), vertices);
+  vertex_buffer.unbind  ();
+  
+  float2 texcoords[6] = {{0,0}, {1,0}, {1,1}, {0,0}, {1,1}, {0,1}};
+  gl::array_buffer texcoord_buffer;
+  texcoord_buffer.bind    ();
+  texcoord_buffer.set_data(6 * sizeof(float2), texcoords);
+  texcoord_buffer.unbind  ();
+  
+  program_     .reset(new gl::program     );
+  vertex_array_.reset(new gl::vertex_array);
 
-  program_->attach_shader(gl::vertex_shader  (shaders::view_dependent_vert));
-  program_->attach_shader(gl::fragment_shader(shaders::view_dependent_frag));
+  program_->attach_shader(gl::vertex_shader  (shaders::lineao_main_pass_vert));
+  program_->attach_shader(gl::fragment_shader(shaders::lineao_main_pass_frag));
   program_->link();
   
   vertex_array_    ->bind  ();
   program_         ->bind  ();
-  vertex_buffer_   ->bind  ();
+  vertex_buffer    . bind  ();
   program_         ->set_attribute_buffer  ("vertex", 3, GL_FLOAT);
   program_         ->enable_attribute_array("vertex");
-  vertex_buffer_   ->unbind();
-  direction_buffer_->bind  ();
-  program_         ->set_attribute_buffer  ("direction" , 3, GL_FLOAT);
-  program_         ->enable_attribute_array("direction");
-  direction_buffer_->unbind();
+  vertex_buffer    . unbind();
+  texcoord_buffer  . bind  ();
+  program_         ->set_attribute_buffer  ("texcoords", 2, GL_FLOAT);
+  program_         ->enable_attribute_array("texcoords");
+  texcoord_buffer  . unbind();
+
   program_         ->unbind();
   vertex_array_    ->unbind();
 }
 
 void streamline_renderer::render_normal_depth_pass(const camera* camera, const glm::uvec2& screen_size) const
 {
-  normal_depth_map_->bind();
+  normal_depth_map_->resize(screen_size);
+  normal_depth_map_->bind  ();
 
   normal_depth_vertex_array_->bind  ();
   normal_depth_program_     ->bind  ();
@@ -166,6 +168,8 @@ void streamline_renderer::render_normal_depth_pass(const camera* camera, const g
   glHint      (GL_LINE_SMOOTH_HINT, GL_NICEST);
   glEnable    (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glViewport  (0, 0, screen_size.x, screen_size.y);
+  glClear     (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glDrawArrays(GL_LINES, 0, GLsizei(draw_count_));
   glDisable   (GL_BLEND);
   glDisable   (GL_LINE_SMOOTH);
@@ -177,7 +181,8 @@ void streamline_renderer::render_normal_depth_pass(const camera* camera, const g
 }
 void streamline_renderer::render_color_pass       (const camera* camera, const glm::uvec2& screen_size) const
 {
-  color_map_->bind();
+  color_map_->resize(screen_size);
+  color_map_->bind  ();
 
   color_vertex_array_->bind  ();
   color_program_     ->bind  ();
@@ -189,6 +194,8 @@ void streamline_renderer::render_color_pass       (const camera* camera, const g
   glHint      (GL_LINE_SMOOTH_HINT, GL_NICEST);
   glEnable    (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glViewport  (0, 0, screen_size.x, screen_size.y);
+  glClear     (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glDrawArrays(GL_LINES, 0, GLsizei(draw_count_));
   glDisable   (GL_BLEND);
   glDisable   (GL_LINE_SMOOTH);
@@ -200,7 +207,8 @@ void streamline_renderer::render_color_pass       (const camera* camera, const g
 }
 void streamline_renderer::render_zoom_pass        (const camera* camera, const glm::uvec2& screen_size) const
 {
-  zoom_map_->bind();
+  zoom_map_->resize(screen_size);
+  zoom_map_->bind  ();
 
   zoom_vertex_array_->bind  ();
   zoom_program_     ->bind  ();
@@ -212,6 +220,8 @@ void streamline_renderer::render_zoom_pass        (const camera* camera, const g
   glHint      (GL_LINE_SMOOTH_HINT, GL_NICEST);
   glEnable    (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glViewport  (0, 0, screen_size.x, screen_size.y);
+  glClear     (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glDrawArrays(GL_LINES, 0, GLsizei(draw_count_));
   glDisable   (GL_BLEND);
   glDisable   (GL_LINE_SMOOTH);
@@ -225,28 +235,16 @@ void streamline_renderer::render_main_pass        (const camera* camera, const g
 {
   vertex_array_->bind  ();
   program_     ->bind  ();
-  program_     ->set_uniform("screen_size"   , screen_size                         );
-  program_     ->set_uniform("model"         , absolute_matrix                   ());
-  program_     ->set_uniform("view"          , camera->inverse_absolute_matrix   ());
-  program_     ->set_uniform("projection"    , camera->projection_matrix         ());
-  program_     ->set_uniform("view_dependent", view_dependent_transparency_        );
-  program_     ->set_uniform("rate_of_decay" , view_dependent_rate_of_decay_       );
   
-  auto nd_tex    = normal_depth_map_->color_texture();
-  auto color_tex = color_map_       ->color_texture();
-  auto zoom_tex  = zoom_map_        ->color_texture();
-  nd_tex   ->set_active(0); nd_tex   ->bind(); program_->set_uniform("normal_depth_texture", 0);
-  color_tex->set_active(1); color_tex->bind(); program_->set_uniform("color_texture"       , 1);
-  zoom_tex ->set_active(2); zoom_tex ->bind(); program_->set_uniform("zoom_texture"        , 2);
-  zoom_tex ->set_active(0);
-
-  glEnable    (GL_LINE_SMOOTH);
-  glHint      (GL_LINE_SMOOTH_HINT, GL_NICEST);
-  glEnable    (GL_BLEND);
-  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glDrawArrays(GL_LINES, 0, GLsizei(draw_count_));
-  glDisable   (GL_BLEND);
-  glDisable   (GL_LINE_SMOOTH);
+  gl::texture_2d::set_active(GL_TEXTURE0); normal_depth_map_->color_texture()->bind(); program_->set_uniform("normal_depth_texture", 0);
+  gl::texture_2d::set_active(GL_TEXTURE1); color_map_       ->color_texture()->bind(); program_->set_uniform("color_texture"       , 1);
+  gl::texture_2d::set_active(GL_TEXTURE2); zoom_map_        ->color_texture()->bind(); program_->set_uniform("zoom_texture"        , 2);
+  
+  glDrawArrays(GL_TRIANGLES, 0, 6);
+  
+  gl::texture_2d::set_active(GL_TEXTURE2); zoom_map_        ->color_texture()->unbind();
+  gl::texture_2d::set_active(GL_TEXTURE1); color_map_       ->color_texture()->unbind();
+  gl::texture_2d::set_active(GL_TEXTURE0); normal_depth_map_->color_texture()->unbind();
   
   program_     ->unbind();
   vertex_array_->unbind();

@@ -8,19 +8,13 @@ namespace shaders
 static std::string view_dependent_frag = R"(\
 #version 400
 
-uniform bool      view_dependent      = true;
-uniform bool      invert              = true;
-uniform float     rate_of_decay       = 1.0 ;
-uniform float     cutoff              = 0.25;
-uniform uvec2     screen_size         ;
-uniform mat4      model               ;
-uniform mat4      view                ;
-uniform mat4      projection          ;
-uniform sampler2D normal_depth_texture;
-uniform sampler2D color_texture       ;
-uniform sampler2D zoom_texture        ;
-in      vec3      vert_direction      ;
-out     vec4      frag_color          ;
+uniform bool  view_dependent = true;
+uniform bool  invert         = true;
+uniform float rate_of_decay  = 1.0 ;
+uniform float cutoff         = 0.25;
+uniform mat4  view           ;
+in      vec3  vert_direction ;
+out     vec4  frag_color     ;
 
 void main()
 {
