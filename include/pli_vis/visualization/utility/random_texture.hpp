@@ -12,7 +12,7 @@ namespace pli
 class random_texture : public gl::texture_3d
 {
 public:
-  random_texture(const glm::uvec3& size);
+  random_texture(const glm::uvec3& size = glm::uvec3(1));
   random_texture(const random_texture&  that) = default;
   random_texture(      random_texture&& temp) = default;
   virtual ~random_texture()                   = default;
