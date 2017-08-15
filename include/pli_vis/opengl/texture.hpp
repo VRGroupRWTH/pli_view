@@ -103,19 +103,19 @@ public:
   static GLint width ()
   {
     GLint  result;
-    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH , &result);
+    glGetTexLevelParameteriv(target, 0, GL_TEXTURE_WIDTH , &result);
     return result;
   }
   static GLint height()
   {
     GLint  result;
-    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &result);
+    glGetTexLevelParameteriv(target, 0, GL_TEXTURE_HEIGHT, &result);
     return result;
   }
   static GLint depth ()
   {
     GLint  result;
-    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_DEPTH , &result);
+    glGetTexLevelParameteriv(target, 0, GL_TEXTURE_DEPTH , &result);
     return result;
   }
 
