@@ -10,8 +10,8 @@ render_target::render_target(const glm::uvec2& size, mode mode) : mode_(mode)
     color_texture_.bind       ();
     color_texture_.wrap_s     (GL_CLAMP_TO_EDGE);
     color_texture_.wrap_t     (GL_CLAMP_TO_EDGE);
-    color_texture_.min_filter (GL_NEAREST);
-    color_texture_.mag_filter (GL_NEAREST);
+    color_texture_.min_filter (GL_LINEAR);
+    color_texture_.mag_filter (GL_LINEAR);
     color_texture_.set_image  (GL_RGBA32F, size[0], size[1], GL_RGBA, GL_FLOAT);
     color_texture_.unbind     ();
     framebuffer_  .set_texture(GL_COLOR_ATTACHMENT0, color_texture_);
@@ -21,8 +21,8 @@ render_target::render_target(const glm::uvec2& size, mode mode) : mode_(mode)
     depth_texture_.bind       ();
     depth_texture_.wrap_s     (GL_CLAMP_TO_EDGE);
     depth_texture_.wrap_t     (GL_CLAMP_TO_EDGE);
-    depth_texture_.min_filter (GL_NEAREST);
-    depth_texture_.mag_filter (GL_NEAREST);
+    depth_texture_.min_filter (GL_LINEAR);
+    depth_texture_.mag_filter (GL_LINEAR);
     depth_texture_.set_image  (GL_DEPTH_COMPONENT32F, size[0], size[1], GL_DEPTH_COMPONENT, GL_FLOAT);
     depth_texture_.unbind     ();
     framebuffer_  .set_texture(GL_DEPTH_ATTACHMENT, depth_texture_);
