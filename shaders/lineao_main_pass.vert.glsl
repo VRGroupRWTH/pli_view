@@ -6,7 +6,7 @@
 namespace shaders
 {
 static std::string lineao_main_pass_vert = R"(\
-#version 400
+#version 420
 
 in  vec3 vertex        ;
 in  vec2 texcoords     ;
