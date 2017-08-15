@@ -38,7 +38,7 @@ void streamline_renderer::render    (const camera* camera)
   render_main_pass        (camera, screen_size);
 }
   
-void streamline_renderer::set_data(const std::vector<float3>& points, const std::vector<float3>& directions)
+void streamline_renderer::set_data      (const std::vector<float3>& points, const std::vector<float3>& directions)
 {
   glm::ivec4 viewport;
   glGetIntegerv(GL_VIEWPORT, reinterpret_cast<GLint*>(&viewport));
@@ -54,7 +54,17 @@ void streamline_renderer::set_data(const std::vector<float3>& points, const std:
   direction_buffer_->set_data(draw_count_ * sizeof(float3), directions.data());
   direction_buffer_->unbind  ();
 
-  random_texture_->generate(glm::uvec3(screen_size[0], screen_size[1], 1));
+  random_texture_->generate(glm::uvec3(screen_size[0], screen_size[1], ao_samples_));
+}
+void streamline_renderer::set_ao_samples(const std::size_t& ao_samples)
+{
+  glm::ivec4 viewport;
+  glGetIntegerv(GL_VIEWPORT, reinterpret_cast<GLint*>(&viewport));
+  glm::uvec2 screen_size{ viewport.z, viewport.w };
+
+  ao_samples_ = ao_samples;
+
+  random_texture_->generate(glm::uvec3(screen_size[0], screen_size[1], ao_samples_));
 }
 
 void streamline_renderer::initialize_normal_depth_pass(const glm::uvec2& screen_size)
@@ -138,7 +148,7 @@ void streamline_renderer::initialize_main_pass        (const glm::uvec2& screen_
   
   program_       .reset(new gl::program     );
   vertex_array_  .reset(new gl::vertex_array);
-  random_texture_.reset(new random_texture(glm::uvec3(screen_size[0], screen_size[1], 1)));
+  random_texture_.reset(new random_texture());
 
   program_->attach_shader(gl::vertex_shader  (shaders::lineao_main_pass_vert));
   program_->attach_shader(gl::fragment_shader(shaders::lineao_main_pass_frag));
@@ -242,6 +252,7 @@ void streamline_renderer::render_main_pass        (const camera* camera, const g
 {
   vertex_array_->bind  ();
   program_     ->bind  ();
+  program_     ->set_uniform("sample_count", unsigned(ao_samples_));
   
   gl::texture_2d::set_active(GL_TEXTURE0); normal_depth_map_->color_texture()->bind(); program_->set_uniform("normal_depth_texture", 0);
   gl::texture_2d::set_active(GL_TEXTURE1); color_map_       ->color_texture()->bind(); program_->set_uniform("color_texture"       , 1);

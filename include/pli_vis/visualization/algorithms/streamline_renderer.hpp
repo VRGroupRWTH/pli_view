@@ -19,7 +19,8 @@ public:
   void initialize()                     override;
   void render    (const camera* camera) override;
   
-  void set_data(const std::vector<float3>& points, const std::vector<float3>& directions);
+  void set_data      (const std::vector<float3>& points, const std::vector<float3>& directions);
+  void set_ao_samples(const std::size_t& ao_samples);
 
 private:     
   void initialize_normal_depth_pass(const glm::uvec2& screen_size);
@@ -33,6 +34,7 @@ private:
   void render_main_pass            (const camera* camera, const glm::uvec2& screen_size) const;
   
   std::size_t                          draw_count_               = 0;
+  std::size_t                          ao_samples_               = 4;
                                        
   // Common data.                      
   std::unique_ptr<gl::array_buffer>    vertex_buffer_            ;
