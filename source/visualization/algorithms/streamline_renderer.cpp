@@ -24,7 +24,7 @@ void streamline_renderer::initialize()
   initialize_normal_depth_pass(screen_size);
   initialize_color_pass       (screen_size);
   initialize_zoom_pass        (screen_size);
-  initialize_main_pass        ();
+  initialize_main_pass        (screen_size);
 }
 void streamline_renderer::render    (const camera* camera)
 {
@@ -40,6 +40,10 @@ void streamline_renderer::render    (const camera* camera)
   
 void streamline_renderer::set_data(const std::vector<float3>& points, const std::vector<float3>& directions)
 {
+  glm::ivec4 viewport;
+  glGetIntegerv(GL_VIEWPORT, reinterpret_cast<GLint*>(&viewport));
+  glm::uvec2 screen_size{ viewport.z, viewport.w };
+
   draw_count_ = points.size();
   
   vertex_buffer_   ->bind    ();
@@ -49,6 +53,8 @@ void streamline_renderer::set_data(const std::vector<float3>& points, const std:
   direction_buffer_->bind    ();
   direction_buffer_->set_data(draw_count_ * sizeof(float3), directions.data());
   direction_buffer_->unbind  ();
+
+  random_texture_->generate(glm::uvec3(screen_size[0], screen_size[1], 1));
 }
 
 void streamline_renderer::initialize_normal_depth_pass(const glm::uvec2& screen_size)
@@ -116,7 +122,7 @@ void streamline_renderer::initialize_zoom_pass        (const glm::uvec2& screen_
   zoom_program_     ->unbind();
   zoom_vertex_array_->unbind();
 }
-void streamline_renderer::initialize_main_pass        ()
+void streamline_renderer::initialize_main_pass        (const glm::uvec2& screen_size)
 {
   float3 vertices [6] = {{-1,-1,0}, {1,-1,0}, {1,1,0}, {-1,-1,0}, {1,1,0}, {-1,1,0}};
   gl::array_buffer vertex_buffer;
@@ -130,8 +136,9 @@ void streamline_renderer::initialize_main_pass        ()
   texcoord_buffer.set_data(6 * sizeof(float2), texcoords);
   texcoord_buffer.unbind  ();
   
-  program_     .reset(new gl::program     );
-  vertex_array_.reset(new gl::vertex_array);
+  program_       .reset(new gl::program     );
+  vertex_array_  .reset(new gl::vertex_array);
+  random_texture_.reset(new random_texture(glm::uvec3(screen_size[0], screen_size[1], 1)));
 
   program_->attach_shader(gl::vertex_shader  (shaders::lineao_main_pass_vert));
   program_->attach_shader(gl::fragment_shader(shaders::lineao_main_pass_frag));
@@ -239,9 +246,11 @@ void streamline_renderer::render_main_pass        (const camera* camera, const g
   gl::texture_2d::set_active(GL_TEXTURE0); normal_depth_map_->color_texture()->bind(); program_->set_uniform("normal_depth_texture", 0);
   gl::texture_2d::set_active(GL_TEXTURE1); color_map_       ->color_texture()->bind(); program_->set_uniform("color_texture"       , 1);
   gl::texture_2d::set_active(GL_TEXTURE2); zoom_map_        ->color_texture()->bind(); program_->set_uniform("zoom_texture"        , 2);
+  gl::texture_2d::set_active(GL_TEXTURE3); random_texture_                   ->bind(); program_->set_uniform("random_texture"      , 3);
   
   glDrawArrays(GL_TRIANGLES, 0, 6);
   
+  gl::texture_2d::set_active(GL_TEXTURE3); random_texture_                   ->unbind();
   gl::texture_2d::set_active(GL_TEXTURE2); zoom_map_        ->color_texture()->unbind();
   gl::texture_2d::set_active(GL_TEXTURE1); color_map_       ->color_texture()->unbind();
   gl::texture_2d::set_active(GL_TEXTURE0); normal_depth_map_->color_texture()->unbind();
