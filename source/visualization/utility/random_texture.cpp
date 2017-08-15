@@ -7,6 +7,14 @@ namespace pli
 {
 random_texture::random_texture(const glm::uvec3& size)
 {
+  bind      ();
+  wrap_s    (GL_REPEAT );
+  wrap_t    (GL_REPEAT );
+  wrap_r    (GL_REPEAT );
+  min_filter(GL_NEAREST);
+  mag_filter(GL_NEAREST);
+  unbind    ();
+
   generate(size);
 }
 
