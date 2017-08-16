@@ -33,8 +33,8 @@ private:
   void render_zoom_pass            (const camera* camera, const glm::uvec2& screen_size) const;
   void render_main_pass            (const camera* camera, const glm::uvec2& screen_size) const;
   
-  std::size_t                          draw_count_               = 0;
-  std::size_t                          ao_samples_               = 4;
+  std::size_t                          draw_count_               = 0 ;
+  std::size_t                          ao_samples_               = 32;
                                        
   // Common data.                      
   std::unique_ptr<gl::array_buffer>    vertex_buffer_            ;
