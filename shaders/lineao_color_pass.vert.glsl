@@ -1,11 +1,11 @@
-#ifndef VIEW_DEPENDENT_VERT_GLSL_
-#define VIEW_DEPENDENT_VERT_GLSL_
+#ifndef LINEAO_COLOR_PASS_VERT_GLSL_
+#define LINEAO_COLOR_PASS_VERT_GLSL_
 
 #include <string>
 
 namespace shaders
 {
-static std::string view_dependent_vert = R"(\
+static std::string lineao_color_pass_vert = R"(\
 #version 400
 
 uniform mat4 model         ;

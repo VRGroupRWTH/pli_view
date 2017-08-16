@@ -19,8 +19,7 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
  
   line_edit_integration_step->setText(QString::fromStdString((boost::format("%.4f") % (float(slider_integration_step->value()) / slider_integration_step->maximum())).str()));
   line_edit_iterations      ->setText(QString::fromStdString(std::to_string(slider_iterations   ->value())));
-  line_edit_rate_of_decay   ->setText(QString::fromStdString(std::to_string(slider_rate_of_decay->value())));
-  
+
   connect(checkbox_enabled          , &QCheckBox::stateChanged    , [&] (bool state)
   {
     logger_->info(std::string(state ? "Enabled." : "Disabled."));
@@ -141,25 +140,6 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
   {
     trace();
   });
-  connect(checkbox_view_dependent   , &QCheckBox::stateChanged          , [&] (bool state)
-  {
-    logger_->info(std::string("View dependent transparency is " + state ? "enabled." : "disabled."));
-    streamline_renderer_->set_view_dependent_transparency(state);
-    label_rate_of_decay    ->setEnabled(state);
-    slider_rate_of_decay   ->setEnabled(state);
-    line_edit_rate_of_decay->setEnabled(state);
-  });
-  connect(slider_rate_of_decay      , &QxtSpanSlider::valueChanged      , [&]
-  {
-    line_edit_rate_of_decay->setText(QString::fromStdString(std::to_string(slider_rate_of_decay->value())));
-    streamline_renderer_->set_view_dependent_rate_of_decay(slider_rate_of_decay->value());
-  });
-  connect(line_edit_rate_of_decay   , &QLineEdit::editingFinished       , [&]
-  {
-    auto value = line_edit::get_text<int>(line_edit_rate_of_decay);
-    slider_rate_of_decay->setValue(value);
-    streamline_renderer_->set_view_dependent_rate_of_decay(value);
-  });
 }
 
 void tractography_plugin::start()
@@ -188,6 +168,12 @@ void tractography_plugin::start()
     letterbox->setWidget(image);
     letterbox->update();
     update();
+    
+    // Hack for enforcing a UI update.
+    auto sizes = owner_->splitter->sizes();
+    owner_->splitter->setSizes(QList<int>{0       , sizes[1]});
+    owner_->splitter->setSizes(QList<int>{sizes[0], sizes[1]});
+    owner_->update();
   });
 }
 void tractography_plugin::trace()

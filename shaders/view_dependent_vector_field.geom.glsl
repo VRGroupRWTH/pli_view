@@ -14,18 +14,16 @@ layout (line_strip, max_vertices = 2) out;
 uniform uint  vectors_per_point = 1;
 uniform float scale             = 1.0;
 uniform uvec3 dimensions        ;
-uniform mat4  projection        ;
-uniform mat4  view              ;
 uniform mat4  model             ;
+uniform mat4  view              ;
+uniform mat4  projection        ;
 
 in  vertex_data {
   vec3 direction;
-  vec4 color    ;
 } gs_in[];
  
 out vertex_data {
-  vec3 direction;
-  vec4 color    ;
+  flat vec3 direction;
 } gs_out;
 
 void main()
@@ -40,10 +38,8 @@ void main()
   uint x     = ((index - y * dimensions.z * vectors_per_point - z * vectors_per_point - t) / (vectors_per_point * dimensions.z * dimensions.y));
 
   vec4 direction   = vec4(gs_in[0].direction * 0.5 * scale, 0.0);
-  gs_out.direction = gs_in[0].direction;
-  gs_out.color     = gs_in[0].color    ;
-  gl_Position      = mvp * (vec4(x, y, z, 1.0) + direction); EmitVertex();
-  gl_Position      = mvp * (vec4(x, y, z, 1.0) - direction); EmitVertex();
+  gs_out.direction =  gs_in[0].direction; gl_Position = mvp * (vec4(x, y, z, 1.0) + direction); EmitVertex();
+  gs_out.direction = -gs_in[0].direction; gl_Position = mvp * (vec4(x, y, z, 1.0) - direction); EmitVertex();
   EndPrimitive();
 }
 )";

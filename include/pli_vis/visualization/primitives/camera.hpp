@@ -38,15 +38,15 @@ private:
   bool  orthographic_      = false;
  
   /// Shared parameters.
-  float	near_clip_plane_   = 0.1F;
-  float	far_clip_plane_    = 100000.0F;
+  float	near_clip_plane_   = 0.01F;
+  float	far_clip_plane_    = 10000.0F;
   float	aspect_ratio_      = 4.0F / 3.0F;
 
   /// When camera is perspective , camera's viewing volume is defined by vertical fov.
   float	vertical_fov_      = glm::radians(68.0F);
   
   /// When camera is orthographic, camera's viewing volume is defined by orthographic size.
-  float	orthographic_size_ = 10;
+  float	orthographic_size_ = 100;
 
   glm::mat4 projection_matrix_;
 };

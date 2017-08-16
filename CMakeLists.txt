@@ -11,8 +11,8 @@ set                   (CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} "--expt-extended-lambd
                                                           "-lcublas"
                                                           "-lcublas_device"
                                                           "-lcudadevrt"
-                                                          "-gencode=arch=compute_50,code=sm_50")
-                                                         #"-gencode=arch=compute_60,code=sm_60")
+                                                         #"-gencode=arch=compute_50,code=sm_50")
+                                                          "-gencode=arch=compute_60,code=sm_60")
 
 ##################################################    Options     ##################################################
 option(BUILD_TESTS "Build tests." OFF)
@@ -197,8 +197,24 @@ set(PROJECT_SOURCES
   include/pli_vis/visualization/interactors/orbit_interactor.hpp
   include/pli_vis/visualization/interactors/simple_interactor.hpp
   include/pli_vis/visualization/primitives/camera.hpp
+  include/pli_vis/visualization/primitives/directional_light.hpp
+  include/pli_vis/visualization/primitives/light.hpp
+  include/pli_vis/visualization/primitives/point_light.hpp
+  include/pli_vis/visualization/primitives/spot_light.hpp
   include/pli_vis/visualization/primitives/transform.hpp
+  include/pli_vis/visualization/utility/random_texture.hpp
+  include/pli_vis/visualization/utility/render_target.hpp
   
+  shaders/depth_pass.frag.glsl
+  shaders/depth_pass.vert.glsl
+  shaders/lineao_color_pass.frag.glsl
+  shaders/lineao_color_pass.vert.glsl
+  shaders/lineao_main_pass.frag.glsl
+  shaders/lineao_main_pass.vert.glsl
+  shaders/lineao_normal_depth_pass.frag.glsl
+  shaders/lineao_normal_depth_pass.vert.glsl
+  shaders/lineao_zoom_pass.frag.glsl
+  shaders/lineao_zoom_pass.vert.glsl
   shaders/simple_color.frag.glsl
   shaders/simple_color.vert.glsl
   shaders/simple_texture.frag.glsl
@@ -335,7 +351,13 @@ set(PROJECT_SOURCES
   source/visualization/interactors/orbit_interactor.cpp
   source/visualization/interactors/simple_interactor.cpp
   source/visualization/primitives/camera.cpp
+  source/visualization/primitives/directional_light.cpp
+  source/visualization/primitives/light.cpp
+  source/visualization/primitives/point_light.cpp
+  source/visualization/primitives/spot_light.cpp
   source/visualization/primitives/transform.cpp
+  source/visualization/utility/random_texture.cpp
+  source/visualization/utility/render_target.cpp
   source/main.cpp
 )
 include(assign_source_group)
