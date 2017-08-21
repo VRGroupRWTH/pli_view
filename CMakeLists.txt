@@ -202,7 +202,6 @@ set(PROJECT_SOURCES
   include/pli_vis/visualization/primitives/point_light.hpp
   include/pli_vis/visualization/primitives/spot_light.hpp
   include/pli_vis/visualization/primitives/transform.hpp
-  include/pli_vis/visualization/utility/random_texture.hpp
   include/pli_vis/visualization/utility/render_target.hpp
   
   shaders/depth_pass.frag.glsl
@@ -356,7 +355,6 @@ set(PROJECT_SOURCES
   source/visualization/primitives/point_light.cpp
   source/visualization/primitives/spot_light.cpp
   source/visualization/primitives/transform.cpp
-  source/visualization/utility/random_texture.cpp
   source/visualization/utility/render_target.cpp
   source/main.cpp
 )

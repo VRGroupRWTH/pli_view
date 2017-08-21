@@ -14,13 +14,10 @@ namespace pli
 {
 void streamline_renderer::initialize()
 {
-  glm::ivec4 viewport;
-  glGetIntegerv(GL_VIEWPORT, reinterpret_cast<GLint*>(&viewport));
-  glm::uvec2 screen_size {viewport.z, viewport.w};
-  
   vertex_buffer_   .reset(new gl::array_buffer);
   direction_buffer_.reset(new gl::array_buffer);
 
+  auto screen_size = this->screen_size();
   initialize_normal_depth_pass(screen_size);
   initialize_color_pass       (screen_size);
   initialize_zoom_pass        (screen_size);
@@ -28,21 +25,19 @@ void streamline_renderer::initialize()
 }
 void streamline_renderer::render    (const camera* camera)
 {
-  glm::ivec4 viewport;
-  glGetIntegerv(GL_VIEWPORT, reinterpret_cast<GLint*>(&viewport));
-  glm::uvec2 screen_size {viewport.z, viewport.w};
-  
+  auto screen_size = this->screen_size();
   render_normal_depth_pass(camera, screen_size);
   render_color_pass       (camera, screen_size);
   render_zoom_pass        (camera, screen_size);
   render_main_pass        (camera, screen_size);
 }
   
-void streamline_renderer::set_data      (const std::vector<float3>& points, const std::vector<float3>& directions)
+void streamline_renderer::set_data(
+  const std::vector<float3>& points        , 
+  const std::vector<float3>& directions    ,
+  const std::vector<float4>& random_vectors)
 {
-  glm::ivec4 viewport;
-  glGetIntegerv(GL_VIEWPORT, reinterpret_cast<GLint*>(&viewport));
-  glm::uvec2 screen_size{ viewport.z, viewport.w };
+  auto screen_size = this->screen_size();
 
   draw_count_ = points.size();
   
@@ -53,18 +48,25 @@ void streamline_renderer::set_data      (const std::vector<float3>& points, cons
   direction_buffer_->bind    ();
   direction_buffer_->set_data(draw_count_ * sizeof(float3), directions.data());
   direction_buffer_->unbind  ();
-
-  random_texture_->generate(glm::uvec3(screen_size[0], screen_size[1], ao_samples_));
+  
+  random_texture_->bind     ();
+  random_texture_->set_image(GL_RGBA32F, screen_size[0], screen_size[1], ao_samples_, GL_RGBA, GL_FLOAT, random_vectors.data());
+  random_texture_->unbind   ();
 }
 void streamline_renderer::set_ao_samples(const std::size_t& ao_samples)
 {
+  ao_samples_ = ao_samples;
+}
+
+glm::uvec2 streamline_renderer::screen_size() const
+{
   glm::ivec4 viewport;
   glGetIntegerv(GL_VIEWPORT, reinterpret_cast<GLint*>(&viewport));
-  glm::uvec2 screen_size{ viewport.z, viewport.w };
-
-  ao_samples_ = ao_samples;
-
-  random_texture_->generate(glm::uvec3(screen_size[0], screen_size[1], ao_samples_));
+  return glm::uvec2(viewport.z, viewport.w);
+}
+std::size_t streamline_renderer::ao_samples() const
+{
+  return ao_samples_;
 }
 
 void streamline_renderer::initialize_normal_depth_pass(const glm::uvec2& screen_size)
@@ -154,7 +156,15 @@ void streamline_renderer::initialize_main_pass        (const glm::uvec2& screen_
   
   program_       .reset(new gl::program     );
   vertex_array_  .reset(new gl::vertex_array);
-  random_texture_.reset(new random_texture());
+  random_texture_.reset(new gl::texture_3d  );
+
+  random_texture_->bind      ();
+  random_texture_->wrap_s    (GL_REPEAT );
+  random_texture_->wrap_t    (GL_REPEAT );
+  random_texture_->wrap_r    (GL_REPEAT );
+  random_texture_->min_filter(GL_NEAREST);
+  random_texture_->mag_filter(GL_NEAREST);
+  random_texture_->unbind    ();
 
   program_->attach_shader(gl::vertex_shader  (shaders::lineao_main_pass_vert));
   program_->attach_shader(gl::fragment_shader(shaders::lineao_main_pass_frag));

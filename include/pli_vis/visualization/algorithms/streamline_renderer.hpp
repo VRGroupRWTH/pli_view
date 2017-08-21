@@ -8,7 +8,6 @@
 
 #include <pli_vis/aspects/renderable.hpp>
 #include <pli_vis/opengl/all.hpp>
-#include <pli_vis/visualization/utility/random_texture.hpp>
 #include <pli_vis/visualization/utility/render_target.hpp>
 
 namespace pli
@@ -19,8 +18,14 @@ public:
   void initialize()                     override;
   void render    (const camera* camera) override;
   
-  void set_data      (const std::vector<float3>& points, const std::vector<float3>& directions);
+  void set_data      (
+    const std::vector<float3>& points        , 
+    const std::vector<float3>& directions    , 
+    const std::vector<float4>& random_vectors);
   void set_ao_samples(const std::size_t& ao_samples);
+
+  glm::uvec2  screen_size() const;
+  std::size_t ao_samples () const;
 
 private:     
   void initialize_normal_depth_pass(const glm::uvec2& screen_size);
@@ -58,7 +63,7 @@ private:
   // Main pass data.                   
   std::unique_ptr<gl::program>         program_                  ;
   std::unique_ptr<gl::vertex_array>    vertex_array_             ;
-  std::unique_ptr<pli::random_texture> random_texture_           ;
+  std::unique_ptr<gl::texture_3d>      random_texture_           ;
 };
 }
 

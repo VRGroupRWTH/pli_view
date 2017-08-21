@@ -1,5 +1,8 @@
 #include <pli_vis/ui/plugins/tractography_plugin.hpp>
 
+#include <algorithm>
+#include <random>
+
 #include <boost/format.hpp>
 #include <tangent-base/default_tracers.hpp>
 
@@ -183,8 +186,9 @@ void tractography_plugin::trace()
 
   logger_->info(std::string("Tracing..."));
 
-  std::vector<float3> points    ;
-  std::vector<float3> directions;
+  std::vector<float3> points        ;
+  std::vector<float3> directions    ;
+  std::vector<float4> random_vectors;
   future_ = std::async(std::launch::async, [&]
   {
     try
@@ -233,6 +237,19 @@ void tractography_plugin::trace()
             directions.push_back(direction);
         }
       }
+
+      std::random_device                    random_device;
+      std::mt19937                          mersenne_twister(random_device());
+      std::uniform_real_distribution<float> distribution;
+      random_vectors.resize(streamline_renderer_->screen_size()[0] * streamline_renderer_->screen_size()[1] * streamline_renderer_->ao_samples());
+      std::generate(random_vectors.begin(), random_vectors.end(), [&mersenne_twister, &distribution] ()
+      {
+        return float4{
+          distribution(mersenne_twister), 
+          distribution(mersenne_twister), 
+          distribution(mersenne_twister), 
+          distribution(mersenne_twister)};
+      });
     }
     catch (std::exception& exception)
     {
@@ -245,7 +262,7 @@ void tractography_plugin::trace()
   if (points.size() > 0 && directions.size() > 0)
   {
     logger_->info(std::string("Trace successful."));
-    streamline_renderer_->set_data(points, directions);
+    streamline_renderer_->set_data(points, directions, random_vectors);
   }
   else
   {
