@@ -72,6 +72,12 @@ void streamline_renderer::initialize_normal_depth_pass(const glm::uvec2& screen_
   normal_depth_program_     .reset(new gl::program     );
   normal_depth_vertex_array_.reset(new gl::vertex_array);
   normal_depth_map_         .reset(new render_target(screen_size));
+
+  auto color_texture = normal_depth_map_->color_texture();
+  color_texture->bind      ();
+  color_texture->min_filter(GL_LINEAR_MIPMAP_LINEAR);
+  color_texture->mag_filter(GL_LINEAR);
+  color_texture->unbind    ();
   
   normal_depth_program_->attach_shader(gl::vertex_shader  (shaders::lineao_normal_depth_pass_vert));
   normal_depth_program_->attach_shader(gl::fragment_shader(shaders::lineao_normal_depth_pass_frag));
@@ -154,19 +160,19 @@ void streamline_renderer::initialize_main_pass        (const glm::uvec2& screen_
   program_->attach_shader(gl::fragment_shader(shaders::lineao_main_pass_frag));
   program_->link();
   
-  vertex_array_    ->bind  ();
-  program_         ->bind  ();
-  vertex_buffer    . bind  ();
-  program_         ->set_attribute_buffer  ("vertex", 3, GL_FLOAT);
-  program_         ->enable_attribute_array("vertex");
-  vertex_buffer    . unbind();
-  texcoord_buffer  . bind  ();
-  program_         ->set_attribute_buffer  ("texcoords", 2, GL_FLOAT);
-  program_         ->enable_attribute_array("texcoords");
-  texcoord_buffer  . unbind();
+  vertex_array_  ->bind  ();
+  program_       ->bind  ();
+  vertex_buffer  . bind  ();
+  program_       ->set_attribute_buffer  ("vertex", 3, GL_FLOAT);
+  program_       ->enable_attribute_array("vertex");
+  vertex_buffer  . unbind();
+  texcoord_buffer. bind  ();
+  program_       ->set_attribute_buffer  ("texcoords", 2, GL_FLOAT);
+  program_       ->enable_attribute_array("texcoords");
+  texcoord_buffer. unbind();
 
-  program_         ->unbind();
-  vertex_array_    ->unbind();
+  program_       ->unbind();
+  vertex_array_  ->unbind();
 }
 
 void streamline_renderer::render_normal_depth_pass(const camera* camera, const glm::uvec2& screen_size) const
@@ -194,6 +200,7 @@ void streamline_renderer::render_normal_depth_pass(const camera* camera, const g
   normal_depth_program_     ->unbind();
   normal_depth_vertex_array_->unbind();
 
+  normal_depth_map_->color_texture()->generate_mipmaps();
   normal_depth_map_->unbind();
 }
 void streamline_renderer::render_color_pass       (const camera* camera, const glm::uvec2& screen_size) const
@@ -253,7 +260,8 @@ void streamline_renderer::render_main_pass        (const camera* camera, const g
   vertex_array_->bind  ();
   program_     ->bind  ();
   program_     ->set_uniform("sample_count", unsigned(ao_samples_));
-  
+  program_     ->set_uniform("screen_size" , screen_size);
+
   gl::texture_2d::set_active(GL_TEXTURE0); normal_depth_map_->color_texture()->bind(); program_->set_uniform("normal_depth_texture", 0);
   gl::texture_2d::set_active(GL_TEXTURE1); color_map_       ->color_texture()->bind(); program_->set_uniform("color_texture"       , 1);
   gl::texture_2d::set_active(GL_TEXTURE2); zoom_map_        ->color_texture()->bind(); program_->set_uniform("zoom_texture"        , 2);
