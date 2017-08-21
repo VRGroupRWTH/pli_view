@@ -25,14 +25,9 @@ scalar_precision interaction_potential(
   auto rhs_segment = rhs_position + rhs_sign * length * rhs_direction;
   auto lhs_diff    = lhs_segment - midpoint;
   auto rhs_diff    = rhs_segment - midpoint;
-  auto lhs_sq_dist = 0;
-  auto rhs_sq_dist = 0;
-  for(auto i = 0; i < 3; i++)
-  {
-    lhs_sq_dist += pow(lhs_diff, 2);
-    rhs_sq_dist += pow(rhs_diff, 2);
-  }
-  return scalar_precision(1.0 / pow(length, 2)) * (lhs_sq_dist  + rhs_sq_dist) - bias;
+  auto lhs_sq_dist = pow(lhs_diff.x, 2) + pow(lhs_diff.y, 2) + pow(lhs_diff.z, 2);
+  auto rhs_sq_dist = pow(rhs_diff.x, 2) + pow(rhs_diff.y, 2) + pow(rhs_diff.z, 2);
+  return (1.0 / pow(length, 2)) * (lhs_sq_dist  + rhs_sq_dist) - bias;
 }
 
 template<
