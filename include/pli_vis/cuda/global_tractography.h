@@ -44,7 +44,7 @@ __host__ __device__ scalar_precision internal_energy(
   const scalar_precision& length          = 1)
 {
   scalar_precision value(0);
-  for(auto i = 0; i < count; i++)
+  for(auto i = 0; i < count; ++i)
     value += interaction_potential(
       lhs_positions   [i], 
       lhs_orientations[i], 
