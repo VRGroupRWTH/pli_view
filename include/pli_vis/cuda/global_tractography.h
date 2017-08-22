@@ -116,6 +116,16 @@ __host__ __device__ void external_energy(
     out_energies[i]  = l2_distance(odf_coefficient_count, original_odfs[start_index], predicted_odfs[start_index]);
   }
 }
+
+template<
+  typename scalar_precision = float>
+__host__ __device__ scalar_precision posterior_probability(
+  const scalar_precision& internal_energy,
+  const scalar_precision& external_energy,
+  const scalar_precision& temperature    )
+{
+  return exp((- internal_energy - external_energy) / temperature);
+}
 }
 
 #endif
