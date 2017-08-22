@@ -8,6 +8,9 @@
 
 namespace pli
 {
+// Based on the following:
+// - Global reconstruction of neuronal fibres      (Reisert et al. 2009)
+// - Global fiber reconstruction becomes practical (Reisert et al. 2011)
 template<
   typename scalar_precision = float , 
   typename vector_precision = float3>
@@ -88,7 +91,9 @@ __host__ __device__ void energy_minimizing_configuration(
 template<
   typename scalar_precision = float ,
   typename vector_precision = float3>
-__host__ __device__ void predicted_signal(
+__host__ __device__ scalar_precision predicted_signal(
+  const vector_precision& position        ,
+  const vector_precision& direction       ,
   const unsigned          count           ,
   const vector_precision* positions       ,
   const vector_precision* directions      ,
@@ -96,8 +101,34 @@ __host__ __device__ void predicted_signal(
   const scalar_precision& c               ,
   const scalar_precision& sigma           )
 {
-  // Given weight, c, sigma as constants and the segments (x,v) as variables:
-  // Calculate weight * SUM[i = 1 -> # segments] exp(-c (v^T * v_i)^2) exp(-|x - x_i|^2 / sigma^2).
+  scalar_precision sum(0);
+  for(auto i = 0; i < count; ++i)
+  {
+    scalar_precision dot_v  = dot(direction, directions[i]);
+    vector_precision diff_x = position - positions[i];
+    sum += exp(-c * pow(dot_v, 2)) * exp(-dot(diff_x, diff_x) / pow(sigma, 2));
+  }
+  return weight * sum;
+}
+
+template<
+  typename scalar_precision = float ,
+  typename vector_precision = float3>  
+__host__ __device__ void predicted_signal(
+  const vector_precision& position        ,
+  const unsigned          count           ,
+  const vector_precision* positions       ,
+  const vector_precision* directions      ,
+  const scalar_precision& weight          ,
+  const scalar_precision& c               ,
+  const scalar_precision& sigma           ,
+  const scalar_precision& max_degree      ,
+        scalar_precision* predicted_odfs  )
+{
+  // TODO: 
+  // - Sample a unit sphere centered at position and evaluate the predicted signal with given parameters.
+  // - Interpret the sampled directions and the evaluated signal at that direction as a histogram.
+  // - Normalize and project to spherical harmonics of given maximum degree.
 }
 
 template<
