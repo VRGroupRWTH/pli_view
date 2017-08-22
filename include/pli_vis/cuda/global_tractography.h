@@ -88,14 +88,16 @@ __host__ __device__ void energy_minimizing_configuration(
 template<
   typename scalar_precision = float ,
   typename vector_precision = float3>
-__host__ __device__ scalar_precision predicted_signal(
-  const vector_precision& position        ,
-  const vector_precision& direction       ,
+__host__ __device__ void predicted_signal(
+  const unsigned          count           ,
+  const vector_precision* positions       ,
+  const vector_precision* directions      ,
+  const scalar_precision& weight          ,
   const scalar_precision& c               ,
-  const scalar_precision& sigma           ,
-  const scalar_precision  weight          = 1.0)
+  const scalar_precision& sigma           )
 {
-  
+  // Given weight, c, sigma as constants and the segments (x,v) as variables:
+  // Calculate weight * SUM[i = 1 -> # segments] exp(-c (v^T * v_i)^2) exp(-|x - x_i|^2 / sigma^2).
 }
 
 template<
