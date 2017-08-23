@@ -21,9 +21,9 @@ template<
   typename vector_precision = float3>
 polyhedron<vector_precision> make_icosahedron     ()
 {
-  polyhedron<vector_precision> icosahedron;
   const scalar_precision x(0.525731112119133606);
   const scalar_precision z(0.850650808352039932);
+  polyhedron<vector_precision> icosahedron;
   icosahedron.vertices = {
     {-x, 0, z}, { x, 0,  z}, {-x,  0, -z}, { x,  0, -z},
     { 0, z, x}, { 0, z, -x}, { 0, -z,  x}, { 0, -z, -x},
@@ -68,7 +68,7 @@ polyhedron<vector_precision> tessellate_polyhedron(const polyhedron<vector_preci
       input.vertices[input.indices[i].x],
       input.vertices[input.indices[i].y],
       input.vertices[input.indices[i].z],
-      depth,
+      depth ,
       output);
   return output;
 }
