@@ -38,7 +38,6 @@ set(PROJECT_SOURCES
   include/pli_vis/cuda/sh/wigner.h
   include/pli_vis/cuda/global_tractography.h
   include/pli_vis/cuda/odf_field.h
-  include/pli_vis/cuda/sphere_tessellation.h
   include/pli_vis/cuda/spherical_histogram.h
   include/pli_vis/io/io.hpp
   include/pli_vis/io/io_slice_impl.hpp
@@ -202,6 +201,7 @@ set(PROJECT_SOURCES
   include/pli_vis/visualization/primitives/directional_light.hpp
   include/pli_vis/visualization/primitives/light.hpp
   include/pli_vis/visualization/primitives/point_light.hpp
+  include/pli_vis/visualization/primitives/sphere_tessellation.hpp
   include/pli_vis/visualization/primitives/spot_light.hpp
   include/pli_vis/visualization/primitives/transform.hpp
   include/pli_vis/visualization/utility/render_target.hpp
