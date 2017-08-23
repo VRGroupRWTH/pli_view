@@ -28,7 +28,7 @@ __global__ void quantify_and_project_kernel(
         uint3          vectors_dimensions ,
   // Quantification related parameters. 
   const vector_type*   vectors            , 
-        uint2          histogram_bins     ,
+        unsigned       histogram_bin_count,
         vector_type*   histogram_vectors  ,
   // Projection related parameters.     
         unsigned       maximum_degree     ,
@@ -43,7 +43,6 @@ __global__ void quantify_and_project_kernel(
     return;
     
   auto volume_index              = z + dimensions.z * (y + dimensions.y * x);
-  auto histogram_bin_count       = histogram_bins.x * histogram_bins.y;
   auto coefficient_count         = pli::coefficient_count(maximum_degree);
   auto coefficient_vector_offset = volume_index * coefficient_count;
   auto alpha                     = 1.0F;
@@ -67,11 +66,11 @@ __global__ void quantify_and_project_kernel(
   cublasCreate(&cublas);
 
   accumulate_kernel<<<grid_size_3d(vectors_dimensions), block_size_3d()>>>(
-    vectors_dimensions        ,
+    vectors_dimensions  ,
     offset              ,
     size                ,
     vectors             ,
-    histogram_bins      , 
+    histogram_bin_count ,
     histogram_vectors   ,
     histogram_magnitudes);
   __syncthreads();
@@ -326,8 +325,8 @@ void calculate_odfs(
   quantify_and_project_kernel<<<dimensions, dim3(1, 1, 1)>>> (
     dimensions             ,
     vectors_dimensions     ,
-    gpu_vectors_ptr            ,
-    histogram_bins         ,
+    gpu_vectors_ptr        ,
+    histogram_bin_count    ,
     histogram_vectors_ptr  ,
     maximum_degree         ,
     V_EI_UT_ptr            ,
