@@ -5,6 +5,7 @@
 
 #include <vector_types.h>
 
+#include <pli_vis/cuda/sh/convert.h>
 #include <pli_vis/cuda/sh/vector_ops.h>
 
 namespace pli
@@ -39,12 +40,13 @@ polyhedron<vector_precision>  make_icosahedron             ()
   };
 }
 
+// Normals are in spherical coordinates.
 template<typename vector_precision = float3>
 void                          tessellate_triangle_normals  (const vector_precision& v1, const vector_precision& v2, const vector_precision& v3, const std::size_t& depth, std::vector<vector_precision>& normals)
 {
   if(depth == 0)
   {
-    normals.push_back(normalize(cross(v2 - v1, v3 - v1)));
+    normals.push_back(to_spherical_coords(normalize(cross(v2 - v1, v3 - v1))));
     return;
   }
 
@@ -58,6 +60,7 @@ void                          tessellate_triangle_normals  (const vector_precisi
   tessellate_triangle_normals(v12, v23, v31, depth - 1, normals);
 }
 
+// Normals are in spherical coordinates.
 template<typename vector_precision = float3>
 std::vector<vector_precision> tessellate_polyhedron_normals(const polyhedron<vector_precision>& polyhedron, const std::size_t& depth)
 {
