@@ -17,10 +17,8 @@ struct polyhedron
   std::vector<vector_precision> indices ;
 };
 
-template<
-  typename scalar_precision = float ,
-  typename vector_precision = float3>
-polyhedron<vector_precision>  make_icosahedron             ()
+template<typename scalar_precision = float, typename vector_precision = float3>
+polyhedron<vector_precision> make_icosahedron()
 {
   const scalar_precision x(0.525731112119133606);
   const scalar_precision z(0.850650808352039932);
@@ -42,7 +40,12 @@ polyhedron<vector_precision>  make_icosahedron             ()
 
 // Normals are in spherical coordinates.
 template<typename vector_precision = float3>
-void                          tessellate_triangle_normals  (const vector_precision& v1, const vector_precision& v2, const vector_precision& v3, const std::size_t& depth, std::vector<vector_precision>& normals)
+void tessellate_triangle_normals(
+  const vector_precision&        v1, 
+  const vector_precision&        v2, 
+  const vector_precision&        v3, 
+  const std::size_t&             depth, 
+  std::vector<vector_precision>& normals)
 {
   if(depth == 0)
   {
@@ -62,7 +65,9 @@ void                          tessellate_triangle_normals  (const vector_precisi
 
 // Normals are in spherical coordinates.
 template<typename vector_precision = float3>
-std::vector<vector_precision> tessellate_polyhedron_normals(const polyhedron<vector_precision>& polyhedron, const std::size_t& depth)
+std::vector<vector_precision> tessellate_polyhedron_normals(
+  const polyhedron<vector_precision>& polyhedron, 
+  const std::size_t&                  depth     )
 {
   std::vector<vector_precision> normals;
   for(auto i = 0; i < polyhedron.indices.size(); i++)
