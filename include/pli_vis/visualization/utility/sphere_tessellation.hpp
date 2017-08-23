@@ -5,7 +5,6 @@
 
 #include <vector_types.h>
 
-#include <pli_vis/cuda/sh/convert.h>
 #include <pli_vis/cuda/sh/vector_ops.h>
 
 namespace pli
