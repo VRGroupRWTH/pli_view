@@ -38,6 +38,7 @@ set(PROJECT_SOURCES
   include/pli_vis/cuda/sh/wigner.h
   include/pli_vis/cuda/global_tractography.h
   include/pli_vis/cuda/odf_field.h
+  include/pli_vis/cuda/sphere_tessellation.h
   include/pli_vis/cuda/spherical_histogram.h
   include/pli_vis/io/io.hpp
   include/pli_vis/io/io_slice_impl.hpp
