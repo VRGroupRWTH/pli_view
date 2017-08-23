@@ -25,7 +25,8 @@ set(PROJECT_SOURCES
   
   include/pli_vis/aspects/loggable.hpp
   include/pli_vis/aspects/renderable.hpp
-  include/pli_vis/cuda/mc/monte_carlo.h
+  include/pli_vis/cuda/mcmc/markov_chain.h
+  include/pli_vis/cuda/mcmc/monte_carlo.h
   include/pli_vis/cuda/sh/choose.h
   include/pli_vis/cuda/sh/clebsch_gordan.h
   include/pli_vis/cuda/sh/factorial.h
