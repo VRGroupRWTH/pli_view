@@ -43,9 +43,7 @@ void                         tessellate_triangle  (const vector_precision& v1, c
 {
   if(depth == 0)
   {
-    polyhedron.vertices.push_back(v1);
-    polyhedron.vertices.push_back(v2);
-    polyhedron.vertices.push_back(v3);
+    polyhedron.vertices.insert(polyhedron.vertices.end(), {v1, v2, v3});
     return;
   }
 
@@ -66,14 +64,12 @@ polyhedron<vector_precision> tessellate_polyhedron(const polyhedron<vector_preci
 {
   polyhedron<vector_precision> output;
   for(auto i = 0; i < input.indices.size(); i++)
-  {
     tessellate_triangle(
       input.vertices[input.indices[i].x],
       input.vertices[input.indices[i].y],
       input.vertices[input.indices[i].z],
       depth,
       output);
-  }
   return output;
 }
 }
