@@ -201,10 +201,10 @@ set(PROJECT_SOURCES
   include/pli_vis/visualization/primitives/directional_light.hpp
   include/pli_vis/visualization/primitives/light.hpp
   include/pli_vis/visualization/primitives/point_light.hpp
-  include/pli_vis/visualization/primitives/sphere_tessellation.hpp
   include/pli_vis/visualization/primitives/spot_light.hpp
   include/pli_vis/visualization/primitives/transform.hpp
   include/pli_vis/visualization/utility/render_target.hpp
+  include/pli_vis/visualization/utility/sphere_tessellation.hpp
   
   shaders/depth_pass.frag.glsl
   shaders/depth_pass.vert.glsl
