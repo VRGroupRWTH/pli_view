@@ -49,7 +49,7 @@ void tessellate_triangle_normals(
 {
   if(depth == 0)
   {
-    normals.push_back(to_spherical_coords(normalize(cross(v2 - v1, v3 - v1))));
+    normals.push_back(normalize(cross(v2 - v1, v3 - v1)));
     return;
   }
 
