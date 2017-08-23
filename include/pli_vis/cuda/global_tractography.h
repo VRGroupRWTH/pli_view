@@ -116,6 +116,8 @@ template<
   typename vector_precision = float3>  
 __host__ __device__ void predicted_signal(
   const vector_precision& position        ,
+  const unsigned          bin_count       ,
+  const vector_precision* bin_directions  ,
   const unsigned          count           ,
   const vector_precision* positions       ,
   const vector_precision* directions      ,
@@ -125,8 +127,20 @@ __host__ __device__ void predicted_signal(
   const scalar_precision& max_degree      ,
         scalar_precision* predicted_odfs  )
 {
-  // TODO: 
-  // - Sample a unit sphere centered at position and evaluate the predicted signal with given parameters.
+  const vector_precision bin_magnitudes[count];
+  for(auto i = 0; i < bin_count; ++i)
+  {
+    bin_magnitudes[i] = predicted_signal(
+      position         , 
+      bin_directions[i], 
+      count            , 
+      positions        , 
+      directions       , 
+      weight           , 
+      c                , 
+      sigma            );
+  }
+  // TODO:
   // - Interpret the sampled directions and the evaluated signal at that direction as a histogram.
   // - Normalize and project to spherical harmonics of given maximum degree.
 }
