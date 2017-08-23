@@ -4,7 +4,7 @@
 #include <vector_types.h>
 
 #include <pli_vis/cuda/sh/spherical_harmonics.h>
-#include <pli_vis/cuda/sh/vector_ops.h>
+#include <pli_vis/cuda/utility/vector_ops.h>
 
 namespace pli
 {
