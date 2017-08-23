@@ -7,7 +7,7 @@
 #include <vector_functions.hpp>
 
 #include <pli_vis/cuda/sh/spherical_harmonics.h>
-#include <pli_vis/cuda/sh/vector_ops.h>
+#include <pli_vis/cuda/utility/vector_ops.h>
 #include <pli_vis/cuda/odf_field.h>
 #include <pli_vis/ui/plugins/data_plugin.hpp>
 #include <pli_vis/ui/utility/line_edit.hpp>

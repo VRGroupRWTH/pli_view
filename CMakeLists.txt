@@ -28,14 +28,13 @@ set(PROJECT_SOURCES
   include/pli_vis/cuda/mc/monte_carlo.h
   include/pli_vis/cuda/sh/choose.h
   include/pli_vis/cuda/sh/clebsch_gordan.h
-  include/pli_vis/cuda/sh/config.h
-  include/pli_vis/cuda/sh/convert.h
   include/pli_vis/cuda/sh/factorial.h
   include/pli_vis/cuda/sh/launch.h
   include/pli_vis/cuda/sh/legendre.h
   include/pli_vis/cuda/sh/spherical_harmonics.h
-  include/pli_vis/cuda/sh/vector_ops.h
   include/pli_vis/cuda/sh/wigner.h
+  include/pli_vis/cuda/utility/convert.h
+  include/pli_vis/cuda/utility/vector_ops.h
   include/pli_vis/cuda/global_tractography.h
   include/pli_vis/cuda/odf_field.h
   include/pli_vis/cuda/spherical_histogram.h

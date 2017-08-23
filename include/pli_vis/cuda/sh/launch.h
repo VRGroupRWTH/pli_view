@@ -1,33 +1,29 @@
 #ifndef PLI_VIS_LAUNCH_H_
 #define PLI_VIS_LAUNCH_H_
 
-#include <math.h>
-
-#include <device_launch_parameters.h>
-
-#include <pli_vis/cuda/sh/config.h>
+#include <vector_types.h>
 
 namespace pli
 {
-INLINE COMMON unsigned block_size_1d()
+__forceinline__ __host__ __device__ unsigned block_size_1d()
 {
   return 64;
 }
-INLINE COMMON dim3     block_size_2d()
+__forceinline__ __host__ __device__ dim3     block_size_2d()
 {
   return {32, 32, 1};
 }
-INLINE COMMON dim3     block_size_3d()
+__forceinline__ __host__ __device__ dim3     block_size_3d()
 {
   return {16, 16, 4};
 }
   
-INLINE COMMON unsigned grid_size_1d(unsigned target_dimension )
+__forceinline__ __host__ __device__ unsigned grid_size_1d(unsigned target_dimension )
 {
   auto block_size = block_size_1d();
   return unsigned((target_dimension + block_size - 1) / block_size);
 }
-INLINE COMMON dim3     grid_size_2d(dim3     target_dimensions)
+__forceinline__ __host__ __device__ dim3     grid_size_2d(dim3     target_dimensions)
 {
   auto block_size = block_size_2d();
   return {
@@ -36,7 +32,7 @@ INLINE COMMON dim3     grid_size_2d(dim3     target_dimensions)
     1u
   };
 }
-INLINE COMMON dim3     grid_size_3d(dim3     target_dimensions)
+__forceinline__ __host__ __device__ dim3     grid_size_3d(dim3     target_dimensions)
 {
   auto block_size = block_size_3d();
   return {

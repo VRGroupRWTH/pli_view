@@ -5,12 +5,10 @@
 
 #include <vector_types.h>
 
-#include <pli_vis/cuda/sh/config.h>
-
 namespace pli
 {
 template<typename input_type, typename output_type = input_type>
-COMMON output_type to_spherical_coords(const input_type& input)
+__host__ __device__ output_type to_spherical_coords(const input_type& input)
 {
   output_type output;
   output[0] = sqrt (pow(input[0], 2) + pow(input[1], 2) + pow(input[2], 2));
@@ -19,7 +17,7 @@ COMMON output_type to_spherical_coords(const input_type& input)
   return output;
 }
 template<typename input_type, typename output_type = input_type>
-COMMON output_type to_cartesian_coords(const input_type& input)
+__host__ __device__ output_type to_cartesian_coords(const input_type& input)
 {
   output_type output;
   output[0] = input[0] * cos(input[1]) * sin(input[2]);
@@ -30,7 +28,7 @@ COMMON output_type to_cartesian_coords(const input_type& input)
 
 #define SPECIALIZE_CONVERT(TYPE)                                         \
 template <typename output_type = TYPE>                                   \
-COMMON output_type to_spherical_coords(const TYPE& input)                \
+__host__ __device__ output_type to_spherical_coords(const TYPE& input)   \
 {                                                                        \
   output_type output;                                                    \
   output.x = sqrt (pow(input.x, 2) + pow(input.y, 2) + pow(input.z, 2)); \
@@ -39,7 +37,7 @@ COMMON output_type to_spherical_coords(const TYPE& input)                \
   return output;                                                         \
 }                                                                        \
 template<typename output_type = TYPE>                                    \
-COMMON output_type to_cartesian_coords(const TYPE& input)                \
+__host__ __device__ output_type to_cartesian_coords(const TYPE& input)   \
 {                                                                        \
   output_type output;                                                    \
   output.x = input.x * cos(input.y) * sin(input.z);                      \

@@ -6,8 +6,8 @@
 
 #include <QFileDialog>
 
-#include <pli_vis/cuda/sh/convert.h>
-#include <pli_vis/cuda/sh/vector_ops.h>
+#include <pli_vis/cuda/utility/convert.h>
+#include <pli_vis/cuda/utility/vector_ops.h>
 #include <pli_vis/ui/utility/line_edit.hpp>
 #include <pli_vis/ui/utility/text_browser_sink.hpp>
 #include <pli_vis/ui/application.hpp>

@@ -11,10 +11,10 @@
 #include <thrust/device_vector.h>
 #include <thrust/extrema.h>
 
-#include <pli_vis/cuda/sh/convert.h>
 #include <pli_vis/cuda/sh/launch.h>
 #include <pli_vis/cuda/sh/spherical_harmonics.h>
-#include <pli_vis/cuda/sh/vector_ops.h>
+#include <pli_vis/cuda/utility/convert.h>
+#include <pli_vis/cuda/utility/vector_ops.h>
 #include <pli_vis/cuda/spherical_histogram.h>
 
 namespace pli
@@ -277,7 +277,7 @@ void calculate_odfs(
     E.begin(),
     E.end  (),
     E.begin(),
-    [] COMMON (float& entry) -> float
+    [] __host__ __device__(float& entry) -> float
     {
       if (int(entry) == 0)
         return 0;
@@ -439,7 +439,7 @@ void sample_odfs(
     points,
     points + point_count,
     points,
-    [] COMMON (const float3& point)
+    [] __host__ __device__(const float3& point)
     {
       return to_cartesian_coords(point);
     });
@@ -451,7 +451,7 @@ void sample_odfs(
     points,
     points + point_count,
     colors,
-    [] COMMON (const float3& point)
+    [] __host__ __device__(const float3& point)
     {
       return make_float4(abs(point.x), abs(point.z), abs(point.y), 1.0);
     });
@@ -494,7 +494,7 @@ void sample_odfs(
       points + layer_point_offset,
       points + layer_point_offset + layer_point_count,
       points + layer_point_offset,
-      [=] COMMON (const float3& point)
+      [=] __host__ __device__(const float3& point)
       {
         auto output = layer_scale * point;
         auto index  = int((&point - (points + layer_point_offset)) / tessellation_count);
@@ -558,7 +558,7 @@ void extract_peaks(
     maxima_vectors.begin(),
     maxima_vectors.end  (),
     maxima_vectors.begin(),
-    [] COMMON (const float3& point)
+    [] __host__ __device__(const float3& point)
     {
       return to_cartesian_coords(point);
     });
