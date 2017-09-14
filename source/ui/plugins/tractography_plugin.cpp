@@ -6,6 +6,7 @@
 #include <boost/format.hpp>
 #include <tangent-base/default_tracers.hpp>
 
+#include <pli_vis/cuda/pt/cartesian_streamline_tracer.h>
 #include <pli_vis/cuda/utility/convert.h>
 #include <pli_vis/cuda/utility/vector_ops.h>
 #include <pli_vis/ui/plugins/data_plugin.hpp>
@@ -143,6 +144,17 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
   {
     trace();
   });
+
+  connect(radio_button_cpu, &QRadioButton::clicked, [&]
+  {
+    logger_->info(std::string("CPU particle tracing selected."));
+    gpu_tracing_ = false;
+  });
+  connect(radio_button_gpu, &QRadioButton::clicked, [&]
+  {
+    logger_->info(std::string("GPU particle tracing selected."));
+    gpu_tracing_ = true;
+  });
 }
 
 void tractography_plugin::start()
@@ -196,47 +208,56 @@ void tractography_plugin::trace()
       auto vectors = owner_->get_plugin<data_plugin>()->generate_vectors(true);
       auto shape   = vectors.shape();
 
-      tangent::CartesianGrid data(tangent::grid_dim_t{{shape[0], shape[1], shape[2]}}, tangent::vector_t{{1.0, 1.0, 1.0}});
-      auto data_ptr = data.GetVectorPointer(0);
-      for (auto x = 0; x < shape[0]; x++)
-        for (auto y = 0; y < shape[1]; y++)
-          for (auto z = 0; z < shape[2]; z++)
-          {
-            auto vector = vectors[x][y][z];
-            data_ptr[x + shape[0] * (y + shape[1] * z)] = tangent::vector_t{{vector.x, vector.y, vector.z}};
-          }
-
-      auto offset = seed_offset();
-      auto size   = seed_size  ();
-      auto stride = seed_stride();
-      std::vector<tangent::point_t> seeds;
-      for (auto x = offset[0]; x < offset[0] + size[0]; x+= stride[0])
-        for (auto y = offset[1]; y < offset[1] + size[1]; y += stride[1])
-          for (auto z = offset[2]; z < offset[2] + size[2]; z += stride[2])
-            seeds.push_back({{float(x), float(y), float(z), 0.0F}});
-
-      tangent::TraceRecorder recorder;
-      tangent::OmpCartGridStreamlineTracer tracer(&recorder);
-      tracer.SetData              (&data);
-      tracer.SetIntegrationStep   (float(slider_integration_step->value()) / slider_integration_step->maximum());
-      tracer.SetNumberOfIterations(slider_iterations->value());
-      auto output = tracer.TraceSeeds(seeds);
-
-      auto& population = recorder.GetPopulation();
-      for(auto i = 0; i < population.GetNumberOfTraces(); i++)
+      // CPU particle tracing.
+      if(!gpu_tracing_)
       {
-        auto& path = population[i];
-        for(auto j = 0; j < path.size() - 1; j++)
+        tangent::CartesianGrid data(tangent::grid_dim_t{{shape[0], shape[1], shape[2]}}, tangent::vector_t{{1.0, 1.0, 1.0}});
+        auto data_ptr = data.GetVectorPointer(0);
+        for (auto x = 0; x < shape[0]; x++)
+          for (auto y = 0; y < shape[1]; y++)
+            for (auto z = 0; z < shape[2]; z++)
+            {
+              auto vector = vectors[x][y][z];
+              data_ptr[x + shape[0] * (y + shape[1] * z)] = tangent::vector_t{{vector.x, vector.y, vector.z}};
+            }
+
+        auto offset = seed_offset();
+        auto size   = seed_size  ();
+        auto stride = seed_stride();
+        std::vector<tangent::point_t> seeds;
+        for (auto x = offset[0]; x < offset[0] + size[0]; x+= stride[0])
+          for (auto y = offset[1]; y < offset[1] + size[1]; y += stride[1])
+            for (auto z = offset[2]; z < offset[2] + size[2]; z += stride[2])
+              seeds.push_back({{float(x), float(y), float(z), 0.0F}});
+
+        tangent::TraceRecorder recorder;
+        tangent::OmpCartGridStreamlineTracer tracer(&recorder);
+        tracer.SetData              (&data);
+        tracer.SetIntegrationStep   (float(slider_integration_step->value()) / slider_integration_step->maximum());
+        tracer.SetNumberOfIterations(slider_iterations->value());
+        auto output = tracer.TraceSeeds(seeds);
+
+        auto& population = recorder.GetPopulation();
+        for(auto i = 0; i < population.GetNumberOfTraces(); i++)
         {
-          float3 start {path[j]    [0], path[j]    [1], path[j]    [2]};
-          float3 end   {path[j + 1][0], path[j + 1][1], path[j + 1][2]};
-          auto   direction = normalize(fabs(end - start));
-          points.push_back(start);
-          points.push_back(end  );   
-          for(auto k = 0; k < 2; ++k)
-            directions.push_back(direction);
+          auto& path = population[i];
+          for(auto j = 0; j < path.size() - 1; j++)
+          {
+            float3 start {path[j]    [0], path[j]    [1], path[j]    [2]};
+            float3 end   {path[j + 1][0], path[j + 1][1], path[j + 1][2]};
+            auto   direction = normalize(fabs(end - start));
+            points.push_back(start);
+            points.push_back(end  );   
+            for(auto k = 0; k < 2; ++k)
+              directions.push_back(direction);
+          }
         }
       }
+      else
+      {
+        
+      }
+
 
       std::random_device                    random_device;
       std::mt19937                          mersenne_twister(random_device());
