@@ -208,7 +208,6 @@ void tractography_plugin::trace()
       auto vectors = owner_->get_plugin<data_plugin>()->generate_vectors(true);
       auto shape   = vectors.shape();
 
-      // CPU particle tracing.
       if(!gpu_tracing_)
       {
         tangent::CartesianGrid data(tangent::grid_dim_t{{shape[0], shape[1], shape[2]}}, tangent::vector_t{{1.0, 1.0, 1.0}});
@@ -255,9 +254,34 @@ void tractography_plugin::trace()
       }
       else
       {
-        
-      }
+        std::vector<float3> formatted_vectors(shape[0] * shape[1] * shape[2]);
+        for (auto x = 0; x < shape[0]; x++)
+          for (auto y = 0; y < shape[1]; y++)
+            for (auto z = 0; z < shape[2]; z++)
+              formatted_vectors[x + shape[0] * (y + shape[1] * z)] = vectors[x][y][z];
 
+        cupt::cartesian_grid<float3> grid; 
+        // TODO: Allocate shape[0] * shape[1] * shape[2]. Copy formatted_vectors to gpu.
+
+        cupt::cartesian_streamline_tracer tracer(
+          &grid, 
+          float(slider_integration_step->value()) / slider_integration_step->maximum(), 
+          slider_iterations->value());
+
+        std::vector<float3> seeds;
+        auto offset = seed_offset();
+        auto size   = seed_size  ();
+        auto stride = seed_stride();
+        for (auto x = offset[0]; x < offset[0] + size[0]; x += stride[0])
+          for (auto y = offset[1]; y < offset[1] + size[1]; y += stride[1])
+            for (auto z = offset[2]; z < offset[2] + size[2]; z += stride[2])
+              seeds.push_back(float3{float(x), float(y), float(z)});
+        // TODO: Copy seeds to gpu. Allocate output buffer.
+
+        tracer.trace(seeds.size(), seeds.data(), nullptr);
+        
+        // TODO: Copy back to cpu and fill points and directions vectors.
+      }
 
       std::random_device                    random_device;
       std::mt19937                          mersenne_twister(random_device());
