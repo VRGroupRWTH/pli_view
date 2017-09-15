@@ -73,8 +73,8 @@ std::vector<std::vector<float3>> trace(
     traces_gpu_ptr );
   cudaDeviceSynchronize();
 
-  std::vector<float3>              traces_linear(traces_gpu.size());
-  thrust::copy(traces_gpu.begin(), traces_gpu.end(), traces_linear.begin());
+  std::vector<float3> traces_linear(traces_gpu.size());
+  thrust::copy (traces_gpu.begin(), traces_gpu.end (), traces_linear.begin());
   cudaDeviceSynchronize();
 
   std::vector<std::vector<float3>> traces(seeds.size());

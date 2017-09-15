@@ -279,13 +279,16 @@ void tractography_plugin::trace()
         for (auto i = 0; i < traces.size(); ++i)
           for (auto j = 0; j < slider_iterations->value() - 1; ++j)
           {
-            float3 start = traces[i][j  ];
-            float3 end   = traces[i][j+1];
-            auto   direction = normalize(fabs(end - start));
-            points.push_back(start);
-            points.push_back(end  );
-            for (auto k = 0; k < 2; ++k)
-              directions.push_back(direction);
+            auto& start = traces[i][j  ];
+            auto& end   = traces[i][j+1];
+            if(end.x != 0 && end.y != 0 && end.z != 0)
+            {
+              auto direction = normalize(fabs(end - start));
+              points.push_back(start);
+              points.push_back(end);
+              for (auto k = 0; k < 2; ++k)
+                directions.push_back(direction);
+            }
           }
       }
 
