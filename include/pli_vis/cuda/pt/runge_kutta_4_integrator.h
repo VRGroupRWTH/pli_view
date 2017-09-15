@@ -8,82 +8,81 @@
 
 namespace cupt 
 {
-template <typename interpolator_trait> 
+template <class data_type, class interpolator_type> 
 class runge_kutta_4_integrator 
 {
 public:
-  using interpolator = typename interpolator_trait::interpolator;
-  using data         = typename interpolator_trait::data;
-
-  enum class step_state 
-  {
-    stage_0  = 0,
-    stage_1  = 1,
-    stage_2  = 2,
-    stage_3  = 3,
-    finished = 4
-  };
-
   struct integration_step 
   {
-    __host__ __device__ integration_step(const float3& start_point, const float step) 
+    __host__ __device__ integration_step(const data_type& start_point, const float step)
     : start_point(start_point)
     , end_point  (start_point)
     , current_k  ({0.0f, 0.0f, 0.0f})
     , sum_k      ({0.0f, 0.0f, 0.0f})
     , time_step  (step)
-    , next_stage (step_state::stage_0)
+    , next_stage (0)
     {
       
     }
 
-    __host__ __device__ void restart_at(float3& start) 
+    __host__ __device__ void restart_at(data_type& start)
     {
       start_point = start;
       sum_k       = {0.0f, 0.0f, 0.0f};
-      next_stage  = step_state::stage_0;
+      next_stage  = 0;
     }
     __host__ __device__ bool done      () const
     {
-      return next_stage == step_state::finished;
+      return next_stage == 4;
     }
 
-    float3     start_point;
-    float3     end_point  ;
-    float3     current_k  ;
-    float3     sum_k      ;
+    data_type  start_point;
+    data_type  end_point  ;
+    data_type  current_k  ;
+    data_type  sum_k      ;
     float      time_step  ;
-    step_state next_stage ;
+    char       next_stage ;
   };
 
-  __host__ __device__ explicit runge_kutta_4_integrator(const data* data) : interpolator_(data), stage_factors_({0.0f, 0.5f, 0.5f}), result_factors_({1.0f, 2.0f, 2.0f}) { }
-  __host__ __device__         ~runge_kutta_4_integrator() = default;
-
-  __host__ __device__ void set_data    (const data* data)
+  __host__ __device__ explicit runge_kutta_4_integrator(const uint3& dimensions, const float3& spacing, const data_type* data)
+  : interpolator_  (dimensions, spacing, data)
+  , stage_factors_ ({0.0f, 0.5f, 0.5f, 1.0f} )
+  , result_factors_({1.0f, 2.0f, 2.0f, 1.0f} )
   {
-    interpolator_ = interpolator(data);
+    
+  }
+
+  __host__ __device__ void set_data    (const uint3& dimensions, const float3& spacing, const data_type*  data)
+  {
+    interpolator_ = interpolator_type(dimensions, spacing, data);
   }
   __host__ __device__ void compute_step(integration_step& step_data) const 
   {
-    for (auto stage = step_data.next_stage; stage < step_state::finished; ++stage) 
+    for (auto stage = 0; stage < 4; ++stage) 
     {
-      float3 current_point = step_data.start_point + stage_factors_[stage] * step_data.current_k;
+      auto stage_factor = 0.0f, result_factor = 0.0f;
+      if      (stage == 0) { stage_factor = stage_factors_.x; result_factor = result_factors_.x; }
+      else if (stage == 1) { stage_factor = stage_factors_.y; result_factor = result_factors_.y; }
+      else if (stage == 2) { stage_factor = stage_factors_.z; result_factor = result_factors_.z; }
+      else if (stage == 3) { stage_factor = stage_factors_.w; result_factor = result_factors_.w; }
+
+      float3 current_point = step_data.start_point + stage_factor * step_data.current_k;
 
       if (!interpolator_.is_valid(current_point))
         return;
       
       float3 current_vector = interpolator_.interpolate(current_point);
       step_data.current_k   = step_data.time_step * current_vector;
-      step_data.sum_k       = step_data.sum_k + result_factors_[stage] * step_data.current_k;
+      step_data.sum_k       = step_data.sum_k + result_factor * step_data.current_k;
       step_data.next_stage  = stage + 1;
     }
     step_data.end_point = step_data.start_point + 1.0f / 6.0f * step_data.sum_k;
   }
 
 private:
-  interpolator interpolator_  ;
-  float3       stage_factors_ ;
-  float3       result_factors_;
+  interpolator_type interpolator_  ;
+  float4            stage_factors_ ;
+  float4            result_factors_;
 };
 }
 

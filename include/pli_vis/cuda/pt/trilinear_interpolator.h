@@ -7,7 +7,7 @@
 #include <vector_types.h>
 
 #include "../utility/vector_ops.h"
-#include "cartesian_grid.h"
+#include "cartesian_locator.h"
 
 namespace cupt 
 {
@@ -15,21 +15,26 @@ template<class type = float3>
 class trilinear_interpolator 
 {
 public:
-  __host__ __device__ explicit trilinear_interpolator(const cartesian_grid<type>* grid) : grid_(grid) { }
-  __host__ __device__ bool     is_valid              (const float3& point) const
+  __host__ __device__ explicit trilinear_interpolator(const uint3& dimensions, const float3& spacing, const type* data) 
+  : data_   {data}
+  , locator_{dimensions, spacing}
   {
-    return grid_->is_within(point);
+    
   }
-  __host__ __device__ float3   interpolate           (const float3& point) const 
+  __host__ __device__ bool     is_valid              (const type& point) const
+  {
+    return locator_.is_within(point);
+  }
+  __host__ __device__ type     interpolate           (const type& point) const
   {
     std::size_t cell_point_ids[8];
-    grid_->cell_point_ids(grid_->grid_coords(point), cell_point_ids);
+    locator_.cell_point_ids(locator_.grid_coords(point), cell_point_ids);
 
-    float3 vectors[8];
+    type vectors[8];
     for (auto i = 0; i < 8; ++i)
-      vectors[i] = grid_[cell_point_ids[i]];
+      vectors[i] = data_[cell_point_ids[i]];
 
-    const float3 weights = grid_->parametric_coords(point);
+    const type weights = locator_.parametric_coords(point);
 
     fold_along_axis<4>(vectors, weights.x);
     fold_along_axis<2>(vectors, weights.y);
@@ -39,14 +44,15 @@ public:
   }
 
 private:
-  template <std::size_t dims>
-  __host__ __device__ void     fold_along_axis       (float3* values, const float weight) const 
+  template <std::size_t dimensions>
+  __host__ __device__ void     fold_along_axis       (type* values, const float weight) const 
   {
-    for (auto i = 0; i < dims; ++i)
+    for (auto i = 0; i < dimensions; ++i)
       values[i] = lerp(values[2 * i], values[2 * i + 1], weight);
   }
 
-  const cartesian_grid<type>* grid_;
+  const type*             data_   ;
+  cartesian_locator<type> locator_;
 };
 }
 

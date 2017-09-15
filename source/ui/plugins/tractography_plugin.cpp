@@ -6,8 +6,7 @@
 #include <boost/format.hpp>
 #include <tangent-base/default_tracers.hpp>
 
-#include <pli_vis/cuda/pt/cartesian_streamline_tracer.h>
-#include <pli_vis/cuda/utility/convert.h>
+#include <pli_vis/cuda/pt/tracer.h>
 #include <pli_vis/cuda/utility/vector_ops.h>
 #include <pli_vis/ui/plugins/data_plugin.hpp>
 #include <pli_vis/ui/utility/line_edit.hpp>
@@ -254,19 +253,11 @@ void tractography_plugin::trace()
       }
       else
       {
-        std::vector<float3> formatted_vectors(shape[0] * shape[1] * shape[2]);
+        std::vector<float3> data(shape[0] * shape[1] * shape[2]);
         for (auto x = 0; x < shape[0]; x++)
           for (auto y = 0; y < shape[1]; y++)
             for (auto z = 0; z < shape[2]; z++)
-              formatted_vectors[x + shape[0] * (y + shape[1] * z)] = vectors[x][y][z];
-
-        cupt::cartesian_grid<float3> grid; 
-        // TODO: Allocate shape[0] * shape[1] * shape[2]. Copy formatted_vectors to gpu.
-
-        cupt::cartesian_streamline_tracer tracer(
-          &grid, 
-          float(slider_integration_step->value()) / slider_integration_step->maximum(), 
-          slider_iterations->value());
+              data[x + shape[0] * (y + shape[1] * z)] = vectors[x][y][z];
 
         std::vector<float3> seeds;
         auto offset = seed_offset();
@@ -276,11 +267,26 @@ void tractography_plugin::trace()
           for (auto y = offset[1]; y < offset[1] + size[1]; y += stride[1])
             for (auto z = offset[2]; z < offset[2] + size[2]; z += stride[2])
               seeds.push_back(float3{float(x), float(y), float(z)});
-        // TODO: Copy seeds to gpu. Allocate output buffer.
-
-        tracer.trace(seeds.size(), seeds.data(), nullptr);
         
-        // TODO: Copy back to cpu and fill points and directions vectors.
+        auto traces = cupt::trace(
+          slider_iterations->value(),
+          float(slider_integration_step->value()) / slider_integration_step->maximum(),
+          uint3  {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
+          float3 {1.0f, 1.0f, 1.0f},
+          data ,
+          seeds);
+
+        for (auto i = 0; i < traces.size(); ++i)
+          for (auto j = 0; j < slider_iterations->value() - 1; ++j)
+          {
+            float3 start = traces[i][j  ];
+            float3 end   = traces[i][j+1];
+            auto   direction = normalize(fabs(end - start));
+            points.push_back(start);
+            points.push_back(end  );
+            for (auto k = 0; k < 2; ++k)
+              directions.push_back(direction);
+          }
       }
 
       std::random_device                    random_device;

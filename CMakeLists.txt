@@ -27,8 +27,7 @@ set(PROJECT_SOURCES
   include/pli_vis/aspects/renderable.hpp
   include/pli_vis/cuda/mcmc/markov_chain.h
   include/pli_vis/cuda/mcmc/monte_carlo.h
-  include/pli_vis/cuda/pt/cartesian_grid.h
-  include/pli_vis/cuda/pt/cartesian_streamline_tracer.h
+  include/pli_vis/cuda/pt/cartesian_locator.h
   include/pli_vis/cuda/pt/runge_kutta_4_integrator.h
   include/pli_vis/cuda/pt/tracer.h
   include/pli_vis/cuda/pt/trilinear_interpolator.h
@@ -235,6 +234,7 @@ set(PROJECT_SOURCES
   shaders/volume_renderer.frag.glsl
   shaders/volume_renderer.vert.glsl
   
+  source/cuda/pt/tracer.cu
   source/cuda/odf_field.cu
   source/third_party/glew/glew.c
   source/third_party/qwt/qwt_abstract_legend.cpp
