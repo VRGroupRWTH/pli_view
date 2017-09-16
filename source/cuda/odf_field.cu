@@ -165,6 +165,7 @@ void calculate_odfs(
   const unsigned     maximum_degree    , 
   const float3*      unit_vectors      , 
         float*       coefficients      , 
+        bool         even_only         ,
         std::function<void(const std::string&)> status_callback)
 {
   auto start_time = std::chrono::system_clock::now();
@@ -204,7 +205,8 @@ void calculate_odfs(
     histogram_bin_count  , 
     coefficient_count    ,
     histogram_vectors_ptr, 
-    basis_matrix_ptr     );
+    basis_matrix_ptr     ,
+    even_only            );
   cudaDeviceSynchronize();
 
   status_callback("Calculating SVD work buffer size.");

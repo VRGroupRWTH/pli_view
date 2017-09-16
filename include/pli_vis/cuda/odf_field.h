@@ -18,6 +18,7 @@ void calculate_odfs(
   const unsigned     maximum_degree    ,
   const float3*      vectors           ,
         float*       coefficients      ,
+        bool         even_only         ,
         std::function<void(const std::string&)> status_callback = [](const std::string&){});
 
 void sample_odfs(

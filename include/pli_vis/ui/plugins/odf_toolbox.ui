@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>294</width>
-    <height>395</height>
+    <width>295</width>
+    <height>428</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -35,6 +35,26 @@
     </widget>
    </item>
    <item row="1" column="0">
+    <widget class="QLabel" name="label_even_only">
+     <property name="text">
+      <string>Even Only</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QCheckBox" name="checkbox_even_only">
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
     <widget class="QLabel" name="label_vector_block_x">
      <property name="enabled">
       <bool>true</bool>
@@ -44,7 +64,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1" colspan="2">
+   <item row="2" column="1" colspan="2">
     <widget class="QSlider" name="slider_vector_block_x">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -78,7 +98,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="3">
+   <item row="2" column="3">
     <widget class="QLineEdit" name="line_edit_vector_block_x">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -97,7 +117,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QLabel" name="label_vector_block_y">
      <property name="enabled">
       <bool>true</bool>
@@ -107,7 +127,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="1" colspan="2">
+   <item row="3" column="1" colspan="2">
     <widget class="QSlider" name="slider_vector_block_y">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -135,7 +155,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="3">
+   <item row="3" column="3">
     <widget class="QLineEdit" name="line_edit_vector_block_y">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -154,7 +174,7 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
+   <item row="4" column="0">
     <widget class="QLabel" name="label_vector_block_z">
      <property name="enabled">
       <bool>true</bool>
@@ -164,7 +184,7 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="1" colspan="2">
+   <item row="4" column="1" colspan="2">
     <widget class="QSlider" name="slider_vector_block_z">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -192,7 +212,7 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="3">
+   <item row="4" column="3">
     <widget class="QLineEdit" name="line_edit_vector_block_z">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -211,7 +231,7 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
+   <item row="5" column="0">
     <widget class="QLabel" name="label_histogram_theta">
      <property name="enabled">
       <bool>true</bool>
@@ -221,7 +241,7 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="1" colspan="2">
+   <item row="5" column="1" colspan="2">
     <widget class="QSlider" name="slider_histogram_theta">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -246,7 +266,7 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="3">
+   <item row="5" column="3">
     <widget class="QLineEdit" name="line_edit_histogram_theta">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -265,7 +285,7 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
+   <item row="6" column="0">
     <widget class="QLabel" name="label_histogram_phi">
      <property name="enabled">
       <bool>true</bool>
@@ -275,7 +295,7 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="1" colspan="2">
+   <item row="6" column="1" colspan="2">
     <widget class="QSlider" name="slider_histogram_phi">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -300,7 +320,7 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="3">
+   <item row="6" column="3">
     <widget class="QLineEdit" name="line_edit_histogram_phi">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -319,7 +339,7 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="0">
+   <item row="7" column="0">
     <widget class="QLabel" name="label_maximum_sh_degree">
      <property name="enabled">
       <bool>true</bool>
@@ -329,7 +349,7 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="1" colspan="2">
+   <item row="7" column="1" colspan="2">
     <widget class="QSlider" name="slider_maximum_sh_degree">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -354,7 +374,7 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="3">
+   <item row="7" column="3">
     <widget class="QLineEdit" name="line_edit_maximum_sh_degree">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -373,7 +393,7 @@
      </property>
     </widget>
    </item>
-   <item row="7" column="0">
+   <item row="8" column="0">
     <widget class="QLabel" name="label_sampling_theta">
      <property name="enabled">
       <bool>true</bool>
@@ -383,7 +403,7 @@
      </property>
     </widget>
    </item>
-   <item row="7" column="1" colspan="2">
+   <item row="8" column="1" colspan="2">
     <widget class="QSlider" name="slider_sampling_theta">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -408,7 +428,7 @@
      </property>
     </widget>
    </item>
-   <item row="7" column="3">
+   <item row="8" column="3">
     <widget class="QLineEdit" name="line_edit_sampling_theta">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -427,7 +447,7 @@
      </property>
     </widget>
    </item>
-   <item row="8" column="0">
+   <item row="9" column="0">
     <widget class="QLabel" name="label_sampling_phi">
      <property name="enabled">
       <bool>true</bool>
@@ -437,7 +457,7 @@
      </property>
     </widget>
    </item>
-   <item row="8" column="1" colspan="2">
+   <item row="9" column="1" colspan="2">
     <widget class="QSlider" name="slider_sampling_phi">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -462,7 +482,7 @@
      </property>
     </widget>
    </item>
-   <item row="8" column="3">
+   <item row="9" column="3">
     <widget class="QLineEdit" name="line_edit_sampling_phi">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -481,14 +501,14 @@
      </property>
     </widget>
    </item>
-   <item row="9" column="0">
+   <item row="10" column="0">
     <widget class="QLabel" name="label_hierarchical">
      <property name="text">
       <string>Hierarchical</string>
      </property>
     </widget>
    </item>
-   <item row="9" column="1">
+   <item row="10" column="1">
     <widget class="QCheckBox" name="checkbox_hierarchical">
      <property name="enabled">
       <bool>true</bool>
@@ -507,7 +527,7 @@
      </property>
     </widget>
    </item>
-   <item row="10" column="0">
+   <item row="11" column="0">
     <widget class="QLabel" name="label_layer_checkboxes">
      <property name="enabled">
       <bool>false</bool>
@@ -517,110 +537,7 @@
      </property>
     </widget>
    </item>
-   <item row="11" column="0">
-    <widget class="QLabel" name="label_clustering_enabled">
-     <property name="text">
-      <string>Clustering</string>
-     </property>
-    </widget>
-   </item>
-   <item row="11" column="1">
-    <widget class="QCheckBox" name="checkbox_clustering_enabled">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="toolTip">
-      <string>See [HDAG2017].</string>
-     </property>
-     <property name="layoutDirection">
-      <enum>Qt::LeftToRight</enum>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="12" column="0">
-    <widget class="QLabel" name="label_threshold">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="text">
-      <string>Threshold</string>
-     </property>
-    </widget>
-   </item>
-   <item row="12" column="1" colspan="2">
-    <widget class="QSlider" name="slider_threshold">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>4</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>See [HDAG2017].</string>
-     </property>
-     <property name="maximum">
-      <number>1000</number>
-     </property>
-     <property name="value">
-      <number>500</number>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="12" column="3">
-    <widget class="QLineEdit" name="line_edit_threshold">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-     </property>
-     <property name="placeholderText">
-      <string>0</string>
-     </property>
-    </widget>
-   </item>
-   <item row="13" column="0" colspan="2">
-    <widget class="QPushButton" name="button_calculate">
-     <property name="text">
-      <string>Calculate</string>
-     </property>
-    </widget>
-   </item>
-   <item row="13" column="2" colspan="2">
-    <widget class="QPushButton" name="button_extract_peaks">
-     <property name="text">
-      <string>Extract Peaks</string>
-     </property>
-    </widget>
-   </item>
-   <item row="10" column="1" colspan="3">
+   <item row="11" column="1" colspan="3">
     <widget class="QWidget" name="layout_layer_checkboxes" native="true">
      <property name="enabled">
       <bool>false</bool>
@@ -747,7 +664,110 @@
      </layout>
     </widget>
    </item>
-   <item row="14" column="0" colspan="4">
+   <item row="12" column="0">
+    <widget class="QLabel" name="label_clustering_enabled">
+     <property name="text">
+      <string>Clustering</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="1">
+    <widget class="QCheckBox" name="checkbox_clustering_enabled">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="toolTip">
+      <string>See [HDAG2017].</string>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="0">
+    <widget class="QLabel" name="label_threshold">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Threshold</string>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="1" colspan="2">
+    <widget class="QSlider" name="slider_threshold">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>4</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>See [HDAG2017].</string>
+     </property>
+     <property name="maximum">
+      <number>1000</number>
+     </property>
+     <property name="value">
+      <number>500</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="3">
+    <widget class="QLineEdit" name="line_edit_threshold">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <property name="placeholderText">
+      <string>0</string>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="0" colspan="2">
+    <widget class="QPushButton" name="button_calculate">
+     <property name="text">
+      <string>Calculate</string>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="2" colspan="2">
+    <widget class="QPushButton" name="button_extract_peaks">
+     <property name="text">
+      <string>Extract Peaks</string>
+     </property>
+    </widget>
+   </item>
+   <item row="15" column="0">
     <spacer name="spacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>

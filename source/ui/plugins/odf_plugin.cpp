@@ -43,7 +43,6 @@ odf_plugin::odf_plugin(QWidget* parent) : plugin(parent)
     logger_->info(std::string(state ? "Enabled." : "Disabled."));
     odf_field_->set_active(state);
   });
-
   connect(slider_vector_block_x      , &QxtSpanSlider::valueChanged, [&]
   {
     line_edit_vector_block_x->setText(QString::fromStdString(std::to_string(slider_vector_block_x->value())));
@@ -264,6 +263,7 @@ void odf_plugin::calculate         ()
         max_degree            ,
         vectors      .data()  ,
         coefficients_.data()  ,
+        checkbox_even_only->isChecked(),
         [&] (const std::string& message) { logger_->info(message); });
     }
     catch (std::exception& exception)
