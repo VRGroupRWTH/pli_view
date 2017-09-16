@@ -188,6 +188,7 @@ void tractography_plugin::start()
     owner_->splitter->setSizes(QList<int>{0       , sizes[1]});
     owner_->splitter->setSizes(QList<int>{sizes[0], sizes[1]});
     owner_->update();
+    update();
   });
 }
 void tractography_plugin::trace()

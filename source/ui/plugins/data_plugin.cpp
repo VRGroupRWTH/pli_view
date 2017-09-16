@@ -239,8 +239,8 @@ boost::multi_array<unsigned char, 2> data_plugin::generate_selection_image(std::
   std::array<std::size_t, 3> size   = {1, 1, 1};
   std::array<std::size_t, 3> stride = {1, 1, 1};
   size  [0] = std::min(int(selection_size()[0]), int(x_resolution));
-  stride[0] = selection_size()[0] / size  [0];
-  size  [1] = selection_size()[1] / stride[0];
+  stride[0] = line_edit::get_text<std::size_t>(line_edit_size_x) / size  [0];
+  size  [1] = line_edit::get_text<std::size_t>(line_edit_size_y) / stride[0];
   stride[1] = stride[0];
 
   boost::multi_array<unsigned char, 2> preview_image(boost::extents[size[0]][size[1]], boost::fortran_storage_order());
