@@ -192,8 +192,8 @@ void tractography_plugin::start()
 }
 void tractography_plugin::trace()
 {
-  owner_->viewer ->set_wait_spinner_enabled(true );
-  owner_->toolbox->setEnabled              (false);
+  owner_->set_wait_spinner_enabled(true );
+  owner_->toolbox->setEnabled     (false);
 
   logger_->info(std::string("Tracing..."));
 
@@ -323,8 +323,8 @@ void tractography_plugin::trace()
     logger_->info(std::string("Trace failed."));
   }
 
-  owner_->toolbox->setEnabled              (true );
-  owner_->viewer ->set_wait_spinner_enabled(false);
+  owner_->toolbox->setEnabled     (true );
+  owner_->set_wait_spinner_enabled(false);
 }
   
 std::array<std::size_t, 3> tractography_plugin::seed_offset() const

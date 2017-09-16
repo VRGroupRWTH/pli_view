@@ -10,7 +10,6 @@
 
 #include <pli_vis/aspects/loggable.hpp>
 #include <pli_vis/aspects/renderable.hpp>
-#include <pli_vis/ui/widgets/wait_spinner.hpp>
 #include <pli_vis/visualization/interactors/interactor.hpp>
 #include <pli_vis/visualization/primitives/camera.hpp>
 
@@ -44,14 +43,11 @@ public:
   void mousePressEvent(QMouseEvent* event) override;
   void mouseMoveEvent (QMouseEvent* event) override;
 
-  void set_wait_spinner_enabled(bool enabled) const;
-
 private:
   bool                                     initialized_ = false;
   std::vector<std::unique_ptr<renderable>> renderables_ ;
   pli::camera                              camera_      ;
   std::unique_ptr<pli::interactor>         interactor_  ;
-  pli::wait_spinner*                       wait_spinner_;
 };
 
 template <typename type, typename ... args>

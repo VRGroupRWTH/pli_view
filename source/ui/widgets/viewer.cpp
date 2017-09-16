@@ -7,7 +7,7 @@
 
 namespace pli
 {
-viewer::viewer(QWidget* parent) : QOpenGLWidget(parent), interactor_(std::make_unique<simple_interactor>(&camera_)), wait_spinner_(new wait_spinner(this, true, false))
+viewer::viewer(QWidget* parent) : QOpenGLWidget(parent), interactor_(std::make_unique<simple_interactor>(&camera_))
 {
   reset_camera_transform();
 
@@ -84,10 +84,5 @@ void viewer::mousePressEvent(QMouseEvent* event)
 void viewer::mouseMoveEvent (QMouseEvent* event)
 {
   interactor_->mouse_move_handler(event);
-}
-
-void viewer::set_wait_spinner_enabled(bool enabled) const
-{
-  enabled ? wait_spinner_->start() : wait_spinner_->stop();
 }
 }

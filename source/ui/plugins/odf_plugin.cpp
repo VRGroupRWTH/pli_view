@@ -214,8 +214,8 @@ void odf_plugin::destroy()
 
 void odf_plugin::calculate         ()
 {
-  owner_->viewer ->set_wait_spinner_enabled(true );
-  owner_->toolbox->setEnabled              (false);
+  owner_ ->set_wait_spinner_enabled(true );
+  owner_->toolbox->setEnabled      (false);
 
   logger_->info(std::string("Updating viewer..."));
   
@@ -288,13 +288,13 @@ void odf_plugin::calculate         ()
 
   logger_->info(std::string("Update successful."));
   
-  owner_->toolbox->setEnabled              (true );
-  owner_->viewer ->set_wait_spinner_enabled(false);
+  owner_->toolbox->setEnabled     (true );
+  owner_->set_wait_spinner_enabled(false);
 }
 void odf_plugin::extract_peaks     ()
 {
-  owner_->viewer ->set_wait_spinner_enabled(true );
-  owner_->toolbox->setEnabled              (false);
+  owner_->set_wait_spinner_enabled(true );
+  owner_->toolbox->setEnabled     (false);
 
   logger_->info(std::string("Extracting peaks..."));
     
@@ -336,8 +336,8 @@ void odf_plugin::extract_peaks     ()
 
   logger_->info(std::string("Extraction successful."));
   
-  owner_->toolbox->setEnabled              (true );
-  owner_->viewer ->set_wait_spinner_enabled(false);
+  owner_->toolbox->setEnabled     (true );
+  owner_->set_wait_spinner_enabled(false);
 }
 void odf_plugin::set_visible_layers() const
 {

@@ -12,6 +12,7 @@ application:: application()
 {
   setupUi      (this);
   showMaximized();
+  wait_spinner_ = new wait_spinner(toolbox, true, false);
 
   set_sink             (std::make_shared<text_browser_sink>(console));
   bind_actions         ();
@@ -34,6 +35,11 @@ application::~application()
 {
   for (auto plugin : plugins_)
     plugin->destroy();
+}
+
+void application::set_wait_spinner_enabled(bool enabled) const
+{
+  enabled ? wait_spinner_->start() : wait_spinner_->stop();
 }
 
 void application::bind_actions()

@@ -145,7 +145,7 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
   });
   connect(button_update     , &QAbstractButton::clicked         , [&]
   {
-    owner_->viewer ->set_wait_spinner_enabled(true);
+    owner_ ->set_wait_spinner_enabled(true);
     owner_->toolbox->setEnabled(false);
 
     future_ = std::async(std::launch::async, [&]
@@ -178,7 +178,7 @@ data_plugin::data_plugin(QWidget* parent) : plugin(parent)
     on_load();
 
     owner_->toolbox->setEnabled(true);
-    owner_->viewer ->set_wait_spinner_enabled(false);
+    owner_->set_wait_spinner_enabled(false);
     owner_->viewer ->update();
   });
 }
