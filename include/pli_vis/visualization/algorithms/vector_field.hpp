@@ -34,9 +34,9 @@ private:
   glm::uvec3                        dimensions_;
   std::size_t                       draw_count_                   = 0;
   unsigned                          vectors_per_point_            = 1;
-  float                             scale_                        = 1.0F;
-  bool                              view_dependent_transparency_  = true;
-  float                             view_dependent_rate_of_decay_ = 1.0F;
+  float                             scale_                        = 1.0F ;
+  bool                              view_dependent_transparency_  = false;
+  float                             view_dependent_rate_of_decay_ = 1.0F ;
 };
 }
 
