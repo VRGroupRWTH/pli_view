@@ -310,7 +310,8 @@ void tractography_plugin::trace()
           {
             auto& start = traces[i][j  ];
             auto& end   = traces[i][j+1];
-            if(end.x != 0 && end.y != 0 && end.z != 0)
+            if(start.x != 0 && start.y != 0 && start.z != 0 &&
+               end.x   != 0 && end.y   != 0 && end.z   != 0)
             {
               auto direction = normalize(fabs(end - start));
               points.push_back(start);

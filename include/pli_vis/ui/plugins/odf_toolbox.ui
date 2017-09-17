@@ -784,6 +784,24 @@
  </widget>
  <tabstops>
   <tabstop>checkbox_enabled</tabstop>
+  <tabstop>checkbox_even_only</tabstop>
+  <tabstop>slider_vector_block_x</tabstop>
+  <tabstop>slider_vector_block_y</tabstop>
+  <tabstop>slider_vector_block_z</tabstop>
+  <tabstop>slider_histogram_theta</tabstop>
+  <tabstop>slider_histogram_phi</tabstop>
+  <tabstop>slider_maximum_sh_degree</tabstop>
+  <tabstop>slider_sampling_theta</tabstop>
+  <tabstop>slider_sampling_phi</tabstop>
+  <tabstop>line_edit_vector_block_x</tabstop>
+  <tabstop>line_edit_vector_block_y</tabstop>
+  <tabstop>line_edit_vector_block_z</tabstop>
+  <tabstop>line_edit_histogram_theta</tabstop>
+  <tabstop>line_edit_histogram_phi</tabstop>
+  <tabstop>line_edit_maximum_sh_degree</tabstop>
+  <tabstop>line_edit_sampling_theta</tabstop>
+  <tabstop>line_edit_sampling_phi</tabstop>
+  <tabstop>checkbox_hierarchical</tabstop>
   <tabstop>checkbox_depth_0</tabstop>
   <tabstop>checkbox_depth_1</tabstop>
   <tabstop>checkbox_depth_2</tabstop>
@@ -794,26 +812,11 @@
   <tabstop>checkbox_depth_7</tabstop>
   <tabstop>checkbox_depth_8</tabstop>
   <tabstop>checkbox_depth_9</tabstop>
-  <tabstop>slider_vector_block_x</tabstop>
-  <tabstop>line_edit_vector_block_x</tabstop>
-  <tabstop>slider_vector_block_y</tabstop>
-  <tabstop>line_edit_vector_block_y</tabstop>
-  <tabstop>slider_vector_block_z</tabstop>
-  <tabstop>line_edit_vector_block_z</tabstop>
-  <tabstop>slider_histogram_theta</tabstop>
-  <tabstop>line_edit_histogram_theta</tabstop>
-  <tabstop>slider_histogram_phi</tabstop>
-  <tabstop>line_edit_histogram_phi</tabstop>
-  <tabstop>slider_maximum_sh_degree</tabstop>
-  <tabstop>line_edit_maximum_sh_degree</tabstop>
-  <tabstop>slider_sampling_theta</tabstop>
-  <tabstop>line_edit_sampling_theta</tabstop>
-  <tabstop>slider_sampling_phi</tabstop>
-  <tabstop>line_edit_sampling_phi</tabstop>
   <tabstop>checkbox_clustering_enabled</tabstop>
   <tabstop>slider_threshold</tabstop>
   <tabstop>line_edit_threshold</tabstop>
   <tabstop>button_calculate</tabstop>
+  <tabstop>button_extract_peaks</tabstop>
  </tabstops>
  <resources/>
  <connections/>

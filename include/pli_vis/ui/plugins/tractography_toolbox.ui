@@ -1284,6 +1284,10 @@
   <tabstop>line_edit_integration_step</tabstop>
   <tabstop>slider_iterations</tabstop>
   <tabstop>line_edit_iterations</tabstop>
+  <tabstop>radio_button_gpu</tabstop>
+  <tabstop>radio_button_cpu</tabstop>
+  <tabstop>radio_button_regular</tabstop>
+  <tabstop>radio_button_lineao</tabstop>
   <tabstop>button_trace_selection</tabstop>
  </tabstops>
  <resources/>

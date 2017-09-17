@@ -13,7 +13,7 @@ uniform  mat4 view          ;
 uniform  mat4 projection    ;
 in       vec3 vertex        ;
 in       vec3 direction     ;
-flat out vec3 vert_direction;
+out      vec3 vert_direction;
 
 void main()
 {

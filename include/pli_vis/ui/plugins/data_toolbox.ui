@@ -1076,6 +1076,23 @@
    <header location="global">pli_vis/ui/widgets/roi_selector.hpp</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>button_open_slice</tabstop>
+  <tabstop>button_open_volume</tabstop>
+  <tabstop>line_edit_offset_x</tabstop>
+  <tabstop>line_edit_offset_y</tabstop>
+  <tabstop>line_edit_offset_z</tabstop>
+  <tabstop>line_edit_size_x</tabstop>
+  <tabstop>line_edit_size_y</tabstop>
+  <tabstop>line_edit_size_z</tabstop>
+  <tabstop>line_edit_stride_x</tabstop>
+  <tabstop>line_edit_stride_y</tabstop>
+  <tabstop>line_edit_stride_z</tabstop>
+  <tabstop>slider_x</tabstop>
+  <tabstop>slider_y</tabstop>
+  <tabstop>slider_z</tabstop>
+  <tabstop>button_update</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
