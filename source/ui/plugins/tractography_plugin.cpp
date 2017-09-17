@@ -12,6 +12,7 @@
 #include <pli_vis/ui/utility/line_edit.hpp>
 #include <pli_vis/ui/utility/text_browser_sink.hpp>
 #include <pli_vis/ui/application.hpp>
+#include <pli_vis/utility/make_even.hpp>
 #include <pli_vis/visualization/algorithms/streamline_renderer.hpp>
 #include <pli_vis/visualization/algorithms/lineao_streamline_renderer.hpp>
 
@@ -32,8 +33,8 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
   });
   connect(image                     , &roi_selector::on_selection_change, [&] (const std::array<float, 2> offset_perc, const std::array<float, 2> size_perc)
   {
-    std::array<int, 2> offset { int(offset_perc[0] * slider_x->maximum()), int(offset_perc[1] * slider_y->maximum()) };
-    std::array<int, 2> size   { int(size_perc  [0] * slider_x->maximum()), int(size_perc  [1] * slider_y->maximum()) };
+    std::array<int, 2> offset { make_even(int(offset_perc[0] * slider_x->maximum())), make_even(int(offset_perc[1] * slider_y->maximum())) };
+    std::array<int, 2> size   { make_even(int(size_perc  [0] * slider_x->maximum())), make_even(int(size_perc  [1] * slider_y->maximum())) };
     line_edit_offset_x->setText      (QString::fromStdString(std::to_string(offset[0])));
     line_edit_size_x  ->setText      (QString::fromStdString(std::to_string(size  [0])));
     line_edit_offset_y->setText      (QString::fromStdString(std::to_string(offset[1])));
@@ -45,12 +46,12 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
   });
   connect(slider_x                  , &QxtSpanSlider::lowerValueChanged , [&] (int value)
   {
-    line_edit_offset_x->setText(QString::fromStdString(std::to_string(value)));
-    line_edit_size_x  ->setText(QString::fromStdString(std::to_string(slider_x->upperValue() - value)));
+    line_edit_offset_x->setText(QString::fromStdString(std::to_string(make_even(value))));
+    line_edit_size_x  ->setText(QString::fromStdString(std::to_string(make_even(slider_x->upperValue() - value))));
   });
   connect(slider_x                  , &QxtSpanSlider::upperValueChanged , [&] (int value)
   {
-    line_edit_size_x->setText(QString::fromStdString(std::to_string(value - slider_x->lowerValue())));
+    line_edit_size_x->setText(QString::fromStdString(std::to_string(make_even(value - slider_x->lowerValue()))));
   });
   connect(slider_x                  , &QxtSpanSlider::sliderReleased    , [&] 
   {
@@ -59,12 +60,12 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
   });
   connect(slider_y                  , &QxtSpanSlider::lowerValueChanged , [&] (int value)
   {
-    line_edit_offset_y->setText(QString::fromStdString(std::to_string(value)));
-    line_edit_size_y  ->setText(QString::fromStdString(std::to_string(slider_y->upperValue() - value)));
+    line_edit_offset_y->setText(QString::fromStdString(std::to_string(make_even(value))));
+    line_edit_size_y  ->setText(QString::fromStdString(std::to_string(make_even(slider_y->upperValue() - value))));
   });
   connect(slider_y                  , &QxtSpanSlider::upperValueChanged , [&] (int value)
   {
-    line_edit_size_y->setText(QString::fromStdString(std::to_string(value - slider_y->lowerValue())));
+    line_edit_size_y->setText(QString::fromStdString(std::to_string(make_even(value - slider_y->lowerValue()))));
   });
   connect(slider_y                  , &QxtSpanSlider::sliderReleased    , [&] 
   {
@@ -82,34 +83,34 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
   });
   connect(line_edit_offset_x        , &QLineEdit::editingFinished       , [&] 
   {
-    auto value = std::max(std::min(line_edit::get_text<int>(line_edit_offset_x), int(slider_x->maximum())), int(slider_x->minimum()));
+    auto value = std::max(std::min(make_even(line_edit::get_text<int>(line_edit_offset_x)), int(slider_x->maximum())), int(slider_x->minimum()));
     if (slider_x->upperValue() < value)
       slider_x->setUpperValue(value);
     slider_x        ->setLowerValue                  (value);
     image           ->set_selection_offset_percentage({static_cast<float>(value) / slider_x->maximum(), image->selection_offset_percentage()[1]});
     image           ->set_selection_size_percentage  ({static_cast<float>(slider_x->upperValue() - slider_x->lowerValue()) / slider_x->maximum(), image->selection_size_percentage()[1]});
-    line_edit_size_x->setText                        (QString::fromStdString(std::to_string(slider_x->upperValue() - value)));
+    line_edit_size_x->setText                        (QString::fromStdString(std::to_string(make_even(slider_x->upperValue() - value))));
   });
   connect(line_edit_size_x          , &QLineEdit::editingFinished       , [&] 
   {
-    auto value = std::max(std::min(line_edit::get_text<int>(line_edit_size_x), int(slider_x->maximum())), int(slider_x->minimum()));
-    slider_x->setUpperValue                (slider_x->lowerValue() + value);
+    auto value = std::max(std::min(make_even(line_edit::get_text<int>(line_edit_size_x)), int(slider_x->maximum())), int(slider_x->minimum()));
+    slider_x->setUpperValue                (make_even(slider_x->lowerValue() + value));
     image   ->set_selection_size_percentage({static_cast<float>(value) / slider_x->maximum(), image->selection_size_percentage()[1]});
   });
   connect(line_edit_offset_y        , &QLineEdit::editingFinished       , [&] 
   {
-    auto value = std::max(std::min(line_edit::get_text<int>(line_edit_offset_y), int(slider_y->maximum())), int(slider_y->minimum()));
+    auto value = std::max(std::min(make_even(line_edit::get_text<int>(line_edit_offset_y)), int(slider_y->maximum())), int(slider_y->minimum()));
     if (slider_y->upperValue() < value)
       slider_y->setUpperValue(value);
     slider_y        ->setLowerValue                  (value);
     image           ->set_selection_offset_percentage({image->selection_offset_percentage()[0], static_cast<float>(value) / slider_y->maximum()});
     image           ->set_selection_size_percentage  ({image->selection_size_percentage  ()[0], static_cast<float>(slider_y->upperValue() - slider_y->lowerValue()) / slider_y->maximum()});
-    line_edit_size_y->setText                        (QString::fromStdString(std::to_string(slider_y->upperValue() - value)));
+    line_edit_size_y->setText                        (QString::fromStdString(std::to_string(make_even(slider_y->upperValue() - value))));
   });
   connect(line_edit_size_y          , &QLineEdit::editingFinished       , [&] 
   {
-    auto value = std::max(std::min(line_edit::get_text<int>(line_edit_size_y), int(slider_y->maximum())), int(slider_y->minimum()));
-    slider_y->setUpperValue                (slider_y->lowerValue() + value);
+    auto value = std::max(std::min(make_even(line_edit::get_text<int>(line_edit_size_y)), int(slider_y->maximum())), int(slider_y->minimum()));
+    slider_y->setUpperValue                (make_even(slider_y->lowerValue() + value));
     image   ->set_selection_size_percentage({image->selection_size_percentage()[0], static_cast<float>(value) / slider_y->maximum()});
   });
   connect(line_edit_offset_z        , &QLineEdit::editingFinished       , [&] 
@@ -141,7 +142,7 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
   {
     slider_iterations->setValue(line_edit::get_text<int>(line_edit_iterations));
   });
-  connect(button_trace_selection    , &QPushButton::clicked             , [&] 
+  connect(button_trace_selection, &QPushButton::clicked, [&]
   {
     trace();
   });
@@ -176,6 +177,15 @@ void tractography_plugin::start()
   else
     streamline_renderer_ = owner_->viewer->add_renderable<streamline_renderer>();
 
+  connect(owner_->toolbox, &QToolBox::currentChanged, [&](int tab)
+  {
+    // Hack for enforcing a UI update.
+    auto sizes = owner_->splitter->sizes();
+    owner_->splitter->setSizes(QList<int>{0, sizes[1]});
+    owner_->splitter->setSizes(QList<int>{sizes[0], sizes[1]});
+    owner_->update();
+    update();
+  });
   connect(owner_->get_plugin<pli::data_plugin>(), &data_plugin::on_load, [&]
   {
     auto data_plugin = owner_->get_plugin<pli::data_plugin>();
