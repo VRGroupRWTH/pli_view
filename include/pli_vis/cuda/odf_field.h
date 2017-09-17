@@ -29,7 +29,7 @@ void sample_odfs(
   const uint3&       vector_dimensions ,
   const float        scale             ,
         float3*      points            ,
-        float4*      colors            ,
+        float3*      directions        ,
         unsigned*    indices           ,
         bool         hierarchical      = false,
         bool         clustering        = false,

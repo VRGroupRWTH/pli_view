@@ -34,12 +34,12 @@ void vector_field::render    (const camera* camera)
   shader_program_->bind  ();
   vertex_array_  ->bind  ();
   
-  shader_program_->set_uniform("model"            , absolute_matrix                ());
-  shader_program_->set_uniform("view"             , camera->inverse_absolute_matrix());
-  shader_program_->set_uniform("projection"       , camera->projection_matrix      ());
   shader_program_->set_uniform("color_mode"       , color_mode_);
   shader_program_->set_uniform("color_k"          , color_k_);
   shader_program_->set_uniform("color_inverted"   , color_inverted_);
+  shader_program_->set_uniform("model"            , absolute_matrix                ());
+  shader_program_->set_uniform("view"             , camera->inverse_absolute_matrix());
+  shader_program_->set_uniform("projection"       , camera->projection_matrix      ());
   shader_program_->set_uniform("dimensions"       , dimensions_);
   shader_program_->set_uniform("vectors_per_point", vectors_per_point_);
   shader_program_->set_uniform("scale"            , scale_);
@@ -81,13 +81,6 @@ void vector_field::set_view_dependent_transparency (bool     enabled          )
 void vector_field::set_view_dependent_rate_of_decay(float    value            )
 {
   view_dependent_rate_of_decay_ = value  ;
-}
-
-void vector_field::set_color_mapping(int mode, float k, bool inverted)
-{
-  color_mode_     = mode;
-  color_k_        = k;
-  color_inverted_ = inverted;
 }
 }
 

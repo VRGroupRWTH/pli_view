@@ -26,7 +26,6 @@ public:
   void set_scale                       (float scale  );
   void set_view_dependent_transparency (bool  enabled);
   void set_view_dependent_rate_of_decay(float value  );
-  void set_color_mapping               (int   mode   , float k, bool inverted);
 
 private:
   std::unique_ptr<gl::program>      shader_program_  ;
@@ -38,9 +37,6 @@ private:
   float                             scale_                        = 1.0F ;
   bool                              view_dependent_transparency_  = false;
   float                             view_dependent_rate_of_decay_ = 1.0F ;
-  int                               color_mode_                   = 0;
-  float                             color_k_                      = 0.5f;
-  bool                              color_inverted_               = false;
 };
 }
 

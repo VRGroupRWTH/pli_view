@@ -353,7 +353,7 @@ void sample_odfs(
   const uint3&       vector_dimensions,
   const float        scale            ,
         float3*      points           ,
-        float4*      colors           ,
+        float3*      directions       ,
         unsigned*    indices          ,
         bool         hierarchical     ,
         bool         clustering       ,
@@ -447,16 +447,8 @@ void sample_odfs(
     });
   cudaDeviceSynchronize();
 
-  status_callback("Assigning colors.");
-  thrust::transform(
-    thrust::device,
-    points,
-    points + point_count,
-    colors,
-    [] __host__ __device__(const float3& point)
-    {
-      return make_float4(abs(point.x), abs(point.z), abs(point.y), 1.0);
-    });
+  status_callback("Assigning directions.");
+  thrust::copy(thrust::device, points, points + point_count, directions);
   cudaDeviceSynchronize();
 
   status_callback("Translating and scaling the points.");

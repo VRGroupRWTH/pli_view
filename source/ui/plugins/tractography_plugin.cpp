@@ -214,6 +214,10 @@ void tractography_plugin::start()
     owner_->update();
     update();
   });
+  connect(owner_->get_plugin<color_plugin>(), &color_plugin::on_change, [&](int mode, float k, bool inverted)
+  {
+    streamline_renderer_->set_color_mapping(mode, k, inverted);
+  });
 }
 void tractography_plugin::trace()
 {

@@ -34,9 +34,12 @@ void streamline_renderer::render    (const camera* camera)
 {
   vertex_array_->bind  ();
   program_     ->bind  ();
-  program_     ->set_uniform("model"     , absolute_matrix                ());
-  program_     ->set_uniform("view"      , camera->inverse_absolute_matrix());
-  program_     ->set_uniform("projection", camera->projection_matrix      ());
+  program_     ->set_uniform("color_mode"    , color_mode_);
+  program_     ->set_uniform("color_k"       , color_k_);
+  program_     ->set_uniform("color_inverted", color_inverted_);
+  program_     ->set_uniform("model"         , absolute_matrix                ());
+  program_     ->set_uniform("view"          , camera->inverse_absolute_matrix());
+  program_     ->set_uniform("projection"    , camera->projection_matrix      ());
 
   glEnable    (GL_LINE_SMOOTH);
   glHint      (GL_LINE_SMOOTH_HINT, GL_NICEST);

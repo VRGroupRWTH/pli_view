@@ -1,17 +1,17 @@
-#ifndef STREAMLINE_RENDERER_FRAG_GLSL_
-#define STREAMLINE_RENDERER_FRAG_GLSL_
+#ifndef ODF_FIELD_RENDERER_FRAG_GLSL_
+#define ODF_FIELD_RENDERER_FRAG_GLSL_
 
 #include <string>
 
 namespace shaders
 {
-static std::string streamline_renderer_frag = R"(\
+static std::string odf_field_renderer_frag = R"(\
 #version 400
 
 uniform int   color_mode     = 0    ;
 uniform float color_k        = 0.5  ;
 uniform bool  color_inverted = false;
-flat in vec3  vert_direction ;
+in      vec3  vert_direction ;
 out     vec4  frag_color     ;
 
 vec3 hue_to_rgb(float hue)

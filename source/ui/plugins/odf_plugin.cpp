@@ -198,6 +198,11 @@ void odf_plugin::start  ()
   odf_field_ = owner_->viewer->add_renderable<odf_field>();
   set_visible_layers();
 
+  connect(owner_->get_plugin<color_plugin>(), &color_plugin::on_change, [&] (int mode, float k, bool inverted)
+  {
+    odf_field_->set_color_mapping(mode, k, inverted);
+  });
+
   logger_->info(std::string("Resetting GPU."));
   cudaDeviceReset();
 
