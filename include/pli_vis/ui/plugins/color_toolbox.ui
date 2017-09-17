@@ -156,6 +156,16 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>radio_button_hsl_1</tabstop>
+  <tabstop>radio_button_hsl_2</tabstop>
+  <tabstop>radio_button_hsv_1</tabstop>
+  <tabstop>radio_button_hsv_2</tabstop>
+  <tabstop>radio_button_rgb</tabstop>
+  <tabstop>slider_k</tabstop>
+  <tabstop>line_edit_k</tabstop>
+  <tabstop>checkbox_invert_k</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
