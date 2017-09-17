@@ -192,6 +192,7 @@ set(PROJECT_SOURCES
   include/pli_vis/ui/application.hpp
   include/pli_vis/ui/plugin.hpp
   include/pli_vis/ui/plugin_base.hpp
+  include/pli_vis/visualization/algorithms/lineao_streamline_renderer.hpp
   include/pli_vis/visualization/algorithms/odf_field.hpp
   include/pli_vis/visualization/algorithms/scalar_field.hpp
   include/pli_vis/visualization/algorithms/streamline_renderer.hpp
@@ -224,6 +225,8 @@ set(PROJECT_SOURCES
   shaders/simple_color.vert.glsl
   shaders/simple_texture.frag.glsl
   shaders/simple_texture.vert.glsl
+  shaders/streamline_renderer.frag.glsl
+  shaders/streamline_renderer.vert.glsl
   shaders/view_dependent_vector_field.frag.glsl
   shaders/view_dependent_vector_field.geom.glsl
   shaders/view_dependent_vector_field.vert.glsl
@@ -348,6 +351,7 @@ set(PROJECT_SOURCES
   source/ui/widgets/viewer.cpp
   source/ui/widgets/wait_spinner.cpp
   source/ui/application.cpp
+  source/visualization/algorithms/lineao_streamline_renderer.cpp
   source/visualization/algorithms/odf_field.cpp
   source/visualization/algorithms/scalar_field.cpp
   source/visualization/algorithms/streamline_renderer.cpp

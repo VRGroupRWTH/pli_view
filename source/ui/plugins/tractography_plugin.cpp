@@ -12,6 +12,8 @@
 #include <pli_vis/ui/utility/line_edit.hpp>
 #include <pli_vis/ui/utility/text_browser_sink.hpp>
 #include <pli_vis/ui/application.hpp>
+#include <pli_vis/visualization/algorithms/streamline_renderer.hpp>
+#include <pli_vis/visualization/algorithms/lineao_streamline_renderer.hpp>
 
 namespace pli
 {
@@ -23,12 +25,12 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
   line_edit_integration_step->setText(QString::fromStdString((boost::format("%.4f") % (float(slider_integration_step->value()) / slider_integration_step->maximum())).str()));
   line_edit_iterations      ->setText(QString::fromStdString(std::to_string(slider_iterations   ->value())));
 
-  connect(checkbox_enabled          , &QCheckBox::stateChanged    , [&] (bool state)
+  connect(checkbox_enabled          , &QCheckBox::stateChanged          , [&] (bool state)
   {
     logger_->info(std::string(state ? "Enabled." : "Disabled."));
     streamline_renderer_->set_active(state);
   });
-  connect(image                     , &roi_selector::on_selection_change, [&](const std::array<float, 2> offset_perc, const std::array<float, 2> size_perc)
+  connect(image                     , &roi_selector::on_selection_change, [&] (const std::array<float, 2> offset_perc, const std::array<float, 2> size_perc)
   {
     std::array<int, 2> offset { int(offset_perc[0] * slider_x->maximum()), int(offset_perc[1] * slider_y->maximum()) };
     std::array<int, 2> size   { int(size_perc  [0] * slider_x->maximum()), int(size_perc  [1] * slider_y->maximum()) };
@@ -41,44 +43,44 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
     slider_y          ->setLowerValue(offset[1]);
     slider_y          ->setUpperValue(offset[1] + size[1]);
   });
-  connect(slider_x                  , &QxtSpanSlider::lowerValueChanged , [&](int value)
+  connect(slider_x                  , &QxtSpanSlider::lowerValueChanged , [&] (int value)
   {
     line_edit_offset_x->setText(QString::fromStdString(std::to_string(value)));
     line_edit_size_x  ->setText(QString::fromStdString(std::to_string(slider_x->upperValue() - value)));
   });
-  connect(slider_x                  , &QxtSpanSlider::upperValueChanged , [&](int value)
+  connect(slider_x                  , &QxtSpanSlider::upperValueChanged , [&] (int value)
   {
     line_edit_size_x->setText(QString::fromStdString(std::to_string(value - slider_x->lowerValue())));
   });
-  connect(slider_x                  , &QxtSpanSlider::sliderReleased    , [&]
+  connect(slider_x                  , &QxtSpanSlider::sliderReleased    , [&] 
   {
     image->set_selection_offset_percentage({static_cast<float>(slider_x->lowerValue())                          / slider_x->maximum(), image->selection_offset_percentage()[1]});
     image->set_selection_size_percentage  ({static_cast<float>(slider_x->upperValue() - slider_x->lowerValue()) / slider_x->maximum(), image->selection_size_percentage  ()[1]});
   });
-  connect(slider_y                  , &QxtSpanSlider::lowerValueChanged , [&](int value)
+  connect(slider_y                  , &QxtSpanSlider::lowerValueChanged , [&] (int value)
   {
     line_edit_offset_y->setText(QString::fromStdString(std::to_string(value)));
     line_edit_size_y  ->setText(QString::fromStdString(std::to_string(slider_y->upperValue() - value)));
   });
-  connect(slider_y                  , &QxtSpanSlider::upperValueChanged , [&](int value)
+  connect(slider_y                  , &QxtSpanSlider::upperValueChanged , [&] (int value)
   {
     line_edit_size_y->setText(QString::fromStdString(std::to_string(value - slider_y->lowerValue())));
   });
-  connect(slider_y                  , &QxtSpanSlider::sliderReleased    , [&]
+  connect(slider_y                  , &QxtSpanSlider::sliderReleased    , [&] 
   {
     image->set_selection_offset_percentage({image->selection_offset_percentage()[0], static_cast<float>(slider_y->lowerValue())                          / slider_y->maximum()});
     image->set_selection_size_percentage  ({image->selection_size_percentage  ()[0], static_cast<float>(slider_y->upperValue() - slider_y->lowerValue()) / slider_y->maximum()});
   });
-  connect(slider_z                  , &QxtSpanSlider::lowerValueChanged , [&](int value)
+  connect(slider_z                  , &QxtSpanSlider::lowerValueChanged , [&] (int value)
   {
     line_edit_offset_z->setText(QString::fromStdString(std::to_string(value)));
     line_edit_size_z  ->setText(QString::fromStdString(std::to_string(slider_z->upperValue() - value)));
   });
-  connect(slider_z                  , &QxtSpanSlider::upperValueChanged , [&](int value)
+  connect(slider_z                  , &QxtSpanSlider::upperValueChanged , [&] (int value)
   {
     line_edit_size_z->setText(QString::fromStdString(std::to_string(value - slider_z->lowerValue())));
   });
-  connect(line_edit_offset_x        , &QLineEdit::editingFinished       , [&]
+  connect(line_edit_offset_x        , &QLineEdit::editingFinished       , [&] 
   {
     auto value = std::max(std::min(line_edit::get_text<int>(line_edit_offset_x), int(slider_x->maximum())), int(slider_x->minimum()));
     if (slider_x->upperValue() < value)
@@ -88,13 +90,13 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
     image           ->set_selection_size_percentage  ({static_cast<float>(slider_x->upperValue() - slider_x->lowerValue()) / slider_x->maximum(), image->selection_size_percentage()[1]});
     line_edit_size_x->setText                        (QString::fromStdString(std::to_string(slider_x->upperValue() - value)));
   });
-  connect(line_edit_size_x          , &QLineEdit::editingFinished       , [&]
+  connect(line_edit_size_x          , &QLineEdit::editingFinished       , [&] 
   {
     auto value = std::max(std::min(line_edit::get_text<int>(line_edit_size_x), int(slider_x->maximum())), int(slider_x->minimum()));
     slider_x->setUpperValue                (slider_x->lowerValue() + value);
     image   ->set_selection_size_percentage({static_cast<float>(value) / slider_x->maximum(), image->selection_size_percentage()[1]});
   });
-  connect(line_edit_offset_y        , &QLineEdit::editingFinished       , [&]
+  connect(line_edit_offset_y        , &QLineEdit::editingFinished       , [&] 
   {
     auto value = std::max(std::min(line_edit::get_text<int>(line_edit_offset_y), int(slider_y->maximum())), int(slider_y->minimum()));
     if (slider_y->upperValue() < value)
@@ -104,13 +106,13 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
     image           ->set_selection_size_percentage  ({image->selection_size_percentage  ()[0], static_cast<float>(slider_y->upperValue() - slider_y->lowerValue()) / slider_y->maximum()});
     line_edit_size_y->setText                        (QString::fromStdString(std::to_string(slider_y->upperValue() - value)));
   });
-  connect(line_edit_size_y          , &QLineEdit::editingFinished       , [&]
+  connect(line_edit_size_y          , &QLineEdit::editingFinished       , [&] 
   {
     auto value = std::max(std::min(line_edit::get_text<int>(line_edit_size_y), int(slider_y->maximum())), int(slider_y->minimum()));
     slider_y->setUpperValue                (slider_y->lowerValue() + value);
     image   ->set_selection_size_percentage({image->selection_size_percentage()[0], static_cast<float>(value) / slider_y->maximum()});
   });
-  connect(line_edit_offset_z        , &QLineEdit::editingFinished       , [&]
+  connect(line_edit_offset_z        , &QLineEdit::editingFinished       , [&] 
   {
     auto value = std::max(std::min(line_edit::get_text<int>(line_edit_offset_z), int(slider_z->maximum())), int(slider_z->minimum()));
     if (slider_z->upperValue() < value)
@@ -118,41 +120,50 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
     slider_z        ->setLowerValue(value);
     line_edit_size_z->setText      (QString::fromStdString(std::to_string(slider_z->upperValue() - value)));
   });
-  connect(line_edit_size_z          , &QLineEdit::editingFinished       , [&]
+  connect(line_edit_size_z          , &QLineEdit::editingFinished       , [&] 
   {
     auto value = std::min(line_edit::get_text<int>(line_edit_size_z), int(slider_z->maximum() - slider_z->minimum()));
     slider_z->setUpperValue(slider_z->lowerValue() + value);
   });
-  connect(slider_integration_step   , &QSlider::valueChanged            , [&]
+  connect(slider_integration_step   , &QSlider::valueChanged            , [&] 
   {
     line_edit_integration_step->setText(QString::fromStdString((boost::format("%.4f") % (float(slider_integration_step->value()) / slider_integration_step->maximum())).str()));
   });
-  connect(line_edit_integration_step, &QLineEdit::editingFinished       , [&]
+  connect(line_edit_integration_step, &QLineEdit::editingFinished       , [&] 
   {
     slider_integration_step->setValue(line_edit::get_text<double>(line_edit_integration_step) * slider_integration_step->maximum());
   });
-  connect(slider_iterations         , &QSlider::valueChanged            , [&]
+  connect(slider_iterations         , &QSlider::valueChanged            , [&] 
   {
     line_edit_iterations->setText(QString::fromStdString(boost::lexical_cast<std::string>(slider_iterations->value())));
   });
-  connect(line_edit_iterations      , &QLineEdit::editingFinished       , [&]
+  connect(line_edit_iterations      , &QLineEdit::editingFinished       , [&] 
   {
     slider_iterations->setValue(line_edit::get_text<int>(line_edit_iterations));
   });
-  connect(button_trace_selection    , &QPushButton::clicked             , [&]
+  connect(button_trace_selection    , &QPushButton::clicked             , [&] 
   {
     trace();
   });
-
-  connect(radio_button_cpu, &QRadioButton::clicked, [&]
+  connect(radio_button_cpu          , &QRadioButton::clicked            , [&]
   {
     logger_->info(std::string("CPU particle tracing selected."));
     gpu_tracing_ = false;
   });
-  connect(radio_button_gpu, &QRadioButton::clicked, [&]
+  connect(radio_button_gpu          , &QRadioButton::clicked            , [&]
   {
     logger_->info(std::string("GPU particle tracing selected."));
     gpu_tracing_ = true;
+  });
+  connect(radio_button_regular      , &QRadioButton::clicked            , [&]
+  {
+    owner_->viewer->remove_renderable(streamline_renderer_);
+    streamline_renderer_ = owner_->viewer->add_renderable<streamline_renderer>();
+  });
+  connect(radio_button_lineao       , &QRadioButton::clicked            , [&]
+  {
+    owner_->viewer->remove_renderable(streamline_renderer_);
+    streamline_renderer_ = owner_->viewer->add_renderable<lineao_streamline_renderer>();
   });
 }
 
@@ -160,7 +171,10 @@ void tractography_plugin::start()
 {
   set_sink(std::make_shared<text_browser_sink>(owner_->console));
 
-  streamline_renderer_ = owner_->viewer->add_renderable<streamline_renderer>();
+  if(radio_button_lineao->isChecked())
+    streamline_renderer_ = owner_->viewer->add_renderable<lineao_streamline_renderer>();
+  else
+    streamline_renderer_ = owner_->viewer->add_renderable<streamline_renderer>();
 
   connect(owner_->get_plugin<pli::data_plugin>(), &data_plugin::on_load, [&]
   {
@@ -296,15 +310,21 @@ void tractography_plugin::trace()
       std::random_device                    random_device;
       std::mt19937                          mersenne_twister(random_device());
       std::uniform_real_distribution<float> distribution;
-      random_vectors.resize(streamline_renderer_->screen_size()[0] * streamline_renderer_->screen_size()[1] * streamline_renderer_->ao_samples());
-      std::generate(random_vectors.begin(), random_vectors.end(), [&mersenne_twister, &distribution] ()
+
+      auto lineao_renderer = dynamic_cast<lineao_streamline_renderer*>(streamline_renderer_);
+      if  (lineao_renderer)
       {
-        return float4{
-          distribution(mersenne_twister), 
-          distribution(mersenne_twister), 
-          distribution(mersenne_twister), 
-          distribution(mersenne_twister)};
-      });
+        auto screen_size = lineao_renderer->screen_size();
+        random_vectors.resize(screen_size[0] * screen_size[1] * lineao_renderer->ao_samples());
+        std::generate(random_vectors.begin(), random_vectors.end(), [&mersenne_twister, &distribution]()
+        {
+          return float4{
+            distribution(mersenne_twister),
+            distribution(mersenne_twister),
+            distribution(mersenne_twister),
+            distribution(mersenne_twister) };
+        });
+      }
     }
     catch (std::exception& exception)
     {
@@ -317,7 +337,12 @@ void tractography_plugin::trace()
   if (points.size() > 0 && directions.size() > 0)
   {
     logger_->info(std::string("Trace successful."));
-    streamline_renderer_->set_data(points, directions, random_vectors);
+
+    auto lineao_renderer  = dynamic_cast<lineao_streamline_renderer*>(streamline_renderer_);
+    if  (lineao_renderer)  lineao_renderer ->set_data(points, directions, random_vectors);
+    
+    auto regular_renderer = dynamic_cast<streamline_renderer*>(streamline_renderer_);
+    if  (regular_renderer) regular_renderer->set_data(points, directions);
   }
   else
   {
