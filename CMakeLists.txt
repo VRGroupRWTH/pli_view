@@ -174,6 +174,7 @@ set(PROJECT_SOURCES
   include/pli_vis/third_party/tangent-base/simple_tracer.hpp
   include/pli_vis/third_party/tangent-base/trace_recorder.hpp
   include/pli_vis/third_party/tangent-base/tracer_base.hpp
+	include/pli_vis/ui/plugins/color_plugin.hpp
   include/pli_vis/ui/plugins/data_plugin.hpp
   include/pli_vis/ui/plugins/fom_plugin.hpp
   include/pli_vis/ui/plugins/interactor_plugin.hpp
@@ -338,6 +339,7 @@ set(PROJECT_SOURCES
   source/third_party/qwt/qwt_widget_overlay.cpp
   source/third_party/qxt/QxtLetterBoxWidget.cpp
   source/third_party/qxt/QxtSpanSlider.cpp
+	source/ui/plugins/color_plugin.cpp
   source/ui/plugins/data_plugin.cpp
   source/ui/plugins/fom_plugin.cpp
   source/ui/plugins/interactor_plugin.cpp
