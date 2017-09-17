@@ -1143,6 +1143,9 @@
       </property>
       <item>
        <widget class="QRadioButton" name="radio_button_regular">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>Regular</string>
         </property>
@@ -1153,6 +1156,9 @@
       </item>
       <item>
        <widget class="QRadioButton" name="radio_button_lineao">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>Line AO</string>
         </property>
@@ -1238,9 +1244,6 @@
        </widget>
       </item>
      </layout>
-     <zorder>radio_button_gpu</zorder>
-     <zorder>radio_button_cpu</zorder>
-     <zorder>button_trace_selection</zorder>
     </widget>
    </item>
   </layout>

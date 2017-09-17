@@ -54,7 +54,7 @@ template <typename type, typename ... args>
 type* viewer::add_renderable(args&&... arguments)
 {
   renderables_.emplace_back(new type(arguments...));
-  auto renderable = (type*) renderables_.back().get();
+  auto renderable = static_cast<type*>(renderables_.back().get());
 
   if (initialized_)
     renderable->initialize();
