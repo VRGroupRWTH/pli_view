@@ -8,6 +8,11 @@ namespace pli
 {
 class color_plugin : public plugin<color_plugin, Ui_color_toolbox>
 {
+  Q_OBJECT
+
+signals :
+  void on_change(int mode, float k, bool inverted);
+
 public:
   explicit color_plugin(QWidget* parent = nullptr);
 

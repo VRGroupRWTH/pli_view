@@ -8,7 +8,9 @@ namespace shaders
 static std::string view_dependent_vector_field_frag = R"(\
 #version 450
 
-uniform bool  hsv            = true ;
+uniform int   color_mode     = 0    ;
+uniform float color_k        = 0.5  ;
+uniform bool  color_inverted = false;
 uniform bool  view_dependent = false;
 uniform bool  invert         = true ;
 uniform float rate_of_decay  = 1.0  ;
@@ -47,9 +49,6 @@ vec3 to_spherical(vec3 cartesian)
   return vec3(r, t, p);
 }
 
-uniform int   color_mode     = 0    ;
-uniform float color_k        = 0.5  ;
-uniform bool  color_inverted = false;
 vec3 map_color(vec3 direction)
 {
   vec3 spherical = to_spherical(direction);
@@ -74,7 +73,7 @@ vec3 map_color(vec3 direction)
     return hsv_to_rgb(vec3(t, color_k, p));
   if(color_mode == 3)
     return hsv_to_rgb(vec3(t, p, color_k));
-  return vec3(direction.x, direction.z, direction.y);
+  return vec3(abs(direction.x), abs(direction.z), abs(direction.y));
 }
 
 void main()
