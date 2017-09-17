@@ -46,18 +46,14 @@ vec3 to_spherical(vec3 cartesian)
   float p = acos  (cartesian.z / r);
   return vec3(r, t, p);
 }
-vec3 to_cartesian(vec3 spherical)
-{
-  float x = spherical.x * cos(spherical.y) * sin(spherical.z);
-  float y = spherical.x * sin(spherical.y) * sin(spherical.z);
-  float z = spherical.x * cos(spherical.z);
-  return vec3(x, y, z);
-}
 
-void main()
+uniform int   color_mode     = 0    ;
+uniform float color_k        = 0.5  ;
+uniform bool  color_inverted = false;
+vec3 map_color(vec3 direction)
 {
-  // RGB, HSv, HsV, HSl, HsL + all inverted.
-  vec3 spherical = to_spherical(fs_in.direction);
+  vec3 spherical = to_spherical(direction);
+
   if(spherical.y <  0.0)            spherical.y += radians(180.0);
   if(spherical.y >= radians(180.0)) spherical.y -= radians(180.0);
   spherical.y = radians(180.0) - spherical.y;
@@ -65,12 +61,25 @@ void main()
   if(spherical.z < 0.0)             spherical.z = abs(spherical.z);
   if(spherical.z >= radians( 90.0)) spherical.z = radians(180.0) - spherical.z;
 
-  float hue        = (spherical.y / radians(180.0));
-  float saturation = (spherical.z / radians( 90.0));
-  float value      = 0.5;
-  
-  if(hsv) frag_color = vec4(hsl_to_rgb(vec3(hue, value, saturation)), 1.0);
-  else    frag_color = vec4(abs(fs_in.direction.x), abs(fs_in.direction.z), abs(fs_in.direction.y), 1.0);
+  float t = spherical.y / radians(180.0);
+  float p = spherical.z / radians(90.0);
+  if(color_inverted)
+    p = 1.0 - p;
+
+  if(color_mode == 0)
+    return hsl_to_rgb(vec3(t, color_k, p));
+  if(color_mode == 1)
+    return hsl_to_rgb(vec3(t, p, color_k));
+  if(color_mode == 2)
+    return hsv_to_rgb(vec3(t, color_k, p));
+  if(color_mode == 3)
+    return hsv_to_rgb(vec3(t, p, color_k));
+  return vec3(direction.x, direction.z, direction.y);
+}
+
+void main()
+{
+  frag_color = vec4(map_color(fs_in.direction), 1.0);
 
   if(view_dependent)
   {
