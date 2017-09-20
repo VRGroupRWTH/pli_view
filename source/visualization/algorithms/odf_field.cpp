@@ -4,8 +4,8 @@
 
 #include <pli_vis/cuda/odf_field.h>
 #include <pli_vis/visualization/primitives/camera.hpp>
-#include <shaders/simple_color.vert.glsl>
-#include <shaders/simple_color.frag.glsl>
+#include <shaders/odf_field_renderer.vert.glsl>
+#include <shaders/odf_field_renderer.frag.glsl>
 
 namespace pli
 {
@@ -17,8 +17,8 @@ void odf_field::initialize()
   color_buffer_  .reset(new gl::array_buffer);
   index_buffer_  .reset(new gl::index_buffer);
 
-  shader_program_->attach_shader(gl::vertex_shader  (shaders::simple_color_vert));
-  shader_program_->attach_shader(gl::fragment_shader(shaders::simple_color_frag));
+  shader_program_->attach_shader(gl::vertex_shader  (shaders::odf_field_renderer_vert));
+  shader_program_->attach_shader(gl::fragment_shader(shaders::odf_field_renderer_frag));
   shader_program_->link();
   
   shader_program_->bind();
@@ -30,8 +30,8 @@ void odf_field::initialize()
   vertex_buffer_ ->unbind();
 
   color_buffer_  ->bind();
-  shader_program_->set_attribute_buffer  ("color" , 4, GL_FLOAT);
-  shader_program_->enable_attribute_array("color");
+  shader_program_->set_attribute_buffer  ("direction" , 3, GL_FLOAT);
+  shader_program_->enable_attribute_array("direction");
   color_buffer_  ->unbind();
 
   vertex_array_  ->unbind();
@@ -43,9 +43,12 @@ void odf_field::render    (const camera* camera)
   vertex_array_  ->bind();
   index_buffer_  ->bind();
 
-  shader_program_->set_uniform("model"     , absolute_matrix                ());
-  shader_program_->set_uniform("view"      , camera->inverse_absolute_matrix());
-  shader_program_->set_uniform("projection", camera->projection_matrix      ());
+  shader_program_->set_uniform("color_mode"    , color_mode_);
+  shader_program_->set_uniform("color_k"       , color_k_);
+  shader_program_->set_uniform("color_inverted", color_inverted_);
+  shader_program_->set_uniform("model"         , absolute_matrix                ());
+  shader_program_->set_uniform("view"          , camera->inverse_absolute_matrix());
+  shader_program_->set_uniform("projection"    , camera->projection_matrix      ());
 
   // Select by visible layers.
   auto dimension_count  = dimensions_.z > 1 ? 3 : 2;
@@ -125,7 +128,7 @@ void odf_field::set_data(
   vertex_buffer_->cuda_register  (cudaGraphicsMapFlagsNone);
 
   color_buffer_->bind           ();
-  color_buffer_->allocate       (point_count * sizeof(float4));
+  color_buffer_->allocate       (point_count * sizeof(float3));
   color_buffer_->unbind         ();
   color_buffer_->cuda_register  (cudaGraphicsMapFlagsNone);
 
@@ -135,7 +138,7 @@ void odf_field::set_data(
   index_buffer_ ->cuda_register  (cudaGraphicsMapFlagsNone);
 
   auto cuda_vertex_buffer = vertex_buffer_->cuda_map<float3  >();
-  auto cuda_color_buffer  = color_buffer_ ->cuda_map<float4  >();
+  auto cuda_color_buffer  = color_buffer_ ->cuda_map<float3  >();
   auto cuda_index_buffer  = index_buffer_ ->cuda_map<unsigned>();
 
   sample_odfs(

@@ -3,8 +3,8 @@
 
 #include <future>
 
+#include <pli_vis/aspects/renderable.hpp>
 #include <pli_vis/ui/plugin.hpp>
-#include <pli_vis/visualization/algorithms/streamline_renderer.hpp>
 #include <ui_tractography_toolbox.h>
 
 namespace pli
@@ -23,8 +23,10 @@ private:
   std::array<std::size_t, 3> seed_size  () const;
   std::array<std::size_t, 3> seed_stride() const;
 
-  streamline_renderer* streamline_renderer_;
-  std::future<void>    future_;
+  renderable*       streamline_renderer_;
+  std::future<void> future_             ;
+  bool              line_ao_            = false;
+  bool              gpu_tracing_        = true ;
 };
 }
 

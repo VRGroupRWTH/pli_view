@@ -195,7 +195,7 @@
           <x>0</x>
           <y>0</y>
           <width>117</width>
-          <height>448</height>
+          <height>427</height>
          </rect>
         </property>
         <property name="font">
@@ -213,12 +213,17 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>28</height>
+          <width>117</width>
+          <height>427</height>
          </rect>
         </property>
         <attribute name="label">
          <string>Interactor</string>
+        </attribute>
+       </widget>
+       <widget class="pli::color_plugin" name="plugin_color">
+        <attribute name="label">
+         <string>Color Space</string>
         </attribute>
        </widget>
        <widget class="pli::scalar_plugin" name="plugin_scalar">
@@ -226,8 +231,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>28</height>
+          <width>117</width>
+          <height>427</height>
          </rect>
         </property>
         <attribute name="label">
@@ -239,8 +244,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>28</height>
+          <width>117</width>
+          <height>427</height>
          </rect>
         </property>
         <attribute name="label">
@@ -253,8 +258,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>28</height>
+          <width>117</width>
+          <height>427</height>
          </rect>
         </property>
         <attribute name="label">
@@ -267,8 +272,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>28</height>
+          <width>117</width>
+          <height>427</height>
          </rect>
         </property>
         <attribute name="label">
@@ -369,6 +374,12 @@
    <class>pli::tractography_plugin</class>
    <extends>QWidget</extends>
    <header location="global">pli_vis/ui/plugins/tractography_plugin.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>pli::color_plugin</class>
+   <extends>QWidget</extends>
+   <header location="global">pli_vis/ui/plugins/color_plugin.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

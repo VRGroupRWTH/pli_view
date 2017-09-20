@@ -7,7 +7,7 @@
 #include <vector_functions.hpp>
 
 #include <pli_vis/cuda/sh/spherical_harmonics.h>
-#include <pli_vis/cuda/sh/vector_ops.h>
+#include <pli_vis/cuda/utility/vector_ops.h>
 #include <pli_vis/cuda/odf_field.h>
 #include <pli_vis/ui/plugins/data_plugin.hpp>
 #include <pli_vis/ui/utility/line_edit.hpp>
@@ -43,7 +43,6 @@ odf_plugin::odf_plugin(QWidget* parent) : plugin(parent)
     logger_->info(std::string(state ? "Enabled." : "Disabled."));
     odf_field_->set_active(state);
   });
-
   connect(slider_vector_block_x      , &QxtSpanSlider::valueChanged, [&]
   {
     line_edit_vector_block_x->setText(QString::fromStdString(std::to_string(slider_vector_block_x->value())));
@@ -199,6 +198,11 @@ void odf_plugin::start  ()
   odf_field_ = owner_->viewer->add_renderable<odf_field>();
   set_visible_layers();
 
+  connect(owner_->get_plugin<color_plugin>(), &color_plugin::on_change, [&] (int mode, float k, bool inverted)
+  {
+    odf_field_->set_color_mapping(mode, k, inverted);
+  });
+
   logger_->info(std::string("Resetting GPU."));
   cudaDeviceReset();
 
@@ -215,8 +219,8 @@ void odf_plugin::destroy()
 
 void odf_plugin::calculate         ()
 {
-  owner_->viewer ->set_wait_spinner_enabled(true );
-  owner_->toolbox->setEnabled              (false);
+  owner_ ->set_wait_spinner_enabled(true );
+  owner_->toolbox->setEnabled      (false);
 
   logger_->info(std::string("Updating viewer..."));
   
@@ -264,6 +268,7 @@ void odf_plugin::calculate         ()
         max_degree            ,
         vectors      .data()  ,
         coefficients_.data()  ,
+        checkbox_even_only->isChecked(),
         [&] (const std::string& message) { logger_->info(message); });
     }
     catch (std::exception& exception)
@@ -288,13 +293,13 @@ void odf_plugin::calculate         ()
 
   logger_->info(std::string("Update successful."));
   
-  owner_->toolbox->setEnabled              (true );
-  owner_->viewer ->set_wait_spinner_enabled(false);
+  owner_->toolbox->setEnabled     (true );
+  owner_->set_wait_spinner_enabled(false);
 }
 void odf_plugin::extract_peaks     ()
 {
-  owner_->viewer ->set_wait_spinner_enabled(true );
-  owner_->toolbox->setEnabled              (false);
+  owner_->set_wait_spinner_enabled(true );
+  owner_->toolbox->setEnabled     (false);
 
   logger_->info(std::string("Extracting peaks..."));
     
@@ -336,8 +341,8 @@ void odf_plugin::extract_peaks     ()
 
   logger_->info(std::string("Extraction successful."));
   
-  owner_->toolbox->setEnabled              (true );
-  owner_->viewer ->set_wait_spinner_enabled(false);
+  owner_->toolbox->setEnabled     (true );
+  owner_->set_wait_spinner_enabled(false);
 }
 void odf_plugin::set_visible_layers() const
 {

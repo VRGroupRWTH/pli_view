@@ -24,8 +24,18 @@ public:
     return active_;
   }
 
+  void set_color_mapping(int mode, float k, bool inverted)
+  {
+    color_mode_     = mode;
+    color_k_        = k;
+    color_inverted_ = inverted;
+  }
+
 protected:
-  bool active_ = true;
+  bool  active_         = true;
+  int   color_mode_     = 0;
+  float color_k_        = 0.5f;
+  bool  color_inverted_ = false;
 };
 }
 

@@ -8,6 +8,7 @@
 #include <QProgressBar>
 
 #include <pli_vis/aspects/loggable.hpp>
+#include <pli_vis/ui/widgets/wait_spinner.hpp>
 #include <pli_vis/ui/plugin_base.hpp>
 #include <ui_window.h>
 
@@ -18,6 +19,8 @@ class application : public QMainWindow, public Ui_window, public loggable<applic
 public:
    application();
   ~application();
+
+  void set_wait_spinner_enabled(bool enabled) const;
 
   template<typename plugin_type>
   plugin_type* get_plugin()
@@ -33,6 +36,7 @@ private:
   void create_gpu_status_bar();
 
   std::vector<plugin_base*> plugins_;
+  pli::wait_spinner* wait_spinner_;
 
   QLabel*       gpu_status_label_ = nullptr;
   QProgressBar* gpu_status_bar_   = nullptr;

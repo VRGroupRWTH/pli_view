@@ -25,17 +25,22 @@ set(PROJECT_SOURCES
   
   include/pli_vis/aspects/loggable.hpp
   include/pli_vis/aspects/renderable.hpp
-  include/pli_vis/cuda/mc/monte_carlo.h
+  include/pli_vis/cuda/mcmc/markov_chain.h
+  include/pli_vis/cuda/mcmc/monte_carlo.h
+  include/pli_vis/cuda/pt/cartesian_locator.h
+  include/pli_vis/cuda/pt/runge_kutta_4_integrator.h
+  include/pli_vis/cuda/pt/tracer.h
+  include/pli_vis/cuda/pt/trilinear_interpolator.h
   include/pli_vis/cuda/sh/choose.h
   include/pli_vis/cuda/sh/clebsch_gordan.h
-  include/pli_vis/cuda/sh/config.h
-  include/pli_vis/cuda/sh/convert.h
   include/pli_vis/cuda/sh/factorial.h
   include/pli_vis/cuda/sh/launch.h
   include/pli_vis/cuda/sh/legendre.h
   include/pli_vis/cuda/sh/spherical_harmonics.h
-  include/pli_vis/cuda/sh/vector_ops.h
   include/pli_vis/cuda/sh/wigner.h
+  include/pli_vis/cuda/utility/convert.h
+  include/pli_vis/cuda/utility/vector_ops.h
+  include/pli_vis/cuda/global_tractography.h
   include/pli_vis/cuda/odf_field.h
   include/pli_vis/cuda/spherical_histogram.h
   include/pli_vis/io/io.hpp
@@ -169,6 +174,7 @@ set(PROJECT_SOURCES
   include/pli_vis/third_party/tangent-base/simple_tracer.hpp
   include/pli_vis/third_party/tangent-base/trace_recorder.hpp
   include/pli_vis/third_party/tangent-base/tracer_base.hpp
+	include/pli_vis/ui/plugins/color_plugin.hpp
   include/pli_vis/ui/plugins/data_plugin.hpp
   include/pli_vis/ui/plugins/fom_plugin.hpp
   include/pli_vis/ui/plugins/interactor_plugin.hpp
@@ -187,6 +193,8 @@ set(PROJECT_SOURCES
   include/pli_vis/ui/application.hpp
   include/pli_vis/ui/plugin.hpp
   include/pli_vis/ui/plugin_base.hpp
+	include/pli_vis/utility/make_even.hpp
+  include/pli_vis/visualization/algorithms/lineao_streamline_renderer.hpp
   include/pli_vis/visualization/algorithms/odf_field.hpp
   include/pli_vis/visualization/algorithms/scalar_field.hpp
   include/pli_vis/visualization/algorithms/streamline_renderer.hpp
@@ -203,6 +211,7 @@ set(PROJECT_SOURCES
   include/pli_vis/visualization/primitives/spot_light.hpp
   include/pli_vis/visualization/primitives/transform.hpp
   include/pli_vis/visualization/utility/render_target.hpp
+  include/pli_vis/visualization/utility/sphere_tessellation.hpp
   
   shaders/depth_pass.frag.glsl
   shaders/depth_pass.vert.glsl
@@ -218,6 +227,8 @@ set(PROJECT_SOURCES
   shaders/simple_color.vert.glsl
   shaders/simple_texture.frag.glsl
   shaders/simple_texture.vert.glsl
+  shaders/streamline_renderer.frag.glsl
+  shaders/streamline_renderer.vert.glsl
   shaders/view_dependent_vector_field.frag.glsl
   shaders/view_dependent_vector_field.geom.glsl
   shaders/view_dependent_vector_field.vert.glsl
@@ -228,6 +239,7 @@ set(PROJECT_SOURCES
   shaders/volume_renderer.frag.glsl
   shaders/volume_renderer.vert.glsl
   
+  source/cuda/pt/tracer.cu
   source/cuda/odf_field.cu
   source/third_party/glew/glew.c
   source/third_party/qwt/qwt_abstract_legend.cpp
@@ -327,6 +339,7 @@ set(PROJECT_SOURCES
   source/third_party/qwt/qwt_widget_overlay.cpp
   source/third_party/qxt/QxtLetterBoxWidget.cpp
   source/third_party/qxt/QxtSpanSlider.cpp
+	source/ui/plugins/color_plugin.cpp
   source/ui/plugins/data_plugin.cpp
   source/ui/plugins/fom_plugin.cpp
   source/ui/plugins/interactor_plugin.cpp
@@ -341,6 +354,7 @@ set(PROJECT_SOURCES
   source/ui/widgets/viewer.cpp
   source/ui/widgets/wait_spinner.cpp
   source/ui/application.cpp
+  source/visualization/algorithms/lineao_streamline_renderer.cpp
   source/visualization/algorithms/odf_field.cpp
   source/visualization/algorithms/scalar_field.cpp
   source/visualization/algorithms/streamline_renderer.cpp

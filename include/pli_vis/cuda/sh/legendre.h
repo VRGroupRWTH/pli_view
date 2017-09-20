@@ -1,9 +1,9 @@
 #ifndef PLI_VIS_LEGENDRE_H_
 #define PLI_VIS_LEGENDRE_H_
 
+#include <host_defines.h>
 #include <math.h>
 
-#include <pli_vis/cuda/sh/config.h>
 #include <pli_vis/cuda/sh/factorial.h>
 
 namespace pli
@@ -11,7 +11,7 @@ namespace pli
 // Based on the recurrence relations defined in page 10 of
 // "Spherical Harmonic Lighting: The Gritty Details" by Robin Green.
 template<typename precision>
-INLINE COMMON precision associated_legendre(const int l, const int m, const precision& x)
+__host__ __device__ precision associated_legendre(const int l, const int m, const precision& x)
 {
   precision p_mm(1.0);
   if (l > 0)

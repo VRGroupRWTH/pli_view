@@ -1,26 +1,18 @@
-#ifndef VIEW_DEPENDENT_FRAG_GLSL_
-#define VIEW_DEPENDENT_FRAG_GLSL_
+#ifndef ODF_FIELD_RENDERER_FRAG_GLSL_
+#define ODF_FIELD_RENDERER_FRAG_GLSL_
 
 #include <string>
 
 namespace shaders
 {
-static std::string view_dependent_vector_field_frag = R"(\
-#version 450
+static std::string odf_field_renderer_frag = R"(\
+#version 400
 
 uniform int   color_mode     = 0    ;
 uniform float color_k        = 0.5  ;
 uniform bool  color_inverted = false;
-uniform bool  view_dependent = false;
-uniform bool  invert         = true ;
-uniform float rate_of_decay  = 1.0  ;
-uniform float cutoff         = 0.25 ;
-uniform mat4  view           ;
+in      vec3  vert_direction ;
 out     vec4  frag_color     ;
-
-in vertex_data {
-  flat vec3 direction;
-} fs_in;
 
 vec3 hue_to_rgb(float hue)
 {
@@ -78,17 +70,7 @@ vec3 map_color(vec3 direction)
 
 void main()
 {
-  frag_color = vec4(map_color(fs_in.direction), 1.0);
-
-  if(view_dependent)
-  {
-    float alpha = abs(dot(normalize(inverse(view)[2].xyz), normalize(fs_in.direction)));
-    if(invert)
-      alpha = 1.0 - alpha;
-    if(alpha < cutoff)
-      discard;
-    frag_color.a = pow(alpha, rate_of_decay);
-  }
+  frag_color = vec4(map_color(vert_direction), 1.0);
 }
 )";
 }

@@ -43,7 +43,7 @@ __global__ void accumulate_kernel(
   uint3                 field_offset  ,
   uint3                 field_size    ,
   const vector_type*    vectors       ,
-  uint2                 bin_dimensions,
+  unsigned              bin_count     ,
   vector_type*          bin_vectors   ,
   magnitude_type*       bin_magnitudes)
 {
@@ -59,7 +59,7 @@ __global__ void accumulate_kernel(
 
   magnitude_type max_dot = -1; auto max_index = -1;
   magnitude_type min_dot =  1; auto min_index = -1;
-  for (auto i = 0; i < bin_dimensions.x * bin_dimensions.y; i++)
+  for (auto i = 0; i < bin_count; i++)
   {
     auto& bin_vector = bin_vectors[i];
 

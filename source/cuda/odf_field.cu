@@ -11,10 +11,10 @@
 #include <thrust/device_vector.h>
 #include <thrust/extrema.h>
 
-#include <pli_vis/cuda/sh/convert.h>
 #include <pli_vis/cuda/sh/launch.h>
 #include <pli_vis/cuda/sh/spherical_harmonics.h>
-#include <pli_vis/cuda/sh/vector_ops.h>
+#include <pli_vis/cuda/utility/convert.h>
+#include <pli_vis/cuda/utility/vector_ops.h>
 #include <pli_vis/cuda/spherical_histogram.h>
 
 namespace pli
@@ -28,7 +28,7 @@ __global__ void quantify_and_project_kernel(
         uint3          vectors_dimensions ,
   // Quantification related parameters. 
   const vector_type*   vectors            , 
-        uint2          histogram_bins     ,
+        unsigned       histogram_bin_count,
         vector_type*   histogram_vectors  ,
   // Projection related parameters.     
         unsigned       maximum_degree     ,
@@ -43,7 +43,6 @@ __global__ void quantify_and_project_kernel(
     return;
     
   auto volume_index              = z + dimensions.z * (y + dimensions.y * x);
-  auto histogram_bin_count       = histogram_bins.x * histogram_bins.y;
   auto coefficient_count         = pli::coefficient_count(maximum_degree);
   auto coefficient_vector_offset = volume_index * coefficient_count;
   auto alpha                     = 1.0F;
@@ -67,11 +66,11 @@ __global__ void quantify_and_project_kernel(
   cublasCreate(&cublas);
 
   accumulate_kernel<<<grid_size_3d(vectors_dimensions), block_size_3d()>>>(
-    vectors_dimensions        ,
+    vectors_dimensions  ,
     offset              ,
     size                ,
     vectors             ,
-    histogram_bins      , 
+    histogram_bin_count ,
     histogram_vectors   ,
     histogram_magnitudes);
   __syncthreads();
@@ -166,6 +165,7 @@ void calculate_odfs(
   const unsigned     maximum_degree    , 
   const float3*      unit_vectors      , 
         float*       coefficients      , 
+        bool         even_only         ,
         std::function<void(const std::string&)> status_callback)
 {
   auto start_time = std::chrono::system_clock::now();
@@ -205,7 +205,8 @@ void calculate_odfs(
     histogram_bin_count  , 
     coefficient_count    ,
     histogram_vectors_ptr, 
-    basis_matrix_ptr     );
+    basis_matrix_ptr     ,
+    even_only            );
   cudaDeviceSynchronize();
 
   status_callback("Calculating SVD work buffer size.");
@@ -278,7 +279,7 @@ void calculate_odfs(
     E.begin(),
     E.end  (),
     E.begin(),
-    [] COMMON (float& entry) -> float
+    [] __host__ __device__(float& entry) -> float
     {
       if (int(entry) == 0)
         return 0;
@@ -326,8 +327,8 @@ void calculate_odfs(
   quantify_and_project_kernel<<<dimensions, dim3(1, 1, 1)>>> (
     dimensions             ,
     vectors_dimensions     ,
-    gpu_vectors_ptr            ,
-    histogram_bins         ,
+    gpu_vectors_ptr        ,
+    histogram_bin_count    ,
     histogram_vectors_ptr  ,
     maximum_degree         ,
     V_EI_UT_ptr            ,
@@ -352,7 +353,7 @@ void sample_odfs(
   const uint3&       vector_dimensions,
   const float        scale            ,
         float3*      points           ,
-        float4*      colors           ,
+        float3*      directions       ,
         unsigned*    indices          ,
         bool         hierarchical     ,
         bool         clustering       ,
@@ -440,22 +441,14 @@ void sample_odfs(
     points,
     points + point_count,
     points,
-    [] COMMON (const float3& point)
+    [] __host__ __device__(const float3& point)
     {
       return to_cartesian_coords(point);
     });
   cudaDeviceSynchronize();
 
-  status_callback("Assigning colors.");
-  thrust::transform(
-    thrust::device,
-    points,
-    points + point_count,
-    colors,
-    [] COMMON (const float3& point)
-    {
-      return make_float4(abs(point.x), abs(point.z), abs(point.y), 1.0);
-    });
+  status_callback("Assigning directions.");
+  thrust::copy(thrust::device, points, points + point_count, directions);
   cudaDeviceSynchronize();
 
   status_callback("Translating and scaling the points.");
@@ -495,7 +488,7 @@ void sample_odfs(
       points + layer_point_offset,
       points + layer_point_offset + layer_point_count,
       points + layer_point_offset,
-      [=] COMMON (const float3& point)
+      [=] __host__ __device__(const float3& point)
       {
         auto output = layer_scale * point;
         auto index  = int((&point - (points + layer_point_offset)) / tessellation_count);
@@ -559,7 +552,7 @@ void extract_peaks(
     maxima_vectors.begin(),
     maxima_vectors.end  (),
     maxima_vectors.begin(),
-    [] COMMON (const float3& point)
+    [] __host__ __device__(const float3& point)
     {
       return to_cartesian_coords(point);
     });

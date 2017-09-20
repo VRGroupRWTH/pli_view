@@ -5,6 +5,7 @@
 #include <boost/format.hpp>
 #include <vector_functions.hpp>
 
+#include <pli_vis/ui/plugins/color_plugin.hpp>
 #include <pli_vis/ui/plugins/data_plugin.hpp>
 #include <pli_vis/ui/utility/line_edit.hpp>
 #include <pli_vis/ui/utility/text_browser_sink.hpp>
@@ -65,10 +66,15 @@ void fom_plugin::start ()
 
   vector_field_ = owner_->viewer->add_renderable<vector_field>();
 
-  connect(owner_->get_plugin<data_plugin>(), &data_plugin::on_load, [&]
+  connect(owner_->get_plugin<data_plugin>(), &data_plugin::on_load    , [&]
   {
     upload();
   });
+  connect(owner_->get_plugin<color_plugin>(), &color_plugin::on_change, [&] (int mode, float k, bool inverted)
+  {
+    vector_field_->set_color_mapping(mode, k, inverted);
+  });
+
 }
 void fom_plugin::upload()
 {

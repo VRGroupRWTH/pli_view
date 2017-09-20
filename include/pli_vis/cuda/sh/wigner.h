@@ -1,17 +1,17 @@
 #ifndef PLI_VIS_WIGNER_H_
 #define PLI_VIS_WIGNER_H_
 
+#include <host_defines.h>
 #include <math.h>
 
-#include <pli_vis/cuda/sh/config.h>
 #include <pli_vis/cuda/sh/choose.h>
 
 namespace pli
 {
 // Based on GNU Scientific Library's implementation. Input is in half-integer units!
 template<typename precision>
-COMMON precision wigner_3j(int two_l1, int two_l2, int two_l3,
-                           int two_m1, int two_m2, int two_m3)
+__host__ __device__ precision wigner_3j(int two_l1, int two_l2, int two_l3,
+                                        int two_m1, int two_m2, int two_m3)
 {
   if (two_l1 < 0                    ||
       two_l2 < 0                    ||
@@ -42,8 +42,8 @@ COMMON precision wigner_3j(int two_l1, int two_l2, int two_l3,
   auto lpm2  = ( two_l2 + two_m2) / 2;
   auto lpm3  = ( two_l3 + two_m3) / 2;
   auto lsum  = ( two_l1 + two_l2 + two_l3) / 2;
-  int  kmin  = fmax(fmax(0.0f      , lpm2 - lmm3), lmm1 - lpm3);
-  int  kmax  = fmin(fmin((float)lc3, lmm1       ), lpm2       );
+  int  kmin  = fmax(fmax(0.0f                   , lpm2 - lmm3), lmm1 - lpm3);
+  int  kmax  = fmin(fmin(static_cast<float>(lc3), lmm1       ), lpm2       );
   auto sign  = kmin - lpm1 + lmm2 & 1 ? -1 : 1;
 
   auto bcn1  = ln_choose(two_l1  , lc3 );
