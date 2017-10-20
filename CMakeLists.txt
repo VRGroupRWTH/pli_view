@@ -183,6 +183,7 @@ set(PROJECT_SOURCES
   include/pli_vis/ui/plugins/scalar_plugin.hpp
   include/pli_vis/ui/plugins/tractography_plugin.hpp
   include/pli_vis/ui/plugins/volume_rendering_plugin.hpp
+  include/pli_vis/ui/plugins/zernike_plugin.hpp
   include/pli_vis/ui/utility/line_edit.hpp
   include/pli_vis/ui/utility/plot_interactor.hpp
   include/pli_vis/ui/utility/text_browser_sink.hpp
@@ -348,6 +349,7 @@ set(PROJECT_SOURCES
   source/ui/plugins/scalar_plugin.cpp
   source/ui/plugins/tractography_plugin.cpp
   source/ui/plugins/volume_rendering_plugin.cpp
+  source/ui/plugins/zernike_plugin.cpp
   source/ui/utility/plot_interactor.cpp
   source/ui/widgets/roi_rectangle.cpp
   source/ui/widgets/roi_selector.cpp
