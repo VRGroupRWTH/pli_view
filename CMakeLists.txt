@@ -41,6 +41,7 @@ set(PROJECT_SOURCES
   include/pli_vis/cuda/utility/convert.h
   include/pli_vis/cuda/utility/vector_ops.h
   include/pli_vis/cuda/zernike/disk.h
+  include/pli_vis/cuda/zernike/launch.h
   include/pli_vis/cuda/zernike/zernike.h
   include/pli_vis/cuda/global_tractography.h
   include/pli_vis/cuda/odf_field.h
@@ -243,6 +244,7 @@ set(PROJECT_SOURCES
   shaders/volume_renderer.vert.glsl
   
   source/cuda/pt/tracer.cu
+  source/cuda/zernike/launch.cu
   source/cuda/odf_field.cu
   source/third_party/glew/glew.c
   source/third_party/qwt/qwt_abstract_legend.cpp
