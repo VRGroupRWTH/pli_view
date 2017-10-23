@@ -89,7 +89,11 @@ zernike_plugin::zernike_plugin(QWidget* parent)
         vectors.resize(boost::extents[vector_dimensions.x][vector_dimensions.y][1]);
 
         // TODO: Calculate.
-        // - Gather vectors in each block
+        // - Group vectors into superpixels of size parameters.superpixel_size.
+        // - Compute a ? for each superpixel.
+        // - Sample a unit disk parameters.partitions many times.
+        // - Compute Zernike basis matrix using the samples, parameters.symmetric and parameters.maximum_degree.
+        // - Linear least squares via SVD on the basis matrix and then multiplying its pseudoinverse with the ?s.
       }
       catch (std::exception& exception)
       {
