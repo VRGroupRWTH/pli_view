@@ -78,14 +78,14 @@ zernike_plugin::zernike_plugin(QWidget* parent)
     {
       try
       {
-        auto  parameters        = get_parameters();
-        auto  vectors           = owner_->get_plugin<data_plugin>()->generate_vectors(false);
-        uint2 tensor_dimesions  = 
+        auto  parameters            = get_parameters();
+        auto  vectors               = owner_->get_plugin<data_plugin>()->generate_vectors(false);
+        uint2 superpixel_dimensions = 
         {
           unsigned(vectors.shape()[0]) / parameters.superpixel_size.x,
           unsigned(vectors.shape()[1]) / parameters.superpixel_size.y,
         };
-        auto  vector_dimensions = parameters.superpixel_size * tensor_dimesions;
+        auto  vector_dimensions     = parameters.superpixel_size * superpixel_dimensions;
         vectors.resize(boost::extents[vector_dimensions.x][vector_dimensions.y][1]);
 
         // TODO: Calculate.
