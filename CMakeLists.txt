@@ -40,6 +40,7 @@ set(PROJECT_SOURCES
   include/pli_vis/cuda/sh/wigner.h
   include/pli_vis/cuda/utility/convert.h
   include/pli_vis/cuda/utility/vector_ops.h
+  include/pli_vis/cuda/zernike/disk.h
   include/pli_vis/cuda/zernike/zernike.h
   include/pli_vis/cuda/global_tractography.h
   include/pli_vis/cuda/odf_field.h
