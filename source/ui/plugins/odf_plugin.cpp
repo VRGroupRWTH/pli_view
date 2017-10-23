@@ -20,8 +20,8 @@ namespace pli
 odf_plugin::odf_plugin(QWidget* parent) : plugin(parent)
 {
   line_edit_vector_block_x   ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_vector_block_x   ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
-  line_edit_vector_block_x   ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_vector_block_y   ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+  line_edit_vector_block_z   ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
   line_edit_histogram_theta  ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
   line_edit_histogram_phi    ->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
   line_edit_maximum_sh_degree->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
