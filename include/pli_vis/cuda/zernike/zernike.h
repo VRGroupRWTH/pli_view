@@ -102,7 +102,7 @@ __host__ __device__ precision evaluate(const int2& nm, const precision& rt )
   return mode(nm, rt.x) * (nm.y >= 0 ? cos(nm.y * rt.y) : sin(nm.y * rt.y));
 }
 
-// This kernel requires a samples_per_voxel x expansion_size 2D grid.
+// This kernel requires a sample_count x expansion_size 2D grid.
 template<typename precision, typename sample_type>
 __global__ void compute_basis(
   const unsigned     sample_count     , 
