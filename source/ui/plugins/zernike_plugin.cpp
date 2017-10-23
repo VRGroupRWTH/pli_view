@@ -88,12 +88,12 @@ zernike_plugin::zernike_plugin(QWidget* parent)
         auto  vector_dimensions     = parameters.superpixel_size * superpixel_dimensions;
         vectors.resize(boost::extents[vector_dimensions.x][vector_dimensions.y][1]);
 
-        // TODO: Calculate.
-        // - Group vectors into superpixels of size parameters.superpixel_size.
-        // - Compute a ? for each superpixel.
-        // - Sample a unit disk parameters.partitions many times.
-        // - Compute Zernike basis matrix using the samples, parameters.symmetric and parameters.maximum_degree.
-        // - Linear least squares via SVD on the basis matrix and then multiplying its pseudoinverse with the ?s.
+        //... = zer::launch(
+        //  vectors                   , 
+        //  parameters.superpixel_size, 
+        //  parameters.partitions     , 
+        //  parameters.maximum_degree , 
+        //  parameters.symmetric      );
       }
       catch (std::exception& exception)
       {
@@ -124,7 +124,6 @@ zernike_plugin::parameters zernike_plugin::get_parameters() const
 {
   return 
   {
-    checkbox_symmetric->isChecked(),
     {
       line_edit::get_text<unsigned>(line_edit_superpixel_x),
       line_edit::get_text<unsigned>(line_edit_superpixel_y) 
@@ -133,7 +132,8 @@ zernike_plugin::parameters zernike_plugin::get_parameters() const
       line_edit::get_text<unsigned>(line_edit_partitions_theta),
       line_edit::get_text<unsigned>(line_edit_partitions_rho  ) 
     },
-    line_edit::get_text<unsigned>(line_edit_maximum_degree)
+    line_edit::get_text<unsigned>(line_edit_maximum_degree),
+    checkbox_symmetric->isChecked()
   };
 }
 }
