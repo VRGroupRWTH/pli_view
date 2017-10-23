@@ -6,10 +6,6 @@
 
 namespace zer
 {
-thrust::device_vector<float> pseudoinverse(
-  const uint2&                         size,
-  const thrust::device_vector<float>&  data);
-
 thrust::device_vector<float> launch(
   const thrust::device_vector<float3>& vectors                       ,
   const uint2&                         superpixel_size               ,

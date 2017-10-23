@@ -10,8 +10,8 @@
 namespace zer
 {
 thrust::device_vector<float> pseudoinverse(
-  const uint2&                        size, 
-  const thrust::device_vector<float>& data)
+  const uint2&                  size, 
+  thrust::device_vector<float>& data)
 {
   cublasHandle_t     cublas  ;
   cusolverDnHandle_t cusolver;
@@ -31,21 +31,96 @@ thrust::device_vector<float> pseudoinverse(
   thrust::device_vector<float> ut     (size.x * size.x);
   thrust::device_vector<float> ei_ut  (size.x * size.y);
   thrust::device_vector<float> v_ei_ut(size.x * size.y);
-  auto alpha       = 1.0F;
-  auto beta        = 0.0F;
-  auto buffer_ptr  = raw_pointer_cast(&buffer [0]);
-  auto info_ptr    = raw_pointer_cast(&info   [0]);
-  auto u_ptr       = raw_pointer_cast(&u      [0]);
-  auto e_ptr       = raw_pointer_cast(&e      [0]);
-  auto vt_ptr      = raw_pointer_cast(&vt     [0]);
-  auto ut_ptr      = raw_pointer_cast(&ut     [0]);
-  auto ei_ut_ptr   = raw_pointer_cast(&ei_ut  [0]);
-  auto v_ei_ut_ptr = raw_pointer_cast(&v_ei_ut[0]);
+  auto alpha = 1.0F;
+  auto beta  = 0.0F;
   
-  // TODO: Run cusolverDnSgesvd UEV, cublasSgeam U, thrust::transform E, cublasSdgmm V, cublasSgemm VEU.
+  cusolverDnSgesvd(
+    cusolver            ,
+    'A'                 ,
+    'A'                 ,
+    size.x              ,
+    size.y              ,
+    data.data().get()   ,
+    size.x              ,
+    e.data().get()      ,
+    u.data().get()      ,
+    size.x              ,
+    vt.data().get()     ,
+    size.y              ,
+    buffer.data().get() ,
+    buffer_size         ,
+    &complex_buffer_size,
+    info.data().get()   );
+  cudaDeviceSynchronize();
+  buffer.clear();
+
+  cublasSgeam(
+    cublas         ,
+    CUBLAS_OP_T    ,
+    CUBLAS_OP_N    ,
+    size.x         ,
+    size.x         ,
+    &alpha         ,
+    u.data().get() ,
+    size.x         ,
+    &beta          ,
+    nullptr        ,
+    size.x         ,
+    ut.data().get(),
+    size.x         );
+  cudaDeviceSynchronize();
+  u.clear();
+  
+  thrust::transform(
+    e.begin(),
+    e.end  (),
+    e.begin(),
+    [] __host__ __device__(float& entry) -> float
+    {
+      if (int(entry) == 0)
+        return 0;
+      return entry = 1.0F / entry;
+    });
+  cudaDeviceSynchronize();
+
+  cublasSdgmm(
+    cublas            ,
+    CUBLAS_SIDE_LEFT  ,
+    size.y            ,
+    size.x            ,
+    ut.data().get()   ,
+    size.x            ,
+    e.data().get()    ,
+    1                 ,
+    ei_ut.data().get(),
+    size.y            );
+  cudaDeviceSynchronize();
+  ut.clear();
+  e .clear();
+
+  cublasSgemm(
+    cublas              ,
+    CUBLAS_OP_T         ,
+    CUBLAS_OP_N         ,
+    size.y              ,
+    size.x              ,            
+    size.y              ,
+    &alpha              ,
+    vt.data().get()     ,
+    size.y              ,
+    ei_ut.data().get()  ,
+    size.y              ,
+    &beta               ,
+    v_ei_ut.data().get(),
+    size.y              );
+  cudaDeviceSynchronize();
+  vt   .clear();
+  ei_ut.clear();
 
   cusolverDnDestroy(cusolver);
   cublasDestroy    (cublas  );
+
+  return v_ei_ut;
 }
 
 thrust::device_vector<float> launch(
@@ -59,10 +134,6 @@ thrust::device_vector<float> launch(
   const auto sample_count      = disk_partitions.x * disk_partitions.y;
   const auto coefficient_count = expansion_size(maximum_degree);
 
-  thrust::device_vector<float> coefficients(superpixel_count * coefficient_count);
-
-  // TODO: Compute the unprojected form of each superpixel.
-  
   // Sample a unit disk.
   thrust::device_vector<float2> disk_samples(sample_count);
   sample_disk<<<grid_size_2d(dim3(superpixel_size.x, superpixel_size.y)), block_size_2d()>>>(
@@ -74,14 +145,16 @@ thrust::device_vector<float> launch(
   compute_basis<<<grid_size_2d(dim3(sample_count, coefficient_count)), block_size_2d()>>>(
     sample_count              , 
     disk_samples.data().get() , 
-    coefficient_count            , 
+    coefficient_count         ,
     basis_matrix.data().get());
 
   // Compute the inverse of the basis matrix.
   auto inverse = pseudoinverse({sample_count, coefficient_count}, basis_matrix);
 
-  // TODO: Multiply the inverse matrix with the unprojected form to obtain the coefficients.
-
+  // Project the vectors within each superpixel to the unit disk (interpret as a e.g. hexagon), then
+  // multiply the resulting vector with the inverse of the basis matrix to obtain the coefficients.
+  thrust::device_vector<float> coefficients(superpixel_count * coefficient_count);
+  // TODO.
   return coefficients;
 }
 }
