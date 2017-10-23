@@ -53,6 +53,9 @@ __forceinline__ __host__ __device__ dim3     grid_size_3d (const dim3&     targe
   };
 }
 
+// Reflection utility.
+template <class T, class M> M member_type(M T:: *);
+
 // Factorial utility.
 template<typename precision>
 __host__ __device__ precision factorial(unsigned n)
@@ -66,7 +69,7 @@ __host__ __device__ precision factorial(unsigned n)
 // Zernike moments implementation.
 __forceinline__ __host__ __device__ unsigned maximum_degree(const unsigned& count)
 {
-  return round(sqrt(2 * count) - 1);
+  return round(sqrtf(2 * count) - 1);
 }
 __forceinline__ __host__ __device__ unsigned expansion_size(const unsigned& max_n)
 {
@@ -79,7 +82,7 @@ __forceinline__ __host__ __device__ unsigned linear_index  (const int2&     nm  
 __forceinline__ __host__ __device__ int2     quantum_index (const unsigned& i    )
 {
   int2 nm;
-  nm.x = ceil((-3 + sqrt(9 + 8 * i)) / 2);
+  nm.x = ceil((-3 + sqrtf(9 + 8 * i)) / 2);
   nm.y = 2 * i - nm.x * (nm.x + 2);
   return nm;
 }
@@ -97,7 +100,7 @@ __host__ __device__ precision mode    (const int2& nm, const precision& rho)
   return out;
 }
 template<typename precision>
-__host__ __device__ precision evaluate(const int2& nm, const precision& rt )
+__host__ __device__ decltype(member_type(&precision::x)) evaluate(const int2& nm, const precision& rt )
 {
   return mode(nm, rt.x) * (nm.y >= 0 ? cos(nm.y * rt.y) : sin(nm.y * rt.y));
 }

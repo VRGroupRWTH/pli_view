@@ -22,12 +22,12 @@ __global__ void sample_disk(const uint2& dimensions, precision* samples)
   if(x > dimensions.x || y >= dimensions.y)
     return;
 
-  const auto rho   =       sqrt(x / dimensions.x);
+  const auto rho   =      sqrtf(x / dimensions.x);
   const auto theta = 2 * M_PI * y / dimensions.y; 
 
-  auto sample = &samples[y * dimensions.x + x];
-  sample.x    = rho * cos(theta);
-  sample.y    = rho * sin(theta);
+  const auto sample_index = y * dimensions.x + x;
+  samples[sample_index].x = rho * cos(theta);
+  samples[sample_index].y = rho * sin(theta);
 }
 }
 
