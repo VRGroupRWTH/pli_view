@@ -54,7 +54,8 @@ __forceinline__ __host__ __device__ dim3     grid_size_3d (const dim3&     targe
 }
 
 // Reflection utility.
-template <class T, class M> M member_type(M T:: *);
+template <class T, class M> 
+M member_type(M T:: *);
 
 // Factorial utility.
 template<typename precision>
