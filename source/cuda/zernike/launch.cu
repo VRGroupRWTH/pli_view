@@ -123,12 +123,25 @@ thrust::device_vector<float> pseudoinverse(
   return v_ei_ut;
 }
 
+__global__ void project(
+  uint2         vectors_size        ,
+  uint2         superpixel_size     ,
+  const float3* vectors             ,
+  unsigned      sample_count        ,
+  const float2* samples             ,
+  const float*  inverse_basis_matrix,
+  unsigned      coefficient_count   ,
+  float*        coefficients        )
+{
+  
+}
+
 thrust::device_vector<float> launch(
   const thrust::device_vector<float3>& vectors        ,
+  const uint2&                         vectors_size   ,
   const uint2&                         superpixel_size,
   const uint2&                         disk_partitions,
-  const unsigned                       maximum_degree ,
-  const bool                           symmetric      )
+  const unsigned                       maximum_degree )
 {
   const auto superpixel_count  = vectors.size() / (superpixel_size.x * superpixel_size.y);
   const auto sample_count      = disk_partitions.x * disk_partitions.y;
@@ -136,11 +149,11 @@ thrust::device_vector<float> launch(
 
   // Sample a unit disk.
   thrust::device_vector<float2> disk_samples(sample_count);
-  sample_disk<<<grid_size_2d(dim3(superpixel_size.x, superpixel_size.y)), block_size_2d()>>>(
+  sample_disk<<<grid_size_2d(dim3(disk_partitions.x, disk_partitions.y)), block_size_2d()>>>(
     disk_partitions           , 
     disk_samples.data().get());
 
-  // Compute Zernike basis for the unit disk.
+  // Compute Zernike basis for the samples.
   thrust::device_vector<float> basis_matrix(sample_count * coefficient_count);
   compute_basis<<<grid_size_2d(dim3(sample_count, coefficient_count)), block_size_2d()>>>(
     sample_count              , 
@@ -149,12 +162,20 @@ thrust::device_vector<float> launch(
     basis_matrix.data().get());
 
   // Compute the inverse of the basis matrix.
-  auto inverse = pseudoinverse({sample_count, coefficient_count}, basis_matrix);
+  auto inverse_basis_matrix = pseudoinverse({sample_count, coefficient_count}, basis_matrix);
 
-  // Project the vectors within each superpixel to the unit disk (interpret as a e.g. hexagon), then
+  // Project the vectors within each superpixel to the samples (interpret as a e.g. hexagon), then
   // multiply the resulting vector with the inverse of the basis matrix to obtain the coefficients.
   thrust::device_vector<float> coefficients(superpixel_count * coefficient_count);
-  // TODO.
+  project<<<grid_size_2d(dim3()), block_size_2d()>>>(
+    vectors_size                     ,
+    superpixel_size                  ,
+    vectors.data().get()             ,
+    sample_count                     ,
+    disk_samples.data().get()        ,
+    inverse_basis_matrix.data().get(),
+    coefficient_count                ,
+    coefficients.data().get()        );
   return coefficients;
 }
 }
