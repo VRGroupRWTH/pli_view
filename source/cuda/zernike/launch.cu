@@ -123,6 +123,29 @@ thrust::device_vector<float> pseudoinverse(
   return v_ei_ut;
 }
 
+// Based on Troyseph's answer at https://stackoverflow.com/questions/7705228/hexagonal-grids-how-do-you-find-which-hexagon-a-point-is-in
+uint2 hexagon_id(const uint2& coordinates, const uint2& grid_size)
+{
+  const auto    row_is_odd = coordinates.y / grid_size.y % 2 == 1;
+  const auto    half_width = grid_size.x / 2;
+  uint2         id          {coordinates.y / grid_size.y, (row_is_odd ? coordinates.x - half_width : coordinates.x) / grid_size.x};
+  const double2 relative    {row_is_odd ? coordinates.x - id.y * grid_size.x - half_width : coordinates.x - id.y * grid_size.x, coordinates.y - id.x * grid_size.y};
+  const auto    c          = 0; // TODO!
+  const auto    m          = c / half_width;
+
+  if      (relative.y < -m * relative.x + c)
+  {
+    id.x--;
+    if (!row_is_odd) id.y--;
+  }
+  else if (relative.y <  m * relative.x - c)
+  {
+    id.x--;
+    if (row_is_odd) id.y++;
+  }
+  return id;
+}
+
 __global__ void project(
   uint2         vectors_size        ,
   uint2         superpixel_size     ,
@@ -133,7 +156,12 @@ __global__ void project(
   unsigned      coefficient_count   ,
   float*        coefficients        )
 {
-  
+  const auto x = blockIdx.x * blockDim.x + threadIdx.x;
+  const auto y = blockIdx.y * blockDim.y + threadIdx.y;
+  if (x >= vectors_size.x || y >= vectors_size.y)
+    return;
+
+  // TODO!
 }
 
 thrust::device_vector<float> launch(
@@ -166,8 +194,11 @@ thrust::device_vector<float> launch(
 
   // Project the vectors within each superpixel to the samples (interpret as a e.g. hexagon), then
   // multiply the resulting vector with the inverse of the basis matrix to obtain the coefficients.
-  thrust::device_vector<float> coefficients(superpixel_count * coefficient_count);
-  project<<<grid_size_2d(dim3()), block_size_2d()>>>(
+  thrust::device_vector<float> intermediates(superpixel_count * sample_count     );
+  thrust::device_vector<float> coefficients (superpixel_count * coefficient_count);
+  // TODO: Accumulate as first pass.
+  // TODO: Project the accumulated as second pass.
+  project<<<grid_size_2d(dim3(vectors_size.x, vectors_size.y)), block_size_2d()>>>(
     vectors_size                     ,
     superpixel_size                  ,
     vectors.data().get()             ,
