@@ -136,17 +136,27 @@ __global__ void accumulate(
   if (x >= vectors_size.x || y >= vectors_size.y)
     return;
 
-  // Place the vector in the center of a unit disk, project it, and scale by superpixel radius.
-  auto       vector       = vectors[y + vectors_size.y * x];
-  vector.x = cos(vector.z) * (max(superpixel_size.x, superpixel_size.y) / 2.0F);
-  vector.z = M_PI / 2;
+  auto& vector = vectors[y + vectors_size.y * x];
   
-  // Find the closest sample to the projected endpoint of the vector and accumulate it.
   const auto superpixel_x        = x / superpixel_size.x;
   const auto superpixel_y        = y / superpixel_size.y;
-  const auto superpixel_index    = superpixel_y + superpixel_size.y * superpixel_x;
-  const auto intermediate_offset = disk_partitions.x * disk_partitions.y * superpixel_index;
-  atomicAdd(&intermediates[intermediate_offset + 42], 1);
+  const auto superpixel_index    = superpixel_y + vectors_size.y / superpixel_size.y * superpixel_x;
+  const auto sample_count        = disk_partitions.x * disk_partitions.y;
+  const auto intermediate_offset = sample_count * superpixel_index;
+
+  auto max_dot      = 0.0F;
+  auto sample_index = 0;
+  for(auto i = 0; i < sample_count; i++)
+  {
+    auto temp_dot = dot(disk_samples[i], float2{cos(vector.z), vector.y});
+    if (temp_dot > max_dot)
+    {
+      max_dot      = temp_dot;
+      sample_index = i       ;
+    }
+  }
+
+  atomicAdd(&intermediates[intermediate_offset + sample_index], 1.0F);
 }
 
 thrust::device_vector<float> launch(
