@@ -3,9 +3,9 @@
 #include <cublas_v2.h>
 #include <cusolverDn.h>
 
+#include <pli_vis/cuda/utility/vector_ops.h>
 #include <pli_vis/cuda/zernike/disk.h>
 #include <pli_vis/cuda/zernike/zernike.h>
-#include "pli_vis/cuda/sh/spherical_harmonics.h"
 
 namespace zer
 {
@@ -124,25 +124,29 @@ __host__ thrust::device_vector<float> pseudoinverse(
 }
 
 __global__ void accumulate(
-  const uint2    vectors_size    ,
-  const float3*  vectors         ,
-  const uint2    disk_partitions ,
-  const float2*  disk_samples    ,
-  const uint2    superpixel_size ,
-        float*   intermediates   )
+  const uint2   vectors_size   ,
+  const float3* vectors        ,
+  const uint2   disk_partitions,
+  const float2* disk_samples   ,
+  const uint2   superpixel_size,
+        float*  intermediates  )
 {
   const auto x = blockIdx.x * blockDim.x + threadIdx.x;
   const auto y = blockIdx.y * blockDim.y + threadIdx.y;
   if (x >= vectors_size.x || y >= vectors_size.y)
     return;
+
+  // Place the vector in the center of a unit disk, project it, and scale by superpixel radius.
+  auto       vector       = vectors[y + vectors_size.y * x];
+  vector.x = cos(vector.z) * (max(superpixel_size.x, superpixel_size.y) / 2.0F);
+  vector.z = M_PI / 2;
   
-  // Find the superpixel of the vector.
-
-  // Place the vector in the center of a unit disk and project it onto it.
-
-  // Scale the sampled point's radial distance by the supervoxel radius.
-
   // Find the closest sample to the projected endpoint of the vector and accumulate it.
+  const auto superpixel_x        = x / superpixel_size.x;
+  const auto superpixel_y        = y / superpixel_size.y;
+  const auto superpixel_index    = superpixel_y + superpixel_size.y * superpixel_x;
+  const auto intermediate_offset = disk_partitions.x * disk_partitions.y * superpixel_index;
+  atomicAdd(&intermediates[intermediate_offset + 42], 1);
 }
 
 thrust::device_vector<float> launch(
