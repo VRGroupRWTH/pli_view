@@ -159,6 +159,22 @@ __global__ void accumulate(
   atomicAdd(&intermediates[intermediate_offset + sample_index], 1.0F);
 }
 
+__global__ void project(
+  const uint2    dimensions       ,
+  const float*   basis_matrix     ,
+  const unsigned sample_count     ,
+  const float*   intermediates    ,
+  const unsigned coefficient_count,
+        float*   coefficients     )
+{
+  const auto x = blockIdx.x * blockDim.x + threadIdx.x;
+  const auto y = blockIdx.y * blockDim.y + threadIdx.y;
+  if (x >= dimensions.x || y >= dimensions.y)
+    return;
+
+  // TODO: coefficients[coefficient_offset] = basis_matrix * intermediates[intermediate_offset];
+}
+
 thrust::device_vector<float> launch(
   const thrust::device_vector<float3>& vectors        ,
   const uint2&                         vectors_size   ,
@@ -166,9 +182,10 @@ thrust::device_vector<float> launch(
   const uint2&                         disk_partitions,
   const unsigned                       maximum_degree )
 {
-  const auto superpixel_count  = vectors.size() / (superpixel_size.x * superpixel_size.y);
-  const auto sample_count      = disk_partitions.x * disk_partitions.y;
-  const auto coefficient_count = expansion_size(maximum_degree);
+  const auto superpixel_dimensions = uint2{vectors_size.x / superpixel_size.x, vectors_size.y / superpixel_size.y};
+  const auto superpixel_count      = superpixel_dimensions.x * superpixel_dimensions.y;
+  const auto sample_count          = disk_partitions.x * disk_partitions.y;
+  const auto coefficient_count     = expansion_size(maximum_degree);
 
   // Sample a unit disk.
   thrust::device_vector<float2> disk_samples(sample_count);
@@ -199,7 +216,13 @@ thrust::device_vector<float> launch(
 
   // Second pass: Project.
   thrust::device_vector<float> coefficients(superpixel_count * coefficient_count);
-  // TODO!
+  project<<<grid_size_2d(dim3(superpixel_dimensions.x, superpixel_dimensions.y)), block_size_2d()>>> (
+    superpixel_dimensions            ,
+    inverse_basis_matrix.data().get(),
+    sample_count                     ,
+    intermediates.data().get()       ,
+    coefficient_count                ,
+    coefficients.data().get())       ;
 
   return coefficients;
 }
