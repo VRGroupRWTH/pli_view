@@ -9,7 +9,8 @@
 
 namespace zer
 {
-thrust::device_vector<float> pseudoinverse(
+// Matrix pseudoinverse through SVD. Generalize and move to a more accessible place.
+__host__ thrust::device_vector<float> pseudoinverse(
   const uint2&                  size, 
   thrust::device_vector<float>& data)
 {
@@ -123,22 +124,25 @@ thrust::device_vector<float> pseudoinverse(
   return v_ei_ut;
 }
 
+// Retrieve which superpixel hexagon a pixel is in.
 // Based on Troyseph's answer at https://stackoverflow.com/questions/7705228/hexagonal-grids-how-do-you-find-which-hexagon-a-point-is-in
-uint2 hexagon_id(const uint2& coordinates, const uint2& grid_size)
+__device__ __host__ uint2 hexagon_id(const uint2& coordinates, const uint2& superpixel_size)
 {
-  const auto    row_is_odd = coordinates.y / grid_size.y % 2 == 1;
-  const auto    half_width = grid_size.x / 2;
-  uint2         id          {coordinates.y / grid_size.y, (row_is_odd ? coordinates.x - half_width : coordinates.x) / grid_size.x};
-  const double2 relative    {row_is_odd ? coordinates.x - id.y * grid_size.x - half_width : coordinates.x - id.y * grid_size.x, coordinates.y - id.x * grid_size.y};
-  const auto    c          = 0; // TODO!
-  const auto    m          = c / half_width;
+  const uint2 grid_size   = {superpixel_size.x, unsigned(0.75 * superpixel_size.y)};
+  const auto  half_width  = grid_size.x / 2;
+  const auto  y_intercept = unsigned(0.25 * superpixel_size.y);
+  const auto  slope       = y_intercept / half_width;
 
-  if      (relative.y < -m * relative.x + c)
+  const auto    row_is_odd = coordinates.y / grid_size.y % 2 == 1;
+  uint2         id          {coordinates.y / grid_size.y, (row_is_odd ? coordinates.x - half_width : coordinates.x) / grid_size.x};
+  const double2 relative    {coordinates.x - id.y * grid_size.x - (row_is_odd ? half_width : 0), coordinates.y - id.x * grid_size.y};
+ 
+  if      (relative.y < -slope * relative.x + y_intercept)
   {
     id.x--;
     if (!row_is_odd) id.y--;
   }
-  else if (relative.y <  m * relative.x - c)
+  else if (relative.y <  slope * relative.x - y_intercept)
   {
     id.x--;
     if (row_is_odd) id.y++;
@@ -146,22 +150,16 @@ uint2 hexagon_id(const uint2& coordinates, const uint2& grid_size)
   return id;
 }
 
-__global__ void project(
-  uint2         vectors_size        ,
-  uint2         superpixel_size     ,
-  const float3* vectors             ,
-  unsigned      sample_count        ,
-  const float2* samples             ,
-  const float*  inverse_basis_matrix,
-  unsigned      coefficient_count   ,
-  float*        coefficients        )
+// First pass to accumulate vectors into the samples.
+__global__ void accumulate(
+  const uint2&  vectors_size   ,
+  const float3* vectors        ,
+  const uint2&  disk_partitions,
+  const 
+  )
 {
-  const auto x = blockIdx.x * blockDim.x + threadIdx.x;
-  const auto y = blockIdx.y * blockDim.y + threadIdx.y;
-  if (x >= vectors_size.x || y >= vectors_size.y)
-    return;
+  // Retrieve the closest sample within the superpixel hexagon a pixel is in.
 
-  // TODO!
 }
 
 thrust::device_vector<float> launch(
@@ -191,22 +189,27 @@ thrust::device_vector<float> launch(
 
   // Compute the inverse of the basis matrix.
   auto inverse_basis_matrix = pseudoinverse({sample_count, coefficient_count}, basis_matrix);
+  
+  // First pass.
+  // For each vector:
+  // - Find the superpixel it lies in.
+  // - Place the vector in the center of a unit disk and project it to the plane of the disk.
+  // - Scale the sampled point's distance to center by the supervoxel (hexagon) size.
+  // - Find the closest sample to the projected endpoint of the vector and accumulate it.
+  thrust::device_vector<float> intermediates(superpixel_count * sample_count);
+  accumulate<<<grid_size_2d(dim3(vectors_size.x, vectors_size.y)), block_size_2d()>>> (
+    vectors_size              ,
+    vectors      .data().get(),
+    disk_partitions           ,
+    disk_samples .data().get(),
+    superpixel_count          ,
+    intermediates.data().get());
 
-  // Project the vectors within each superpixel to the samples (interpret as a e.g. hexagon), then
-  // multiply the resulting vector with the inverse of the basis matrix to obtain the coefficients.
-  thrust::device_vector<float> intermediates(superpixel_count * sample_count     );
-  thrust::device_vector<float> coefficients (superpixel_count * coefficient_count);
-  // TODO: Accumulate as first pass.
-  // TODO: Project the accumulated as second pass.
-  project<<<grid_size_2d(dim3(vectors_size.x, vectors_size.y)), block_size_2d()>>>(
-    vectors_size                     ,
-    superpixel_size                  ,
-    vectors.data().get()             ,
-    sample_count                     ,
-    disk_samples.data().get()        ,
-    inverse_basis_matrix.data().get(),
-    coefficient_count                ,
-    coefficients.data().get()        );
+  // Second pass.
+  // For each hexagon:
+  // - Multiply the samples histogram with the inverse of the basis matrix, leading to the coefficients.
+  thrust::device_vector<float> coefficients(superpixel_count * coefficient_count);
+
   return coefficients;
 }
 }
