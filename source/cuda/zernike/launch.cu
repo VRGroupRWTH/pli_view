@@ -124,12 +124,13 @@ __host__ thrust::device_vector<float> pseudoinverse(
 }
 
 __global__ void accumulate(
-  const uint2   vectors_size   ,
-  const float3* vectors        ,
-  const uint2   disk_partitions,
-  const float2* disk_samples   ,
-  const uint2   superpixel_size,
-        float*  intermediates  )
+  const uint2   vectors_size         ,
+  const float3* vectors              ,
+  const uint2   disk_partitions      ,
+  const float2* disk_samples         ,
+  const uint2   superpixel_size      ,
+  const uint2   superpixel_dimensions,
+        float*  intermediates        )
 {
   const auto x = blockIdx.x * blockDim.x + threadIdx.x;
   const auto y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -140,7 +141,7 @@ __global__ void accumulate(
   
   const auto superpixel_x        = x / superpixel_size.x;
   const auto superpixel_y        = y / superpixel_size.y;
-  const auto superpixel_index    = superpixel_y + vectors_size.y / superpixel_size.y * superpixel_x;
+  const auto superpixel_index    = superpixel_y + superpixel_dimensions.y * superpixel_x;
   const auto sample_count        = disk_partitions.x * disk_partitions.y;
   const auto intermediate_offset = sample_count * superpixel_index;
 
@@ -212,6 +213,7 @@ thrust::device_vector<float> launch(
     disk_partitions           ,
     disk_samples .data().get(),
     superpixel_size           ,
+    superpixel_dimensions     ,
     intermediates.data().get());
 
   // Second pass: Project.
