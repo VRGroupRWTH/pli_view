@@ -9,9 +9,7 @@
 
 namespace zer
 {
-__host__ thrust::device_vector<float> pseudoinverse(
-  const uint2&                  size, 
-  thrust::device_vector<float>& data)
+__host__ thrust::device_vector<float> pseudoinverse(const uint2& size, thrust::device_vector<float>& data)
 {
   cublasHandle_t     cublas  ;
   cusolverDnHandle_t cusolver;
@@ -124,13 +122,13 @@ __host__ thrust::device_vector<float> pseudoinverse(
 }
 
 __global__ void accumulate(
-  const uint2   vectors_size         ,
-  const float3* vectors              ,
-  const uint2   disk_partitions      ,
-  const float2* disk_samples         ,
-  const uint2   superpixel_size      ,
-  const uint2   superpixel_dimensions,
-        float*  intermediates        )
+  const uint2    vectors_size         ,
+  const float3*  vectors              ,
+  const uint2    disk_partitions      ,
+  const float2*  disk_samples         ,
+  const uint2    superpixel_size      ,
+  const uint2    superpixel_dimensions,
+        float*   intermediates        )
 {
   const auto x = blockIdx.x * blockDim.x + threadIdx.x;
   const auto y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -161,12 +159,12 @@ __global__ void accumulate(
 }
 
 __global__ void project(
-  const uint2    dimensions       ,
-  const float*   basis_matrix     ,
-  const unsigned sample_count     ,
-  const float*   intermediates    ,
-  const unsigned coefficient_count,
-        float*   coefficients     )
+  const uint2    dimensions           ,
+  const float*   basis_matrix         ,
+  const unsigned sample_count         ,
+  const float*   intermediates        ,
+  const unsigned coefficient_count    ,
+        float*   coefficients         )
 {
   const auto x = blockIdx.x * blockDim.x + threadIdx.x;
   const auto y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -226,7 +224,7 @@ thrust::device_vector<float> launch(
   // Compute the inverse of the basis matrix.
   auto inverse_basis_matrix = pseudoinverse({sample_count, coefficient_count}, basis_matrix);
   
-  // First pass: Accumulate.
+  // Accumulate vectors into superpixels.
   thrust::device_vector<float> intermediates(superpixel_count * sample_count);
   accumulate<<<grid_size_2d(dim3(vectors_size.x, vectors_size.y)), block_size_2d()>>> (
     vectors_size              ,
@@ -237,7 +235,7 @@ thrust::device_vector<float> launch(
     superpixel_dimensions     ,
     intermediates.data().get());
 
-  // Second pass: Project.
+  // Project superpixels to the Zernike basis.
   thrust::device_vector<float> coefficients(superpixel_count * coefficient_count);
   project<<<grid_size_2d(dim3(superpixel_dimensions.x, superpixel_dimensions.y)), block_size_2d()>>> (
     superpixel_dimensions            ,
