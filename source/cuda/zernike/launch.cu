@@ -212,6 +212,7 @@ thrust::device_vector<float> launch(
   sample_disk<<<grid_size_2d(dim3(disk_partitions.x, disk_partitions.y)), block_size_2d()>>>(
     disk_partitions           , 
     disk_samples.data().get());
+  cudaDeviceSynchronize();
 
   // Compute Zernike basis for the samples.
   thrust::device_vector<float> basis_matrix(sample_count * coefficient_count);
@@ -220,6 +221,7 @@ thrust::device_vector<float> launch(
     disk_samples.data().get() , 
     coefficient_count         ,
     basis_matrix.data().get());
+  cudaDeviceSynchronize();
 
   // Compute the inverse of the basis matrix.
   auto inverse_basis_matrix = pseudoinverse({sample_count, coefficient_count}, basis_matrix);
@@ -234,6 +236,7 @@ thrust::device_vector<float> launch(
     superpixel_size           ,
     superpixel_dimensions     ,
     intermediates.data().get());
+  cudaDeviceSynchronize();
 
   // Project superpixels to the Zernike basis.
   thrust::device_vector<float> coefficients(superpixel_count * coefficient_count);
@@ -244,7 +247,28 @@ thrust::device_vector<float> launch(
     intermediates.data().get()       ,
     coefficient_count                ,
     coefficients.data().get())       ;
+  cudaDeviceSynchronize();
 
   return coefficients;
+}
+
+std::vector<float> launch(
+  const std::vector<float3>&           vectors        ,
+  const uint2&                         vectors_size   ,
+  const uint2&                         superpixel_size,
+  const uint2&                         disk_partitions,
+  const unsigned                       maximum_degree )
+{
+  thrust::device_vector<float3> vectors_gpu(vectors.size());
+  thrust::copy(vectors.begin(), vectors.end(), vectors_gpu.begin());
+  auto coefficients = zer::launch(
+    vectors_gpu    ,
+    vectors_size   ,
+    superpixel_size,
+    disk_partitions,
+    maximum_degree );
+  std::vector<float> coefficients_cpu(coefficients.size());
+  thrust::copy(coefficients.begin(), coefficients.end(), coefficients_cpu.begin());
+  return coefficients_cpu;
 }
 }
