@@ -173,7 +173,28 @@ __global__ void project(
   if (x >= dimensions.x || y >= dimensions.y)
     return;
 
-  // TODO: coefficients[coefficient_offset] = basis_matrix * intermediates[intermediate_offset];
+  const auto linear_index        = y + dimensions.y * x;
+  const auto intermediate_offset = sample_count      * linear_index;
+  const auto coefficient_offset  = coefficient_count * linear_index;
+
+  cublasHandle_t cublas;
+  cublasCreate(&cublas);
+  auto alpha = 1.0F;
+  auto beta  = 0.0F;
+  cublasSgemv(
+    cublas                             ,
+    CUBLAS_OP_N                        ,
+    coefficient_count                  ,
+    sample_count                       ,
+    &alpha                             ,
+    basis_matrix                       ,
+    coefficient_count                  ,
+    &intermediates[intermediate_offset],
+    1                                  ,
+    &beta                              ,
+    &coefficients [coefficient_offset ],
+    1                                  );
+  cublasDestroy(cublas);
 }
 
 thrust::device_vector<float> launch(
