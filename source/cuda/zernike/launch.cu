@@ -137,23 +137,23 @@ __global__ void accumulate(
   if (x >= vectors_size.x || y >= vectors_size.y)
     return;
 
-  auto& vector = vectors[y + vectors_size.y * x];
-  
+  const auto& vector = vectors[y + vectors_size.y * x];
+
   const auto superpixel_x        = x / superpixel_size.x;
   const auto superpixel_y        = y / superpixel_size.y;
   const auto superpixel_index    = superpixel_y + superpixel_dimensions.y * superpixel_x;
   const auto sample_count        = disk_partitions.x * disk_partitions.y;
   const auto intermediate_offset = sample_count * superpixel_index;
 
-  auto max_dot      = 0.0F;
+  auto min_distance = 2.0F;
   auto sample_index = 0;
   for(auto i = 0; i < sample_count; i++)
   {
-    auto temp_dot = dot(disk_samples[i], float2{cos(vector.z), vector.y});
-    if (temp_dot > max_dot)
+    const auto temp_distance = sqrt(pow(cos(vector.z), 2) + pow(disk_samples[i].x, 2) - 2.0F * cos(vector.z) * disk_samples[i].x * cos(vector.y - disk_samples[i].y));
+    if (temp_distance < min_distance)
     {
-      max_dot      = temp_dot;
-      sample_index = i       ;
+      min_distance = temp_distance;
+      sample_index = i;
     }
   }
 
