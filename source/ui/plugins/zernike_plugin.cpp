@@ -1,6 +1,7 @@
 #include <pli_vis/ui/plugins/zernike_plugin.hpp>
 
 #include <pli_vis/cuda/utility/vector_ops.h>
+#include <pli_vis/cuda/zernike/launch.h>
 #include <pli_vis/ui/utility/line_edit.hpp>
 #include <pli_vis/ui/utility/text_browser_sink.hpp>
 #include <pli_vis/ui/application.hpp>
@@ -88,12 +89,14 @@ zernike_plugin::zernike_plugin(QWidget* parent)
         auto  vector_dimensions     = parameters.superpixel_size * superpixel_dimensions;
         vectors.resize(boost::extents[vector_dimensions.x][vector_dimensions.y][1]);
 
-        //... = zer::launch(
-        //  vectors                   , 
-        //  parameters.superpixel_size, 
-        //  parameters.partitions     , 
-        //  parameters.maximum_degree , 
-        //  parameters.symmetric      );
+        std::vector<float3> vectors_linear(vectors.num_elements());
+        std::copy_n(vectors.data(), vectors.num_elements(), vectors_linear.begin());
+        auto coefficients = zer::launch(
+          vectors_linear            ,
+          parameters.vectors_size   ,
+          parameters.superpixel_size, 
+          parameters.partitions     , 
+          parameters.maximum_degree );
       }
       catch (std::exception& exception)
       {
@@ -125,6 +128,10 @@ zernike_plugin::parameters zernike_plugin::get_parameters() const
   return 
   {
     {
+      unsigned(owner_->get_plugin<data_plugin>()->selection_size()[0]),
+      unsigned(owner_->get_plugin<data_plugin>()->selection_size()[1])
+    },
+    {
       line_edit::get_text<unsigned>(line_edit_superpixel_x),
       line_edit::get_text<unsigned>(line_edit_superpixel_y) 
     },
@@ -132,8 +139,7 @@ zernike_plugin::parameters zernike_plugin::get_parameters() const
       line_edit::get_text<unsigned>(line_edit_partitions_theta),
       line_edit::get_text<unsigned>(line_edit_partitions_rho  ) 
     },
-    line_edit::get_text<unsigned>(line_edit_maximum_degree),
-    checkbox_symmetric->isChecked()
+    line_edit::get_text<unsigned>(line_edit_maximum_degree)
   };
 }
 }

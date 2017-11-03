@@ -17,10 +17,10 @@ class zernike_plugin : public plugin<zernike_plugin, Ui_zernike_toolbox>
 public:
   struct parameters
   {
+    uint2    vectors_size   ;
     uint2    superpixel_size;
     uint2    partitions     ;
     unsigned maximum_degree ;
-    bool     symmetric      ;
   };
 
   explicit zernike_plugin(QWidget* parent = nullptr);
