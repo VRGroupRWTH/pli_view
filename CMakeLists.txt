@@ -227,21 +227,26 @@ set(PROJECT_SOURCES
   shaders/lineao_normal_depth_pass.vert.glsl
   shaders/lineao_zoom_pass.frag.glsl
   shaders/lineao_zoom_pass.vert.glsl
+  shaders/odf_field_renderer.frag.glsl
+  shaders/odf_field_renderer.vert.glsl
   shaders/simple_color.frag.glsl
   shaders/simple_color.vert.glsl
   shaders/simple_texture.frag.glsl
   shaders/simple_texture.vert.glsl
   shaders/streamline_renderer.frag.glsl
   shaders/streamline_renderer.vert.glsl
+  shaders/view_dependent.frag.glsl
+  shaders/view_dependent.vert.glsl
   shaders/view_dependent_vector_field.frag.glsl
   shaders/view_dependent_vector_field.geom.glsl
   shaders/view_dependent_vector_field.vert.glsl
-  shaders/view_dependent.frag.glsl
-  shaders/view_dependent.vert.glsl
   shaders/volume_renderer_prepass.frag.glsl
   shaders/volume_renderer_prepass.vert.glsl
   shaders/volume_renderer.frag.glsl
   shaders/volume_renderer.vert.glsl
+  shaders/zernike.frag.glsl
+  shaders/zernike.geom.glsl
+  shaders/zernike.vert.glsl
   
   source/cuda/pt/tracer.cu
   source/cuda/zernike/launch.cu
