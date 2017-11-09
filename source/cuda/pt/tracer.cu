@@ -54,7 +54,7 @@ std::vector<std::vector<float3>> trace(
 {
   thrust::device_vector<float3> data_gpu   = data ;
   thrust::device_vector<float3> seeds_gpu  = seeds;
-  thrust::device_vector<float3> traces_gpu(iteration_count * seeds.size());
+  thrust::device_vector<float3> traces_gpu(iteration_count * seeds.size(), float3{0.0f, 0.0f, 0.0f});
   const auto data_gpu_ptr   = raw_pointer_cast(&data_gpu  [0]);
   const auto seeds_gpu_ptr  = raw_pointer_cast(&seeds_gpu [0]);
   const auto traces_gpu_ptr = raw_pointer_cast(&traces_gpu[0]);
