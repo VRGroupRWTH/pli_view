@@ -204,6 +204,7 @@ set(PROJECT_SOURCES
   include/pli_vis/visualization/algorithms/streamline_renderer.hpp
   include/pli_vis/visualization/algorithms/vector_field.hpp
   include/pli_vis/visualization/algorithms/volume_renderer.hpp
+  include/pli_vis/visualization/algorithms/zernike_field.hpp
   include/pli_vis/visualization/interactors/first_person_interactor.hpp
   include/pli_vis/visualization/interactors/interactor.hpp
   include/pli_vis/visualization/interactors/orbit_interactor.hpp
@@ -371,6 +372,7 @@ set(PROJECT_SOURCES
   source/visualization/algorithms/streamline_renderer.cpp
   source/visualization/algorithms/vector_field.cpp
   source/visualization/algorithms/volume_renderer.cpp
+  source/visualization/algorithms/zernike_field.cpp
   source/visualization/interactors/first_person_interactor.cpp
   source/visualization/interactors/orbit_interactor.cpp
   source/visualization/interactors/simple_interactor.cpp
