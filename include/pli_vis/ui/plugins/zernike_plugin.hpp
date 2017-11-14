@@ -10,7 +10,7 @@
 
 namespace pli
 {
-class tensor_field;
+class zernike_field;
 
 class zernike_plugin : public plugin<zernike_plugin, Ui_zernike_toolbox>
 {
@@ -29,8 +29,8 @@ public:
   parameters get_parameters() const   ;
 
 private:
-  std::future<void> future_       ;
-  tensor_field*     tensor_field_ = nullptr;
+  std::future<void> future_        ;
+  zernike_field*    zernike_field_ = nullptr;
 };
 }
 
