@@ -31,9 +31,9 @@ public:
   
   template <typename buffer_type>
   void set_element_buffer(const buffer_type& buffer)
-   {
+  {
      glVertexArrayElementBuffer(id_, buffer.id());
-   }
+  }
 
   bool is_valid() const
   {
