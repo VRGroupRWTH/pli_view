@@ -59,7 +59,7 @@ void main()
 
   float scalar = 0.0f;
   for(uint i = 0; i < coefficients_per_voxel; i++)
-    scalar += coefficients[coefficient_offset + i] * evaluate(ivec2(0,0), vec2(0.5, 0.5));
+    scalar += coefficients[coefficient_offset + i] * evaluate(quantum_index(i), to_radial(fs_in.position.xy - vec2(0.5, 0.5)));
 
   color = vec4(scalar, scalar, scalar, 1.0);
 }
