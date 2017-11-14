@@ -246,7 +246,6 @@ set(PROJECT_SOURCES
   shaders/volume_renderer.frag.glsl
   shaders/volume_renderer.vert.glsl
   shaders/zernike.frag.glsl
-  shaders/zernike.geom.glsl
   shaders/zernike.vert.glsl
   
   source/cuda/pt/tracer.cu
