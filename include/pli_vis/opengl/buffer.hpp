@@ -115,10 +115,11 @@ private:
   cudaGraphicsResource* resource_ = nullptr;
 };
 
-typedef buffer<GL_ARRAY_BUFFER>         array_buffer;
-typedef buffer<GL_ELEMENT_ARRAY_BUFFER> index_buffer;
-typedef buffer<GL_PIXEL_PACK_BUFFER>    pixel_pack_buffer;
-typedef buffer<GL_PIXEL_UNPACK_BUFFER>  pixel_unpack_buffer;
+typedef buffer<GL_ARRAY_BUFFER>          array_buffer;
+typedef buffer<GL_ELEMENT_ARRAY_BUFFER>  index_buffer;
+typedef buffer<GL_PIXEL_PACK_BUFFER>     pixel_pack_buffer;
+typedef buffer<GL_PIXEL_UNPACK_BUFFER>   pixel_unpack_buffer;
+typedef buffer<GL_SHADER_STORAGE_BUFFER> shader_storage_buffer;
 
 typedef array_buffer vertex_buffer;
 }

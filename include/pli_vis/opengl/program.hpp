@@ -54,7 +54,7 @@ public:
   {
     glUseProgram(0  );
   }
-                                      
+
   void   set_attribute_buffer         (const std::string& name, GLuint size, GLuint type, bool normalize = true, GLuint stride = 0, GLuint offset = 0)
   {
     auto location = get_attribute_location(name);
