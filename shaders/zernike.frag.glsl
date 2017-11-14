@@ -27,6 +27,13 @@ vec2 to_radial(vec2 cartesian)
   return vec2(length(cartesian), atan(cartesian.y, cartesian.x));
 }
 
+ivec2 quantum_index(int index)
+{
+  ivec2 nm;
+  nm.x = int(ceil((-3.0 + sqrt(float(9 + 8 * index))) / 2.0));
+  nm.y = 2 * index - nm.x * (nm.x + 2);
+  return nm;
+}
 uint factorial(uint n)
 {
   uint result = 1;
@@ -34,14 +41,14 @@ uint factorial(uint n)
     result *= i;
   return result;
 }
-float mode(uvec2 nm, float rho)
+float mode(ivec2 nm, float rho)
 {
   float result = 0.0;
   for(uint i = 0; i < (nm.x - nm.y) / 2; i++)
     result += pow(rho, nm.x - 2 * i) * (pow(-1, i) * factorial(nm.x - i)) / (factorial(i) * factorial((nm.x + nm.y) / 2 - i) * factorial((nm.x - nm.y) / 2 - i));
   return result;
 }
-float evaluate(uvec2 nm, vec2 rt)
+float evaluate(ivec2 nm, vec2 rt)
 {
   return mode(nm, rt.x) * (nm.y >= 0 ? cos(nm.y * rt.y) : sin(nm.y * rt.y));
 }
@@ -49,12 +56,14 @@ float evaluate(uvec2 nm, vec2 rt)
 void main()
 {
   uint coefficient_offset = fs_in.offset * coefficients_per_voxel;
-  for(uint i = 0; i < coefficients_per_voxel; i++)
-  {
 
-  }
-  color = vec4(1.0, 1.0, 1.0, 1.0);
+  float scalar = 0.0f;
+  for(uint i = 0; i < coefficients_per_voxel; i++)
+    scalar += coefficients[coefficient_offset + i] * evaluate(ivec2(0,0), vec2(0.5, 0.5));
+
+  color = vec4(scalar, scalar, scalar, 1.0);
 }
 )";
 }
+
 #endif
