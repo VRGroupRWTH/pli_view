@@ -100,7 +100,10 @@ zernike_plugin::zernike_plugin(QWidget* parent)
           parameters.vectors_size   ,
           parameters.superpixel_size, 
           parameters.partitions     , 
-          parameters.maximum_degree );
+          parameters.maximum_degree ,
+          true                      ,
+          true                      ,
+          false                     );
       }
       catch (std::exception& exception)
       {

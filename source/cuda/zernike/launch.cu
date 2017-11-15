@@ -206,7 +206,10 @@ thrust::device_vector<float> launch(
   const uint2&                         vectors_size   ,
   const uint2&                         superpixel_size,
   const uint2&                         disk_partitions,
-  const unsigned                       maximum_degree )
+  const unsigned                       maximum_degree ,
+  bool                                 normalize      ,
+  bool                                 even_only      ,
+  bool                                 edge_only      )
 {
   const auto superpixel_dimensions = uint2{vectors_size.x / superpixel_size.x, vectors_size.y / superpixel_size.y};
   const auto superpixel_count      = superpixel_dimensions.x * superpixel_dimensions.y;
@@ -227,8 +230,8 @@ thrust::device_vector<float> launch(
     disk_samples.data().get() , 
     coefficient_count         ,
     basis_matrix.data().get() ,
-    true                      ,
-    true                      );
+    even_only                 ,
+    edge_only                 );
   cudaDeviceSynchronize();
 
   // Compute the inverse of the basis matrix.
@@ -247,15 +250,19 @@ thrust::device_vector<float> launch(
   cudaDeviceSynchronize();
 
   // Normalize.
-  for(auto i = 0; i < superpixel_count; i++)
+  if(normalize)
   {
-    const auto start_iterator = intermediates.begin() +  i      * superpixel_count;
-    const auto end_iterator   = intermediates.begin() + (i + 1) * superpixel_count;
-    const auto max_element    = *thrust::max_element(start_iterator, end_iterator);
-    thrust::transform(start_iterator, end_iterator, start_iterator, [=] __host__ __device__(const float& point)
+    for(auto i = 0; i < superpixel_count; i++)
     {
-      return point / max_element;
-    });
+      const auto start_iterator = intermediates.begin() +  i      * superpixel_count;
+      const auto end_iterator   = intermediates.begin() + (i + 1) * superpixel_count;
+      const auto max_element    = *thrust::max_element(start_iterator, end_iterator);
+      thrust::transform(start_iterator, end_iterator, start_iterator, 
+      [=] __host__ __device__(const float& point)
+      {
+        return point / max_element;
+      });
+    }
   }
 
   // Project superpixels to the Zernike basis.
@@ -277,7 +284,10 @@ std::vector<float> launch(
   const uint2&                         vectors_size   ,
   const uint2&                         superpixel_size,
   const uint2&                         disk_partitions,
-  const unsigned                       maximum_degree )
+  const unsigned                       maximum_degree ,
+  bool                                 normalize      ,
+  bool                                 even_only      ,
+  bool                                 edge_only      )
 {
   thrust::device_vector<float3> vectors_gpu(vectors.size());
   thrust::copy(vectors.begin(), vectors.end(), vectors_gpu.begin());
@@ -286,7 +296,10 @@ std::vector<float> launch(
     vectors_size   ,
     superpixel_size,
     disk_partitions,
-    maximum_degree );
+    maximum_degree ,
+    normalize      ,
+    even_only      ,
+    edge_only      );
   std::vector<float> coefficients_cpu(coefficients.size());
   thrust::copy(coefficients.begin(), coefficients.end(), coefficients_cpu.begin());
   return coefficients_cpu;

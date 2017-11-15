@@ -136,7 +136,9 @@ __global__ void compute_bases(
   const unsigned     samples_per_voxel, 
   const sample_type* samples          ,
   const unsigned     expansion_size   ,
-  precision*         bases            )
+  precision*         bases            ,
+  bool               even_only        = false,
+  bool               edge_only        = false)
 {
   const auto x = blockIdx.x * blockDim.x + threadIdx.x;
   const auto y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -150,7 +152,9 @@ __global__ void compute_bases(
     samples_per_voxel       ,
     samples + samples_offset,
     expansion_size          , 
-    bases   + bases_offset  );
+    bases   + bases_offset  ,
+    even_only               ,
+    edge_only               );
 }
 
 // This kernel requires a expansion_size x samples_per_voxel 2D grid.
