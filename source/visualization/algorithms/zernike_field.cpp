@@ -64,8 +64,9 @@ void zernike_field::set_data(const uint2& dimensions, const uint2& spacing, cons
   coefficients_per_voxel_ = coefficients_per_voxel;
   primitive_count_        = dimensions_.x * dimensions_.y;
 
-  coefficient_buffer_->bind    ();
-  coefficient_buffer_->set_data(coefficients.size() * sizeof(float), coefficients.data());
-  coefficient_buffer_->unbind  ();
+  coefficient_buffer_->bind     () ;
+  coefficient_buffer_->set_data (coefficients.size() * sizeof(float), coefficients.data());
+  coefficient_buffer_->bind_base(0);
+  coefficient_buffer_->unbind   () ;
 }
 }

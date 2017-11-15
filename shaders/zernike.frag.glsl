@@ -7,11 +7,12 @@ namespace shaders
 {
 static std::string zernike_frag = R"(\
 #version 450
+#extension GL_ARB_explicit_attrib_location : enable
 
 in vertex_data 
 {
-  vec3 position;
-  uint offset  ;
+  vec3      relative_position;
+  flat uint offset;
 } fs_in;
 
 layout(std430, binding = 0) readonly buffer Coefficients 
@@ -20,13 +21,12 @@ layout(std430, binding = 0) readonly buffer Coefficients
 };
 uniform uint coefficients_per_voxel;
 
-out vec4 color;
+layout(location = 0) out vec4 color;
 
 vec2 to_radial(vec2 cartesian)
 {
   return vec2(length(cartesian), atan(cartesian.y, cartesian.x));
 }
-
 ivec2 quantum_index(int index)
 {
   ivec2 nm;
@@ -34,17 +34,17 @@ ivec2 quantum_index(int index)
   nm.y = 2 * index - nm.x * (nm.x + 2);
   return nm;
 }
-uint factorial(uint n)
+int factorial(int n)
 {
-  uint result = 1;
-  for(uint i = 2; i <= n; i++)
+  int result = 1;
+  for(int i = 2; i <= n; i++)
     result *= i;
   return result;
 }
 float mode(ivec2 nm, float rho)
 {
   float result = 0.0;
-  for(uint i = 0; i < (nm.x - nm.y) / 2; i++)
+  for(int i = 0; i < (nm.x - nm.y) / 2; i++)
     result += pow(rho, nm.x - 2 * i) * (pow(-1, i) * factorial(nm.x - i)) / (factorial(i) * factorial((nm.x + nm.y) / 2 - i) * factorial((nm.x - nm.y) / 2 - i));
   return result;
 }
@@ -55,13 +55,15 @@ float evaluate(ivec2 nm, vec2 rt)
 
 void main()
 {
-  uint coefficient_offset = fs_in.offset * coefficients_per_voxel;
+  int  coefficient_offset = int(fs_in.offset * coefficients_per_voxel);
+  vec2 radial             = to_radial(2.0 * (fs_in.relative_position.xy - vec2(0.5, 0.5)));
+  if  (radial.x >= 1.0) discard;
 
-  float scalar = 0.0f;
-  for(uint i = 0; i < coefficients_per_voxel; i++)
-    scalar += coefficients[coefficient_offset + i] * evaluate(quantum_index(i), to_radial(fs_in.position.xy - vec2(0.5, 0.5)));
+  float scalar = 0.0;
+  for(int i = 0; i < int(coefficients_per_voxel); i++)
+    scalar += coefficients[coefficient_offset + i] * evaluate(quantum_index(i), radial);
 
-  color = vec4(scalar, scalar, scalar, 1.0);
+  color = vec4(abs(scalar), abs(scalar), abs(scalar), 1.0);
 }
 )";
 }
