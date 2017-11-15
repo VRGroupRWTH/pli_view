@@ -113,7 +113,8 @@ __global__ void compute_basis(
   const sample_type* samples          ,
   const unsigned     expansion_size   ,
   precision*         basis            ,
-  bool               even_only        = false)
+  bool               even_only        = false,
+  bool               edge_only        = false)
 {
   const auto x = blockIdx.x * blockDim.x + threadIdx.x;
   const auto y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -121,8 +122,12 @@ __global__ void compute_basis(
     return;
 
   const auto index = quantum_index(y);
-  if(!even_only || even_only && index.x % 2 == 0)
-    atomicAdd(&basis[x + sample_count * y], evaluate(index, samples[x]));
+  if(even_only && index.x % 2 != 0)
+    return;
+  if(edge_only && abs(index.x) != abs(index.y))
+    return;
+
+  atomicAdd(&basis[x + sample_count * y], evaluate(index, samples[x]));
 }
 // This kernel requires a dimensions.x x dimensions.y x dimensions.z 3D grid.
 template<typename precision, typename sample_type>

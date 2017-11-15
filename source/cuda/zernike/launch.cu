@@ -227,6 +227,7 @@ thrust::device_vector<float> launch(
     disk_samples.data().get() , 
     coefficient_count         ,
     basis_matrix.data().get() ,
+    true                      ,
     true                      );
   cudaDeviceSynchronize();
 
