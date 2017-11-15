@@ -226,7 +226,8 @@ thrust::device_vector<float> launch(
     sample_count              , 
     disk_samples.data().get() , 
     coefficient_count         ,
-    basis_matrix.data().get());
+    basis_matrix.data().get() ,
+    true                      );
   cudaDeviceSynchronize();
 
   // Compute the inverse of the basis matrix.
