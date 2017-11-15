@@ -2,6 +2,7 @@
 
 #include <cublas_v2.h>
 #include <cusolverDn.h>
+#include <thrust/extrema.h>
 
 #include <pli_vis/cuda/utility/vector_ops.h>
 #include <pli_vis/cuda/zernike/disk.h>
@@ -242,6 +243,18 @@ thrust::device_vector<float> launch(
     superpixel_dimensions     ,
     intermediates.data().get());
   cudaDeviceSynchronize();
+
+  // Normalize.
+  for(auto i = 0; i < superpixel_count; i++)
+  {
+    const auto start_iterator = intermediates.begin() +  i      * superpixel_count;
+    const auto end_iterator   = intermediates.begin() + (i + 1) * superpixel_count;
+    const auto max_element    = *thrust::max_element(start_iterator, end_iterator);
+    thrust::transform(start_iterator, end_iterator, start_iterator, [=] __host__ __device__(const float& point)
+    {
+      return point / max_element;
+    });
+  }
 
   // Project superpixels to the Zernike basis.
   thrust::device_vector<float> coefficients(superpixel_count * coefficient_count);
