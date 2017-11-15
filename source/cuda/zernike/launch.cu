@@ -144,8 +144,8 @@ __global__ void accumulate(
   const auto sample_count        = disk_partitions.x * disk_partitions.y;
   const auto intermediate_offset = sample_count * superpixel_index;
 
-  auto min_distance = 2.0F, max_distance = 0.0F;
-  auto min_index    = 0   , max_index    = 0   ;
+  auto min_distance = 2.0F;
+  auto min_index    = 0   ;
   for(auto i = 0; i < sample_count; i++)
   {
     const auto temp_distance = sqrt(pow(cos(vector.z), 2) + pow(disk_samples[i].x, 2) - 2.0F * cos(vector.z) * disk_samples[i].x * cos(vector.y - disk_samples[i].y));
@@ -154,14 +154,22 @@ __global__ void accumulate(
       min_distance = temp_distance;
       min_index    = i;
     }
-    if (temp_distance > max_distance)
+  }
+  atomicAdd(&intermediates[intermediate_offset + min_index],  1.0F);
+  
+  // Change this to Freitag's method of sampling points in proportion to the current radius.
+  auto symmetric_distance = 2.0F;
+  auto symmetric_index    = 0   ;
+  for(auto i = 0; i < sample_count; i++)
+  {
+    const auto temp_distance = sqrt(pow(disk_samples[min_index].x, 2) + pow(disk_samples[i].x, 2) - 2.0F * disk_samples[min_index].x * disk_samples[i].x * cos((disk_samples[min_index].y + M_PI) - disk_samples[i].y));
+    if (temp_distance < symmetric_distance)
     {
-      max_distance = temp_distance;
-      max_index    = i;
+      symmetric_distance = temp_distance;
+      symmetric_index    = i;
     }
   }
-  atomicAdd(&intermediates[intermediate_offset + min_index], 1.0F);
-  atomicAdd(&intermediates[intermediate_offset + max_index], 1.0F);
+  atomicAdd(&intermediates[intermediate_offset + symmetric_index], 1.0F);
 }
 
 __global__ void project(

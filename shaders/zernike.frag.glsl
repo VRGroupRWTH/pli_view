@@ -59,19 +59,17 @@ float evaluate(ivec2 nm, vec2 rt)
 void main()
 {
   int  coefficient_offset = int(fs_in.offset * coefficients_per_voxel);
-  vec2 radial             = to_radial(2.0 * (fs_in.relative_position.xy - vec2(0.5, 0.5)));
-  if  (radial.x >= 1.0) discard;
+  vec2 radial             = to_radial(fs_in.relative_position.xy - vec2(0.5, 0.5));
+  if  (radial.x >= 0.5) discard;
 
   float scalar = 0.0;
   for(int i = 0; i < int(coefficients_per_voxel); i++)
     scalar += coefficients[coefficient_offset + i] * evaluate(quantum_index(i), radial);
     
-  if(scalar == 0.0)
-    scalar = 0.1;
-  if(scalar != scalar)
-    scalar = 0.5;
-
-  color = vec4(abs(scalar), abs(scalar), abs(scalar), 1.0);
+  if(scalar > 0.0)
+    discard;
+  else
+    color = vec4(abs(scalar), abs(scalar), abs(scalar), 1.0);
 }
 )";
 }
