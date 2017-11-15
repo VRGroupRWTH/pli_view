@@ -9,13 +9,16 @@ static std::string zernike_frag = R"(\
 #version 450
 #extension GL_ARB_explicit_attrib_location : enable
 
+const float pi       = 3.1415926535897932384626433832795;
+const float infinity = 1.0 / 0.0;
+
 in vertex_data 
 {
   vec3      relative_position;
   flat uint offset;
 } fs_in;
 
-layout(std430, binding = 0) readonly buffer Coefficients 
+layout(std430, binding=0) buffer Coefficients 
 {
   float coefficients[];
 };
@@ -34,23 +37,23 @@ ivec2 quantum_index(int index)
   nm.y = 2 * index - nm.x * (nm.x + 2);
   return nm;
 }
-int factorial(int n)
+float factorial(int n)
 {
-  int result = 1;
+  float result = 1.0;
   for(int i = 2; i <= n; i++)
-    result *= i;
+    result *= float(i);
   return result;
 }
 float mode(ivec2 nm, float rho)
 {
   float result = 0.0;
   for(int i = 0; i < (nm.x - nm.y) / 2; i++)
-    result += pow(rho, nm.x - 2 * i) * (pow(-1, i) * factorial(nm.x - i)) / (factorial(i) * factorial((nm.x + nm.y) / 2 - i) * factorial((nm.x - nm.y) / 2 - i));
+    result += pow(rho, float(nm.x - 2 * i)) * ((mod(i, 2) == 0 ? 1.0 : -1.0) * factorial(nm.x - i)) / (factorial(i) * factorial((nm.x + nm.y) / 2 - i) * factorial((nm.x - nm.y) / 2 - i));
   return result;
 }
 float evaluate(ivec2 nm, vec2 rt)
 {
-  return mode(nm, rt.x) * (nm.y >= 0 ? cos(nm.y * rt.y) : sin(nm.y * rt.y));
+  return mode(nm, rt.x) * (nm.y >= 0 ? cos(float(nm.y) * rt.y) : sin(float(nm.y) * rt.y));
 }
 
 void main()
@@ -62,6 +65,11 @@ void main()
   float scalar = 0.0;
   for(int i = 0; i < int(coefficients_per_voxel); i++)
     scalar += coefficients[coefficient_offset + i] * evaluate(quantum_index(i), radial);
+    
+  if(scalar == 0.0)
+    scalar = 0.1;
+  if(scalar != scalar)
+    scalar = 0.5;
 
   color = vec4(abs(scalar), abs(scalar), abs(scalar), 1.0);
 }

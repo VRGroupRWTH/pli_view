@@ -42,8 +42,9 @@ void zernike_field::initialize()
 }
 void zernike_field::render    (const camera* camera)
 { 
-  program_     ->bind  ();
-  vertex_array_->bind  ();
+  program_           ->bind();
+  vertex_array_      ->bind();
+  coefficient_buffer_->bind_base(0);
   
   program_->set_uniform("model"                 , absolute_matrix                ());
   program_->set_uniform("view"                  , camera->inverse_absolute_matrix());
@@ -52,9 +53,9 @@ void zernike_field::render    (const camera* camera)
   program_->set_uniform("spacing"               , spacing_                         );
   program_->set_uniform("coefficients_per_voxel", coefficients_per_voxel_          );
   glDrawElementsInstanced(GL_TRIANGLES, draw_count_, GL_UNSIGNED_INT, nullptr, primitive_count_);
-
-  vertex_array_->unbind();
-  program_     ->unbind();
+  
+  vertex_array_      ->unbind();
+  program_           ->unbind();
 }
 
 void zernike_field::set_data(const uint2& dimensions, const uint2& spacing, const unsigned coefficients_per_voxel, const std::vector<float>& coefficients)
