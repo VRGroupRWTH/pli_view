@@ -25,7 +25,7 @@ layout(location = 0) out vertex_data
 
 void main()
 {
-  uvec2 location    = uvec2(gl_InstanceID % dimensions.x, gl_InstanceID / dimensions.x % dimensions.y);
+  uvec2 location    = uvec2(gl_InstanceID / dimensions.x % dimensions.y, gl_InstanceID % dimensions.x);
   vec4  translation = vec4(location.x * spacing.x, location.y * spacing.y, 0.0, 1.0);
   vec4  scale       = vec4(             spacing.x,              spacing.y, 1.0, 1.0);
 

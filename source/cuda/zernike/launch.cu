@@ -262,15 +262,20 @@ thrust::device_vector<float> launch(
   {
     for(auto i = 0; i < superpixel_count; i++)
     {
-      const auto start_iterator = intermediates.begin() +  i      * superpixel_count;
-      const auto end_iterator   = intermediates.begin() + (i + 1) * superpixel_count;
-      const auto max_element    = *thrust::max_element(start_iterator, end_iterator);
-      thrust::transform(start_iterator, end_iterator, start_iterator, 
-      [=] __host__ __device__(const float& point)
+      const auto start_iterator   = intermediates.begin() +  i      * sample_count;
+      const auto end_iterator     = intermediates.begin() + (i + 1) * sample_count;
+      const auto max_intermediate = abs(*max_element(start_iterator, end_iterator, 
+      [=] __host__ __device__(float lhs, float rhs)
       {
-        return point / max_element;
+        return std::abs(lhs) < std::abs(rhs);
+      }));
+      thrust::transform(start_iterator, end_iterator, start_iterator, 
+      [=] __host__ __device__(const float& intermediate)
+      {
+        return intermediate / max_intermediate;
       });
     }
+    cudaDeviceSynchronize();
   }
 
   // Project superpixels to the Zernike basis.
