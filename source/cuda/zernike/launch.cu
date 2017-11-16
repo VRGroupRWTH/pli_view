@@ -155,7 +155,7 @@ __global__ void accumulate(
       min_index    = i;
     }
   }
-  atomicAdd(&intermediates[intermediate_offset + min_index],  1.0F);
+  atomicAdd(&intermediates[intermediate_offset + min_index], 1.0f);
   
   // Change this to Freitag's method of sampling points in proportion to the current radius.
   auto symmetric_distance = 2.0F;
@@ -169,7 +169,7 @@ __global__ void accumulate(
       symmetric_index    = i;
     }
   }
-  atomicAdd(&intermediates[intermediate_offset + symmetric_index], 1.0F);
+  atomicAdd(&intermediates[intermediate_offset + symmetric_index], -1.0f);
 }
 
 __global__ void project(
