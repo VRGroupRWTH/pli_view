@@ -102,7 +102,8 @@ zernike_plugin::zernike_plugin(QWidget* parent)
           parameters.partitions     , 
           parameters.maximum_degree ,
           false                     ,
-          false                     ,
+          true                      ,
+          true                      ,
           false                     );
       }
       catch (std::exception& exception)
