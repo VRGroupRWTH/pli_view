@@ -129,7 +129,8 @@ __global__ void accumulate(
   const float2*  disk_samples         ,
   const uint2    superpixel_size      ,
   const uint2    superpixel_dimensions,
-        float*   intermediates        )
+        float*   intermediates        ,
+        bool     symmetric            )
 {
   const auto x = blockIdx.x * blockDim.x + threadIdx.x;
   const auto y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -158,18 +159,21 @@ __global__ void accumulate(
   atomicAdd(&intermediates[intermediate_offset + min_index], 1.0f);
   
   // Change this to Freitag's method of sampling points in proportion to the current radius.
-  auto symmetric_distance = 2.0F;
-  auto symmetric_index    = 0   ;
-  for(auto i = 0; i < sample_count; i++)
+  if(symmetric)
   {
-    const auto temp_distance = sqrt(pow(disk_samples[min_index].x, 2) + pow(disk_samples[i].x, 2) - 2.0F * disk_samples[min_index].x * disk_samples[i].x * cos((disk_samples[min_index].y + M_PI) - disk_samples[i].y));
-    if (temp_distance < symmetric_distance)
+    auto symmetric_distance = 2.0F;
+    auto symmetric_index    = 0   ;
+    for(auto i = 0; i < sample_count; i++)
     {
-      symmetric_distance = temp_distance;
-      symmetric_index    = i;
+      const auto temp_distance = sqrt(pow(disk_samples[min_index].x, 2) + pow(disk_samples[i].x, 2) - 2.0F * disk_samples[min_index].x * disk_samples[i].x * cos((disk_samples[min_index].y + M_PI) - disk_samples[i].y));
+      if (temp_distance < symmetric_distance)
+      {
+        symmetric_distance = temp_distance;
+        symmetric_index    = i;
+      }
     }
+    atomicAdd(&intermediates[intermediate_offset + symmetric_index], -1.0f);
   }
-  atomicAdd(&intermediates[intermediate_offset + symmetric_index], -1.0f);
 }
 
 __global__ void project(
@@ -215,6 +219,7 @@ thrust::device_vector<float> launch(
   const uint2&                         superpixel_size,
   const uint2&                         disk_partitions,
   const unsigned                       maximum_degree ,
+  bool                                 symmetric      ,
   bool                                 normalize      ,
   bool                                 even_only      ,
   bool                                 edge_only      )
@@ -227,8 +232,9 @@ thrust::device_vector<float> launch(
   // Sample a unit disk.
   thrust::device_vector<float2> disk_samples(sample_count);
   sample_disk<<<grid_size_2d(dim3(disk_partitions.x, disk_partitions.y)), block_size_2d()>>>(
-    disk_partitions           , 
-    disk_samples.data().get());
+    disk_partitions          , 
+    disk_samples.data().get(),
+    false                    );
   cudaDeviceSynchronize();
 
   // Compute Zernike basis for the samples.
@@ -254,7 +260,8 @@ thrust::device_vector<float> launch(
     disk_samples .data().get(),
     superpixel_size           ,
     superpixel_dimensions     ,
-    intermediates.data().get());
+    intermediates.data().get(),
+    symmetric                 );
   cudaDeviceSynchronize();
 
   // Normalize.
@@ -298,6 +305,7 @@ std::vector<float> launch(
   const uint2&                         superpixel_size,
   const uint2&                         disk_partitions,
   const unsigned                       maximum_degree ,
+  bool                                 symmetric      ,
   bool                                 normalize      ,
   bool                                 even_only      ,
   bool                                 edge_only      )
@@ -310,6 +318,7 @@ std::vector<float> launch(
     superpixel_size,
     disk_partitions,
     maximum_degree ,
+    symmetric      ,
     normalize      ,
     even_only      ,
     edge_only      );

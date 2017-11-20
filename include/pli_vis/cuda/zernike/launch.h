@@ -12,6 +12,7 @@ thrust::device_vector<float> launch(
   const uint2&                         superpixel_size               ,
   const uint2&                         disk_partitions = {100u, 360u},
   const unsigned                       maximum_degree  = 10          ,
+  bool                                 symmetric       = true        ,
   bool                                 normalize       = true        ,
   bool                                 even_only       = false       ,
   bool                                 edge_only       = false       );
@@ -22,6 +23,7 @@ std::vector<float> launch(
   const uint2&                         superpixel_size               ,
   const uint2&                         disk_partitions = {100u, 360u},
   const unsigned                       maximum_degree  = 10          ,
+  bool                                 symmetric       = true        ,
   bool                                 normalize       = true        ,
   bool                                 even_only       = false       ,
   bool                                 edge_only       = false       );
