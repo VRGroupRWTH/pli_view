@@ -101,10 +101,10 @@ zernike_plugin::zernike_plugin(QWidget* parent)
           parameters.superpixel_size, 
           parameters.partitions     , 
           parameters.maximum_degree ,
-          false                     ,
-          true                      ,
-          true                      ,
-          false                     );
+          parameters.symmetric      ,
+          parameters.normalize      ,
+          parameters.even_only      ,
+          parameters.edge_only      );
       }
       catch (std::exception& exception)
       {
@@ -147,7 +147,11 @@ zernike_plugin::parameters zernike_plugin::get_parameters() const
       line_edit::get_text<unsigned>(line_edit_partitions_theta),
       line_edit::get_text<unsigned>(line_edit_partitions_rho  ) 
     },
-    line_edit::get_text<unsigned>(line_edit_maximum_degree)
+    line_edit::get_text<unsigned>(line_edit_maximum_degree),
+    checkbox_symmetric->isChecked(),
+    checkbox_normalize->isChecked(),
+    checkbox_even_only->isChecked(),
+    checkbox_edge_only->isChecked()
   };
 }
 }

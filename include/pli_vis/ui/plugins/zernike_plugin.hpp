@@ -21,6 +21,10 @@ public:
     uint2    superpixel_size;
     uint2    partitions     ;
     unsigned maximum_degree ;
+    bool     symmetric      ;
+    bool     normalize      ;
+    bool     even_only      ;
+    bool     edge_only      ;
   };
 
   explicit zernike_plugin(QWidget* parent = nullptr);
