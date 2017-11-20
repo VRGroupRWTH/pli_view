@@ -8,6 +8,7 @@ namespace shaders
 static std::string zernike_frag = R"(\
 #version 450
 #extension GL_ARB_explicit_attrib_location : enable
+precision highp int;
 
 const float pi       = 3.1415926535897932384626433832795;
 const float infinity = 1.0 / 0.0;
@@ -53,23 +54,25 @@ float mode(ivec2 nm, float rho)
 }
 float evaluate(ivec2 nm, vec2 rt)
 {
-  return mode(nm, rt.x) * (nm.y >= 0 ? cos(float(nm.y) * rt.y) : sin(float(nm.y) * rt.y));
+  return mode(ivec2(abs(nm.x), abs(nm.y)), rt.x) * (nm.y >= 0 ? cos(float(nm.y) * rt.y) : sin(float(-nm.y) * rt.y));
 }
 
 void main()
 {
   int  coefficient_offset = int(fs_in.offset * coefficients_per_voxel);
-  vec2 radial             = to_radial((fs_in.relative_position.xy - vec2(0.5, 0.5)));
-  if  (radial.x >= 0.5) discard;
+  vec2 radial             = to_radial(2.0 * (fs_in.relative_position.xy - vec2(0.5, 0.5)));
+  if  (radial.x >= 1.0) discard;
 
   float scalar = 0.0;
   for(int i = 0; i < int(coefficients_per_voxel); i++)
     scalar += coefficients[coefficient_offset + i] * evaluate(quantum_index(i), radial);
-    
+  
+  scalar = mode(quantum_index(int(fs_in.offset)), radial.x); 
+
   if(scalar > 0.0)
-    color = vec4(0.0, 0.5, abs(scalar), 1.0);
+    color = vec4(0.0, 0.0, abs(scalar), 1.0);
   else
-    color = vec4(abs(scalar), 0.5, 0.0, 1.0);
+    color = vec4(abs(scalar), 0.0, 0.0, 1.0);
 }
 )";
 }
