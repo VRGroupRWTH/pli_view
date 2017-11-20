@@ -67,9 +67,9 @@ void main()
     scalar += coefficients[coefficient_offset + i] * evaluate(quantum_index(i), radial);
     
   if(scalar > 0.0)
-    color = vec4(0.0, 0.0, abs(scalar), 1.0);
+    color = vec4(0.0, 0.5, abs(scalar), 1.0);
   else
-    color = vec4(abs(scalar), 0.0, 0.0, 1.0);
+    color = vec4(abs(scalar), 0.5, 0.0, 1.0);
 }
 )";
 }
