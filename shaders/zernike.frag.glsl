@@ -59,8 +59,8 @@ float evaluate(ivec2 nm, vec2 rt)
 void main()
 {
   int  coefficient_offset = int(fs_in.offset * coefficients_per_voxel);
-  vec2 radial             = to_radial(2.0 * (fs_in.relative_position.xy - vec2(0.5, 0.5)));
-  if  (radial.x >= 1.0) discard;
+  vec2 radial             = to_radial((fs_in.relative_position.xy - vec2(0.5, 0.5)));
+  if  (radial.x >= 0.5) discard;
 
   float scalar = 0.0;
   for(int i = 0; i < int(coefficients_per_voxel); i++)
