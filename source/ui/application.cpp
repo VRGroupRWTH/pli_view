@@ -37,9 +37,10 @@ application::~application()
     plugin->destroy();
 }
 
-void application::set_wait_spinner_enabled(bool enabled) const
+void application::set_is_loading(const bool is_loading) const
 {
-  enabled ? wait_spinner_->start() : wait_spinner_->stop();
+  is_loading ? wait_spinner_->start() : wait_spinner_->stop();
+  toolbox->setEnabled(!is_loading);
 }
 
 void application::bind_actions()

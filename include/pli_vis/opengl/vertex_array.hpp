@@ -20,21 +20,27 @@ public:
       glDeleteVertexArrays(1, &id_);
   }
 
-  void   bind     ()
+  void bind  ()
   {
     glBindVertexArray(id_);
   }
-  void   unbind   ()
+  void unbind()
   {
     glBindVertexArray(0  );
   }
+  
+  template <typename buffer_type>
+  void set_element_buffer(const buffer_type& buffer)
+  {
+     glVertexArrayElementBuffer(id_, buffer.id());
+  }
 
-  bool   is_valid () const
+  bool is_valid() const
   {
     return glIsVertexArray(id_) != 0;
   }
 
-  GLuint id       () const
+  GLuint id() const
   {
     return id_;
   }

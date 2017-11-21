@@ -221,8 +221,7 @@ void tractography_plugin::start()
 }
 void tractography_plugin::trace()
 {
-  owner_->set_wait_spinner_enabled(true );
-  owner_->toolbox->setEnabled     (false);
+  owner_->set_is_loading(true);
 
   logger_->info(std::string("Tracing..."));
 
@@ -272,11 +271,10 @@ void tractography_plugin::trace()
           {
             float3 start {path[j]    [0], path[j]    [1], path[j]    [2]};
             float3 end   {path[j + 1][0], path[j + 1][1], path[j + 1][2]};
-            auto   direction = normalize(fabs(end - start));
             points.push_back(start);
-            points.push_back(end  );   
-            for(auto k = 0; k < 2; ++k)
-              directions.push_back(direction);
+            points.push_back(end  );
+            directions.push_back(normalize(end   - start));
+            directions.push_back(normalize(start - end  ));
           }
         }
       }
@@ -306,19 +304,16 @@ void tractography_plugin::trace()
           seeds);
 
         for (auto i = 0; i < traces.size(); ++i)
-          for (auto j = 0; j < slider_iterations->value() - 1; ++j)
+          for (auto j = 0; j < traces[i].size() - 1; ++j)
           {
             auto& start = traces[i][j  ];
             auto& end   = traces[i][j+1];
-            if(start.x != 0 && start.y != 0 && start.z != 0 &&
-               end.x   != 0 && end.y   != 0 && end.z   != 0)
-            {
-              auto direction = normalize(fabs(end - start));
-              points.push_back(start);
-              points.push_back(end);
-              for (auto k = 0; k < 2; ++k)
-                directions.push_back(direction);
-            }
+            if(end.x == 0.0f && end.y == 0.0f && end.z == 0.0f)
+              break;
+            points    .push_back(start);
+            points    .push_back(end  ); 
+            directions.push_back(normalize(end   - start));
+            directions.push_back(normalize(start - end  ));
           }
       }
 
@@ -364,8 +359,7 @@ void tractography_plugin::trace()
     logger_->info(std::string("Trace failed."));
   }
 
-  owner_->toolbox->setEnabled     (true );
-  owner_->set_wait_spinner_enabled(false);
+  owner_->set_is_loading(false);
 }
   
 std::array<std::size_t, 3> tractography_plugin::seed_offset() const

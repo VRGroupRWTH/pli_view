@@ -20,7 +20,7 @@ public:
    application();
   ~application();
 
-  void set_wait_spinner_enabled(bool enabled) const;
+  void set_is_loading(const bool is_loading) const;
 
   template<typename plugin_type>
   plugin_type* get_plugin()

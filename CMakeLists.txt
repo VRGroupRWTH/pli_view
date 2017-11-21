@@ -40,6 +40,9 @@ set(PROJECT_SOURCES
   include/pli_vis/cuda/sh/wigner.h
   include/pli_vis/cuda/utility/convert.h
   include/pli_vis/cuda/utility/vector_ops.h
+  include/pli_vis/cuda/zernike/disk.h
+  include/pli_vis/cuda/zernike/launch.h
+  include/pli_vis/cuda/zernike/zernike.h
   include/pli_vis/cuda/global_tractography.h
   include/pli_vis/cuda/odf_field.h
   include/pli_vis/cuda/spherical_histogram.h
@@ -182,6 +185,7 @@ set(PROJECT_SOURCES
   include/pli_vis/ui/plugins/scalar_plugin.hpp
   include/pli_vis/ui/plugins/tractography_plugin.hpp
   include/pli_vis/ui/plugins/volume_rendering_plugin.hpp
+  include/pli_vis/ui/plugins/zernike_plugin.hpp
   include/pli_vis/ui/utility/line_edit.hpp
   include/pli_vis/ui/utility/plot_interactor.hpp
   include/pli_vis/ui/utility/text_browser_sink.hpp
@@ -200,6 +204,7 @@ set(PROJECT_SOURCES
   include/pli_vis/visualization/algorithms/streamline_renderer.hpp
   include/pli_vis/visualization/algorithms/vector_field.hpp
   include/pli_vis/visualization/algorithms/volume_renderer.hpp
+  include/pli_vis/visualization/algorithms/zernike_field.hpp
   include/pli_vis/visualization/interactors/first_person_interactor.hpp
   include/pli_vis/visualization/interactors/interactor.hpp
   include/pli_vis/visualization/interactors/orbit_interactor.hpp
@@ -223,23 +228,28 @@ set(PROJECT_SOURCES
   shaders/lineao_normal_depth_pass.vert.glsl
   shaders/lineao_zoom_pass.frag.glsl
   shaders/lineao_zoom_pass.vert.glsl
+  shaders/odf_field_renderer.frag.glsl
+  shaders/odf_field_renderer.vert.glsl
   shaders/simple_color.frag.glsl
   shaders/simple_color.vert.glsl
   shaders/simple_texture.frag.glsl
   shaders/simple_texture.vert.glsl
   shaders/streamline_renderer.frag.glsl
   shaders/streamline_renderer.vert.glsl
+  shaders/view_dependent.frag.glsl
+  shaders/view_dependent.vert.glsl
   shaders/view_dependent_vector_field.frag.glsl
   shaders/view_dependent_vector_field.geom.glsl
   shaders/view_dependent_vector_field.vert.glsl
-  shaders/view_dependent.frag.glsl
-  shaders/view_dependent.vert.glsl
   shaders/volume_renderer_prepass.frag.glsl
   shaders/volume_renderer_prepass.vert.glsl
   shaders/volume_renderer.frag.glsl
   shaders/volume_renderer.vert.glsl
+  shaders/zernike.frag.glsl
+  shaders/zernike.vert.glsl
   
   source/cuda/pt/tracer.cu
+  source/cuda/zernike/launch.cu
   source/cuda/odf_field.cu
   source/third_party/glew/glew.c
   source/third_party/qwt/qwt_abstract_legend.cpp
@@ -347,6 +357,7 @@ set(PROJECT_SOURCES
   source/ui/plugins/scalar_plugin.cpp
   source/ui/plugins/tractography_plugin.cpp
   source/ui/plugins/volume_rendering_plugin.cpp
+  source/ui/plugins/zernike_plugin.cpp
   source/ui/utility/plot_interactor.cpp
   source/ui/widgets/roi_rectangle.cpp
   source/ui/widgets/roi_selector.cpp
@@ -360,6 +371,7 @@ set(PROJECT_SOURCES
   source/visualization/algorithms/streamline_renderer.cpp
   source/visualization/algorithms/vector_field.cpp
   source/visualization/algorithms/volume_renderer.cpp
+  source/visualization/algorithms/zernike_field.cpp
   source/visualization/interactors/first_person_interactor.cpp
   source/visualization/interactors/orbit_interactor.cpp
   source/visualization/interactors/simple_interactor.cpp
