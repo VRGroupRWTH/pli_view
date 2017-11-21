@@ -22,9 +22,57 @@ layout(std430, binding=0) buffer Coefficients
 {
   float coefficients[];
 };
-uniform uint coefficients_per_voxel;
+uniform uint  coefficients_per_voxel;
+uniform int   color_mode     = 0    ;
+uniform float color_k        = 0.5  ;
+uniform bool  color_inverted = false;
 
 layout(location = 0) out vec4 color;
+
+vec3 hue_to_rgb(float hue)
+{
+  float R = abs(hue * 6 - 3) - 1;
+  float G = 2 - abs(hue * 6 - 2);
+  float B = 2 - abs(hue * 6 - 4);
+  return clamp(vec3(R,G,B), 0, 1);
+}
+vec3 hsv_to_rgb(vec3 hsv)
+{
+  vec3 rgb = hue_to_rgb(hsv.x);
+  return ((rgb - 1.0) * hsv.y + 1.0) * hsv.z;
+}
+vec3 hsl_to_rgb(vec3 hsl)
+{
+  vec3 rgb = hue_to_rgb(hsl.x);
+  float C = (1 - abs(2 * hsl.z - 1)) * hsl.y;
+  return (rgb - 0.5) * C + hsl.z;
+}
+vec3 map_color(vec2 radial, float scalar)
+{
+  vec3 spherical = vec3(1.0, radial.y, acos(radial.x));
+
+  if(spherical.y <  0.0)            spherical.y += radians(180.0);
+  if(spherical.y >= radians(180.0)) spherical.y -= radians(180.0);
+  spherical.y = radians(180.0) - spherical.y;
+
+  if(spherical.z < 0.0)             spherical.z = abs(spherical.z);
+  if(spherical.z >= radians( 90.0)) spherical.z = radians(180.0) - spherical.z;
+
+  float t = spherical.y / radians(180.0);
+  float p = spherical.z / radians(90.0);
+  if(color_inverted)
+    p = 1.0 - p;
+
+  if(color_mode == 0)
+    return hsl_to_rgb(vec3(t, scalar, p));
+  if(color_mode == 1)
+    return hsl_to_rgb(vec3(t, p, scalar));
+  if(color_mode == 2)
+    return hsv_to_rgb(vec3(t, scalar, p));
+  if(color_mode == 3)
+    return hsv_to_rgb(vec3(t, p, scalar));
+  return vec3(scalar, scalar, scalar);
+}
 
 vec2 to_radial(vec2 cartesian)
 {
@@ -67,10 +115,7 @@ void main()
   for(int i = 0; i < int(coefficients_per_voxel); i++)
     scalar += coefficients[coefficient_offset + i] * evaluate(quantum_index(i), radial);
   
-  if(scalar > 0.0) 
-    color = vec4(0.0, 0.0, abs(scalar), 1.0);
-  else
-    color = vec4(abs(scalar), 0.0, 0.0, 1.0);
+  color = vec4(map_color(radial, abs(scalar)), 1.0);
 }
 )";
 }

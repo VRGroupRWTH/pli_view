@@ -52,6 +52,9 @@ void zernike_field::render    (const camera* camera)
   program_->set_uniform("dimensions"            , dimensions_                      );
   program_->set_uniform("spacing"               , spacing_                         );
   program_->set_uniform("coefficients_per_voxel", coefficients_per_voxel_          );
+  program_->set_uniform("color_mode"            , color_mode_                      );
+  program_->set_uniform("color_k"               , color_k_                         );
+  program_->set_uniform("color_inverted"        , color_inverted_                  );
   glDrawElementsInstanced(GL_TRIANGLES, draw_count_, GL_UNSIGNED_INT, nullptr, primitive_count_);
   
   vertex_array_      ->unbind();
