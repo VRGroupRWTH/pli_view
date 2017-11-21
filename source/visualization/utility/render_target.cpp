@@ -59,6 +59,13 @@ void render_target::unbind()
   last_framebuffer_.bind();
 }
 
+void render_target::resize_to_viewport()
+{
+  glm::ivec4 viewport;
+  glGetIntegerv(GL_VIEWPORT, reinterpret_cast<GLint*>(&viewport));
+  resize(glm::uvec2(viewport.z, viewport.w));
+}
+
 gl::framebuffer* render_target::framebuffer  ()
 {
   return &framebuffer_;

@@ -31,6 +31,8 @@ public:
   void bind  ();
   void unbind();
 
+  void resize_to_viewport();
+
   gl::framebuffer* framebuffer  ();
   gl::texture_2d*  color_texture();
   gl::texture_2d*  depth_texture();
