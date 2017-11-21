@@ -49,28 +49,25 @@ vec3 hsl_to_rgb(vec3 hsl)
 }
 vec3 map_color(vec2 radial, float scalar)
 {
-  vec3 spherical = vec3(1.0, radial.y, acos(radial.x));
+  if(radial.y <  0.0)            radial.y += radians(180.0);
+  if(radial.y >= radians(180.0)) radial.y -= radians(180.0);
+  radial.y = radians(180.0) - radial.y;
 
-  if(spherical.y <  0.0)            spherical.y += radians(180.0);
-  if(spherical.y >= radians(180.0)) spherical.y -= radians(180.0);
-  spherical.y = radians(180.0) - spherical.y;
-
-  if(spherical.z < 0.0)             spherical.z = abs(spherical.z);
-  if(spherical.z >= radians( 90.0)) spherical.z = radians(180.0) - spherical.z;
-
-  float t = spherical.y / radians(180.0);
-  float p = spherical.z / radians(90.0);
+  float t = radial.y / radians(180.0);
   if(color_inverted)
-    p = 1.0 - p;
+    scalar = 1.0 - scalar;
+
+  if(scalar <= 0.5)
+    return vec3(0.0, 0.0, 0.0);
 
   if(color_mode == 0)
-    return hsl_to_rgb(vec3(t, scalar, p));
+    return hsl_to_rgb(vec3(t, color_k, scalar));
   if(color_mode == 1)
-    return hsl_to_rgb(vec3(t, p, scalar));
+    return hsl_to_rgb(vec3(t, scalar, color_k));
   if(color_mode == 2)
-    return hsv_to_rgb(vec3(t, scalar, p));
+    return hsv_to_rgb(vec3(t, color_k, scalar));
   if(color_mode == 3)
-    return hsv_to_rgb(vec3(t, p, scalar));
+    return hsv_to_rgb(vec3(t, scalar, color_k));
   return vec3(scalar, scalar, scalar);
 }
 
