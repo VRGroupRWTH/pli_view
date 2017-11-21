@@ -41,7 +41,7 @@ void zernike_field::initialize()
   draw_count_ = 6;
 }
 void zernike_field::render    (const camera* camera)
-{ 
+{
   program_           ->bind();
   vertex_array_      ->bind();
   coefficient_buffer_->bind_base(0);

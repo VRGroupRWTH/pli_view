@@ -8,7 +8,6 @@ namespace shaders
 static std::string zernike_frag = R"(\
 #version 450
 #extension GL_ARB_explicit_attrib_location : enable
-precision highp int;
 
 const float pi       = 3.1415926535897932384626433832795;
 const float infinity = 1.0 / 0.0;
@@ -48,13 +47,13 @@ float factorial(int n)
 float mode(ivec2 nm, float rho)
 {
   float result = 0.0;
-  for(int i = 0; i < (nm.x - nm.y) / 2; i++)
+  for(int i = 0; i <= (nm.x - nm.y) / 2; i++)
     result += pow(rho, float(nm.x - 2 * i)) * ((mod(i, 2) == 0 ? 1.0 : -1.0) * factorial(nm.x - i)) / (factorial(i) * factorial((nm.x + nm.y) / 2 - i) * factorial((nm.x - nm.y) / 2 - i));
   return result;
 }
 float evaluate(ivec2 nm, vec2 rt)
 {
-  return mode(ivec2(abs(nm.x), abs(nm.y)), rt.x) * (nm.y >= 0 ? cos(float(nm.y) * rt.y) : sin(float(-nm.y) * rt.y));
+  return mode(ivec2(abs(nm.x), abs(nm.y)), rt.x) * (nm.y >= 0 ? cos(float(abs(nm.y)) * rt.y) : sin(float(abs(nm.y)) * rt.y));
 }
 
 void main()
@@ -67,9 +66,7 @@ void main()
   for(int i = 0; i < int(coefficients_per_voxel); i++)
     scalar += coefficients[coefficient_offset + i] * evaluate(quantum_index(i), radial);
   
-  scalar = mode(quantum_index(int(fs_in.offset)), radial.x); 
-
-  if(scalar > 0.0)
+  if(scalar > 0.0) 
     color = vec4(0.0, 0.0, abs(scalar), 1.0);
   else
     color = vec4(abs(scalar), 0.0, 0.0, 1.0);

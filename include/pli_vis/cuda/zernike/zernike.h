@@ -92,7 +92,7 @@ template<typename precision>
 __host__ __device__ precision mode    (const int2& nm, const precision& rho)
 {
   precision out(0);
-  for(unsigned i = 0; i < (nm.x - nm.y) / 2; i++)
+  for(unsigned i = 0; i <= (nm.x - nm.y) / 2; i++)
     out += pow(rho, nm.x - 2 * i) * 
      (pow(-1, i) * factorial<precision>(nm.x - i)) / 
      (factorial<precision>(i) * 
@@ -103,7 +103,7 @@ __host__ __device__ precision mode    (const int2& nm, const precision& rho)
 template<typename precision>
 __host__ __device__ decltype(member_type(&precision::x)) evaluate(const int2& nm, const precision& rt )
 {
-  return mode(nm, rt.x) * (nm.y >= 0 ? cos(nm.y * rt.y) : sin(nm.y * rt.y));
+  return mode(int2{abs(nm.x), abs(nm.y)}, rt.x) * (nm.y >= 0 ? cos(abs(nm.y) * rt.y) : sin(abs(nm.y) * rt.y));
 }
 
 // This kernel requires a sample_count x expansion_size 2D grid.
@@ -198,6 +198,7 @@ __global__ void reconstruct(
     samples_per_voxel                 ,
     samples      + samples_offset     ,
     outputs      + samples_offset     );
+  cudaDeviceSynchronize();
 }
 }
 
