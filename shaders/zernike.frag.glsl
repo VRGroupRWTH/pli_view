@@ -57,9 +57,6 @@ vec3 map_color(vec2 radial, float scalar)
   if(color_inverted)
     scalar = 1.0 - scalar;
 
-  if(scalar <= 0.5)
-    return vec3(0.0, 0.0, 0.0);
-
   if(color_mode == 0)
     return hsl_to_rgb(vec3(t, color_k, scalar));
   if(color_mode == 1)
