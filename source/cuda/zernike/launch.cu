@@ -264,27 +264,6 @@ thrust::device_vector<float> launch(
     symmetric                 );
   cudaDeviceSynchronize();
 
-  // Normalize.
-  if(normalize)
-  {
-    for(auto i = 0; i < superpixel_count; i++)
-    {
-      const auto start_iterator   = intermediates.begin() +  i      * sample_count;
-      const auto end_iterator     = intermediates.begin() + (i + 1) * sample_count;
-      const auto max_intermediate = abs(*max_element(start_iterator, end_iterator, 
-      [=] __host__ __device__(float lhs, float rhs)
-      {
-        return std::abs(lhs) < std::abs(rhs);
-      }));
-      thrust::transform(start_iterator, end_iterator, start_iterator, 
-      [=] __host__ __device__(const float& intermediate)
-      {
-        return intermediate / max_intermediate;
-      });
-    }
-    cudaDeviceSynchronize();
-  }
-
   // Project superpixels to the Zernike basis.
   thrust::device_vector<float> coefficients(superpixel_count * coefficient_count);
   project<<<grid_size_2d(dim3(superpixel_dimensions.x, superpixel_dimensions.y)), block_size_2d()>>> (
@@ -295,6 +274,26 @@ thrust::device_vector<float> launch(
     coefficient_count                ,
     coefficients.data().get())       ;
   cudaDeviceSynchronize();
+
+  // Normalize.
+  if(normalize)
+  {
+    for(auto i = 0; i < superpixel_count; i++)
+    {
+      const auto start_iterator  = coefficients.begin() +  i      * coefficient_count;
+      const auto end_iterator    = coefficients.begin() + (i + 1) * coefficient_count;
+      const auto max_coefficient = abs(*max_element(start_iterator, end_iterator, 
+      [=] __host__ __device__(float lhs, float rhs)
+      {
+        return std::abs(lhs) < std::abs(rhs);
+      }));
+      thrust::transform(start_iterator, end_iterator, start_iterator, 
+      [=] __host__ __device__(const float& coefficient)
+      {
+        return coefficient / max_coefficient;
+      });
+    }
+  }
 
   return coefficients;
 }
