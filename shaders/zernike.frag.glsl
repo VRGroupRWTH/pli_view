@@ -53,7 +53,7 @@ float mode(ivec2 nm, float rho)
 }
 float evaluate(ivec2 nm, vec2 rt)
 {
-  return mode(ivec2(abs(nm.x), abs(nm.y)), rt.x) * (nm.y >= 0 ? cos(float(abs(nm.y)) * rt.y) : sin(float(abs(nm.y)) * rt.y));
+  return mode(ivec2(abs(nm.x), abs(nm.y)), rt.x) * (nm.y >= 0 ? cos(float(nm.y) * rt.y) : sin(float(-nm.y) * rt.y));
 }
 
 void main()
@@ -61,6 +61,7 @@ void main()
   int  coefficient_offset = int(fs_in.offset * coefficients_per_voxel);
   vec2 radial             = to_radial(2.0 * (fs_in.relative_position.xy - vec2(0.5, 0.5)));
   if  (radial.x >= 1.0) discard;
+  radial.y += pi;
 
   float scalar = 0.0;
   for(int i = 0; i < int(coefficients_per_voxel); i++)
