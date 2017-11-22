@@ -230,6 +230,8 @@ set(PROJECT_SOURCES
   shaders/lineao_zoom_pass.vert.glsl
   shaders/odf_field_renderer.frag.glsl
   shaders/odf_field_renderer.vert.glsl
+  shaders/simple_color_texture.frag.glsl
+  shaders/simple_color_texture.vert.glsl
   shaders/simple_color.frag.glsl
   shaders/simple_color.vert.glsl
   shaders/simple_texture.frag.glsl
