@@ -11,9 +11,6 @@ static std::string zernike_vert = R"(\
 
 layout(location = 0) in vec3 position;
 
-uniform mat4  model     ;
-uniform mat4  view      ;
-uniform mat4  projection;
 uniform uvec2 dimensions;
 uniform uvec2 spacing   ;
 
@@ -29,7 +26,7 @@ void main()
   vec4  translation = vec4(location.x * spacing.x, location.y * spacing.y, 0.0, 1.0);
   vec4  scale       = vec4(             spacing.x,              spacing.y, 1.0, 1.0);
 
-  gl_Position              = projection * view * model * (vec4(position, 1.0) * scale + translation);
+  gl_Position              = vec4(position, 1.0) * scale + translation;
   vs_out.relative_position = position;
   vs_out.offset            = gl_InstanceID;
 }
