@@ -19,7 +19,7 @@ public:
     color_and_depth
   };
 
-  render_target(const glm::uvec2& size, mode mode = mode::color_and_depth);
+  render_target(const glm::uvec2& size = {1u, 1u}, mode mode = mode::color_and_depth);
   render_target(const render_target&  that) = default;
   render_target(      render_target&& temp) = default;
   virtual ~render_target()                  = default;

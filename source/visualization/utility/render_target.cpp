@@ -29,6 +29,9 @@ render_target::render_target(const glm::uvec2& size, mode mode) : mode_(mode)
   }
   assert(framebuffer_.is_valid() && framebuffer_.is_complete());
   unbind();
+  
+  if (size == glm::uvec2{1u, 1u})
+    resize_to_viewport();
 }
 
 void render_target::resize(const glm::uvec2& size)
