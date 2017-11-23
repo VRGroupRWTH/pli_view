@@ -114,7 +114,7 @@ zernike_plugin::zernike_plugin(QWidget* parent)
     while (future_.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
       QApplication::processEvents();
 
-    zernike_field_->set_data(superpixel_dimensions, 2 * parameters.superpixel_size, zer::expansion_size(parameters.maximum_degree), coefficients);
+    zernike_field_->set_data(superpixel_dimensions, parameters.superpixel_size, zer::expansion_size(parameters.maximum_degree), coefficients);
 
     logger_->info(std::string("Update successful."));
     owner_ ->set_is_loading(false);

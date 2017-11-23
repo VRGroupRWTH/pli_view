@@ -65,24 +65,29 @@ void zernike_field::initialize()
   main_program_        ->unbind                ();
   main_vertex_array_   ->unbind                ();
 
-  draw_count_ = 6;
+  draw_count_ = indices.size();
 } 
 void zernike_field::render    (const camera* camera)
 {
+  const auto size = dimensions_ * spacing_;
+
   if(needs_update_)
   {
-    render_target_       ->resize     (glm::vec2(dimensions_ * spacing_) * 0.5F);
+    render_target_       ->resize     (size);
     render_target_       ->bind       ();
     prepass_program_     ->bind       ();
     prepass_vertex_array_->bind       ();
     coefficient_buffer_  ->bind_base  (0);
-  
+
     prepass_program_     ->set_uniform("dimensions"            , dimensions_            );
     prepass_program_     ->set_uniform("spacing"               , spacing_               );
     prepass_program_     ->set_uniform("coefficients_per_voxel", coefficients_per_voxel_);
     prepass_program_     ->set_uniform("color_mode"            , color_mode_            );
     prepass_program_     ->set_uniform("color_k"               , color_k_               );
     prepass_program_     ->set_uniform("color_inverted"        , color_inverted_        );
+    glViewport             (0, 0, size.x, size.y);
+    glClearColor           (0.0, 0.0, 0.0, 0.0);
+    glClear                (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glDrawElementsInstanced(GL_TRIANGLES, draw_count_, GL_UNSIGNED_INT, nullptr, primitive_count_);
   
     prepass_vertex_array_->unbind     ();
@@ -93,21 +98,21 @@ void zernike_field::render    (const camera* camera)
   }
   
   gl::texture_2d::set_active(GL_TEXTURE0);
-
+  
+  render_target_    ->color_texture()->bind();
   main_program_     ->bind();
   main_vertex_array_->bind();
-  render_target_    ->color_texture()->bind();
-
+  
   main_program_     ->set_uniform("texture_unit", 0);
   main_program_     ->set_uniform("model"       , absolute_matrix                 ());
   main_program_     ->set_uniform("view"        , camera->inverse_absolute_matrix ());
   main_program_     ->set_uniform("projection"  , camera->projection_matrix       ());
-  main_program_     ->set_uniform("size"        , glm::vec2(dimensions_ * spacing_) * 0.5F);
+  main_program_     ->set_uniform("size"        , glm::vec2(size));
   glDrawElements(GL_TRIANGLES, draw_count_, GL_UNSIGNED_INT, nullptr);
-
-  render_target_    ->color_texture()->unbind();
+  
   main_vertex_array_->unbind();
   main_program_     ->unbind();
+  render_target_    ->color_texture()->unbind();
 }
 
 void zernike_field::set_data  (const uint2& dimensions, const uint2& spacing, const unsigned coefficients_per_voxel, const std::vector<float>& coefficients)
