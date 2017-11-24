@@ -18,7 +18,7 @@ out     vec2 vert_texcoords;
 
 void main()
 {
-  gl_Position    = projection * view * model * vec4(position.x * size.x, position.y * size.y, position.z, 1.0);
+  gl_Position    = projection * view * model * vec4(2.0f * (position.x - 0.5f) * size.x - 0.5f, 2.0f * (position.y - 0.5f) * size.y - 0.5f, position.z, 1.0);
   vert_texcoords = texcoords;
 }
 )";

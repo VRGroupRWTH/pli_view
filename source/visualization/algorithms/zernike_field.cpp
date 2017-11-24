@@ -69,11 +69,9 @@ void zernike_field::initialize()
 } 
 void zernike_field::render    (const camera* camera)
 {
-  const auto size = dimensions_ * spacing_;
-
   if(needs_update_)
   {
-    render_target_       ->resize     (size);
+    render_target_       ->resize     ({8192u, 8192u});
     render_target_       ->bind       ();
     prepass_program_     ->bind       ();
     prepass_vertex_array_->bind       ();
@@ -85,7 +83,7 @@ void zernike_field::render    (const camera* camera)
     prepass_program_     ->set_uniform("color_mode"            , color_mode_            );
     prepass_program_     ->set_uniform("color_k"               , color_k_               );
     prepass_program_     ->set_uniform("color_inverted"        , color_inverted_        );
-    glViewport             (0, 0, size.x, size.y);
+    glViewport             (0, 0, 8192, 8192);
     glClearColor           (0.0, 0.0, 0.0, 0.0);
     glClear                (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glDrawElementsInstanced(GL_TRIANGLES, draw_count_, GL_UNSIGNED_INT, nullptr, primitive_count_);
@@ -93,6 +91,10 @@ void zernike_field::render    (const camera* camera)
     prepass_vertex_array_->unbind     ();
     prepass_program_     ->unbind     ();
     render_target_       ->unbind     ();
+
+    render_target_->color_texture()->bind            ();
+    render_target_->color_texture()->generate_mipmaps();
+    render_target_->color_texture()->unbind          ();
 
     needs_update_ = false;
   }
@@ -107,7 +109,7 @@ void zernike_field::render    (const camera* camera)
   main_program_     ->set_uniform("model"       , absolute_matrix                 ());
   main_program_     ->set_uniform("view"        , camera->inverse_absolute_matrix ());
   main_program_     ->set_uniform("projection"  , camera->projection_matrix       ());
-  main_program_     ->set_uniform("size"        , glm::vec2(size));
+  main_program_     ->set_uniform("size"        , glm::vec2(dimensions_ * spacing_ ));
   glDrawElements(GL_TRIANGLES, draw_count_, GL_UNSIGNED_INT, nullptr);
   
   main_vertex_array_->unbind();

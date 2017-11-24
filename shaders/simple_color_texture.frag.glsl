@@ -14,7 +14,9 @@ out     vec4      frag_color    ;
 
 void main()
 {
-  frag_color = texture(texture_unit, vert_texcoords);
+  vec4 color = texture(texture_unit, vert_texcoords);
+  if(color.a == 0.0f) discard;
+  frag_color = color;
 }
 )";
 }
