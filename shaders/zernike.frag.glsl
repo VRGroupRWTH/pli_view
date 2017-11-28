@@ -95,7 +95,7 @@ float mode(ivec2 nm, float rho)
 }
 float evaluate(ivec2 nm, vec2 rt)
 {
-  return mode(ivec2(abs(nm.x), abs(nm.y)), rt.x) * (nm.y >= 0 ? cos(float(nm.y) * rt.y) : sin(float(-nm.y) * rt.y));
+  return (nm.y >= 0 ? 1.0f : -1.0f) * sqrt((2.0f * float(nm.x) + 2.0f) / (1.0f + (nm.y == 0 ? 1.0f : 0.0f))) * mode(ivec2(abs(nm.x), abs(nm.y)), rt.x) * (nm.y >= 0 ? cos(float(nm.y) * rt.y) : sin(float(-nm.y) * rt.y));
 }
 
 void main()

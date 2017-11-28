@@ -103,7 +103,7 @@ __host__ __device__ precision mode    (const int2& nm, const precision& rho)
 template<typename precision>
 __host__ __device__ decltype(member_type(&precision::x)) evaluate(const int2& nm, const precision& rt )
 {
-  return mode(int2{abs(nm.x), abs(nm.y)}, rt.x) * (nm.y >= 0 ? cos(abs(nm.y) * rt.y) : sin(abs(nm.y) * rt.y));
+  return (nm.y >= 0 ? 1.0f : -1.0f) * sqrtf((2.0f * nm.x + 2.0f) / (1.0f + (nm.y == 0 ? 1.0f : 0.0f))) * mode(int2{abs(nm.x), abs(nm.y)}, rt.x) * (nm.y >= 0 ? cos(abs(nm.y) * rt.y) : sin(abs(nm.y) * rt.y));
 }
 
 // This kernel requires a sample_count x expansion_size 2D grid.
