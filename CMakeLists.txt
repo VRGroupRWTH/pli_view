@@ -180,6 +180,7 @@ set(PROJECT_SOURCES
 	include/pli_vis/ui/plugins/color_plugin.hpp
   include/pli_vis/ui/plugins/data_plugin.hpp
   include/pli_vis/ui/plugins/fom_plugin.hpp
+  include/pli_vis/ui/plugins/global_tractography_plugin.hpp
   include/pli_vis/ui/plugins/interactor_plugin.hpp
   include/pli_vis/ui/plugins/odf_plugin.hpp
   include/pli_vis/ui/plugins/scalar_plugin.hpp
@@ -354,6 +355,7 @@ set(PROJECT_SOURCES
 	source/ui/plugins/color_plugin.cpp
   source/ui/plugins/data_plugin.cpp
   source/ui/plugins/fom_plugin.cpp
+  source/ui/plugins/global_tractography_plugin.cpp
   source/ui/plugins/interactor_plugin.cpp
   source/ui/plugins/odf_plugin.cpp
   source/ui/plugins/scalar_plugin.cpp
