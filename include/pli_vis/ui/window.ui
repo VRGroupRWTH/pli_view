@@ -181,7 +181,7 @@
         <number>2</number>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>6</number>
        </property>
        <property name="tabSpacing">
         <number>0</number>
@@ -194,8 +194,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>117</width>
-          <height>406</height>
+          <width>98</width>
+          <height>28</height>
          </rect>
         </property>
         <property name="font">
@@ -213,8 +213,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>117</width>
-          <height>406</height>
+          <width>98</width>
+          <height>28</height>
          </rect>
         </property>
         <attribute name="label">
@@ -226,8 +226,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>117</width>
-          <height>406</height>
+          <width>98</width>
+          <height>28</height>
          </rect>
         </property>
         <attribute name="label">
@@ -239,8 +239,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>117</width>
-          <height>406</height>
+          <width>98</width>
+          <height>28</height>
          </rect>
         </property>
         <attribute name="label">
@@ -252,8 +252,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>117</width>
-          <height>406</height>
+          <width>98</width>
+          <height>28</height>
          </rect>
         </property>
         <attribute name="label">
@@ -275,7 +275,7 @@
         </attribute>
         <layout class="QGridLayout" name="grid_layout_fdm"/>
        </widget>
-       <widget class="pli::tractography_plugin" name="plugin_tractography">
+       <widget class="pli::local_tractography_plugin" name="plugin_local_tractography">
         <property name="geometry">
          <rect>
           <x>0</x>
@@ -285,10 +285,18 @@
          </rect>
         </property>
         <attribute name="label">
-         <string>Tractography</string>
+         <string>Local Tractography</string>
         </attribute>
        </widget>
        <widget class="pli::zernike_plugin" name="plugin_zernike_moments">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>98</width>
+          <height>28</height>
+         </rect>
+        </property>
         <attribute name="label">
          <string>Zernike Moments</string>
         </attribute>
@@ -384,9 +392,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>pli::tractography_plugin</class>
+   <class>pli::local_tractography_plugin</class>
    <extends>QWidget</extends>
-   <header location="global">pli_vis/ui/plugins/tractography_plugin.hpp</header>
+   <header location="global">pli_vis/ui/plugins/local_tractography_plugin.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>tractography_toolbox</class>
- <widget class="QWidget" name="tractography_toolbox">
+ <class>local_tractography_toolbox</class>
+ <widget class="QWidget" name="local_tractography_toolbox">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Tractography Toolbox</string>
+   <string>Local Tractography Toolbox</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
@@ -1116,6 +1116,9 @@
    </item>
    <item row="5" column="3" colspan="2">
     <widget class="QGroupBox" name="groupBox_2">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
        <horstretch>0</horstretch>

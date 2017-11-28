@@ -1,18 +1,18 @@
-#ifndef PLI_VIS_TRACTOGRAPHY_PLUGIN_HPP_
-#define PLI_VIS_TRACTOGRAPHY_PLUGIN_HPP_
+#ifndef PLI_VIS_LOCAL_TRACTOGRAPHY_PLUGIN_HPP_
+#define PLI_VIS_LOCAL_TRACTOGRAPHY_PLUGIN_HPP_
 
 #include <future>
 
 #include <pli_vis/aspects/renderable.hpp>
 #include <pli_vis/ui/plugin.hpp>
-#include <ui_tractography_toolbox.h>
+#include <ui_local_tractography_toolbox.h>
 
 namespace pli
 {
-class tractography_plugin : public plugin<tractography_plugin, Ui_tractography_toolbox>
+class local_tractography_plugin : public plugin<local_tractography_plugin, Ui_local_tractography_toolbox>
 {
 public:
-  explicit tractography_plugin(QWidget* parent = nullptr);
+  explicit local_tractography_plugin(QWidget* parent = nullptr);
 
   void start() override;
 

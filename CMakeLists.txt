@@ -183,7 +183,7 @@ set(PROJECT_SOURCES
   include/pli_vis/ui/plugins/interactor_plugin.hpp
   include/pli_vis/ui/plugins/odf_plugin.hpp
   include/pli_vis/ui/plugins/scalar_plugin.hpp
-  include/pli_vis/ui/plugins/tractography_plugin.hpp
+  include/pli_vis/ui/plugins/local_tractography_plugin.hpp
   include/pli_vis/ui/plugins/volume_rendering_plugin.hpp
   include/pli_vis/ui/plugins/zernike_plugin.hpp
   include/pli_vis/ui/utility/line_edit.hpp
@@ -357,7 +357,7 @@ set(PROJECT_SOURCES
   source/ui/plugins/interactor_plugin.cpp
   source/ui/plugins/odf_plugin.cpp
   source/ui/plugins/scalar_plugin.cpp
-  source/ui/plugins/tractography_plugin.cpp
+  source/ui/plugins/local_tractography_plugin.cpp
   source/ui/plugins/volume_rendering_plugin.cpp
   source/ui/plugins/zernike_plugin.cpp
   source/ui/utility/plot_interactor.cpp

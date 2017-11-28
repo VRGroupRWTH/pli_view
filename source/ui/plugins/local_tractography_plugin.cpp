@@ -1,4 +1,4 @@
-#include <pli_vis/ui/plugins/tractography_plugin.hpp>
+#include <pli_vis/ui/plugins/local_tractography_plugin.hpp>
 
 #include <algorithm>
 #include <random>
@@ -18,7 +18,7 @@
 
 namespace pli
 {
-tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
+local_tractography_plugin::local_tractography_plugin(QWidget* parent) : plugin(parent)
 {
   line_edit_integration_step->setValidator(new QDoubleValidator(0, std::numeric_limits<double>::max(), 10, this));
   line_edit_iterations      ->setValidator(new QIntValidator   (0, std::numeric_limits<int>   ::max(),     this));
@@ -168,7 +168,7 @@ tractography_plugin::tractography_plugin(QWidget* parent) : plugin(parent)
   });
 }
 
-void tractography_plugin::start()
+void local_tractography_plugin::start()
 {
   set_sink(std::make_shared<text_browser_sink>(owner_->console));
 
@@ -219,7 +219,7 @@ void tractography_plugin::start()
     streamline_renderer_->set_color_mapping(mode, k, inverted);
   });
 }
-void tractography_plugin::trace()
+void local_tractography_plugin::trace()
 {
   owner_->set_is_loading(true);
 
@@ -362,7 +362,7 @@ void tractography_plugin::trace()
   owner_->set_is_loading(false);
 }
   
-std::array<std::size_t, 3> tractography_plugin::seed_offset() const
+std::array<std::size_t, 3> local_tractography_plugin::seed_offset() const
 {
   return
   {
@@ -371,7 +371,7 @@ std::array<std::size_t, 3> tractography_plugin::seed_offset() const
     line_edit::get_text<std::size_t>(line_edit_offset_z)
   };
 }
-std::array<std::size_t, 3> tractography_plugin::seed_size  () const
+std::array<std::size_t, 3> local_tractography_plugin::seed_size  () const
 {
   return
   {
@@ -380,7 +380,7 @@ std::array<std::size_t, 3> tractography_plugin::seed_size  () const
     line_edit::get_text<std::size_t>(line_edit_size_z)
   };
 }
-std::array<std::size_t, 3> tractography_plugin::seed_stride() const
+std::array<std::size_t, 3> local_tractography_plugin::seed_stride() const
 {
   return
   {
