@@ -45,6 +45,7 @@ set(PROJECT_SOURCES
   include/pli_vis/cuda/zernike/zernike.h
   include/pli_vis/cuda/global_tractography.h
   include/pli_vis/cuda/odf_field.h
+  include/pli_vis/cuda/polar_plot.h
   include/pli_vis/cuda/spherical_histogram.h
   include/pli_vis/io/io.hpp
   include/pli_vis/io/io_slice_impl.hpp
@@ -183,6 +184,7 @@ set(PROJECT_SOURCES
   include/pli_vis/ui/plugins/global_tractography_plugin.hpp
   include/pli_vis/ui/plugins/interactor_plugin.hpp
   include/pli_vis/ui/plugins/odf_plugin.hpp
+  include/pli_vis/ui/plugins/polar_plot_plugin.hpp
   include/pli_vis/ui/plugins/scalar_plugin.hpp
   include/pli_vis/ui/plugins/local_tractography_plugin.hpp
   include/pli_vis/ui/plugins/volume_rendering_plugin.hpp
@@ -201,6 +203,7 @@ set(PROJECT_SOURCES
 	include/pli_vis/utility/make_even.hpp
   include/pli_vis/visualization/algorithms/lineao_streamline_renderer.hpp
   include/pli_vis/visualization/algorithms/odf_field.hpp
+  include/pli_vis/visualization/algorithms/polar_plot_field.hpp
   include/pli_vis/visualization/algorithms/scalar_field.hpp
   include/pli_vis/visualization/algorithms/streamline_renderer.hpp
   include/pli_vis/visualization/algorithms/vector_field.hpp
@@ -231,6 +234,8 @@ set(PROJECT_SOURCES
   shaders/lineao_zoom_pass.vert.glsl
   shaders/odf_field_renderer.frag.glsl
   shaders/odf_field_renderer.vert.glsl
+  shaders/polar_plot.frag.glsl
+  shaders/polar_plot.vert.glsl
   shaders/simple_color_texture.frag.glsl
   shaders/simple_color_texture.vert.glsl
   shaders/simple_color.frag.glsl
@@ -254,6 +259,7 @@ set(PROJECT_SOURCES
   source/cuda/pt/tracer.cu
   source/cuda/zernike/launch.cu
   source/cuda/odf_field.cu
+  source/cuda/polar_plot.cu
   source/third_party/glew/glew.c
   source/third_party/qwt/qwt_abstract_legend.cpp
   source/third_party/qwt/qwt_abstract_scale.cpp
@@ -358,6 +364,7 @@ set(PROJECT_SOURCES
   source/ui/plugins/global_tractography_plugin.cpp
   source/ui/plugins/interactor_plugin.cpp
   source/ui/plugins/odf_plugin.cpp
+  source/ui/plugins/polar_plot_plugin.cpp
   source/ui/plugins/scalar_plugin.cpp
   source/ui/plugins/local_tractography_plugin.cpp
   source/ui/plugins/volume_rendering_plugin.cpp
@@ -371,6 +378,7 @@ set(PROJECT_SOURCES
   source/ui/application.cpp
   source/visualization/algorithms/lineao_streamline_renderer.cpp
   source/visualization/algorithms/odf_field.cpp
+  source/visualization/algorithms/polar_plot_field.cpp
   source/visualization/algorithms/scalar_field.cpp
   source/visualization/algorithms/streamline_renderer.cpp
   source/visualization/algorithms/vector_field.cpp

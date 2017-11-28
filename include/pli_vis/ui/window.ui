@@ -195,7 +195,7 @@
           <x>0</x>
           <y>0</y>
           <width>117</width>
-          <height>385</height>
+          <height>364</height>
          </rect>
         </property>
         <property name="font">
@@ -214,7 +214,7 @@
           <x>0</x>
           <y>0</y>
           <width>117</width>
-          <height>385</height>
+          <height>364</height>
          </rect>
         </property>
         <attribute name="label">
@@ -227,7 +227,7 @@
           <x>0</x>
           <y>0</y>
           <width>117</width>
-          <height>385</height>
+          <height>364</height>
          </rect>
         </property>
         <attribute name="label">
@@ -240,7 +240,7 @@
           <x>0</x>
           <y>0</y>
           <width>117</width>
-          <height>385</height>
+          <height>364</height>
          </rect>
         </property>
         <attribute name="label">
@@ -253,7 +253,7 @@
           <x>0</x>
           <y>0</y>
           <width>117</width>
-          <height>385</height>
+          <height>364</height>
          </rect>
         </property>
         <attribute name="label">
@@ -267,7 +267,7 @@
           <x>0</x>
           <y>0</y>
           <width>117</width>
-          <height>385</height>
+          <height>364</height>
          </rect>
         </property>
         <attribute name="label">
@@ -281,7 +281,7 @@
           <x>0</x>
           <y>0</y>
           <width>117</width>
-          <height>385</height>
+          <height>364</height>
          </rect>
         </property>
         <attribute name="label">
@@ -294,7 +294,7 @@
           <x>0</x>
           <y>0</y>
           <width>117</width>
-          <height>385</height>
+          <height>364</height>
          </rect>
         </property>
         <attribute name="label">
@@ -307,11 +307,24 @@
           <x>0</x>
           <y>0</y>
           <width>117</width>
-          <height>385</height>
+          <height>364</height>
          </rect>
         </property>
         <attribute name="label">
          <string>Zernike Moments</string>
+        </attribute>
+       </widget>
+       <widget class="pli::polar_plot_plugin" name="plugin_polar_plots">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>117</width>
+          <height>364</height>
+         </rect>
+        </property>
+        <attribute name="label">
+         <string>Polar Plots</string>
         </attribute>
        </widget>
       </widget>
@@ -426,6 +439,12 @@
    <class>pli::global_tractography_plugin</class>
    <extends>QWidget</extends>
    <header location="global">pli_vis/ui/plugins/global_tractography_plugin.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>pli::polar_plot_plugin</class>
+   <extends>QWidget</extends>
+   <header location="global">pli_vis/ui/plugins/polar_plot_plugin.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
