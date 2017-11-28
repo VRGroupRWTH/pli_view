@@ -7,7 +7,7 @@
 
 namespace pli
 {
-std::vector<float> calculate(
+std::array<std::vector<float3>, 2> calculate(
   const std::vector<float3>& vectors           ,
   const uint2&               vectors_dimensions,
   const unsigned             superpixel_size   ,
