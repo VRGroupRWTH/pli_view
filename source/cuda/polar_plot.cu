@@ -13,6 +13,7 @@
 
 #include <pli_vis/cuda/sh/launch.h>
 #include <pli_vis/cuda/utility/convert.h>
+#include <pli_vis/cuda/utility/vector_ops.h>
 
 namespace pli
 {
@@ -60,12 +61,13 @@ __global__ void generate_kernel(
   const auto vertex_offset     = index * angular_partitions * 3;
   for (auto i = 0, j = 0; j < angular_partitions; i += 3, ++j)
   {
-    vertices  [vertex_offset + i    ] = vertex_type {0, 0, 0};
-    vertices  [vertex_offset + i + 1] = to_cartesian_coords(vertex_type {superpixel_size / 2.0 * 1.0 /* polar_plots[superpixel_offset + (j + 1) % angular_partitions] */, 2.0 * M_PI * ((j + 1) % angular_partitions) / angular_partitions, M_PI / 2.0});
-    vertices  [vertex_offset + i + 2] = to_cartesian_coords(vertex_type {superpixel_size / 2.0 * 1.0 /* polar_plots[superpixel_offset +  j]                           */, 2.0 * M_PI *   j                            / angular_partitions, M_PI / 2.0});
+    vertex_type spatial_offset {superpixel_size * (0.5 + x), superpixel_size * (0.5 + y), 0.0};
+    vertices  [vertex_offset + i    ] = spatial_offset ,
+    vertices  [vertex_offset + i + 1] = spatial_offset + to_cartesian_coords(vertex_type {superpixel_size / 2.0 /* polar_plots[superpixel_offset + (j + 1) % angular_partitions] */, 2.0 * M_PI * ((j + 1) % angular_partitions) / angular_partitions, M_PI / 2.0});
+    vertices  [vertex_offset + i + 2] = spatial_offset + to_cartesian_coords(vertex_type {superpixel_size / 2.0 /* polar_plots[superpixel_offset +  j]                           */, 2.0 * M_PI *   j                            / angular_partitions, M_PI / 2.0});
     directions[vertex_offset + i    ] = vertex_type {0, 0, 0};
-    directions[vertex_offset + i + 1] = to_cartesian_coords(vertex_type {superpixel_size / 2.0 * polar_plots[superpixel_offset + (j + 1) % angular_partitions], 2.0 * M_PI * ((j + 1) % angular_partitions) / angular_partitions, M_PI / 2.0});
-    directions[vertex_offset + i + 2] = to_cartesian_coords(vertex_type {superpixel_size / 2.0 * polar_plots[superpixel_offset +  j]                          , 2.0 * M_PI *   j                            / angular_partitions, M_PI / 2.0});
+    directions[vertex_offset + i + 1] = to_cartesian_coords(vertex_type {polar_plots[superpixel_offset + (j + 1) % angular_partitions], 2.0 * M_PI * ((j + 1) % angular_partitions) / angular_partitions, M_PI / 2.0});
+    directions[vertex_offset + i + 2] = to_cartesian_coords(vertex_type {polar_plots[superpixel_offset +  j]                          , 2.0 * M_PI *   j                            / angular_partitions, M_PI / 2.0});
   }
 }
 
