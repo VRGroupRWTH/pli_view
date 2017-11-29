@@ -100,13 +100,8 @@ std::array<std::vector<float3>, 2> calculate(
     angular_partitions          ,
     symmetric                   ,
     polar_plots_gpu.data().get());
-  auto code = cudaDeviceSynchronize();
-  if (code != cudaSuccess)
-  {
-    fprintf(stderr, "GPUassert: %s\n", cudaGetErrorString(code));
-    if (abort) exit(code);
-  }
-
+  cudaDeviceSynchronize();
+  
   for (auto i = 0; i < superpixel_count; i++)
   {
     const auto start_iterator = polar_plots_gpu.begin() +  i      * angular_partitions;

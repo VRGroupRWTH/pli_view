@@ -263,7 +263,7 @@ boost::multi_array<float3, 3>        data_plugin::generate_vectors        (bool 
       vectors     . data(), 
       [cartesian] (const float& direction, const float& inclination)
       {
-        float3 vector {1.0, (90.0F + direction) * M_PI / 180.0F, (90.0F - inclination) * M_PI / 180.0F};
+        float3 vector {1.0, (90.0F + direction + direction < 0.0f ? 2 * M_PI : 0.0f) * M_PI / 180.0F, (90.0F - inclination) * M_PI / 180.0F};
         return cartesian ? to_cartesian_coords(vector) : vector;
       });
 
