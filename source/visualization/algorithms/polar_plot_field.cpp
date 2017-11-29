@@ -37,8 +37,8 @@ void polar_plot_field::render    (const camera* camera)
 {
   shader_program_  ->bind                  ();
   vertex_array_    ->bind                  ();
-  shader_program_  ->set_uniform           ("color_mode"    , color_mode_);
-  shader_program_  ->set_uniform           ("color_k"       , color_k_);
+  shader_program_  ->set_uniform           ("color_mode"    , color_mode_    );
+  shader_program_  ->set_uniform           ("color_k"       , color_k_       );
   shader_program_  ->set_uniform           ("color_inverted", color_inverted_);
   shader_program_  ->set_uniform           ("model"         , absolute_matrix                ());
   shader_program_  ->set_uniform           ("view"          , camera->inverse_absolute_matrix());
