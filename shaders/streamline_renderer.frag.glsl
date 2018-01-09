@@ -11,7 +11,7 @@ static std::string streamline_renderer_frag = R"(\
 uniform int   color_mode     = 0    ;
 uniform float color_k        = 0.5  ;
 uniform bool  color_inverted = false;
-in      vec3  vert_direction ;
+flat in vec3  vert_direction ;
 out     vec4  frag_color     ;
 
 vec3 hue_to_rgb(float hue)
