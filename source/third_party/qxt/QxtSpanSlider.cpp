@@ -1,4 +1,4 @@
-#include <third_party/qxt/QxtSpanSlider.h>
+#include <qxt/QxtSpanSlider.h>
 /****************************************************************************
 ** Copyright (c) 2006 - 2011, the LibQxt project.
 ** See the Qxt AUTHORS file for a list of authors and copyright holders.
@@ -29,7 +29,7 @@
 ** <http://libqxt.org>  <foundation@libqxt.org>
 *****************************************************************************/
 
-#include <third_party/qxt/QxtSpanSliderP.h>
+#include <qxt/QxtSpanSliderP.h>
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QApplication>

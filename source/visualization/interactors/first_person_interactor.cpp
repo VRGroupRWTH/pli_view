@@ -1,12 +1,12 @@
-#include /* implements */ <visualization/interactors/first_person_interactor.hpp>
+#include <pli_vis/visualization/interactors/first_person_interactor.hpp>
 
 #include <QKeyEvent>
 
-#include <math/transform.hpp>
+#include <pli_vis/visualization/primitives/camera.hpp>
 
 namespace pli
 {
-first_person_interactor::first_person_interactor(transform* transform) : transform_(transform)
+first_person_interactor::first_person_interactor(camera* camera) : interactor(camera)
 {
 
 }
@@ -14,17 +14,27 @@ first_person_interactor::first_person_interactor(transform* transform) : transfo
 void first_person_interactor::update_transform()
 {
   if (key_map_[Qt::Key_W])
-    transform_->translate(- transform_->forward() * (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
+  {
+    if (camera_->orthographic())
+      camera_->set_scale(camera_->scale() - glm::vec3(1.0) * ((1.0F / (2.0F * camera_->orthographic_size())) * move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
+    else
+      camera_->translate(-camera_->forward() * (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
+  }
   if (key_map_[Qt::Key_A])
-    transform_->translate(- transform_->right  () * (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
+    camera_->translate(- camera_->right  () * (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
   if (key_map_[Qt::Key_S])
-    transform_->translate(  transform_->forward() * (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
+  {
+    if(camera_->orthographic())
+      camera_->set_scale(camera_->scale() + glm::vec3(1.0) * ((1.0F / (2.0F * camera_->orthographic_size())) * move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
+    else
+      camera_->translate(camera_->forward() * (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
+  }
   if (key_map_[Qt::Key_D])
-    transform_->translate(  transform_->right  () * (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
+    camera_->translate(  camera_->right  () * (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
   if (key_map_[Qt::Key_Z])
-    transform_->translate(- transform_->up     () * (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
+    camera_->translate(- camera_->up     () * (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
   if (key_map_[Qt::Key_X])
-    transform_->translate(  transform_->up     () * (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
+    camera_->translate(  camera_->up     () * (move_speed_ * (key_map_[Qt::Key_Shift] ? 2 : 1)));
 }
 
 void first_person_interactor::key_press_handler  (QKeyEvent*   event)
@@ -95,8 +105,8 @@ void first_person_interactor::mouse_move_handler (QMouseEvent* event)
   auto dy = event->y() - last_mouse_position_.y();
   if (event->buttons() & Qt::LeftButton)
   {
-    transform_->rotate(angleAxis(radians(-look_speed_ * dx), vec3f(0.0, 0.0, 1.0)));
-    transform_->rotate(angleAxis(radians(-look_speed_ * dy), transform_->right()));
+    camera_->rotate(glm::angleAxis(glm::radians( look_speed_ * dx), glm::vec3(0.0, 0.0, 1.0)));
+    camera_->rotate(glm::angleAxis(glm::radians(-look_speed_ * dy), camera_->right()));
   }
 
   last_mouse_position_ = event->pos();

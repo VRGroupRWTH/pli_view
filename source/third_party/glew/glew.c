@@ -30,17 +30,17 @@
 ** THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <third_party/glew/GL/glew.h>
+#include <glew/GL/glew.h>
 
 #if defined(GLEW_OSMESA)
 #  define GLAPI extern
 #  include <GL/osmesa.h>
 #elif defined(GLEW_EGL)
-#  include <third_party/glew/GL/eglew.h>
+#  include <glew/GL/eglew.h>
 #elif defined(_WIN32)
-#  include <third_party/glew/GL/wglew.h>
+#  include <glew/GL/wglew.h>
 #elif !defined(__ANDROID__) && !defined(__native_client__) && !defined(__HAIKU__) && (!defined(__APPLE__) || defined(GLEW_APPLE_GLX))
-#  include <third_party/glew/GL/glxew.h>
+#  include <glew/GL/glxew.h>
 #endif
 
 #include <stddef.h>  /* For size_t */
@@ -16928,7 +16928,7 @@ GLboolean __GLXEW_SGIX_swap_barrier = GL_FALSE;
 GLboolean __GLXEW_SGIX_swap_group = GL_FALSE;
 GLboolean __GLXEW_SGIX_video_resize = GL_FALSE;
 GLboolean __GLXEW_SGIX_visual_select_group = GL_FALSE;
-GLboolean __GLXEW_SGI_cushion = GL_FALSE;
+GLboolean __GLXEW_SGI_pliion = GL_FALSE;
 GLboolean __GLXEW_SGI_make_current_read = GL_FALSE;
 GLboolean __GLXEW_SGI_swap_control = GL_FALSE;
 GLboolean __GLXEW_SGI_video_sync = GL_FALSE;
@@ -17400,9 +17400,9 @@ static GLboolean _glewInit_GLX_SGIX_video_resize ()
 
 #endif /* GLX_SGIX_video_resize */
 
-#ifdef GLX_SGI_cushion
+#ifdef GLX_SGI_pliion
 
-static GLboolean _glewInit_GLX_SGI_cushion ()
+static GLboolean _glewInit_GLX_SGI_pliion ()
 {
   GLboolean r = GL_FALSE;
 
@@ -17411,7 +17411,7 @@ static GLboolean _glewInit_GLX_SGI_cushion ()
   return r;
 }
 
-#endif /* GLX_SGI_cushion */
+#endif /* GLX_SGI_pliion */
 
 #ifdef GLX_SGI_make_current_read
 
@@ -17748,10 +17748,10 @@ GLenum glxewInit ()
 #ifdef GLX_SGIX_visual_select_group
   GLXEW_SGIX_visual_select_group = _glewSearchExtension("GLX_SGIX_visual_select_group", extStart, extEnd);
 #endif /* GLX_SGIX_visual_select_group */
-#ifdef GLX_SGI_cushion
-  GLXEW_SGI_cushion = _glewSearchExtension("GLX_SGI_cushion", extStart, extEnd);
-  if (glewExperimental || GLXEW_SGI_cushion) GLXEW_SGI_cushion = !_glewInit_GLX_SGI_cushion();
-#endif /* GLX_SGI_cushion */
+#ifdef GLX_SGI_pliion
+  GLXEW_SGI_pliion = _glewSearchExtension("GLX_SGI_pliion", extStart, extEnd);
+  if (glewExperimental || GLXEW_SGI_pliion) GLXEW_SGI_pliion = !_glewInit_GLX_SGI_pliion();
+#endif /* GLX_SGI_pliion */
 #ifdef GLX_SGI_make_current_read
   GLXEW_SGI_make_current_read = _glewSearchExtension("GLX_SGI_make_current_read", extStart, extEnd);
   if (glewExperimental || GLXEW_SGI_make_current_read) GLXEW_SGI_make_current_read = !_glewInit_GLX_SGI_make_current_read();
@@ -23102,10 +23102,10 @@ GLboolean glxewIsSupported (const char* name)
       }
       if (_glewStrSame2(&pos, &len, (const GLubyte*)"SGI_", 4))
       {
-#ifdef GLX_SGI_cushion
-        if (_glewStrSame3(&pos, &len, (const GLubyte*)"cushion", 7))
+#ifdef GLX_SGI_pliion
+        if (_glewStrSame3(&pos, &len, (const GLubyte*)"pliion", 7))
         {
-          ret = GLXEW_SGI_cushion;
+          ret = GLXEW_SGI_pliion;
           continue;
         }
 #endif

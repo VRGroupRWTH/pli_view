@@ -6,12 +6,16 @@ extern "C"
 }
 #endif
 
+#include <omp.h>
 #include <QApplication>
+#include <QSurfaceFormat>
 
-#include <ui/window.hpp>
+#include <pli_vis/ui/application.hpp>
 
 int main(int argc, char** argv)
 {
+  omp_set_num_threads(4);
+
   QSurfaceFormat format;
   format.setProfile     (QSurfaceFormat::CompatibilityProfile);
   format.setSwapBehavior(QSurfaceFormat::DoubleBuffer        );
@@ -21,7 +25,7 @@ int main(int argc, char** argv)
 
   QApplication application(argc, argv);
   
-  pli::window window;
+  pli::application window;
   
   application.exec();
 
