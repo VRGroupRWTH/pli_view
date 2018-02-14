@@ -82,24 +82,24 @@ void ospray_streamline_renderer::set_data(
   std::vector<int> indices(points.size());
   std::iota(indices.begin(), indices.end(), 0);
   
-	auto vertex_data = ospNewData(points    .size(), OSP_FLOAT3, points    .data(), 0);
+  auto vertex_data = ospNewData(points    .size(), OSP_FLOAT3, points    .data(), 0);
   auto color_data  = ospNewData(directions.size(), OSP_FLOAT3, directions.data(), 0);
   auto index_data  = ospNewData(indices   .size(), OSP_UINT  , indices   .data(), 0);
-	ospCommit(vertex_data);
-	ospCommit(color_data );
-	ospCommit(index_data );
+  ospCommit(vertex_data);
+  ospCommit(color_data );
+  ospCommit(index_data );
   
-	ospSet1f  (streamlines_, "radius"      , 2          );
-	ospSetData(streamlines_, "vertex"      , vertex_data);
-	ospSetData(streamlines_, "vertex.color", color_data );
-	ospSetData(streamlines_, "index"       , index_data );
+  ospSet1f  (streamlines_, "radius"      , 2          );
+  ospSetData(streamlines_, "vertex"      , vertex_data);
+  ospSetData(streamlines_, "vertex.color", color_data );
+  ospSetData(streamlines_, "index"       , index_data );
   
   auto material = ospNewMaterial(renderer_, "OBJMaterial");
-	ospSetVec3f   (material, "Ks", osp::vec3f{0.5, 0.5, 0.5});
-	ospSet1f      (material, "Ns", 2.f);
-	ospCommit     (material);
-	ospSetMaterial(streamlines_, material);
+  ospSetVec3f   (material, "Ks", osp::vec3f{0.5, 0.5, 0.5});
+  ospSet1f      (material, "Ns", 2.f);
+  ospCommit     (material);
+  ospSetMaterial(streamlines_, material);
   
-	ospCommit(streamlines_);
+  ospCommit(streamlines_);
 }
 }
