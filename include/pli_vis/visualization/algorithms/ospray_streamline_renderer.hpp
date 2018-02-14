@@ -1,10 +1,10 @@
 #ifndef PLI_VIS_OSPRAY_STREAMLINE_RENDERER_HPP_
 #define PLI_VIS_OSPRAY_STREAMLINE_RENDERER_HPP_
 
+#include <ospray/ospray.h>
 #include <vector_types.h>
 
 #include <pli_vis/aspects/renderable.hpp>
-#include <pli_vis/visualization/primitives/camera.hpp>
 
 namespace pli
 {
@@ -19,7 +19,9 @@ public:
     const std::vector<float3>& directions);
 
 protected:
-
+  OSPCamera   camera_      = nullptr;
+  OSPGeometry streamlines_ = nullptr;
+  OSPRenderer renderer_    = nullptr;
 };
 }
 
