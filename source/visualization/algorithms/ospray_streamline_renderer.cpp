@@ -1,5 +1,7 @@
 #include <pli_vis/visualization/algorithms/ospray_streamline_renderer.hpp>
 
+#include <ospray/ospray.h>
+
 namespace pli
 {
 void ospray_streamline_renderer::initialize()

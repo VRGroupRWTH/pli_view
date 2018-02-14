@@ -428,6 +428,9 @@ list          (APPEND CMAKE_CXX_FLAGS ${OpenMP_CXX_FLAGS})
 find_package  (OpenGL REQUIRED)
 import_library(opengl OPENGL_INCLUDE_DIRS OPENGL_LIBRARIES)
 
+find_package  (OSPRay REQUIRED)
+import_library(ospray OSPRAY_INCLUDE_DIRS OSPRAY_LIBRARIES)
+
 set           (CMAKE_AUTOMOC ON)
 set           (CMAKE_AUTOUIC ON)
 set           (CMAKE_INCLUDE_CURRENT_DIR ON)
