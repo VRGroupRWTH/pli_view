@@ -25,7 +25,6 @@ private:
 
   renderable*       streamline_renderer_;
   std::future<void> future_             ;
-  bool              line_ao_            = false;
   bool              gpu_tracing_        = true ;
 };
 }

@@ -15,6 +15,7 @@
 #include <pli_vis/utility/make_even.hpp>
 #include <pli_vis/visualization/algorithms/streamline_renderer.hpp>
 #include <pli_vis/visualization/algorithms/lineao_streamline_renderer.hpp>
+#include <pli_vis/visualization/algorithms/ospray_streamline_renderer.hpp>
 
 namespace pli
 {
@@ -159,12 +160,17 @@ local_tractography_plugin::local_tractography_plugin(QWidget* parent) : plugin(p
   connect(radio_button_regular      , &QRadioButton::clicked            , [&]
   {
     owner_->viewer->remove_renderable(streamline_renderer_);
-    streamline_renderer_ = owner_->viewer->add_renderable<streamline_renderer>();
+    streamline_renderer_ = owner_->viewer->add_renderable<streamline_renderer>       ();
   });
   connect(radio_button_lineao       , &QRadioButton::clicked            , [&]
   {
     owner_->viewer->remove_renderable(streamline_renderer_);
     streamline_renderer_ = owner_->viewer->add_renderable<lineao_streamline_renderer>();
+  });
+  connect(radio_button_ospray       , &QRadioButton::clicked            , [&]
+  {
+    owner_->viewer->remove_renderable(streamline_renderer_);
+    streamline_renderer_ = owner_->viewer->add_renderable<ospray_streamline_renderer>();
   });
 }
 
@@ -172,10 +178,12 @@ void local_tractography_plugin::start()
 {
   set_sink(std::make_shared<text_browser_sink>(owner_->console));
 
-  if(radio_button_lineao->isChecked())
+  if      (radio_button_regular->isChecked())
+    streamline_renderer_ = owner_->viewer->add_renderable<streamline_renderer>       ();
+  else if (radio_button_lineao->isChecked())
     streamline_renderer_ = owner_->viewer->add_renderable<lineao_streamline_renderer>();
   else
-    streamline_renderer_ = owner_->viewer->add_renderable<streamline_renderer>();
+    streamline_renderer_ = owner_->viewer->add_renderable<ospray_streamline_renderer>();
 
   connect(owner_->toolbox, &QToolBox::currentChanged, [&](int tab)
   {
@@ -348,11 +356,14 @@ void local_tractography_plugin::trace()
   {
     logger_->info(std::string("Trace successful."));
 
+    auto regular_renderer = dynamic_cast<streamline_renderer*>       (streamline_renderer_);
+    if  (regular_renderer) regular_renderer->set_data(points, directions);
+    
     auto lineao_renderer  = dynamic_cast<lineao_streamline_renderer*>(streamline_renderer_);
     if  (lineao_renderer)  lineao_renderer ->set_data(points, directions, random_vectors);
     
-    auto regular_renderer = dynamic_cast<streamline_renderer*>(streamline_renderer_);
-    if  (regular_renderer) regular_renderer->set_data(points, directions);
+    auto ospray_renderer  = dynamic_cast<ospray_streamline_renderer*>(streamline_renderer_);
+    if  (ospray_renderer)  ospray_renderer ->set_data(points, directions);
   }
   else
   {

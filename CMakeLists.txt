@@ -201,6 +201,7 @@ set(PROJECT_SOURCES
 	include/pli_vis/utility/make_even.hpp
   include/pli_vis/visualization/algorithms/lineao_streamline_renderer.hpp
   include/pli_vis/visualization/algorithms/odf_field.hpp
+  include/pli_vis/visualization/algorithms/ospray_streamline_renderer.hpp
   include/pli_vis/visualization/algorithms/polar_plot_field.hpp
   include/pli_vis/visualization/algorithms/scalar_field.hpp
   include/pli_vis/visualization/algorithms/streamline_renderer.hpp
@@ -376,6 +377,7 @@ set(PROJECT_SOURCES
   source/ui/application.cpp
   source/visualization/algorithms/lineao_streamline_renderer.cpp
   source/visualization/algorithms/odf_field.cpp
+  source/visualization/algorithms/ospray_streamline_renderer.cpp
   source/visualization/algorithms/polar_plot_field.cpp
   source/visualization/algorithms/scalar_field.cpp
   source/visualization/algorithms/streamline_renderer.cpp
