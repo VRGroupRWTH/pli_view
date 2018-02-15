@@ -3,8 +3,9 @@
 #include <numeric>
 #include <vector>
 
-#include <pli_vis/third_party/glew/GL/glew.h>
 #include <pli_vis/visualization/primitives/camera.hpp>
+#include <shaders/fullscreen_texture.vert.glsl>
+#include <shaders/fullscreen_texture.frag.glsl>
 
 #include <glm/glm.hpp>
 #include <ospray/ospray_cpp.h>
@@ -18,11 +19,54 @@ void ospray_streamline_renderer::initialize()
   glGetIntegerv(GL_VIEWPORT, reinterpret_cast<GLint*>(&viewport));
   glm::ivec2 size(viewport[2], viewport[3]);
 
-  texture_. reset    (new gl::texture_2d);
-  texture_->bind     ();
-  texture_->set_image(GL_RGBA, size[0], size[1], GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-  texture_->unbind   ();
+  // Setup OpenGL.
+  std::vector<float>    vertices  = {-1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 1.0f, 0.0f};
+  std::vector<float>    texcoords = {0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f};
+  std::vector<unsigned> indices   = {0u, 1u, 2u, 0u, 2u, 3u};
+
+  program_        .reset                  (new gl::program      );
+  vertex_array_   .reset                  (new gl::vertex_array );
+  vertex_buffer_  .reset                  (new gl::vertex_buffer);
+  texcoord_buffer_.reset                  (new gl::vertex_buffer);
+  index_buffer_   .reset                  (new gl::index_buffer );
+  texture_        .reset                  (new gl::texture_2d   );
+
+  program_        ->attach_shader         (gl::vertex_shader  (shaders::fullscreen_texture_vert));
+  program_        ->attach_shader         (gl::fragment_shader(shaders::fullscreen_texture_frag));
+  program_        ->link                  ();
+
+  vertex_array_   ->bind                  ();
+  program_        ->bind                  ();
   
+  vertex_buffer_  ->bind                  ();
+  vertex_buffer_  ->set_data              (vertices.size() * sizeof(float), vertices.data());
+  program_        ->set_attribute_buffer  ("position", 3, GL_FLOAT);
+  program_        ->enable_attribute_array("position");
+  vertex_buffer_  ->unbind                ();
+
+  texcoord_buffer_->bind                  ();
+  texcoord_buffer_->set_data              (texcoords.size() * sizeof(float), texcoords.data());
+  program_        ->set_attribute_buffer  ("texcoords", 2, GL_FLOAT);
+  program_        ->enable_attribute_array("texcoords");
+  texcoord_buffer_->unbind                ();
+
+  index_buffer_   ->bind                  ();
+  index_buffer_   ->set_data              (indices.size() * sizeof(unsigned), indices.data());
+  index_buffer_   ->unbind                ();
+  vertex_array_   ->set_element_buffer    (*index_buffer_.get());
+
+  program_        ->unbind                ();
+  vertex_array_   ->unbind                ();
+
+  texture_        ->bind                  ();
+  texture_        ->min_filter            (GL_NEAREST);
+  texture_        ->mag_filter            (GL_NEAREST);
+  texture_        ->wrap_s                (GL_CLAMP_TO_EDGE);
+  texture_        ->wrap_t                (GL_CLAMP_TO_EDGE);
+  texture_        ->set_image             (GL_RGBA, size[0], size[1], GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+  texture_        ->unbind                ();
+  draw_count_ = indices.size();
+
   // Setup renderer.
   renderer_ = std::make_unique<ospray::cpp::Renderer>("scivis");
   renderer_->set   ("shadowsEnabled", 1 );
@@ -78,20 +122,32 @@ void ospray_streamline_renderer::render    (const camera* camera)
   auto camera_position = camera->translation();
   auto camera_forward  = camera->forward    ();
   auto camera_up       = camera->up         ();
-  camera_->set   ("aspect", size[0] / static_cast<float>(size[1]));
-  camera_->set   ("pos"   , camera_position[0], camera_position[1], camera_position[2]);
-  camera_->set   ("dir"   , camera_forward [0], camera_forward [1], camera_forward [2]);
-  camera_->set   ("up"    , camera_up      [0], camera_up      [1], camera_up      [2]);
-  camera_->commit();
+  camera_      ->set        ("aspect", size[0] / static_cast<float>(size[1]));
+  camera_      ->set        ("pos"   , camera_position[0], camera_position[1], camera_position[2]);
+  camera_      ->set        ("dir"   , camera_forward [0], camera_forward [1], camera_forward [2]);
+  camera_      ->set        ("up"    , camera_up      [0], camera_up      [1], camera_up      [2]);
+  camera_      ->commit     ();
 
-  framebuffer_->clear      (OSP_FB_COLOR);
-  renderer_   ->renderFrame(*framebuffer_.get(), 0);
-
+  framebuffer_ = std::make_unique<ospray::cpp::FrameBuffer>(ospcommon::vec2i(size[0], size[1]), OSP_FB_SRGBA, OSP_FB_COLOR);
+  framebuffer_ ->clear      (OSP_FB_COLOR);
+  renderer_    ->renderFrame(*framebuffer_.get(), 0);
+  
   const auto bytes = static_cast<uint32_t*>(framebuffer_->map(OSP_FB_COLOR));
-  texture_    ->bind     ();
-  texture_    ->set_image(GL_RGBA, size[0], size[1], GL_RGBA, GL_UNSIGNED_BYTE, bytes);
-  texture_    ->unbind   ();
-  framebuffer_->unmap    (bytes);
+  texture_     ->bind       ();
+  texture_     ->set_image  (GL_RGBA, size[0], size[1], GL_RGBA, GL_UNSIGNED_BYTE, bytes);
+  texture_     ->unbind     ();
+  framebuffer_ ->unmap      (bytes);
+
+  vertex_array_->bind       ();
+  program_     ->bind       ();
+  texture_     ->bind       ();
+
+  program_     ->set_uniform("texture_unit", 0);
+  glDrawElements(GL_TRIANGLES, draw_count_, GL_UNSIGNED_INT, nullptr);
+  
+  texture_     ->unbind     ();
+  program_     ->unbind     ();
+  vertex_array_->unbind     ();
 }
   
 void ospray_streamline_renderer::set_data(

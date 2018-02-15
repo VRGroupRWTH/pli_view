@@ -26,16 +26,19 @@ public:
     const std::vector<float3>& directions);
   
 protected:
-  std::unique_ptr<ospray::cpp::Renderer>    renderer_     = nullptr;
-  std::unique_ptr<ospray::cpp::Model>       model_        = nullptr;
-  std::unique_ptr<ospray::cpp::Geometry>    streamlines_  = nullptr;
-  std::unique_ptr<ospray::cpp::Camera>      camera_       = nullptr;
-  std::unique_ptr<ospray::cpp::Data>        lights_       = nullptr;
-  std::unique_ptr<ospray::cpp::FrameBuffer> framebuffer_  = nullptr;
-  std::unique_ptr<gl::program>              program_      ;
-  std::unique_ptr<gl::vertex_array>         vertex_array_ ;
-  std::unique_ptr<gl::array_buffer>         vertex_buffer_;
-  std::unique_ptr<gl::texture_2d>           texture_      ;
+  std::size_t                               draw_count_     = 0;
+  std::unique_ptr<gl::program>              program_        ;
+  std::unique_ptr<gl::vertex_array>         vertex_array_   ;
+  std::unique_ptr<gl::vertex_buffer>        vertex_buffer_  ;
+  std::unique_ptr<gl::vertex_buffer>        texcoord_buffer_;
+  std::unique_ptr<gl::index_buffer>         index_buffer_   ;
+  std::unique_ptr<gl::texture_2d>           texture_        ;
+  std::unique_ptr<ospray::cpp::Renderer>    renderer_       ;
+  std::unique_ptr<ospray::cpp::Model>       model_          ;
+  std::unique_ptr<ospray::cpp::Geometry>    streamlines_    ;
+  std::unique_ptr<ospray::cpp::Camera>      camera_         ;
+  std::unique_ptr<ospray::cpp::Data>        lights_         ;
+  std::unique_ptr<ospray::cpp::FrameBuffer> framebuffer_    ;
 };
 }
 

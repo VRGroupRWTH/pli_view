@@ -223,6 +223,8 @@ set(PROJECT_SOURCES
   
   shaders/depth_pass.frag.glsl
   shaders/depth_pass.vert.glsl
+  shaders/fullscreen_texture.frag.glsl
+  shaders/fullscreen_texture.vert.glsl
   shaders/lineao_color_pass.frag.glsl
   shaders/lineao_color_pass.vert.glsl
   shaders/lineao_main_pass.frag.glsl
