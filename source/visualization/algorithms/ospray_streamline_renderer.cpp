@@ -26,6 +26,7 @@ void ospray_streamline_renderer::initialize()
   
   auto model = ospNewModel();
   ospAddGeometry(model, streamlines_);
+  set_data({{0.0F, 0.0F, 0.0F}, {0.0F, 0.0F, 0.0F}}, {{1.0F, 1.0F, 1.0F}, {1.0F, 1.0F, 1.0F}});
   ospCommit(model);
   
   auto ambient_light = ospNewLight(renderer_, "ambient");
