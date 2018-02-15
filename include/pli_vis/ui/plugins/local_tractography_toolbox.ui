@@ -1176,63 +1176,47 @@
      <property name="title">
       <string>Shading</string>
      </property>
-     <widget class="QRadioButton" name="radio_button_regular">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>7</x>
-        <y>21</y>
-        <width>60</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Regular</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="radio_button_lineao">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>70</x>
-        <y>20</y>
-        <width>60</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Line AO</string>
-      </property>
-      <property name="checked">
-       <bool>false</bool>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="radio_button_ospray">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>140</x>
-        <y>20</y>
-        <width>105</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>OSPRay</string>
-      </property>
-      <property name="checked">
-       <bool>false</bool>
-      </property>
-     </widget>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="radio_button_regular">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Regular</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QRadioButton" name="radio_button_lineao">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Line AO</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QRadioButton" name="radio_button_ospray">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>OSPRay</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item row="4" column="2" colspan="2">
