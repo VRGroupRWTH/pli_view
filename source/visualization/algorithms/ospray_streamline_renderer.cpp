@@ -7,7 +7,8 @@
 #include <pli_vis/visualization/primitives/camera.hpp>
 
 #include <glm/glm.hpp>
-#include <ospray/ospray.h>
+#include <ospray/ospray_cpp.h>
+#include <ospray/ospcommon/vec.h>
 
 namespace pli
 {
@@ -16,42 +17,57 @@ void ospray_streamline_renderer::initialize()
   glm::ivec4 viewport;
   glGetIntegerv(GL_VIEWPORT, reinterpret_cast<GLint*>(&viewport));
   glm::ivec2 size(viewport[2], viewport[3]);
+
+  texture_. reset    (new gl::texture_2d);
+  texture_->bind     ();
+  texture_->set_image(GL_RGBA, size[0], size[1], GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+  texture_->unbind   ();
   
-  camera_ = ospNewCamera("perspective");
-  ospSet1f (camera_, "aspect", size[0] / static_cast<float>(size[1]));
-  ospCommit(camera_);
+  // Setup renderer.
+  renderer_ = std::make_unique<ospray::cpp::Renderer>("scivis");
+  renderer_->set   ("shadowsEnabled", 1 );
+  renderer_->set   ("aoSamples"     , 8 );
+  renderer_->set   ("spp"           , 16);
+  renderer_->set   ("bgColor"       , 0.0F, 0.0F, 0.0F, 1.0F);
+  renderer_->commit();
   
-  renderer_    = ospNewRenderer("scivis");
-  streamlines_ = ospNewGeometry("streamlines");
-  
-  auto model = ospNewModel();
-  ospAddGeometry(model, streamlines_);
+  // Setup model.
+  streamlines_ = std::make_unique<ospray::cpp::Geometry>("streamlines");
   set_data({{0.0F, 0.0F, 0.0F}, {0.0F, 0.0F, 0.0F}}, {{1.0F, 1.0F, 1.0F}, {1.0F, 1.0F, 1.0F}});
-  ospCommit(model);
+
+  model_ = std::make_unique<ospray::cpp::Model>();
+  model_   ->addGeometry(*streamlines_.get());
+  model_   ->commit     ();
+  renderer_->set        ("model", *model_.get());
+  renderer_->commit     ();
+
+  // Setup camera.
+  camera_ = std::make_unique<ospray::cpp::Camera>("perspective");
+  camera_  ->set   ("aspect", size[0] / static_cast<float>(size[1]));
+  camera_  ->commit();
+  renderer_->set   ("camera", *camera_.get());
+  renderer_->commit();
+
+  // Setup lights.
+  auto ambient_light = renderer_->newLight("ambient");
+  ambient_light.set   ("intensity"      , 0.2F);
+  ambient_light.commit();
   
-  auto ambient_light = ospNewLight(renderer_, "ambient");
-  ospSet1f (ambient_light, "intensity", 0.2);
-  ospCommit(ambient_light);
-  
-  auto distant_light = ospNewLight(renderer_, "distant");
-  ospSetVec3f(distant_light, "direction"      , osp::vec3f {1.0F, 1.0F, -0.5F});
-  ospSetVec3f(distant_light, "color"          , osp::vec3f {1.0F, 1.0F,  0.8F});
-  ospSet1f   (distant_light, "intensity"      , 0.8);
-  ospSet1f   (distant_light, "angularDiameter", 1);
-  ospCommit  (distant_light);
-  
-  auto lights_list = std::vector<OSPLight> {ambient_light, distant_light};
-  auto lights      = ospNewData(lights_list.size(), OSP_LIGHT, lights_list.data(), 0);
-  ospCommit(lights);
-  
-  ospSetObject(renderer_, "model"         , model  );
-  ospSetObject(renderer_, "camera"        , camera_);
-  ospSetObject(renderer_, "lights"        , lights );
-  ospSet1i    (renderer_, "shadowsEnabled", 1);
-  ospSet1i    (renderer_, "aoSamples"     , 8);
-  ospSet1i    (renderer_, "spp"           , 16);
-  ospSetVec4f (renderer_, "bgColor"       , osp::vec4f {0.0F, 0.0F, 0.0F, 1.0F});
-  ospCommit   (renderer_);
+  auto distant_light = renderer_->newLight("distant");
+  distant_light.set   ("direction"      , 1.0F, 1.0F, -0.5F);
+  distant_light.set   ("color"          , 1.0F, 1.0F,  0.8F);
+  distant_light.set   ("intensity"      , 0.8F);
+  distant_light.set   ("angularDiameter", 1.0F);
+  distant_light.commit();
+
+  auto lights = std::vector<ospray::cpp::Light>{ambient_light, distant_light};
+  lights_ = std::make_unique<ospray::cpp::Data>(lights.size(), OSP_LIGHT, lights.data(), 0);
+  lights_  ->commit();
+  renderer_->set   ("lights", lights_.get());
+  renderer_->commit();
+
+  // Setup framebuffer.
+  framebuffer_ = std::make_unique<ospray::cpp::FrameBuffer>(ospcommon::vec2i(size[0], size[1]), OSP_FB_SRGBA, OSP_FB_COLOR);
 }
 void ospray_streamline_renderer::render    (const camera* camera)
 {
@@ -62,45 +78,46 @@ void ospray_streamline_renderer::render    (const camera* camera)
   auto camera_position = camera->translation();
   auto camera_forward  = camera->forward    ();
   auto camera_up       = camera->up         ();
-  ospSet1f   (camera_, "aspect", size[0] / static_cast<float>(size[1]));
-  ospSetVec3f(camera_, "pos"   , reinterpret_cast<osp::vec3f&>(camera_position));
-  ospSetVec3f(camera_, "dir"   , reinterpret_cast<osp::vec3f&>(camera_forward ));
-  ospSetVec3f(camera_, "up"    , reinterpret_cast<osp::vec3f&>(camera_up      ));
-  ospCommit  (camera_);
-  
-  auto framebuffer = ospNewFrameBuffer(reinterpret_cast<osp::vec2i&>(size), OSP_FB_SRGBA, OSP_FB_COLOR);
-  ospFrameBufferClear(framebuffer,            OSP_FB_COLOR);
-  ospRenderFrame     (framebuffer, renderer_, OSP_FB_COLOR);
-  auto bytes = static_cast<const uint32_t*>(ospMapFrameBuffer(framebuffer, OSP_FB_COLOR));
-  // TODO: Render to opengl backbuffer directly.
-  ospUnmapFrameBuffer(bytes, framebuffer);
+  camera_->set   ("aspect", size[0] / static_cast<float>(size[1]));
+  camera_->set   ("pos"   , camera_position[0], camera_position[1], camera_position[2]);
+  camera_->set   ("dir"   , camera_forward [0], camera_forward [1], camera_forward [2]);
+  camera_->set   ("up"    , camera_up      [0], camera_up      [1], camera_up      [2]);
+  camera_->commit();
+
+  framebuffer_->clear      (OSP_FB_COLOR);
+  renderer_   ->renderFrame(*framebuffer_.get(), 0);
+
+  const auto bytes = static_cast<uint32_t*>(framebuffer_->map(OSP_FB_COLOR));
+  texture_    ->bind     ();
+  texture_    ->set_image(GL_RGBA, size[0], size[1], GL_RGBA, GL_UNSIGNED_BYTE, bytes);
+  texture_    ->unbind   ();
+  framebuffer_->unmap    (bytes);
 }
   
 void ospray_streamline_renderer::set_data(
   const std::vector<float3>& points    , 
   const std::vector<float3>& directions)
 {
-  std::vector<int> indices(points.size());
+  std::vector<unsigned> indices(points.size());
   std::iota(indices.begin(), indices.end(), 0);
   
-  auto vertex_data = ospNewData(points    .size(), OSP_FLOAT3, points    .data(), 0);
-  auto color_data  = ospNewData(directions.size(), OSP_FLOAT3, directions.data(), 0);
-  auto index_data  = ospNewData(indices   .size(), OSP_UINT  , indices   .data(), 0);
-  ospCommit(vertex_data);
-  ospCommit(color_data );
-  ospCommit(index_data );
+  auto vertex_data = ospray::cpp::Data(points    .size(), OSP_FLOAT3, points    .data()); 
+  auto color_data  = ospray::cpp::Data(directions.size(), OSP_FLOAT3, directions.data()); 
+  auto index_data  = ospray::cpp::Data(indices   .size(), OSP_UINT  , indices   .data()); 
+  vertex_data.commit();
+  color_data .commit();
+  index_data .commit();
+
+  streamlines_->set("radius"      , 2.0F       );
+  streamlines_->set("vertex"      , vertex_data);
+  streamlines_->set("vertex.color", color_data );
+  streamlines_->set("index"       , index_data );
   
-  ospSet1f  (streamlines_, "radius"      , 2          );
-  ospSetData(streamlines_, "vertex"      , vertex_data);
-  ospSetData(streamlines_, "vertex.color", color_data );
-  ospSetData(streamlines_, "index"       , index_data );
-  
-  auto material = ospNewMaterial(renderer_, "OBJMaterial");
-  ospSetVec3f   (material, "Ks", osp::vec3f{0.5, 0.5, 0.5});
-  ospSet1f      (material, "Ns", 2.f);
-  ospCommit     (material);
-  ospSetMaterial(streamlines_, material);
-  
-  ospCommit(streamlines_);
+  auto material = renderer_->newMaterial("OBJMaterial");
+  material.set   ("Ks", 0.5F, 0.5F, 0.5F);
+  material.set   ("Ns", 2.0F);
+  material.commit();
+  streamlines_->setMaterial(material);
+  streamlines_->commit     ();
 }
 }
