@@ -3,6 +3,8 @@
 
 #include <future>
 
+#include <vector_types.h>
+
 #include <pli_vis/aspects/renderable.hpp>
 #include <pli_vis/ui/plugin.hpp>
 #include <ui_local_tractography_toolbox.h>
@@ -22,10 +24,12 @@ private:
   std::array<std::size_t, 3> seed_offset() const;
   std::array<std::size_t, 3> seed_size  () const;
   std::array<std::size_t, 3> seed_stride() const;
-
-  renderable*       streamline_renderer_;
-  std::future<void> future_             ;
-  bool              gpu_tracing_        = true ;
+  
+  std::vector<float3> vertices_           ;
+  std::vector<float3> tangents_           ;
+  renderable*         streamline_renderer_;
+  std::future<void>   future_             ;
+  bool                gpu_tracing_        = true ;
 };
 }
 

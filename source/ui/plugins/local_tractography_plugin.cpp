@@ -4,6 +4,7 @@
 #include <random>
 
 #include <boost/format.hpp>
+#include <QFileDialog>
 #include <tangent-base/default_tracers.hpp>
 
 #include <pli_vis/cuda/pt/tracer.h>
@@ -15,6 +16,7 @@
 #include <pli_vis/utility/make_even.hpp>
 #include <pli_vis/visualization/algorithms/streamline_renderer.hpp>
 #include <pli_vis/visualization/algorithms/lineao_streamline_renderer.hpp>
+#include <pli_vis/visualization/algorithms/ospray_streamline_exporter.hpp>
 #include <pli_vis/visualization/algorithms/ospray_streamline_renderer.hpp>
 
 namespace pli
@@ -143,9 +145,25 @@ local_tractography_plugin::local_tractography_plugin(QWidget* parent) : plugin(p
   {
     slider_iterations->setValue(line_edit::get_text<int>(line_edit_iterations));
   });
-  connect(button_trace_selection, &QPushButton::clicked, [&]
+  connect(button_trace_selection    , &QPushButton::clicked             , [&]
   {
     trace();
+  });
+  connect(button_ospray_export      , &QPushButton::clicked             , [&]
+  {
+    auto filepath = QFileDialog::getSaveFileName(this, tr("Select output file."), "C:/", tr("Image Files (*.bmp *.hdr *.jpg *.png *.tga)")).toStdString();
+    if (filepath.empty())
+      return;
+
+    auto camera   = owner_->viewer->camera();
+    auto position = float3{camera->translation()[0], camera->translation()[1], camera->translation()[2]};
+    auto forward  = float3{camera->forward    ()[0], camera->forward    ()[1], camera->forward    ()[2]};
+    auto up       = float3{camera->up         ()[0], camera->up         ()[1], camera->up         ()[2]};
+
+    ospray_streamline_exporter exporter;
+    exporter.set_data  (vertices_, tangents_);
+    exporter.set_camera(position, forward, up);
+    exporter.save      (filepath);
   });
   connect(radio_button_cpu          , &QRadioButton::clicked            , [&]
   {
@@ -245,8 +263,9 @@ void local_tractography_plugin::trace()
 
   logger_->info(std::string("Tracing..."));
 
-  std::vector<float3> points        ;
-  std::vector<float3> directions    ;
+  vertices_.clear();
+  tangents_.clear();
+
   std::vector<float4> random_vectors;
   future_ = std::async(std::launch::async, [&]
   {
@@ -291,10 +310,10 @@ void local_tractography_plugin::trace()
           {
             float3 start {path[j]    [0], path[j]    [1], path[j]    [2]};
             float3 end   {path[j + 1][0], path[j + 1][1], path[j + 1][2]};
-            points.push_back(start);
-            points.push_back(end  );
-            directions.push_back(normalize(end   - start));
-            directions.push_back(normalize(start - end  ));
+            vertices_.push_back(start);
+            vertices_.push_back(end  );
+            tangents_.push_back(normalize(end   - start));
+            tangents_.push_back(normalize(start - end  ));
           }
         }
       }
@@ -330,10 +349,10 @@ void local_tractography_plugin::trace()
             auto& end   = traces[i][j+1];
             if(end.x == 0.0f && end.y == 0.0f && end.z == 0.0f)
               break;
-            points    .push_back(start);
-            points    .push_back(end  ); 
-            directions.push_back(normalize(end   - start));
-            directions.push_back(normalize(start - end  ));
+            vertices_.push_back(start);
+            vertices_.push_back(end);
+            tangents_.push_back(normalize(end - start));
+            tangents_.push_back(normalize(start - end  ));
           }
       }
 
@@ -364,18 +383,18 @@ void local_tractography_plugin::trace()
   while (future_.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
     QApplication::processEvents();
 
-  if (points.size() > 0 && directions.size() > 0)
+  if (vertices_.size() > 0 && tangents_.size() > 0)
   {
     logger_->info(std::string("Trace successful."));
 
     auto regular_renderer = dynamic_cast<streamline_renderer*>       (streamline_renderer_);
-    if  (regular_renderer) regular_renderer->set_data(points, directions);
+    if  (regular_renderer) regular_renderer->set_data(vertices_, tangents_);
     
     auto lineao_renderer  = dynamic_cast<lineao_streamline_renderer*>(streamline_renderer_);
-    if  (lineao_renderer)  lineao_renderer ->set_data(points, directions, random_vectors);
+    if  (lineao_renderer)  lineao_renderer ->set_data(vertices_, tangents_, random_vectors);
     
     auto ospray_renderer  = dynamic_cast<ospray_streamline_renderer*>(streamline_renderer_);
-    if  (ospray_renderer)  ospray_renderer ->set_data(points, directions);
+    if  (ospray_renderer)  ospray_renderer ->set_data(vertices_, tangents_);
   }
   else
   {
