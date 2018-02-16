@@ -134,7 +134,7 @@ void ospray_streamline_renderer::render    (const camera* camera)
   
   const auto bytes = static_cast<uint32_t*>(framebuffer_->map(OSP_FB_COLOR));
   texture_     ->bind       ();
-  texture_     ->set_image  (GL_RGBA, size[0], size[1], GL_RGBA, GL_UNSIGNED_BYTE, bytes);
+  texture_     ->set_image  (GL_RGBA32F, size[0], size[1], GL_RGBA, GL_UNSIGNED_BYTE, bytes);
   texture_     ->unbind     ();
   framebuffer_ ->unmap      (bytes);
 
