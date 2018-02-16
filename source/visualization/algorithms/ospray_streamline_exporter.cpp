@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <numeric>
+#include <random>
 
 #include <pli_vis/opengl/opengl.hpp>
 #include <pli_vis/third_party/stb/stb_image_write.h>
@@ -31,6 +32,12 @@ void ospray_streamline_exporter::set_camera(
 void ospray_streamline_exporter::save(
   const std::string& filepath)
 {
+  {
+    camera_position_ = float3{-248.0F, -62.0F, -60.0F};
+    camera_forward_  = float3{125.0F - camera_position_.x, 125.0F - camera_position_.y, 125.0F - camera_position_.z};
+    camera_up_       = float3{0.0F, 1.0F, 0.0F};
+  }
+
   std::vector<float4> vertices (vertices_.size());
   std::vector<float4> colors   (tangents_.size());
   std::vector<int>    indices  (vertices_.size() / 2);
@@ -43,6 +50,34 @@ void ospray_streamline_exporter::save(
     return float4 {abs(value.x), abs(value.y), abs(value.z), 1.0F};
   });
   std::generate (indices  .begin(), indices  .end(), [n = -2] () mutable { n += 2; return n; });
+
+  {
+    vertices.clear();
+    colors  .clear();
+    indices .clear();
+  
+	  const ospcommon::vec3i volume_dims(256, 256, 256);
+    std::random_device rd;
+    std::mt19937 rng(rd());
+    std::uniform_real_distribution<float> pos_x(-0.05 * volume_dims.x, 1.05 * volume_dims.x);
+    std::uniform_real_distribution<float> pos_y(-0.05 * volume_dims.y, 1.05 * volume_dims.y);
+    std::uniform_real_distribution<float> pos_z(-0.05 * volume_dims.z, 1.05 * volume_dims.z);
+    std::uniform_real_distribution<float> cols (0, 1.0);
+    for (size_t i = 0; i < 200; ++i) 
+    {
+      vertices.push_back(float4{pos_x(rng), pos_y(rng), pos_z(rng), 1.0F});
+      colors  .push_back(float4{cols(rng), cols(rng), cols(rng), 1.0});
+    }
+    const std::uniform_int_distribution<int> streamline_length(1, 5);
+    auto next_streamline = 0;
+    for (size_t i = 0; i < 20; ++i) 
+    {
+      const auto length = streamline_length(rng);
+      for (auto j = 0; j < length && next_streamline < vertices.size(); ++j, ++next_streamline)
+        indices.push_back(next_streamline);
+      ++next_streamline;
+    }
+  }
 
   int4  viewport; glGetIntegerv(GL_VIEWPORT, reinterpret_cast<GLint*>(&viewport));
   uint2 size {viewport.z, viewport.w};
@@ -98,6 +133,7 @@ void ospray_streamline_exporter::save(
   auto ambient_light = renderer.newLight("ambient");
   ambient_light.set   ("intensity", 0.2F);
   ambient_light.commit();
+  auto ambient_handle = ambient_light.handle();
   
   //auto distant_light = renderer.newLight("distant");
   //distant_light.set   ("direction"      , 1.0F, 1.0F, -0.5F);
@@ -105,22 +141,20 @@ void ospray_streamline_exporter::save(
   //distant_light.set   ("intensity"      , 0.8F);
   //distant_light.set   ("angularDiameter", 1.0F);
   //distant_light.commit();
-  
-  //auto light_vector = std::vector<osp::Light>{ambient_light.handle(), distant_light.handle()};
-  
-  auto handle = ambient_light.handle();
-  ospray::cpp::Data lights(1, OSP_LIGHT, &handle);
+  //auto distant_handle = distant_light.handle();
+
+  std::vector<OSPLight> lights_list = {ambient_handle};
+  ospray::cpp::Data lights(lights_list.size(), OSP_LIGHT, lights_list.data());
   lights  .commit();
   renderer.set   ("lights", lights);
   renderer.commit();
   
   // Setup framebuffer.
-  ospray::cpp::FrameBuffer framebuffer(ospcommon::vec2i(size.x, size.y), OSP_FB_SRGBA, OSP_FB_COLOR | OSP_FB_ACCUM);
-  framebuffer.clear(OSP_FB_COLOR | OSP_FB_ACCUM);
+  ospray::cpp::FrameBuffer framebuffer(ospcommon::vec2i(size.x, size.y), OSP_FB_SRGBA, OSP_FB_COLOR);
+  framebuffer.clear(OSP_FB_COLOR);
 
   // Render.
-  for(auto i = 0; i < 10; ++i)
-    renderer.renderFrame(framebuffer, OSP_FB_COLOR | OSP_FB_ACCUM);
+  renderer.renderFrame(framebuffer, OSP_FB_COLOR);
   
   // Save.
   const auto bytes     = static_cast<uint32_t*>(framebuffer.map(OSP_FB_COLOR));
