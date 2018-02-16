@@ -164,8 +164,12 @@ void ospray_streamline_renderer::set_data(
   {
     return float4 {value.x, value.y, value.z, 1.0F};
   });
-  std::vector<int> indices(points.size());
+  std::vector<int> indices(points.size() / 2);
   std::iota(indices.begin(), indices.end(), 0);
+  std::transform(indices.begin(), indices.end(), indices.begin(), [ ](const int& value)
+  {
+    return 2 * value;
+  });
 
   vertex_data_ = std::make_unique<ospray::cpp::Data>(points4    .size(), OSP_FLOAT3A, points4    .data());
   color_data_  = std::make_unique<ospray::cpp::Data>(directions4.size(), OSP_FLOAT4 , directions4.data());
