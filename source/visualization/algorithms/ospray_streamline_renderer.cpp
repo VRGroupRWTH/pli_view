@@ -134,40 +134,50 @@ void ospray_streamline_renderer::render    (const camera* camera)
   
   const auto bytes = static_cast<uint32_t*>(framebuffer_->map(OSP_FB_COLOR));
   texture_     ->bind       ();
-  texture_     ->set_image  (GL_RGBA32F, size[0], size[1], GL_RGBA, GL_UNSIGNED_BYTE, bytes);
+  texture_     ->set_image  (GL_RGBA, size[0], size[1], GL_RGBA, GL_UNSIGNED_BYTE, bytes);
   texture_     ->unbind     ();
   framebuffer_ ->unmap      (bytes);
-
-  vertex_array_->bind       ();
-  program_     ->bind       ();
+  
   texture_     ->bind       ();
+  program_     ->bind       ();
+  vertex_array_->bind       ();
 
   program_     ->set_uniform("texture_unit", 0);
   glDrawElements(GL_TRIANGLES, draw_count_, GL_UNSIGNED_INT, nullptr);
   
-  texture_     ->unbind     ();
-  program_     ->unbind     ();
   vertex_array_->unbind     ();
+  program_     ->unbind     ();
+  texture_     ->unbind     ();
 }
   
 void ospray_streamline_renderer::set_data(
   const std::vector<float3>& points    , 
   const std::vector<float3>& directions)
 {
-  std::vector<unsigned> indices(points.size());
+  std::vector<float4> points4    (points    .size());
+  std::transform(points.begin(), points.end(), points4.begin(), [ ] (const float3& value)
+  {
+    return float4 {value.x, value.y, value.z, 0.0F};
+  });
+  std::vector<float4> directions4(directions.size());
+  std::transform(directions.begin(), directions.end(), directions4.begin(), [ ] (const float3& value)
+  {
+    return float4 {value.x, value.y, value.z, 1.0F};
+  });
+  std::vector<int> indices(points.size());
   std::iota(indices.begin(), indices.end(), 0);
-  
-  auto vertex_data = ospray::cpp::Data(points    .size(), OSP_FLOAT3, points    .data()); 
-  auto color_data  = ospray::cpp::Data(directions.size(), OSP_FLOAT3, directions.data()); 
-  auto index_data  = ospray::cpp::Data(indices   .size(), OSP_UINT  , indices   .data()); 
-  vertex_data.commit();
-  color_data .commit();
-  index_data .commit();
 
-  streamlines_->set("radius"      , 2.0F       );
-  streamlines_->set("vertex"      , vertex_data);
-  streamlines_->set("vertex.color", color_data );
-  streamlines_->set("index"       , index_data );
+  vertex_data_ = std::make_unique<ospray::cpp::Data>(points4    .size(), OSP_FLOAT3A, points4    .data());
+  color_data_  = std::make_unique<ospray::cpp::Data>(directions4.size(), OSP_FLOAT4 , directions4.data());
+  index_data_  = std::make_unique<ospray::cpp::Data>(indices    .size(), OSP_INT    , indices    .data()); 
+  vertex_data_->commit();
+  color_data_ ->commit();
+  index_data_ ->commit();
+
+  streamlines_->set("radius"      , 2.0F               );
+  streamlines_->set("vertex"      , *vertex_data_.get());
+  streamlines_->set("vertex.color", *color_data_ .get());
+  streamlines_->set("index"       , *index_data_ .get());
   
   auto material = renderer_->newMaterial("OBJMaterial");
   material.set   ("Ks", 0.5F, 0.5F, 0.5F);

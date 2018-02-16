@@ -35,6 +35,9 @@ protected:
   std::unique_ptr<gl::texture_2d>           texture_        ;
   std::unique_ptr<ospray::cpp::Renderer>    renderer_       ;
   std::unique_ptr<ospray::cpp::Model>       model_          ;
+  std::unique_ptr<ospray::cpp::Data>        vertex_data_    ;
+  std::unique_ptr<ospray::cpp::Data>        color_data_     ;
+  std::unique_ptr<ospray::cpp::Data>        index_data_     ;
   std::unique_ptr<ospray::cpp::Geometry>    streamlines_    ;
   std::unique_ptr<ospray::cpp::Camera>      camera_         ;
   std::unique_ptr<ospray::cpp::Data>        lights_         ;
