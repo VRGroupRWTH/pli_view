@@ -151,7 +151,7 @@ local_tractography_plugin::local_tractography_plugin(QWidget* parent) : plugin(p
   });
   connect(button_ospray_export      , &QPushButton::clicked             , [&]
   {
-    auto filepath = QFileDialog::getSaveFileName(this, tr("Select output file."), "C:/", tr("Image Files (*.bmp *.hdr *.jpg *.png *.tga)")).toStdString();
+    auto filepath = QFileDialog::getSaveFileName(this, tr("Select output file."), "C:/", tr("Image Files (*.bmp *.jpg *.png *.tga)")).toStdString();
     if (filepath.empty())
       return;
 
