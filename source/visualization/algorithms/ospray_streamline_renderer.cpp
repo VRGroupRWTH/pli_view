@@ -18,23 +18,23 @@ void ospray_streamline_renderer::initialize()
   glm::ivec4 viewport;
   glGetIntegerv(GL_VIEWPORT, reinterpret_cast<GLint*>(&viewport));
   glm::ivec2 size(viewport[2], viewport[3]);
-
+  
   // Setup OpenGL.
   std::vector<float>    vertices  = {-1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 1.0f, 0.0f};
   std::vector<float>    texcoords = {0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f};
   std::vector<unsigned> indices   = {0u, 1u, 2u, 0u, 2u, 3u};
-
+  
   program_        .reset                  (new gl::program      );
   vertex_array_   .reset                  (new gl::vertex_array );
   vertex_buffer_  .reset                  (new gl::vertex_buffer);
   texcoord_buffer_.reset                  (new gl::vertex_buffer);
   index_buffer_   .reset                  (new gl::index_buffer );
   texture_        .reset                  (new gl::texture_2d   );
-
+  
   program_        ->attach_shader         (gl::vertex_shader  (shaders::fullscreen_texture_vert));
   program_        ->attach_shader         (gl::fragment_shader(shaders::fullscreen_texture_frag));
   program_        ->link                  ();
-
+  
   vertex_array_   ->bind                  ();
   program_        ->bind                  ();
   
@@ -43,21 +43,21 @@ void ospray_streamline_renderer::initialize()
   program_        ->set_attribute_buffer  ("position", 3, GL_FLOAT);
   program_        ->enable_attribute_array("position");
   vertex_buffer_  ->unbind                ();
-
+  
   texcoord_buffer_->bind                  ();
   texcoord_buffer_->set_data              (texcoords.size() * sizeof(float), texcoords.data());
   program_        ->set_attribute_buffer  ("texcoords", 2, GL_FLOAT);
   program_        ->enable_attribute_array("texcoords");
   texcoord_buffer_->unbind                ();
-
+  
   index_buffer_   ->bind                  ();
   index_buffer_   ->set_data              (indices.size() * sizeof(unsigned), indices.data());
   index_buffer_   ->unbind                ();
   vertex_array_   ->set_element_buffer    (*index_buffer_.get());
-
+  
   program_        ->unbind                ();
   vertex_array_   ->unbind                ();
-
+  
   texture_        ->bind                  ();
   texture_        ->min_filter            (GL_NEAREST);
   texture_        ->mag_filter            (GL_NEAREST);
@@ -66,7 +66,7 @@ void ospray_streamline_renderer::initialize()
   texture_        ->set_image             (GL_RGBA, size[0], size[1], GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
   texture_        ->unbind                ();
   draw_count_ = indices.size();
-
+  
   // Setup renderer.
   renderer_ = std::make_unique<ospray::cpp::Renderer>("scivis");
   renderer_->set   ("shadowsEnabled", 1 );
@@ -78,20 +78,20 @@ void ospray_streamline_renderer::initialize()
   // Setup model.
   streamlines_ = std::make_unique<ospray::cpp::Geometry>("streamlines");
   set_data({{0.0F, 0.0F, 0.0F}, {0.0F, 0.0F, 0.0F}}, {{1.0F, 1.0F, 1.0F}, {1.0F, 1.0F, 1.0F}});
-
+  
   model_ = std::make_unique<ospray::cpp::Model>();
   model_   ->addGeometry(*streamlines_.get());
   model_   ->commit     ();
   renderer_->set        ("model", *model_.get());
   renderer_->commit     ();
-
+  
   // Setup camera.
   camera_ = std::make_unique<ospray::cpp::Camera>("perspective");
   camera_  ->set   ("aspect", size[0] / static_cast<float>(size[1]));
   camera_  ->commit();
   renderer_->set   ("camera", *camera_.get());
   renderer_->commit();
-
+  
   // Setup lights.
   auto ambient_light = renderer_->newLight("ambient");
   ambient_light.set   ("intensity"      , 0.2F);
@@ -103,13 +103,13 @@ void ospray_streamline_renderer::initialize()
   distant_light.set   ("intensity"      , 0.8F);
   distant_light.set   ("angularDiameter", 1.0F);
   distant_light.commit();
-
+  
   auto lights = std::vector<ospray::cpp::Light>{ambient_light, distant_light};
   lights_ = std::make_unique<ospray::cpp::Data>(lights.size(), OSP_LIGHT, lights.data(), 0);
   lights_  ->commit();
   renderer_->set   ("lights", lights_.get());
   renderer_->commit();
-
+  
   // Setup framebuffer.
   framebuffer_ = std::make_unique<ospray::cpp::FrameBuffer>(ospcommon::vec2i(size[0], size[1]), OSP_FB_SRGBA, OSP_FB_COLOR);
 }
@@ -127,7 +127,7 @@ void ospray_streamline_renderer::render    (const camera* camera)
   camera_      ->set        ("dir"   , camera_forward [0], camera_forward [1], camera_forward [2]);
   camera_      ->set        ("up"    , camera_up      [0], camera_up      [1], camera_up      [2]);
   camera_      ->commit     ();
-
+  
   framebuffer_ = std::make_unique<ospray::cpp::FrameBuffer>(ospcommon::vec2i(size[0], size[1]), OSP_FB_SRGBA, OSP_FB_COLOR);
   framebuffer_ ->clear      (OSP_FB_COLOR);
   renderer_    ->renderFrame(*framebuffer_.get(), 0);
@@ -141,7 +141,7 @@ void ospray_streamline_renderer::render    (const camera* camera)
   texture_     ->bind       ();
   program_     ->bind       ();
   vertex_array_->bind       ();
-
+  
   program_     ->set_uniform("texture_unit", 0);
   glDrawElements(GL_TRIANGLES, draw_count_, GL_UNSIGNED_INT, nullptr);
   
@@ -162,7 +162,7 @@ void ospray_streamline_renderer::set_data(
   std::vector<float4> directions4(directions.size());
   std::transform(directions.begin(), directions.end(), directions4.begin(), [ ] (const float3& value)
   {
-    return float4 {value.x, value.y, value.z, 1.0F};
+    return float4 {abs(value.x), abs(value.y), abs(value.z), 1.0F};
   });
   std::vector<int> indices(points.size() / 2);
   std::iota(indices.begin(), indices.end(), 0);
@@ -178,7 +178,7 @@ void ospray_streamline_renderer::set_data(
   color_data_ ->commit();
   index_data_ ->commit();
 
-  streamlines_->set("radius"      , 2.0F               );
+  streamlines_->set("radius"      , 1.0F               );
   streamlines_->set("vertex"      , *vertex_data_.get());
   streamlines_->set("vertex.color", *color_data_ .get());
   streamlines_->set("index"       , *index_data_ .get());
