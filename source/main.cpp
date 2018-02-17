@@ -1,5 +1,5 @@
 #ifdef _WIN32
-//#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 extern "C"
 {
   _declspec(dllexport) unsigned long NvOptimusEnablement = 0x00000001;
