@@ -159,11 +159,13 @@ local_tractography_plugin::local_tractography_plugin(QWidget* parent) : plugin(p
     auto position = float3{camera->translation()[0], camera->translation()[1], camera->translation()[2]};
     auto forward  = float3{camera->forward    ()[0], camera->forward    ()[1], camera->forward    ()[2]};
     auto up       = float3{camera->up         ()[0], camera->up         ()[1], camera->up         ()[2]};
+    auto size     = uint2 {unsigned(owner_->viewer->size().width()), unsigned(owner_->viewer->size().height())};
 
     ospray_streamline_exporter exporter;
-    exporter.set_data  (vertices_, tangents_);
-    exporter.set_camera(position, forward, up);
-    exporter.save      (filepath);
+    exporter.set_data      (vertices_, tangents_);
+    exporter.set_camera    (position, forward, up);
+    exporter.set_image_size(size);
+    exporter.save          (filepath);
   });
   connect(radio_button_cpu          , &QRadioButton::clicked            , [&]
   {

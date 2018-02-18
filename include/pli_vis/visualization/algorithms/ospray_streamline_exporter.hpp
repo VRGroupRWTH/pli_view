@@ -23,6 +23,8 @@ public:
     const float3&              position, 
     const float3&              forward , 
     const float3&              up      = {0.0F, 1.0F, 0.0F});
+  void set_image_size(
+    const uint2&               size    );
   void save(                   
     const std::string&         filepath);
 
@@ -32,6 +34,7 @@ protected:
   float3              camera_position_;
   float3              camera_forward_ ;
   float3              camera_up_      ;
+  uint2               image_size_     ;
 };
 }
 
