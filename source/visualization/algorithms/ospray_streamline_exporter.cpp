@@ -22,8 +22,8 @@ void ospray_streamline_exporter::set_camera(
   const float3& up      )
 {
   camera_position_ = position;
-  camera_forward_  = {-forward .x, -forward .y, -forward .z};
-  camera_up_       = {up      .x, up      .y,  up      .z};
+  camera_forward_  = forward ;
+  camera_up_       = up      ;
 }
 void ospray_streamline_exporter::set_image_size(
   const uint2& size)
@@ -83,9 +83,9 @@ void ospray_streamline_exporter::save(
   renderer.commit     ();
   
   // Setup camera.
-  const ospcommon::vec3f position {camera_position_.x, camera_position_.y, camera_position_.z};
-  const ospcommon::vec3f forward  {camera_forward_ .x, camera_forward_ .y, camera_forward_ .z};
-  const ospcommon::vec3f up       {camera_up_      .x, camera_up_      .y, camera_up_      .z};
+  const ospcommon::vec3f position { camera_position_.x,  camera_position_.y,  camera_position_.z};
+  const ospcommon::vec3f forward  {-camera_forward_ .x, -camera_forward_ .y, -camera_forward_ .z};
+  const ospcommon::vec3f up       { camera_up_      .x,  camera_up_      .y,  camera_up_      .z};
   const ospcommon::vec2f start    {0.0F, 1.0F};
   const ospcommon::vec2f end      {1.0F, 0.0F};
   ospray::cpp::Camera camera("perspective");
