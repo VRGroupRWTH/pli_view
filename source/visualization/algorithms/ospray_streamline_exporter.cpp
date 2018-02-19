@@ -9,8 +9,8 @@
 namespace pli
 {
 void ospray_streamline_exporter::set_data(
-  const std::vector<float3>& vertices, 
-  const std::vector<float3>& tangents)
+  const std::vector<float4>& vertices, 
+  const std::vector<float4>& tangents)
 {
   vertices_ = vertices;
   tangents_ = tangents;
@@ -37,23 +37,7 @@ void ospray_streamline_exporter::save(
   std::vector<float4> vertices (vertices_.size());
   std::vector<float4> colors   (tangents_.size());
   std::vector<int>    indices  (vertices_.size() / 2);
-  std::transform(vertices_.begin(), vertices_.end(), vertices.begin(), [ ] (const float3& value)
-  {
-    return float4 {
-      isnan(value.x) ? 0.0F : value.x, 
-      isnan(value.y) ? 0.0F : value.y, 
-      isnan(value.z) ? 0.0F : value.z, 
-      0.0F};
-  });
-  std::transform(tangents_.begin(), tangents_.end(), colors  .begin(), [ ] (const float3& value)
-  {
-    return float4 {
-      isnan(value.x) ? 0.0F : abs(value.x),
-      isnan(value.z) ? 0.0F : abs(value.z), 
-      isnan(value.y) ? 0.0F : abs(value.y), 
-      1.0F};
-  });
-  std::generate (indices  .begin(), indices  .end(), [n = -2] () mutable { n += 2; return n; });
+  std::generate (indices.begin(), indices.end(), [n = -2] () mutable { n += 2; return n; });
 
   // Setup renderer.
   ospray::cpp::Renderer renderer("scivis");
@@ -76,7 +60,7 @@ void ospray_streamline_exporter::save(
   
   auto material = renderer.newMaterial("OBJMaterial");
   material   .set        ("Ks", 0.5F, 0.5F, 0.5F);
-  material   .set        ("Ns", 2.0F);
+  material   .set        ("Ns", 10.0F);
   material   .commit     ();
   streamlines.setMaterial(material);
   streamlines.commit     ();

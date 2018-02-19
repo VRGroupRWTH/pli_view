@@ -25,11 +25,12 @@ private:
   std::array<std::size_t, 3> seed_size  () const;
   std::array<std::size_t, 3> seed_stride() const;
   
-  std::vector<float3> vertices_           ;
-  std::vector<float3> tangents_           ;
-  renderable*         streamline_renderer_;
-  std::future<void>   future_             ;
-  bool                gpu_tracing_        = true ;
+  std::vector<float4>   vertices_           ;
+  std::vector<float4>   tangents_           ;
+  std::vector<unsigned> indices_            ;
+  renderable*           streamline_renderer_;
+  std::future<void>     future_             ;
+  bool                  gpu_tracing_        = true ;
 };
 }
 

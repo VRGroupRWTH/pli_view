@@ -18,8 +18,9 @@ public:
   void render    (const camera* camera) override;
   
   void set_data(
-    const std::vector<float3>& points    , 
-    const std::vector<float3>& directions);
+    const std::vector<float4>&   points    , 
+    const std::vector<float4>&   directions,
+    const std::vector<unsigned>& indices   );
 
 private:
   std::size_t                       draw_count_      = 0;
@@ -27,6 +28,7 @@ private:
   std::unique_ptr<gl::vertex_array> vertex_array_    ;
   std::unique_ptr<gl::array_buffer> vertex_buffer_   ;
   std::unique_ptr<gl::array_buffer> direction_buffer_;
+  std::unique_ptr<gl::index_buffer> index_buffer_    ;
 };
 }
 

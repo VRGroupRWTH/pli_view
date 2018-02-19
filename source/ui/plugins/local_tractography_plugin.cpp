@@ -162,7 +162,7 @@ local_tractography_plugin::local_tractography_plugin(QWidget* parent) : plugin(p
     auto size     = uint2 {unsigned(owner_->viewer->size().width()), unsigned(owner_->viewer->size().height())};
 
     ospray_streamline_exporter exporter;
-    exporter.set_data      (vertices_, tangents_);
+    exporter.set_data      (vertices_, tangents_, indices_);
     exporter.set_camera    (position, forward, up);
     exporter.set_image_size(size);
     exporter.save          (filepath);
@@ -312,6 +312,9 @@ void local_tractography_plugin::trace()
           {
             float3 start {path[j]    [0], path[j]    [1], path[j]    [2]};
             float3 end   {path[j + 1][0], path[j + 1][1], path[j + 1][2]};
+            if (isnan(start.x) || isnan(start.y) || isnan(start.z) || 
+                isnan(end  .x) || isnan(end  .y) || isnan(end  .z))
+              continue;
             vertices_.push_back(start);
             vertices_.push_back(end  );
             tangents_.push_back(normalize(end   - start));

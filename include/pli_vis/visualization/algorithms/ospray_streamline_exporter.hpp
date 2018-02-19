@@ -17,8 +17,8 @@ class ospray_streamline_exporter
 {
 public:
   void set_data(
-    const std::vector<float3>& vertices, 
-    const std::vector<float3>& tangents);
+    const std::vector<float4>& vertices, 
+    const std::vector<float4>& tangents);
   void set_camera(
     const float3&              position, 
     const float3&              forward , 
@@ -29,8 +29,8 @@ public:
     const std::string&         filepath);
 
 protected:
-  std::vector<float3> vertices_       ;
-  std::vector<float3> tangents_       ;
+  std::vector<float4> vertices_       ;
+  std::vector<float4> tangents_       ;
   float3              camera_position_;
   float3              camera_forward_ ;
   float3              camera_up_      ;
