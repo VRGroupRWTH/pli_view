@@ -57,21 +57,18 @@ void ospray_streamline_exporter::save(
 
   // Setup renderer.
   ospray::cpp::Renderer renderer("scivis");
-  renderer.set   ("oneSidedLighting", true);
-  renderer.set   ("shadowsEnabled"  , true);
-  renderer.set   ("aoSamples"       , 8   );
-  renderer.set   ("spp"             , 16  );
+  renderer.set   ("oneSidedLighting", false);
+  renderer.set   ("shadowsEnabled"  , true );
+  renderer.set   ("aoSamples"       , 8    );
+  renderer.set   ("spp"             , 16   );
   renderer.set   ("bgColor"         , 1.0F, 1.0F, 1.0F, 1.0F);
   renderer.commit();
-  
+
   // Setup model.
   ospray::cpp::Geometry streamlines("streamlines");
-  ospray::cpp::Data     vertex_data(vertices.size(), OSP_FLOAT3A, vertices.data());
-  ospray::cpp::Data     color_data (colors  .size(), OSP_FLOAT4 , colors  .data());
-  ospray::cpp::Data     index_data (indices .size(), OSP_INT    , indices .data());
-  vertex_data.commit();
-  color_data .commit();
-  index_data .commit();
+  ospray::cpp::Data     vertex_data(vertices.size(), OSP_FLOAT3A, vertices.data()); vertex_data.commit();
+  ospray::cpp::Data     color_data (colors  .size(), OSP_FLOAT4 , colors  .data()); color_data .commit();
+  ospray::cpp::Data     index_data (indices .size(), OSP_INT    , indices .data()); index_data .commit();
   streamlines.set("radius"      , 0.1F       );
   streamlines.set("vertex"      , vertex_data);
   streamlines.set("vertex.color", color_data );
