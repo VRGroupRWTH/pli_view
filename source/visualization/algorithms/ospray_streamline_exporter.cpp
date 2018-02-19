@@ -39,11 +39,19 @@ void ospray_streamline_exporter::save(
   std::vector<int>    indices  (vertices_.size() / 2);
   std::transform(vertices_.begin(), vertices_.end(), vertices.begin(), [ ] (const float3& value)
   {
-    return float4 {value.x, value.y, value.z, 0.0F};
+    return float4 {
+      isnan(value.x) ? 0.0F : value.x, 
+      isnan(value.y) ? 0.0F : value.y, 
+      isnan(value.z) ? 0.0F : value.z, 
+      0.0F};
   });
   std::transform(tangents_.begin(), tangents_.end(), colors  .begin(), [ ] (const float3& value)
   {
-    return float4 {abs(value.x), abs(value.z), abs(value.y), 1.0F};
+    return float4 {
+      isnan(value.x) ? 0.0F : abs(value.x),
+      isnan(value.z) ? 0.0F : abs(value.z), 
+      isnan(value.y) ? 0.0F : abs(value.y), 
+      1.0F};
   });
   std::generate (indices  .begin(), indices  .end(), [n = -2] () mutable { n += 2; return n; });
 
