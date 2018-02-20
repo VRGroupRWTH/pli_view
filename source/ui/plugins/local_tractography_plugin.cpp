@@ -325,8 +325,14 @@ void local_tractography_plugin::trace()
                 path[j][1] - path[j - 1][1], 
                 path[j][2] - path[j - 1][2], 
                 0.0}));
+            else if (path.size() > 1)
+              tangents_.push_back(normalize(float4{
+                path[j + 1][0] - path[j][0], 
+                path[j + 1][1] - path[j][1], 
+                path[j + 1][2] - path[j][2], 
+                0.0}));
             else
-              tangents_.push_back(float4{1.0, 1.0, 1.0, 1.0});
+              tangents_.push_back(float4{0.0F, 0.0F, 0.0F, 0.0F});
 
             if (j > 0)
             {
@@ -387,8 +393,14 @@ void local_tractography_plugin::trace()
                 path[j].y - path[j - 1].y, 
                 path[j].z - path[j - 1].z, 
                 0.0}));
+            else if (path.size() > 1)
+              tangents_.push_back(normalize(float4{
+                path[j + 1].x - path[j].x, 
+                path[j + 1].y - path[j].y, 
+                path[j + 1].z - path[j].z, 
+                0.0}));
             else
-              tangents_.push_back(float4{1.0, 1.0, 1.0, 1.0});
+              tangents_.push_back(float4{0.0F, 0.0F, 0.0F, 0.0F});
 
             if (j > 0)
             {
