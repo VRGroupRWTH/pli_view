@@ -44,7 +44,7 @@ public:
     char       next_stage ;
   };
 
-  __host__ __device__ explicit runge_kutta_4_integrator(const uint3& dimensions, const float3& spacing, const data_type* data)
+  __host__ __device__ explicit runge_kutta_4_integrator(const uint3& dimensions, const data_type& spacing, const data_type* data)
   : interpolator_  (dimensions, spacing, data)
   , stage_factors_ ({0.0f, 0.5f, 0.5f, 1.0f} )
   , result_factors_({1.0f, 2.0f, 2.0f, 1.0f} )
@@ -52,7 +52,7 @@ public:
     
   }
 
-  __host__ __device__ void set_data    (const uint3& dimensions, const float3& spacing, const data_type*  data)
+  __host__ __device__ void set_data    (const uint3& dimensions, const data_type& spacing, const data_type*  data)
   {
     interpolator_ = interpolator_type(dimensions, spacing, data);
   }
@@ -66,12 +66,12 @@ public:
       else if (stage == 2) { stage_factor = stage_factors_.z; result_factor = result_factors_.z; }
       else if (stage == 3) { stage_factor = stage_factors_.w; result_factor = result_factors_.w; }
 
-      float3 current_point = step_data.start_point + stage_factor * step_data.current_k;
+      auto current_point = step_data.start_point + stage_factor * step_data.current_k;
 
       if (!interpolator_.is_valid(current_point))
         return;
       
-      float3 current_vector = interpolator_.interpolate(current_point);
+      auto current_vector = interpolator_.interpolate(current_point);
       step_data.current_k   = step_data.time_step * current_vector;
       step_data.sum_k       = step_data.sum_k + result_factor * step_data.current_k;
       step_data.next_stage  = stage + 1;

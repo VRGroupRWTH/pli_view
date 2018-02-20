@@ -30,7 +30,7 @@ private:
   std::vector<unsigned> indices_            ;
   renderable*           streamline_renderer_;
   std::future<void>     future_             ;
-  bool                  gpu_tracing_        = true ;
+  bool                  gpu_tracing_        = true;
 };
 }
 

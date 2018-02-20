@@ -2,42 +2,30 @@
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 
-#include <algorithm>
+#include <ospray/ospray_cpp.h>
 
 #include <pli_vis/third_party/stb/stb_image_write.h>
 
 namespace pli
 {
-void ospray_streamline_exporter::set_data(
-  const std::vector<float4>& vertices, 
-  const std::vector<float4>& tangents)
+namespace ospray_streamline_exporter
 {
-  vertices_ = vertices;
-  tangents_ = tangents;
-}
-
-void ospray_streamline_exporter::set_camera(
-  const float3& position, 
-  const float3& forward , 
-  const float3& up      )
+void to_image(
+  const float3&                position  , 
+  const float3&                forward   , 
+  const float3&                up        , 
+  const uint2&                 size      ,
+  const std::vector<float4>&   vertices  , 
+  const std::vector<float4>&   tangents  ,
+  const std::vector<unsigned>& gl_indices,
+  const std::string&           filepath  )
 {
-  camera_position_ = position;
-  camera_forward_  = forward ;
-  camera_up_       = up      ;
-}
-void ospray_streamline_exporter::set_image_size(
-  const uint2& size)
-{
-  image_size_ = size;
-}
-
-void ospray_streamline_exporter::save(
-  const std::string& filepath)
-{
-  std::vector<float4> vertices (vertices_.size());
-  std::vector<float4> colors   (tangents_.size());
-  std::vector<int>    indices  (vertices_.size() / 2);
-  std::generate (indices.begin(), indices.end(), [n = -2] () mutable { n += 2; return n; });
+  std::vector<float4> colors (tangents  .size());
+  std::vector<int>    indices(gl_indices.size() / 2);
+  for (auto i = 0; i < colors .size(); ++i)
+    colors [i] = float4{abs(tangents[i].x), abs(tangents[i].z), abs(tangents[i].y), 1.0};
+  for (auto i = 0; i < indices.size(); ++i)
+    indices[i] = gl_indices[2 * i];
 
   // Setup renderer.
   ospray::cpp::Renderer renderer("scivis");
@@ -72,21 +60,21 @@ void ospray_streamline_exporter::save(
   renderer.commit     ();
   
   // Setup camera.
-  const ospcommon::vec3f position { camera_position_.x,  camera_position_.y,  camera_position_.z};
-  const ospcommon::vec3f forward  {-camera_forward_ .x, -camera_forward_ .y, -camera_forward_ .z};
-  const ospcommon::vec3f up       { camera_up_      .x,  camera_up_      .y,  camera_up_      .z};
+  const ospcommon::vec3f camera_position { position.x,  position.y,  position.z};
+  const ospcommon::vec3f camera_forward  {-forward .x, -forward .y, -forward .z};
+  const ospcommon::vec3f camera_up       { up      .x,  up      .y,  up      .z};
   const ospcommon::vec2f start    {0.0F, 1.0F};
   const ospcommon::vec2f end      {1.0F, 0.0F};
   ospray::cpp::Camera camera("perspective");
-  camera  .set   ("aspect"    , image_size_.x / static_cast<float>(image_size_.y));
-  camera  .set   ("fovy"      , 68.0F   );
-  camera  .set   ("pos"       , position);
-  camera  .set   ("dir"       , forward );
-  camera  .set   ("up"        , up      );
-  camera  .set   ("imageStart", start   );
-  camera  .set   ("imageEnd"  , end     );
-  camera  .commit();
-  renderer.set   ("camera"    , camera  );
+  camera  .set   ("aspect"    , size.x / static_cast<float>(size.y));
+  camera  .set   ("fovy"      , 68.0F          );
+  camera  .set   ("pos"       , camera_position);
+  camera  .set   ("dir"       , camera_forward );
+  camera  .set   ("up"        , camera_up      );
+  camera  .set   ("imageStart", start          );
+  camera  .set   ("imageEnd"  , end            );
+  camera  .commit();                           
+  renderer.set   ("camera"    , camera         );
   renderer.commit();
   
   // Setup lights.
@@ -118,7 +106,7 @@ void ospray_streamline_exporter::save(
   renderer.commit();
   
   // Setup framebuffer.
-  ospray::cpp::FrameBuffer framebuffer(ospcommon::vec2i(image_size_.x, image_size_.y), OSP_FB_SRGBA, OSP_FB_COLOR | OSP_FB_ACCUM);
+  ospray::cpp::FrameBuffer framebuffer(ospcommon::vec2i(size.x, size.y), OSP_FB_SRGBA, OSP_FB_COLOR | OSP_FB_ACCUM);
   framebuffer.clear(OSP_FB_COLOR | OSP_FB_ACCUM);
 
   // Render.
@@ -129,13 +117,14 @@ void ospray_streamline_exporter::save(
   const auto bytes     = static_cast<uint32_t*>(framebuffer.map(OSP_FB_COLOR));
   const auto extension = filepath.substr(filepath.find_last_of("."));
   if      (extension == ".bmp")
-    stbi_write_bmp(filepath.c_str(), image_size_.x, image_size_.y, 4, bytes);
+    stbi_write_bmp(filepath.c_str(), size.x, size.y, 4, bytes);
   else if (extension == ".jpg")
-    stbi_write_jpg(filepath.c_str(), image_size_.x, image_size_.y, 4, bytes, image_size_.x * sizeof(uint32_t));
+    stbi_write_jpg(filepath.c_str(), size.x, size.y, 4, bytes, size.x * sizeof(uint32_t));
   else if (extension == ".png")
-    stbi_write_png(filepath.c_str(), image_size_.x, image_size_.y, 4, bytes, image_size_.x * sizeof(uint32_t));
+    stbi_write_png(filepath.c_str(), size.x, size.y, 4, bytes, size.x * sizeof(uint32_t));
   else if (extension == ".tga")
-    stbi_write_tga(filepath.c_str(), image_size_.x, image_size_.y, 4, bytes);
+    stbi_write_tga(filepath.c_str(), size.x, size.y, 4, bytes);
   framebuffer.unmap(bytes);
+}
 }
 }

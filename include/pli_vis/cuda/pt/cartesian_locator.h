@@ -10,7 +10,7 @@
 
 namespace cupt 
 {
-template<class type = float3, class index_type = uint3>
+template<class type, class index_type = uint3>
 class cartesian_locator
 {
 public:

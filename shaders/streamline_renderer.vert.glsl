@@ -17,7 +17,7 @@ flat out vec4 vert_direction;
 
 void main()
 {
-  gl_Position    = projection * view * model * vertex;
+  gl_Position    = projection * view * model * vec4(vertex.xyz, 1.0);
   vert_direction = direction;
 }
 )";

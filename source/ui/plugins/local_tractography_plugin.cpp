@@ -160,12 +160,7 @@ local_tractography_plugin::local_tractography_plugin(QWidget* parent) : plugin(p
     auto forward  = float3{camera->forward    ()[0], camera->forward    ()[1], camera->forward    ()[2]};
     auto up       = float3{camera->up         ()[0], camera->up         ()[1], camera->up         ()[2]};
     auto size     = uint2 {unsigned(owner_->viewer->size().width()), unsigned(owner_->viewer->size().height())};
-
-    ospray_streamline_exporter exporter;
-    exporter.set_data      (vertices_, tangents_, indices_);
-    exporter.set_camera    (position, forward, up);
-    exporter.set_image_size(size);
-    exporter.save          (filepath);
+    ospray_streamline_exporter::to_image(position, forward, up, size, vertices_, tangents_, indices_, filepath);
   });
   connect(radio_button_cpu          , &QRadioButton::clicked            , [&]
   {
@@ -267,6 +262,7 @@ void local_tractography_plugin::trace()
 
   vertices_.clear();
   tangents_.clear();
+  indices_ .clear();
 
   std::vector<float4> random_vectors;
   future_ = std::async(std::launch::async, [&]
@@ -284,7 +280,7 @@ void local_tractography_plugin::trace()
           for (auto y = 0; y < shape[1]; y++)
             for (auto z = 0; z < shape[2]; z++)
             {
-              auto vector = vectors[x][y][z];
+              auto& vector = vectors[x][y][z];
               data_ptr[x + shape[0] * (y + shape[1] * z)] = tangent::vector_t{{vector.x, vector.y, vector.z}};
             }
 
@@ -305,60 +301,92 @@ void local_tractography_plugin::trace()
         auto output = tracer.TraceSeeds(seeds);
 
         auto& population = recorder.GetPopulation();
-        for(auto i = 0; i < population.GetNumberOfTraces(); i++)
+        for (auto i = 0; i < population.GetNumberOfTraces(); ++i)
         {
+          auto vertex_offset = vertices_.size();
           auto& path = population[i];
-          for(auto j = 0; j < path.size() - 1; j++)
+          for(auto j = 0; j < path.size() - 1; ++j)
           {
-            float3 start {path[j]    [0], path[j]    [1], path[j]    [2]};
-            float3 end   {path[j + 1][0], path[j + 1][1], path[j + 1][2]};
-            if (isnan(start.x) || isnan(start.y) || isnan(start.z) || 
-                isnan(end  .x) || isnan(end  .y) || isnan(end  .z))
+            auto& vertex = path[j];
+
+            if (isnan(vertex[0]) || isnan(vertex[1]) || isnan(vertex[2]))
               continue;
-            vertices_.push_back(start);
-            vertices_.push_back(end  );
-            tangents_.push_back(normalize(end   - start));
-            tangents_.push_back(normalize(start - end  ));
+
+            vertices_.push_back(float4{vertex[0], vertex[1], vertex[2], 1.0});
+            
+            if (j < path.size() - 1)
+              tangents_.push_back(normalize(float4{
+                path[j + 1][0] - path[j][0], 
+                path[j + 1][1] - path[j][1], 
+                path[j + 1][2] - path[j][2], 
+                1.0}));
+            else
+              tangents_.push_back(tangents_.back());
+
+            if (j < path.size() - 1)
+            {
+              indices_.push_back(vertex_offset + j);
+              indices_.push_back(vertex_offset + j + 1);
+            }
           }
         }
       }
       else
       {
-        std::vector<float3> data(shape[0] * shape[1] * shape[2]);
+        std::vector<float4> data(shape[0] * shape[1] * shape[2]);
         for (auto x = 0; x < shape[0]; x++)
           for (auto y = 0; y < shape[1]; y++)
             for (auto z = 0; z < shape[2]; z++)
-              data[x + shape[0] * (y + shape[1] * z)] = vectors[x][y][z];
+            {
+              auto& vector = vectors[x][y][z];
+              data[x + shape[0] * (y + shape[1] * z)] = float4 {vector.x, vector.y, vector.z, 1.0};
+            }
 
-        std::vector<float3> seeds;
         auto offset = seed_offset();
         auto size   = seed_size  ();
         auto stride = seed_stride();
+        std::vector<float4> seeds;
         for (auto x = offset[0]; x < offset[0] + size[0]; x += stride[0])
           for (auto y = offset[1]; y < offset[1] + size[1]; y += stride[1])
             for (auto z = offset[2]; z < offset[2] + size[2]; z += stride[2])
-              seeds.push_back(float3{float(x), float(y), float(z)});
+              seeds.push_back(float4{float(x), float(y), float(z), 0.0});
         
         auto traces = cupt::trace(
           slider_iterations->value(),
           float(slider_integration_step->value()) / slider_integration_step->maximum(),
           uint3  {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
-          float3 {1.0f, 1.0f, 1.0f},
+          float4 {1.0f, 1.0f, 1.0f, 0.0f},
           data ,
           seeds);
 
         for (auto i = 0; i < traces.size(); ++i)
-          for (auto j = 0; j < traces[i].size() - 1; ++j)
+        {
+          auto vertex_offset = vertices_.size();
+          for (auto j = 0; j < traces[i].size(); ++j)
           {
-            auto& start = traces[i][j  ];
-            auto& end   = traces[i][j+1];
-            if(end.x == 0.0f && end.y == 0.0f && end.z == 0.0f)
-              break;
-            vertices_.push_back(start);
-            vertices_.push_back(end);
-            tangents_.push_back(normalize(end - start));
-            tangents_.push_back(normalize(start - end  ));
+            auto& vertex = traces[i][j];
+
+            if (isnan(vertex.x) || isnan(vertex.y) || isnan(vertex.z))
+              continue;
+
+            vertices_.push_back(vertex);
+
+            if (j < traces[i].size() - 1)
+              tangents_.push_back(normalize(float4{
+                traces[i][j + 1].x - traces[i][j].x,
+                traces[i][j + 1].y - traces[i][j].y,
+                traces[i][j + 1].z - traces[i][j].z,
+                1.0}));
+            else
+              tangents_.push_back(tangents_.back());
+
+            if (j < traces[i].size() - 1)
+            {
+              indices_.push_back(vertex_offset + j);
+              indices_.push_back(vertex_offset + j + 1);
+            }
           }
+        }
       }
 
       std::random_device                    random_device;
@@ -393,13 +421,13 @@ void local_tractography_plugin::trace()
     logger_->info(std::string("Trace successful."));
 
     auto regular_renderer = dynamic_cast<streamline_renderer*>       (streamline_renderer_);
-    if  (regular_renderer) regular_renderer->set_data(vertices_, tangents_);
+    if  (regular_renderer) regular_renderer->set_data(vertices_, tangents_, indices_);
     
-    auto lineao_renderer  = dynamic_cast<lineao_streamline_renderer*>(streamline_renderer_);
-    if  (lineao_renderer)  lineao_renderer ->set_data(vertices_, tangents_, random_vectors);
+    //auto lineao_renderer  = dynamic_cast<lineao_streamline_renderer*>(streamline_renderer_);
+    //if  (lineao_renderer)  lineao_renderer ->set_data(vertices_, tangents_, random_vectors);
     
-    auto ospray_renderer  = dynamic_cast<ospray_streamline_renderer*>(streamline_renderer_);
-    if  (ospray_renderer)  ospray_renderer ->set_data(vertices_, tangents_);
+    //auto ospray_renderer  = dynamic_cast<ospray_streamline_renderer*>(streamline_renderer_);
+    //if  (ospray_renderer)  ospray_renderer ->set_data(vertices_, tangents_);
   }
   else
   {

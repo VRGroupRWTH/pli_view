@@ -37,6 +37,8 @@ void streamline_renderer::render    (const camera* camera)
 {
   vertex_array_->bind       ();
   program_     ->bind       ();
+  index_buffer_->bind       ();
+
   program_     ->set_uniform("color_mode"    , color_mode_);
   program_     ->set_uniform("color_k"       , color_k_);
   program_     ->set_uniform("color_inverted", color_inverted_);
@@ -48,10 +50,11 @@ void streamline_renderer::render    (const camera* camera)
   glHint                    (GL_LINE_SMOOTH_HINT, GL_NICEST);
   glEnable                  (GL_BLEND);
   glBlendFunc               (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glDrawArrays              (GL_LINES, 0, GLsizei(draw_count_));
+  glDrawElements            (GL_LINES, GLsizei(draw_count_), GL_UNSIGNED_INT, nullptr);
   glDisable                 (GL_BLEND);
   glDisable                 (GL_LINE_SMOOTH);
   
+  index_buffer_->unbind     ();
   program_     ->unbind     ();
   vertex_array_->unbind     ();
 }
