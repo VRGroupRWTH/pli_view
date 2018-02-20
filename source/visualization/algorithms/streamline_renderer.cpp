@@ -46,13 +46,7 @@ void streamline_renderer::render    (const camera* camera)
   program_     ->set_uniform("view"          , camera->inverse_absolute_matrix());
   program_     ->set_uniform("projection"    , camera->projection_matrix      ());
 
-  glEnable                  (GL_LINE_SMOOTH);
-  glHint                    (GL_LINE_SMOOTH_HINT, GL_NICEST);
-  glEnable                  (GL_BLEND);
-  glBlendFunc               (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glDrawElements            (GL_LINES, GLsizei(draw_count_), GL_UNSIGNED_INT, nullptr);
-  glDisable                 (GL_BLEND);
-  glDisable                 (GL_LINE_SMOOTH);
+  glDrawElements(GL_LINES, GLsizei(draw_count_), GL_UNSIGNED_INT, nullptr);
   
   index_buffer_->unbind     ();
   program_     ->unbind     ();
