@@ -303,30 +303,34 @@ void local_tractography_plugin::trace()
         auto& population = recorder.GetPopulation();
         for (auto i = 0; i < population.GetNumberOfTraces(); ++i)
         {
-          auto vertex_offset = vertices_.size();
-          auto& path = population[i];
-          for(auto j = 0; j < path.size() - 1; ++j)
+          auto& path          = population[i];
+          auto  vertex_offset = vertices_.size();
+          for(auto j = 0; j < path.size(); ++j)
           {
             auto& vertex = path[j];
-
-            if (isnan(vertex[0]) || isnan(vertex[1]) || isnan(vertex[2]))
+            if (isnan(vertex[0])  || 
+                isnan(vertex[1])  || 
+                isnan(vertex[2])  || 
+                vertex[0] == 0.0F && 
+                vertex[1] == 0.0F && 
+                vertex[2] == 0.0F)
               continue;
 
             vertices_.push_back(float4{vertex[0], vertex[1], vertex[2], 1.0});
             
-            if (j < path.size() - 1)
+            if (j > 0)
               tangents_.push_back(normalize(float4{
-                path[j + 1][0] - path[j][0], 
-                path[j + 1][1] - path[j][1], 
-                path[j + 1][2] - path[j][2], 
-                1.0}));
+                path[j][0] - path[j - 1][0], 
+                path[j][1] - path[j - 1][1], 
+                path[j][2] - path[j - 1][2], 
+                0.0}));
             else
-              tangents_.push_back(tangents_.back());
+              tangents_.push_back(float4{1.0, 1.0, 1.0, 1.0});
 
-            if (j < path.size() - 1)
+            if (j > 0)
             {
+              indices_.push_back(vertex_offset + j - 1);
               indices_.push_back(vertex_offset + j);
-              indices_.push_back(vertex_offset + j + 1);
             }
           }
         }
@@ -361,29 +365,34 @@ void local_tractography_plugin::trace()
 
         for (auto i = 0; i < traces.size(); ++i)
         {
-          auto vertex_offset = vertices_.size();
-          for (auto j = 0; j < traces[i].size(); ++j)
+          auto& path          = traces[i];
+          auto  vertex_offset = vertices_.size();
+          for(auto j = 0; j < path.size(); ++j)
           {
-            auto& vertex = traces[i][j];
-
-            if (isnan(vertex.x) || isnan(vertex.y) || isnan(vertex.z))
+            auto& vertex = path[j];
+            if (isnan(vertex.x)  || 
+                isnan(vertex.y)  || 
+                isnan(vertex.z)  || 
+                vertex.x == 0.0F && 
+                vertex.y == 0.0F && 
+                vertex.z == 0.0F)
               continue;
 
-            vertices_.push_back(vertex);
-
-            if (j < traces[i].size() - 1)
+            vertices_.push_back(float4{vertex.x, vertex.y, vertex.z, 1.0});
+            
+            if (j > 0)
               tangents_.push_back(normalize(float4{
-                traces[i][j + 1].x - traces[i][j].x,
-                traces[i][j + 1].y - traces[i][j].y,
-                traces[i][j + 1].z - traces[i][j].z,
-                1.0}));
+                path[j].x - path[j - 1].x, 
+                path[j].y - path[j - 1].y, 
+                path[j].z - path[j - 1].z, 
+                0.0}));
             else
-              tangents_.push_back(tangents_.back());
+              tangents_.push_back(float4{1.0, 1.0, 1.0, 1.0});
 
-            if (j < traces[i].size() - 1)
+            if (j > 0)
             {
+              indices_.push_back(vertex_offset + j - 1);
               indices_.push_back(vertex_offset + j);
-              indices_.push_back(vertex_offset + j + 1);
             }
           }
         }
