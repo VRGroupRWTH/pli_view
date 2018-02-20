@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 {
   ospInit(&argc, const_cast<const char**>(argv));
 
-  // omp_set_num_threads(4);
+  omp_set_num_threads(4);
 
   QSurfaceFormat format;
   format.setProfile     (QSurfaceFormat::CompatibilityProfile);
