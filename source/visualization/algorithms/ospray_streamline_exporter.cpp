@@ -5,6 +5,7 @@
 #include <ospray/ospray_cpp.h>
 
 #include <pli_vis/third_party/stb/stb_image_write.h>
+#include <pli_vis/visualization/algorithms/color_mapper.hpp>
 
 namespace pli
 {
@@ -23,7 +24,7 @@ void to_image(
   std::vector<float4> colors (tangents  .size());
   std::vector<int>    indices(gl_indices.size() / 2);
   for (auto i = 0; i < colors .size(); ++i)
-    colors [i] = float4{abs(tangents[i].x), abs(tangents[i].z), abs(tangents[i].y), 1.0};
+    colors [i] = color_mapper::to_hsv(tangents[i], true, 0.5F);
   for (auto i = 0; i < indices.size(); ++i)
     indices[i] = gl_indices[2 * i];
 

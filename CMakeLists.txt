@@ -199,6 +199,7 @@ set(PROJECT_SOURCES
   include/pli_vis/ui/plugin.hpp
   include/pli_vis/ui/plugin_base.hpp
 	include/pli_vis/utility/make_even.hpp
+  include/pli_vis/visualization/algorithms/color_mapper.hpp
   include/pli_vis/visualization/algorithms/lineao_streamline_renderer.hpp
   include/pli_vis/visualization/algorithms/odf_field.hpp
   include/pli_vis/visualization/algorithms/ospray_streamline_exporter.hpp
