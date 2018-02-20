@@ -6,6 +6,7 @@
 #include <boost/format.hpp>
 #include <QFileDialog>
 #include <tangent-base/default_tracers.hpp>
+#include <tangent-tbb/tbb_default_tracers.hpp>
 
 #include <pli_vis/cuda/pt/tracer.h>
 #include <pli_vis/cuda/utility/vector_ops.h>
@@ -294,7 +295,7 @@ void local_tractography_plugin::trace()
               seeds.push_back({{float(x), float(y), float(z), 0.0F}});
 
         tangent::TraceRecorder recorder;
-        tangent::OmpCartGridStreamlineTracer tracer(&recorder);
+        tangent::TBBCartGridStreamlineTracer tracer(&recorder);
         tracer.SetData              (&data);
         tracer.SetIntegrationStep   (float(slider_integration_step->value()) / slider_integration_step->maximum());
         tracer.SetNumberOfIterations(slider_iterations->value());
