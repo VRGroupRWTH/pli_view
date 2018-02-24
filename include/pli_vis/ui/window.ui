@@ -171,6 +171,9 @@
          <bold>false</bold>
         </font>
        </property>
+       <property name="inputMethodHints">
+        <set>Qt::ImhNone</set>
+       </property>
        <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>
        </property>
@@ -195,7 +198,7 @@
           <x>0</x>
           <y>0</y>
           <width>117</width>
-          <height>364</height>
+          <height>385</height>
          </rect>
         </property>
         <property name="font">
@@ -214,11 +217,11 @@
           <x>0</x>
           <y>0</y>
           <width>117</width>
-          <height>364</height>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
-         <string>Interactor</string>
+         <string>Camera / Interaction</string>
         </attribute>
        </widget>
        <widget class="pli::color_plugin" name="plugin_color">
@@ -227,7 +230,7 @@
           <x>0</x>
           <y>0</y>
           <width>117</width>
-          <height>364</height>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
@@ -240,7 +243,7 @@
           <x>0</x>
           <y>0</y>
           <width>117</width>
-          <height>364</height>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
@@ -253,7 +256,7 @@
           <x>0</x>
           <y>0</y>
           <width>117</width>
-          <height>364</height>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
@@ -261,17 +264,30 @@
         </attribute>
         <layout class="QGridLayout" name="grid_layout_fom"/>
        </widget>
+       <widget class="pli::polar_plot_plugin" name="plugin_polar_plots">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>117</width>
+          <height>385</height>
+         </rect>
+        </property>
+        <attribute name="label">
+         <string>Polar Plots</string>
+        </attribute>
+       </widget>
        <widget class="pli::odf_plugin" name="plugin_odf">
         <property name="geometry">
          <rect>
           <x>0</x>
           <y>0</y>
           <width>117</width>
-          <height>364</height>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
-         <string>ODF Maps</string>
+         <string>Orientation Distribution FUnctions</string>
         </attribute>
         <layout class="QGridLayout" name="grid_layout_fdm"/>
        </widget>
@@ -281,7 +297,7 @@
           <x>0</x>
           <y>0</y>
           <width>117</width>
-          <height>364</height>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
@@ -294,37 +310,11 @@
           <x>0</x>
           <y>0</y>
           <width>117</width>
-          <height>364</height>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
          <string>Global Tractography</string>
-        </attribute>
-       </widget>
-       <widget class="pli::zernike_plugin" name="plugin_zernike_moments">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>117</width>
-          <height>364</height>
-         </rect>
-        </property>
-        <attribute name="label">
-         <string>Zernike Moments</string>
-        </attribute>
-       </widget>
-       <widget class="pli::polar_plot_plugin" name="plugin_polar_plots">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>117</width>
-          <height>364</height>
-         </rect>
-        </property>
-        <attribute name="label">
-         <string>Polar Plots</string>
         </attribute>
        </widget>
       </widget>
@@ -427,12 +417,6 @@
    <class>pli::color_plugin</class>
    <extends>QWidget</extends>
    <header location="global">pli_vis/ui/plugins/color_plugin.hpp</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>pli::zernike_plugin</class>
-   <extends>QWidget</extends>
-   <header location="global">pli_vis/ui/plugins/zernike_plugin.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
