@@ -302,8 +302,8 @@ void local_tractography_plugin::trace()
         tangent::TraceRecorder recorder;
         tangent::TBBCartGridStreamlineTracer tracer(&recorder);
         tracer.SetData              (&data);
-        tracer.SetIntegrationStep   (float(slider_integration_step->value()) / slider_integration_step->maximum());
-        tracer.SetNumberOfIterations(slider_iterations->value());
+        tracer.SetIntegrationStep   (step());
+        tracer.SetNumberOfIterations(iterations());
         auto output = tracer.TraceSeeds(seeds);
 
         auto& population = recorder.GetPopulation();
@@ -465,7 +465,7 @@ void local_tractography_plugin::trace()
 }
 void local_tractography_plugin::remote_trace()
 {
-  remote_viewer_ = std::make_unique<remote_viewer>();
+  remote_viewer_ = std::make_unique<remote_viewer>(owner_);
   remote_viewer_->on_close.connect([&]()
   {
     remote_viewer_.reset();

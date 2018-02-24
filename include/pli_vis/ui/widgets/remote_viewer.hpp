@@ -10,10 +10,12 @@
 
 namespace pli
 {
+class application;
+
 class remote_viewer : public QLabel
 {
 public:
-  explicit remote_viewer  (QWidget* parent = nullptr);
+  explicit remote_viewer  (application* owner, QWidget* parent = nullptr);
   remote_viewer           (const remote_viewer&  that) = default;
   remote_viewer           (      remote_viewer&& temp) = default;
   virtual ~remote_viewer  ();
@@ -26,6 +28,7 @@ public:
 
 protected:
   std::string       address_ = "tcp://localhost:5555";
+  application*      owner_   ;
   std::atomic<bool> alive_   ;
   std::future<void> future_  ;
 };

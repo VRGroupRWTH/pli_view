@@ -21,15 +21,24 @@ public:
   explicit local_tractography_plugin(QWidget* parent = nullptr);
 
   void start() override;
+  
+  std::array<std::size_t, 3> seed_offset() const;
+  std::array<std::size_t, 3> seed_size  () const;
+  std::array<std::size_t, 3> seed_stride() const;
+  
+  float       step      () const
+  {
+    return float(slider_integration_step->value()) / slider_integration_step->maximum();
+  }
+  std::size_t iterations() const
+  {
+    return slider_iterations->value();
+  }
 
 private:
   void trace();
   void remote_trace();
 
-  std::array<std::size_t, 3> seed_offset() const;
-  std::array<std::size_t, 3> seed_size  () const;
-  std::array<std::size_t, 3> seed_stride() const;
-  
   std::vector<float4>            vertices_           ;
   std::vector<float4>            tangents_           ;
   std::vector<unsigned>          indices_            ;

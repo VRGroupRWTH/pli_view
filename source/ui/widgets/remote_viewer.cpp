@@ -4,19 +4,28 @@
 #include <cstdint>
 
 #include <pli_vis/third_party/cppzmq/zmq.hpp>
+#include <pli_vis/ui/plugins/data_plugin.hpp>
+#include <pli_vis/ui/plugins/local_tractography_plugin.hpp>
+#include <pli_vis/ui/application.hpp>
+#include <pli_vis/visualization/primitives/camera.hpp>
 
 #include <image.pb.h>
 #include <parameters.pb.h>
 
 namespace pli
 {
-remote_viewer::remote_viewer(QWidget* parent) : QLabel(parent)
+remote_viewer::remote_viewer(application* owner, QWidget* parent) : QLabel(parent), owner_(owner)
 {
   setWindowTitle(std::string("Remote Viewer " + address_).c_str());
   show          ();
-
+  
   future_ = std::async(std::launch::async, [&]
   {
+    auto camera               = owner->viewer->camera                            ();
+    auto data_plugin          = owner->get_plugin<pli::data_plugin>              ();
+    auto color_plugin         = owner->get_plugin<pli::color_plugin>             ();
+    auto tractography_plugin  = owner->get_plugin<pli::local_tractography_plugin>();
+
     zmq::context_t context(1);
     zmq::socket_t  socket(context, ZMQ_PAIR);
     socket.connect(address_);
@@ -24,55 +33,56 @@ remote_viewer::remote_viewer(QWidget* parent) : QLabel(parent)
     while(alive_)
     {
       tt::parameters parameters;
-      // TODO: Fill parameters from UI. Either trace or converge.
-      
-      //// TODO: Set from command line parameters.
-      //auto data_loading_parameters = parameters.mutable_data_loading();
-      //data_loading_parameters->set_filepath      ("C:/dev/data/pli/Human/MSA0309_s0536-0695.h5");
-      //data_loading_parameters->set_dataset_format(tt::msa0309);
-      //data_loading_parameters->mutable_selection()->mutable_offset()->set_x(512u);
-      //data_loading_parameters->mutable_selection()->mutable_offset()->set_y(512u);
-      //data_loading_parameters->mutable_selection()->mutable_offset()->set_z(0u  );
-      //data_loading_parameters->mutable_selection()->mutable_size  ()->set_x(128u);
-      //data_loading_parameters->mutable_selection()->mutable_size  ()->set_y(128u);
-      //data_loading_parameters->mutable_selection()->mutable_size  ()->set_z(128u);
-      //data_loading_parameters->mutable_selection()->mutable_stride()->set_x(1u  );
-      //data_loading_parameters->mutable_selection()->mutable_stride()->set_y(1u  );
-      //data_loading_parameters->mutable_selection()->mutable_stride()->set_z(1u  );
-      //
-      //// TODO: Set from command line parameters.
-      //auto particle_tracking_parameters = parameters.mutable_particle_tracking();
-      //particle_tracking_parameters->set_step      (0.5F);
-      //particle_tracking_parameters->set_iterations(100u);
-      //particle_tracking_parameters->mutable_seeds()->mutable_offset()->set_x(0u  );
-      //particle_tracking_parameters->mutable_seeds()->mutable_offset()->set_y(0u  );
-      //particle_tracking_parameters->mutable_seeds()->mutable_offset()->set_z(0u  );
-      //particle_tracking_parameters->mutable_seeds()->mutable_size  ()->set_x(128u);
-      //particle_tracking_parameters->mutable_seeds()->mutable_size  ()->set_y(128u);
-      //particle_tracking_parameters->mutable_seeds()->mutable_size  ()->set_z(128u);
-      //particle_tracking_parameters->mutable_seeds()->mutable_stride()->set_x(4u  );
-      //particle_tracking_parameters->mutable_seeds()->mutable_stride()->set_y(4u  );
-      //particle_tracking_parameters->mutable_seeds()->mutable_stride()->set_z(4u  );
-      //
-      //// TODO: Set from command line parameters.
-      //auto color_mapping_parameters = parameters.mutable_color_mapping();
-      //color_mapping_parameters->set_mapping(tt::tkp_hsv);
-      //color_mapping_parameters->set_k      (0.5F       );
-      //
-      //// TODO: Set from command line parameters.
-      //auto raytracing_parameters = parameters.mutable_raytracing();
-      //raytracing_parameters->mutable_camera()->mutable_position()->set_x( 0.0F  );
-      //raytracing_parameters->mutable_camera()->mutable_position()->set_y( 0.0F  );
-      //raytracing_parameters->mutable_camera()->mutable_position()->set_z(-100.0F);
-      //raytracing_parameters->mutable_camera()->mutable_forward ()->set_x( 0.0F  );
-      //raytracing_parameters->mutable_camera()->mutable_forward ()->set_y( 0.0F  );
-      //raytracing_parameters->mutable_camera()->mutable_forward ()->set_z( 1.0F  );
-      //raytracing_parameters->mutable_camera()->mutable_up      ()->set_x( 0.0F  );
-      //raytracing_parameters->mutable_camera()->mutable_up      ()->set_y(-1.0F  );
-      //raytracing_parameters->mutable_camera()->mutable_up      ()->set_z( 0.0F  );
-      //raytracing_parameters->mutable_image_size()->set_x(1920u);
-      //raytracing_parameters->mutable_image_size()->set_y(1080u);
 
+      auto offset = data_plugin->selection_offset();
+      auto size   = data_plugin->selection_bounds();
+      auto stride = data_plugin->selection_stride();
+      auto data_loading_parameters = parameters.mutable_data_loading();
+      data_loading_parameters->set_filepath      (data_plugin->filepath());
+      data_loading_parameters->set_dataset_format(tt::msa0309);
+      data_loading_parameters->mutable_selection()->mutable_offset()->set_x(offset[0]);
+      data_loading_parameters->mutable_selection()->mutable_offset()->set_y(offset[1]);
+      data_loading_parameters->mutable_selection()->mutable_offset()->set_z(offset[2]);
+      data_loading_parameters->mutable_selection()->mutable_size  ()->set_x(size  [0]);
+      data_loading_parameters->mutable_selection()->mutable_size  ()->set_y(size  [1]);
+      data_loading_parameters->mutable_selection()->mutable_size  ()->set_z(size  [2]);
+      data_loading_parameters->mutable_selection()->mutable_stride()->set_x(stride[0]);
+      data_loading_parameters->mutable_selection()->mutable_stride()->set_y(stride[1]);
+      data_loading_parameters->mutable_selection()->mutable_stride()->set_z(stride[2]);
+      
+      auto seed_offset = tractography_plugin->seed_offset();
+      auto seed_size   = tractography_plugin->seed_size  ();
+      auto seed_stride = tractography_plugin->seed_stride();
+      auto particle_tracking_parameters = parameters.mutable_particle_tracking();
+      particle_tracking_parameters->set_step      (tractography_plugin->step      ());
+      particle_tracking_parameters->set_iterations(tractography_plugin->iterations());
+      particle_tracking_parameters->mutable_seeds()->mutable_offset()->set_x(seed_offset[0]);
+      particle_tracking_parameters->mutable_seeds()->mutable_offset()->set_y(seed_offset[1]);
+      particle_tracking_parameters->mutable_seeds()->mutable_offset()->set_z(seed_offset[2]);
+      particle_tracking_parameters->mutable_seeds()->mutable_size  ()->set_x(seed_size  [0]);
+      particle_tracking_parameters->mutable_seeds()->mutable_size  ()->set_y(seed_size  [1]);
+      particle_tracking_parameters->mutable_seeds()->mutable_size  ()->set_z(seed_size  [2]);
+      particle_tracking_parameters->mutable_seeds()->mutable_stride()->set_x(seed_stride[0]);
+      particle_tracking_parameters->mutable_seeds()->mutable_stride()->set_y(seed_stride[1]);
+      particle_tracking_parameters->mutable_seeds()->mutable_stride()->set_z(seed_stride[2]);
+
+      auto color_mapping_parameters = parameters.mutable_color_mapping();
+      color_mapping_parameters->set_mapping(tt::color_mapping(color_plugin->mode()));
+      color_mapping_parameters->set_k      (color_plugin->k());
+      
+      auto raytracing_parameters = parameters.mutable_raytracing();
+      raytracing_parameters->mutable_camera()->mutable_position()->set_x( camera->translation()[0]);
+      raytracing_parameters->mutable_camera()->mutable_position()->set_y( camera->translation()[1]);
+      raytracing_parameters->mutable_camera()->mutable_position()->set_z( camera->translation()[2]);
+      raytracing_parameters->mutable_camera()->mutable_forward ()->set_x(-camera->forward    ()[0]);
+      raytracing_parameters->mutable_camera()->mutable_forward ()->set_y(-camera->forward    ()[1]);
+      raytracing_parameters->mutable_camera()->mutable_forward ()->set_z(-camera->forward    ()[2]);
+      raytracing_parameters->mutable_camera()->mutable_up      ()->set_x( camera->up         ()[0]);
+      raytracing_parameters->mutable_camera()->mutable_up      ()->set_y( camera->up         ()[1]);
+      raytracing_parameters->mutable_camera()->mutable_up      ()->set_z( camera->up         ()[2]);
+      raytracing_parameters->mutable_image_size()->set_x(remote_viewer::size().width ());
+      raytracing_parameters->mutable_image_size()->set_y(remote_viewer::size().height());
+      
       std::string buffer;
       parameters.SerializeToString(&buffer);
 
@@ -88,6 +98,8 @@ remote_viewer::remote_viewer(QWidget* parent) : QLabel(parent)
 
       QImage ui_image;
       ui_image.loadFromData(reinterpret_cast<const unsigned char*>(image.data().c_str()), image.size().x() * image.size().y() * sizeof(std::array<std::uint8_t, 4>));
+      
+      resize   (image.size().x(), image.size().y());
       setPixmap(QPixmap::fromImage(ui_image));
     }
   });
