@@ -100,9 +100,7 @@ remote_viewer::remote_viewer(application* owner, QWidget* parent) : QLabel(paren
       QImage ui_image(reinterpret_cast<const unsigned char*>(image.data().c_str()), image.size().x(), image.size().y(), QImage::Format_RGBA8888);
       
       blockSignals(true);
-      resize      (image.size().x(), image.size().y());
       setPixmap   (QPixmap::fromImage(ui_image));
-      update      ();
       blockSignals(false);
     }
   });
