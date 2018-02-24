@@ -27,13 +27,13 @@ private:
   std::array<std::size_t, 3> seed_size  () const;
   std::array<std::size_t, 3> seed_stride() const;
   
-  std::vector<float4>            vertices_           ;
-  std::vector<float4>            tangents_           ;
-  std::vector<unsigned>          indices_            ;
-  renderable*                    streamline_renderer_;
-  std::future<void>              future_             ;
-  bool                           gpu_tracing_        = false  ;
-  std::unique_ptr<remote_viewer> remote_viewer_      = nullptr;
+  std::vector<float4>   vertices_           ;
+  std::vector<float4>   tangents_           ;
+  std::vector<unsigned> indices_            ;
+  renderable*           streamline_renderer_;
+  std::future<void>     future_             ;
+  bool                  gpu_tracing_        = false  ;
+  remote_viewer*        remote_viewer_      = nullptr;
 };
 }
 
