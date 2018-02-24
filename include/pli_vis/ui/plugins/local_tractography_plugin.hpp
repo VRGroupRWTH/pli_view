@@ -11,6 +11,7 @@
 
 namespace pli
 {
+class remote_viewer;
 class local_tractography_plugin : public plugin<local_tractography_plugin, Ui_local_tractography_toolbox>
 {
 public:
@@ -26,12 +27,13 @@ private:
   std::array<std::size_t, 3> seed_size  () const;
   std::array<std::size_t, 3> seed_stride() const;
   
-  std::vector<float4>   vertices_           ;
-  std::vector<float4>   tangents_           ;
-  std::vector<unsigned> indices_            ;
-  renderable*           streamline_renderer_;
-  std::future<void>     future_             ;
-  bool                  gpu_tracing_        = false;
+  std::vector<float4>            vertices_           ;
+  std::vector<float4>            tangents_           ;
+  std::vector<unsigned>          indices_            ;
+  renderable*                    streamline_renderer_;
+  std::future<void>              future_             ;
+  bool                           gpu_tracing_        = false  ;
+  std::unique_ptr<remote_viewer> remote_viewer_      = nullptr;
 };
 }
 

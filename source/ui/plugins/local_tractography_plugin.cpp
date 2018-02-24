@@ -11,6 +11,7 @@
 #include <pli_vis/cuda/pt/tracer.h>
 #include <pli_vis/cuda/utility/vector_ops.h>
 #include <pli_vis/ui/plugins/data_plugin.hpp>
+#include <pli_vis/ui/widgets/remote_viewer.hpp>
 #include <pli_vis/ui/utility/line_edit.hpp>
 #include <pli_vis/ui/utility/text_browser_sink.hpp>
 #include <pli_vis/ui/application.hpp>
@@ -464,7 +465,7 @@ void local_tractography_plugin::trace()
 }
 void local_tractography_plugin::remote_trace()
 {
-  
+  remote_viewer_ = std::make_unique<remote_viewer>();
 }
   
 std::array<std::size_t, 3> local_tractography_plugin::seed_offset() const
