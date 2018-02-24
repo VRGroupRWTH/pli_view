@@ -184,7 +184,7 @@
         <number>2</number>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>6</number>
        </property>
        <property name="tabSpacing">
         <number>0</number>
@@ -197,7 +197,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>117</width>
+          <width>169</width>
           <height>385</height>
          </rect>
         </property>
@@ -216,8 +216,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>117</width>
-          <height>385</height>
+          <width>98</width>
+          <height>28</height>
          </rect>
         </property>
         <attribute name="label">
@@ -229,8 +229,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>117</width>
-          <height>385</height>
+          <width>98</width>
+          <height>28</height>
          </rect>
         </property>
         <attribute name="label">
@@ -242,8 +242,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>117</width>
-          <height>385</height>
+          <width>98</width>
+          <height>28</height>
          </rect>
         </property>
         <attribute name="label">
@@ -255,8 +255,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>117</width>
-          <height>385</height>
+          <width>98</width>
+          <height>28</height>
          </rect>
         </property>
         <attribute name="label">
@@ -269,8 +269,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>117</width>
-          <height>385</height>
+          <width>98</width>
+          <height>28</height>
          </rect>
         </property>
         <attribute name="label">
@@ -282,12 +282,12 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>117</width>
+          <width>169</width>
           <height>385</height>
          </rect>
         </property>
         <attribute name="label">
-         <string>Orientation Distribution FUnctions</string>
+         <string>Orientation Distribution Functions</string>
         </attribute>
         <layout class="QGridLayout" name="grid_layout_fdm"/>
        </widget>
@@ -296,8 +296,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>117</width>
-          <height>385</height>
+          <width>98</width>
+          <height>28</height>
          </rect>
         </property>
         <attribute name="label">
@@ -309,8 +309,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>117</width>
-          <height>385</height>
+          <width>98</width>
+          <height>28</height>
          </rect>
         </property>
         <attribute name="label">
