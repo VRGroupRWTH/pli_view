@@ -17,14 +17,15 @@ namespace pli
 remote_viewer::remote_viewer(application* owner, QWidget* parent) : QLabel(parent), owner_(owner)
 {
   setWindowTitle(std::string("Remote Viewer " + address_).c_str());
+  resize        (640, 480);
   show          ();
   
   future_ = std::async(std::launch::async, [&]
   {
-    auto camera               = owner->viewer->camera                            ();
-    auto data_plugin          = owner->get_plugin<pli::data_plugin>              ();
-    auto color_plugin         = owner->get_plugin<pli::color_plugin>             ();
-    auto tractography_plugin  = owner->get_plugin<pli::local_tractography_plugin>();
+    auto camera               = owner_->viewer->camera                            ();
+    auto data_plugin          = owner_->get_plugin<pli::data_plugin>              ();
+    auto color_plugin         = owner_->get_plugin<pli::color_plugin>             ();
+    auto tractography_plugin  = owner_->get_plugin<pli::local_tractography_plugin>();
 
     zmq::context_t context(1);
     zmq::socket_t  socket(context, ZMQ_PAIR);
@@ -96,11 +97,13 @@ remote_viewer::remote_viewer(application* owner, QWidget* parent) : QLabel(paren
       tt::image image;
       image.ParseFromArray(reply.data(), static_cast<std::int32_t>(reply.size()));
 
-      QImage ui_image;
-      ui_image.loadFromData(reinterpret_cast<const unsigned char*>(image.data().c_str()), image.size().x() * image.size().y() * sizeof(std::array<std::uint8_t, 4>));
+      QImage ui_image(reinterpret_cast<const unsigned char*>(image.data().c_str()), image.size().x(), image.size().y(), QImage::Format_RGBA8888);
       
-      resize   (image.size().x(), image.size().y());
-      setPixmap(QPixmap::fromImage(ui_image));
+      blockSignals(true);
+      resize      (image.size().x(), image.size().y());
+      setPixmap   (QPixmap::fromImage(ui_image));
+      update      ();
+      blockSignals(false);
     }
   });
 }
