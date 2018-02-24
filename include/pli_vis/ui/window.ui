@@ -153,6 +153,9 @@
        </widget>
       </widget>
       <widget class="QToolBox" name="toolbox">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -184,7 +187,7 @@
         <number>2</number>
        </property>
        <property name="currentIndex">
-        <number>6</number>
+        <number>0</number>
        </property>
        <property name="tabSpacing">
         <number>0</number>
@@ -197,7 +200,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>169</width>
+          <width>168</width>
           <height>385</height>
          </rect>
         </property>
@@ -282,7 +285,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>169</width>
+          <width>168</width>
           <height>385</height>
          </rect>
         </property>

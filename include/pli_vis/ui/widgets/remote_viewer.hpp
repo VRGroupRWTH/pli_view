@@ -1,6 +1,8 @@
 #ifndef PLI_VIS_REMOTE_VIEWER_HPP_
 #define PLI_VIS_REMOTE_VIEWER_HPP_
 
+#include <future>
+
 #include <QLabel>
 
 namespace pli
@@ -16,8 +18,8 @@ public:
   remote_viewer& operator=(      remote_viewer&& temp) = default;
 
 protected:
-  std::string address_ = "tcp://localhost:5555";
-  
+  std::string       address_ = "tcp://localhost:5555";
+  std::future<void> future_  ;
 };
 }
 
