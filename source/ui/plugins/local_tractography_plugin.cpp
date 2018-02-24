@@ -465,9 +465,11 @@ void local_tractography_plugin::trace()
 }
 void local_tractography_plugin::remote_trace()
 {
-  if (remote_viewer_)
-    delete remote_viewer_;
-  remote_viewer_ = new remote_viewer();
+  remote_viewer_ = std::make_unique<remote_viewer>();
+  remote_viewer_->on_close.connect([&]()
+  {
+    remote_viewer_.reset();
+  });
 }
   
 std::array<std::size_t, 3> local_tractography_plugin::seed_offset() const

@@ -14,7 +14,6 @@ remote_viewer::remote_viewer(QWidget* parent) : QLabel(parent)
 {
   setWindowTitle(std::string("Remote Viewer " + address_).c_str());
   show          ();
-  setAttribute  (Qt::WA_DeleteOnClose);
 
   future_ = std::async(std::launch::async, [&]
   {
@@ -97,5 +96,11 @@ remote_viewer::~remote_viewer()
 {
   alive_ = false;
   future_.get();
+}
+
+void remote_viewer::closeEvent(QCloseEvent* event)
+{
+  QLabel::closeEvent(event);
+  on_close();
 }
 }

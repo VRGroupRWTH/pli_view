@@ -4,6 +4,8 @@
 #include <atomic>
 #include <future>
 
+#include <boost/signals2.hpp>
+#include <QCloseEvent>
 #include <QLabel>
 
 namespace pli
@@ -17,6 +19,10 @@ public:
   virtual ~remote_viewer  ();
   remote_viewer& operator=(const remote_viewer&  that) = default;
   remote_viewer& operator=(      remote_viewer&& temp) = default;
+
+  void closeEvent(QCloseEvent* event) override;
+
+  boost::signals2::signal<void()> on_close;
 
 protected:
   std::string       address_ = "tcp://localhost:5555";
