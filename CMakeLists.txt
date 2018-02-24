@@ -453,6 +453,20 @@ set           (CMAKE_INCLUDE_CURRENT_DIR ON)
 find_package  (Qt5Widgets REQUIRED)
 list          (APPEND PROJECT_LIBRARIES Qt5::Widgets)
 
+##################################################    Prebuild    ##################################################
+set(PROJECT_PROTO_SOURCES
+  proto/camera.proto
+  proto/color_mapping.proto
+  proto/dataset_format.proto
+  proto/image.proto
+  proto/parameters.proto
+  proto/selection.proto
+  proto/vector_types.proto
+)
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROJECT_PROTO_SOURCES})
+list                 (APPEND PROJECT_SOURCES ${PROJECT_PROTO_SOURCES} ${PROTO_HDRS} ${PROTO_SRCS})
+assign_source_group  (${PROJECT_SOURCES})
+
 ##################################################    Targets     ##################################################
 cuda_add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
 target_include_directories(${PROJECT_NAME} PUBLIC 

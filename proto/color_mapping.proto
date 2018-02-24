@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package tt;
+
+enum color_mapping
+{
+  tkp_hsl = 0;
+  tpk_hsl = 1;
+  tkp_hsv = 2;
+  tpk_hsv = 3;
+  xzy_rgb = 4;
+}

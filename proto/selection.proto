@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+import "vector_types.proto";
+
+package tt;
+
+message selection
+{
+  uvec3 offset = 1;
+  uvec3 size   = 2;
+  uvec3 stride = 3;
+}

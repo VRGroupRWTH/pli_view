@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+import "camera.proto";
+import "color_mapping.proto";
+import "dataset_format.proto";
+import "selection.proto";
+import "vector_types.proto";
+
+package tt;
+
+message data_loading_parameters
+{
+  string         filepath       = 1;
+  dataset_format dataset_format = 2;
+  selection      selection      = 3;
+}
+message particle_tracking_parameters
+{
+  float          step           = 1;
+  uint32         iterations     = 2;
+  selection      seeds          = 3;
+	// TODO: Extend with arbitrary, non-cubic seeding.
+}
+message color_mapping_parameters
+{
+  color_mapping  mapping        = 1;
+  float          k              = 2; // Unused when mapping is xzy_rgb.
+}
+message raytracing_parameters
+{
+  camera         camera         = 1;
+  uvec2          image_size     = 2;
+	// TODO: Extend with OSPRenderer, OSPModel, OSPLight, OSPCamera, OSPMaterial, OSPFrameBuffer.
+}
+
+message parameters
+{
+  data_loading_parameters      data_loading      = 1;
+  particle_tracking_parameters particle_tracking = 2;
+  color_mapping_parameters     color_mapping     = 3;
+  raytracing_parameters        raytracing        = 4;
+}
