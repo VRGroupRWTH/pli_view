@@ -20,6 +20,7 @@ public:
 
 private:
   void trace();
+  void remote_trace();
 
   std::array<std::size_t, 3> seed_offset() const;
   std::array<std::size_t, 3> seed_size  () const;
@@ -30,7 +31,7 @@ private:
   std::vector<unsigned> indices_            ;
   renderable*           streamline_renderer_;
   std::future<void>     future_             ;
-  bool                  gpu_tracing_        = true;
+  bool                  gpu_tracing_        = false;
 };
 }
 

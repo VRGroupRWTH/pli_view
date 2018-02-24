@@ -146,9 +146,13 @@ local_tractography_plugin::local_tractography_plugin(QWidget* parent) : plugin(p
   {
     slider_iterations->setValue(line_edit::get_text<int>(line_edit_iterations));
   });
-  connect(button_trace_selection    , &QPushButton::clicked             , [&]
+  connect(button_local_trace        , &QPushButton::clicked             , [&]
   {
     trace();
+  });
+  connect(button_remote_trace       , &QPushButton::clicked             , [&]
+  {
+    remote_trace();
   });
   connect(button_ospray_export      , &QPushButton::clicked             , [&]
   {
@@ -457,6 +461,10 @@ void local_tractography_plugin::trace()
   }
 
   owner_->set_is_loading(false);
+}
+void local_tractography_plugin::remote_trace()
+{
+  
 }
   
 std::array<std::size_t, 3> local_tractography_plugin::seed_offset() const
