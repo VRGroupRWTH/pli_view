@@ -96,6 +96,8 @@ remote_viewer::remote_viewer(application* owner, QWidget* parent) : QLabel(paren
         auto color_mapping_parameters = parameters.mutable_color_mapping();
         color_mapping_parameters->set_mapping(tt::color_mapping(color_mapping_));
         color_mapping_parameters->set_k      (k_);
+
+        parameters.mutable_raytracing()->set_streamline_radius(streamline_radius_);
       }
       
       if(camera->translation()          != translation_   ||
@@ -121,7 +123,6 @@ remote_viewer::remote_viewer(application* owner, QWidget* parent) : QLabel(paren
         raytracing_parameters->mutable_camera()->mutable_up      ()->set_z( up_         [2]);
         raytracing_parameters->mutable_image_size()->set_x(image_size_[0]);
         raytracing_parameters->mutable_image_size()->set_y(image_size_[1]);
-        raytracing_parameters->set_streamline_radius      (streamline_radius_ > 0.0F ? streamline_radius_ : std::numeric_limits<float>::epsilon());
       }
 
       std::string buffer;
