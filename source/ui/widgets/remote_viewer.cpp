@@ -121,7 +121,7 @@ remote_viewer::remote_viewer(application* owner, QWidget* parent) : QLabel(paren
         raytracing_parameters->mutable_camera()->mutable_up      ()->set_z( up_         [2]);
         raytracing_parameters->mutable_image_size()->set_x(image_size_[0]);
         raytracing_parameters->mutable_image_size()->set_y(image_size_[1]);
-        raytracing_parameters->set_streamline_radius      (streamline_radius_);
+        raytracing_parameters->set_streamline_radius      (streamline_radius_ > 0.0F ? streamline_radius_ : std::numeric_limits<float>::epsilon());
       }
 
       std::string buffer;
