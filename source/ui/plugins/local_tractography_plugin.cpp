@@ -25,11 +25,13 @@ namespace pli
 {
 local_tractography_plugin::local_tractography_plugin(QWidget* parent) : plugin(parent)
 {
-  line_edit_integration_step->setValidator(new QDoubleValidator(0, std::numeric_limits<double>::max(), 10, this));
-  line_edit_iterations      ->setValidator(new QIntValidator   (0, std::numeric_limits<int>   ::max(),     this));
+  line_edit_integration_step ->setValidator(new QDoubleValidator(0, std::numeric_limits<double>::max(), 10, this));
+  line_edit_iterations       ->setValidator(new QIntValidator   (0, std::numeric_limits<int>   ::max(),     this));
+  line_edit_streamline_radius->setValidator(new QDoubleValidator(0, std::numeric_limits<double>::max(), 10, this));
  
-  line_edit_integration_step->setText(QString::fromStdString((boost::format("%.4f") % (float(slider_integration_step->value()) / slider_integration_step->maximum())).str()));
-  line_edit_iterations      ->setText(QString::fromStdString(std::to_string(slider_iterations   ->value())));
+  line_edit_integration_step ->setText(QString::fromStdString((boost::format("%.4f") % (float(slider_integration_step ->value()) / slider_integration_step ->maximum())).str()));
+  line_edit_iterations       ->setText(QString::fromStdString(std::to_string(slider_iterations   ->value())));
+  line_edit_streamline_radius->setText(QString::fromStdString((boost::format("%.4f") % (float(slider_streamline_radius->value()) / slider_streamline_radius->maximum())).str()));
 
   connect(checkbox_enabled          , &QCheckBox::stateChanged          , [&] (bool state)
   {
@@ -146,6 +148,14 @@ local_tractography_plugin::local_tractography_plugin(QWidget* parent) : plugin(p
   connect(line_edit_iterations      , &QLineEdit::editingFinished       , [&] 
   {
     slider_iterations->setValue(line_edit::get_text<int>(line_edit_iterations));
+  });
+  connect(slider_streamline_radius   , &QSlider::valueChanged            , [&] 
+  {
+    line_edit_streamline_radius->setText(QString::fromStdString((boost::format("%.4f") % (float(slider_streamline_radius->value()) / slider_streamline_radius->maximum())).str()));
+  });
+  connect(line_edit_streamline_radius, &QLineEdit::editingFinished       , [&]
+  {
+    slider_streamline_radius->setValue(line_edit::get_text<double>(line_edit_streamline_radius) * slider_streamline_radius->maximum());
   });
   connect(button_local_trace        , &QPushButton::clicked             , [&]
   {

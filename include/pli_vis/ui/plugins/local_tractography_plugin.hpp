@@ -34,6 +34,10 @@ public:
   {
     return slider_iterations->value();
   }
+  float       streamline_radius () const
+  {
+    return float(slider_streamline_radius->value()) / slider_streamline_radius->maximum();
+  }
 
 private:
   void trace();

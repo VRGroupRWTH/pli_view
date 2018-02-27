@@ -36,21 +36,22 @@ protected:
   std::atomic<bool> alive_   ;
   std::future<void> future_  ;
 
-  std::string                filepath_     ;
-  std::array<std::size_t, 3> offset_       ;
-  std::array<std::size_t, 3> size_         ;
-  std::array<std::size_t, 3> stride_       ;
-  float                      step_         ;
-  std::size_t                iterations_   ;
-  std::array<std::size_t, 3> seed_offset_  ;
-  std::array<std::size_t, 3> seed_size_    ;
-  std::array<std::size_t, 3> seed_stride_  ;
-  int                        color_mapping_;
-  float                      k_            ;
-  glm::vec3                  translation_  ;
-  glm::vec3                  forward_      ;
-  glm::vec3                  up_           ;
-  std::array<std::size_t, 2> image_size_   ;
+  std::string                filepath_         ;
+  std::array<std::size_t, 3> offset_           ;
+  std::array<std::size_t, 3> size_             ;
+  std::array<std::size_t, 3> stride_           ;
+  float                      step_             ;
+  std::size_t                iterations_       ;
+  std::array<std::size_t, 3> seed_offset_      ;
+  std::array<std::size_t, 3> seed_size_        ;
+  std::array<std::size_t, 3> seed_stride_      ;
+  int                        color_mapping_    ;
+  float                      k_                ;
+  glm::vec3                  translation_      ;
+  glm::vec3                  forward_          ;
+  glm::vec3                  up_               ;
+  std::array<std::size_t, 2> image_size_       ;
+  float                      streamline_radius_;
 
 };
 }

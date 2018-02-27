@@ -62,21 +62,23 @@ remote_viewer::remote_viewer(application* owner, QWidget* parent) : QLabel(paren
       auto seed_offset = tractography_plugin->seed_offset();
       auto seed_size   = tractography_plugin->seed_size  ();
       auto seed_stride = tractography_plugin->seed_stride();
-      if (tractography_plugin->step      () != step_          || 
-          tractography_plugin->iterations() != iterations_    || 
-          seed_offset                       != seed_offset_   || 
-          seed_size                         != seed_size_     || 
-          seed_stride                       != seed_stride_   || 
-          color_plugin->mode()              != color_mapping_ ||
-          color_plugin->k   ()              != k_             )
+      if (tractography_plugin->step      ()        != step_              || 
+          tractography_plugin->iterations()        != iterations_        ||
+          tractography_plugin->streamline_radius() != streamline_radius_ ||
+          seed_offset                              != seed_offset_       || 
+          seed_size                                != seed_size_         || 
+          seed_stride                              != seed_stride_       || 
+          color_plugin->mode()                     != color_mapping_     ||
+          color_plugin->k   ()                     != k_                 )
       {
-        step_          = tractography_plugin->step      ();
-        iterations_    = tractography_plugin->iterations();
-        seed_offset_   = seed_offset;
-        seed_size_     = seed_size  ;
-        seed_stride_   = seed_stride;
-        color_mapping_ = color_plugin->mode();
-        k_             = color_plugin->k();
+        step_              = tractography_plugin->step             ();
+        iterations_        = tractography_plugin->iterations       ();
+        streamline_radius_ = tractography_plugin->streamline_radius();
+        seed_offset_       = seed_offset;
+        seed_size_         = seed_size  ;
+        seed_stride_       = seed_stride;
+        color_mapping_     = color_plugin->mode();
+        k_                 = color_plugin->k();
 
         auto particle_tracking_parameters = parameters.mutable_particle_tracking();
         particle_tracking_parameters->set_step      (step_      );
@@ -96,9 +98,9 @@ remote_viewer::remote_viewer(application* owner, QWidget* parent) : QLabel(paren
         color_mapping_parameters->set_k      (k_);
       }
       
-      if(camera->translation() != translation_            ||
-         camera->forward    () != forward_                ||
-         camera->up         () != up_                     ||
+      if(camera->translation()          != translation_   ||
+         camera->forward    ()          != forward_       ||
+         camera->up         ()          != up_            ||
          remote_viewer::size().width () != image_size_[0] ||
          remote_viewer::size().height() != image_size_[1] )
       {
@@ -119,6 +121,7 @@ remote_viewer::remote_viewer(application* owner, QWidget* parent) : QLabel(paren
         raytracing_parameters->mutable_camera()->mutable_up      ()->set_z( up_         [2]);
         raytracing_parameters->mutable_image_size()->set_x(image_size_[0]);
         raytracing_parameters->mutable_image_size()->set_y(image_size_[1]);
+        raytracing_parameters->set_streamline_radius      (streamline_radius_);
       }
 
       std::string buffer;
