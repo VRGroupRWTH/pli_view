@@ -80,18 +80,18 @@ remote_viewer::remote_viewer(application* owner, QWidget* parent) : QLabel(paren
         color_mapping_     = color_plugin->mode();
         k_                 = color_plugin->k();
 
-        auto particle_tracking_parameters = parameters.mutable_particle_tracking();
-        particle_tracking_parameters->set_step      (step_      );
-        particle_tracking_parameters->set_iterations(iterations_);
-        particle_tracking_parameters->mutable_seeds()->mutable_offset()->set_x(seed_offset_[0]);
-        particle_tracking_parameters->mutable_seeds()->mutable_offset()->set_y(seed_offset_[1]);
-        particle_tracking_parameters->mutable_seeds()->mutable_offset()->set_z(seed_offset_[2]);
-        particle_tracking_parameters->mutable_seeds()->mutable_size  ()->set_x(seed_size_  [0]);
-        particle_tracking_parameters->mutable_seeds()->mutable_size  ()->set_y(seed_size_  [1]);
-        particle_tracking_parameters->mutable_seeds()->mutable_size  ()->set_z(seed_size_  [2]);
-        particle_tracking_parameters->mutable_seeds()->mutable_stride()->set_x(seed_stride_[0]);
-        particle_tracking_parameters->mutable_seeds()->mutable_stride()->set_y(seed_stride_[1]);
-        particle_tracking_parameters->mutable_seeds()->mutable_stride()->set_z(seed_stride_[2]);
+        auto particle_tracing_parameters = parameters.mutable_particle_tracing();
+        particle_tracing_parameters->set_step      (step_      );
+        particle_tracing_parameters->set_iterations(iterations_);
+        particle_tracing_parameters->mutable_seeds()->mutable_offset()->set_x(seed_offset_[0]);
+        particle_tracing_parameters->mutable_seeds()->mutable_offset()->set_y(seed_offset_[1]);
+        particle_tracing_parameters->mutable_seeds()->mutable_offset()->set_z(seed_offset_[2]);
+        particle_tracing_parameters->mutable_seeds()->mutable_size  ()->set_x(seed_size_  [0]);
+        particle_tracing_parameters->mutable_seeds()->mutable_size  ()->set_y(seed_size_  [1]);
+        particle_tracing_parameters->mutable_seeds()->mutable_size  ()->set_z(seed_size_  [2]);
+        particle_tracing_parameters->mutable_seeds()->mutable_stride()->set_x(seed_stride_[0]);
+        particle_tracing_parameters->mutable_seeds()->mutable_stride()->set_y(seed_stride_[1]);
+        particle_tracing_parameters->mutable_seeds()->mutable_stride()->set_z(seed_stride_[2]);
         
         auto color_mapping_parameters = parameters.mutable_color_mapping();
         color_mapping_parameters->set_mapping(tt::color_mapping(color_mapping_));
