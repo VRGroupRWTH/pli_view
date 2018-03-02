@@ -90,7 +90,7 @@ local_tractography_plugin::local_tractography_plugin(QWidget* parent) : plugin(p
   });
   connect(line_edit_offset_x        , &QLineEdit::editingFinished       , [&] 
   {
-    auto value = std::max(std::min(make_even(line_edit::get_text<int>(line_edit_offset_x)), int(slider_x->maximum())), int(slider_x->minimum()));
+    auto value = make_even(line_edit::get_text<int>(line_edit_offset_x)); // std::max(std::min(make_even(line_edit::get_text<int>(line_edit_offset_x)), int(slider_x->maximum())), int(slider_x->minimum()));
     if (slider_x->upperValue() < value)
       slider_x->setUpperValue(value);
     slider_x        ->setLowerValue                  (value);
@@ -100,13 +100,13 @@ local_tractography_plugin::local_tractography_plugin(QWidget* parent) : plugin(p
   });
   connect(line_edit_size_x          , &QLineEdit::editingFinished       , [&] 
   {
-    auto value = std::max(std::min(make_even(line_edit::get_text<int>(line_edit_size_x)), int(slider_x->maximum())), int(slider_x->minimum()));
+    auto value = make_even(line_edit::get_text<int>(line_edit_size_x)); // std::max(std::min(make_even(line_edit::get_text<int>(line_edit_size_x)), int(slider_x->maximum())), int(slider_x->minimum()));
     slider_x->setUpperValue                (make_even(slider_x->lowerValue() + value));
     image   ->set_selection_size_percentage({static_cast<float>(value) / slider_x->maximum(), image->selection_size_percentage()[1]});
   });
   connect(line_edit_offset_y        , &QLineEdit::editingFinished       , [&] 
   {
-    auto value = std::max(std::min(make_even(line_edit::get_text<int>(line_edit_offset_y)), int(slider_y->maximum())), int(slider_y->minimum()));
+    auto value = make_even(line_edit::get_text<int>(line_edit_offset_y)); // std::max(std::min(make_even(line_edit::get_text<int>(line_edit_offset_y)), int(slider_y->maximum())), int(slider_y->minimum()));
     if (slider_y->upperValue() < value)
       slider_y->setUpperValue(value);
     slider_y        ->setLowerValue                  (value);
@@ -116,13 +116,13 @@ local_tractography_plugin::local_tractography_plugin(QWidget* parent) : plugin(p
   });
   connect(line_edit_size_y          , &QLineEdit::editingFinished       , [&] 
   {
-    auto value = std::max(std::min(make_even(line_edit::get_text<int>(line_edit_size_y)), int(slider_y->maximum())), int(slider_y->minimum()));
+    auto value = make_even(line_edit::get_text<int>(line_edit_size_y)); // std::max(std::min(make_even(line_edit::get_text<int>(line_edit_size_y)), int(slider_y->maximum())), int(slider_y->minimum()));
     slider_y->setUpperValue                (make_even(slider_y->lowerValue() + value));
     image   ->set_selection_size_percentage({image->selection_size_percentage()[0], static_cast<float>(value) / slider_y->maximum()});
   });
   connect(line_edit_offset_z        , &QLineEdit::editingFinished       , [&] 
   {
-    auto value = std::max(std::min(line_edit::get_text<int>(line_edit_offset_z), int(slider_z->maximum())), int(slider_z->minimum()));
+    auto value = make_even(line_edit::get_text<int>(line_edit_offset_z)); // std::max(std::min(line_edit::get_text<int>(line_edit_offset_z), int(slider_z->maximum())), int(slider_z->minimum()));
     if (slider_z->upperValue() < value)
       slider_z->setUpperValue(value + 1);
     slider_z        ->setLowerValue(value);
@@ -130,7 +130,7 @@ local_tractography_plugin::local_tractography_plugin(QWidget* parent) : plugin(p
   });
   connect(line_edit_size_z          , &QLineEdit::editingFinished       , [&] 
   {
-    auto value = std::min(line_edit::get_text<int>(line_edit_size_z), int(slider_z->maximum() - slider_z->minimum()));
+    auto value = make_even(line_edit::get_text<int>(line_edit_size_z)); // std::min(line_edit::get_text<int>(line_edit_size_z), int(slider_z->maximum() - slider_z->minimum()));
     slider_z->setUpperValue(slider_z->lowerValue() + value);
   });
   connect(slider_integration_step   , &QSlider::valueChanged            , [&] 
