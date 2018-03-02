@@ -31,7 +31,7 @@ public:
   boost::signals2::signal<void()> on_close;
 
 protected:
-  std::string       address_ = "tcp://localhost:5555";
+  std::string       address_ = "tcp://linuxihdc090.rz.rwth-aachen.de:14130";
   application*      owner_   ;
   std::atomic<bool> alive_   ;
   std::future<void> future_  ;
