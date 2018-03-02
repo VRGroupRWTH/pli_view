@@ -46,8 +46,8 @@ remote_viewer::remote_viewer(application* owner, QWidget* parent) : QLabel(paren
         stride_   = stride;
 
         auto data_loading_parameters = parameters.mutable_data_loading();
-        data_loading_parameters->set_filepath      (filepath_  );
-        data_loading_parameters->set_dataset_format(tt::msa0309);
+        data_loading_parameters->set_filepath      (filepath_.find("MSA") != std::string::npos ? "/home/ad784563/data/MSA0309_s0536-0695.h5" : "/home/ad784563/data/Vervet1818.h5");
+        data_loading_parameters->set_dataset_format(filepath_.find("MSA") != std::string::npos ? tt::msa0309 : tt::vervet1818);
         data_loading_parameters->mutable_selection()->mutable_offset()->set_x(offset_[0]);
         data_loading_parameters->mutable_selection()->mutable_offset()->set_y(offset_[1]);
         data_loading_parameters->mutable_selection()->mutable_offset()->set_z(offset_[2]);
