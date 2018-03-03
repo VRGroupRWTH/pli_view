@@ -10,7 +10,9 @@
 #include <boost/signals2.hpp>
 #include <glm/glm.hpp>
 #include <QCloseEvent>
+#include <QImage>
 #include <QLabel>
+#include <QTimer>
 
 namespace pli
 {
@@ -28,7 +30,8 @@ public:
 
   void closeEvent(QCloseEvent* event) override;
 
-  boost::signals2::signal<void()> on_close;
+  boost::signals2::signal<void()> on_close ;
+  boost::signals2::signal<void()> on_render;
 
 protected:
   std::string       address_ = "tcp://linuxihdc090.rz.rwth-aachen.de:14130";
@@ -52,7 +55,8 @@ protected:
   glm::vec3                  up_               ;
   std::array<std::size_t, 2> image_size_       ;
   float                      streamline_radius_;
-
+  QImage                     image_            ;
+  QTimer                     timer_            ;
 };
 }
 

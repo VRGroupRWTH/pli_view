@@ -1,5 +1,9 @@
 #include <pli_vis/ui/widgets/remote_viewer.hpp>
 
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+
 #include <array>
 #include <cstdint>
 
@@ -14,7 +18,7 @@
 
 namespace pli
 {
-remote_viewer::remote_viewer(application* owner, QWidget* parent) : QLabel(parent), owner_(owner)
+remote_viewer::remote_viewer(application* owner, QWidget* parent) : QLabel(parent), owner_(owner), alive_(true)
 {
   setWindowTitle(std::string("Remote Viewer " + address_).c_str());
   resize        (640, 480);
@@ -138,12 +142,14 @@ remote_viewer::remote_viewer(application* owner, QWidget* parent) : QLabel(paren
       tt::image image;
       image.ParseFromArray(reply.data(), static_cast<std::int32_t>(reply.size()));
 
-      QImage ui_image(reinterpret_cast<const unsigned char*>(image.data().c_str()), image.size().x(), image.size().y(), QImage::Format_RGBA8888);
-      
-      blockSignals(true);
-      setPixmap   (QPixmap::fromImage(ui_image));
-      blockSignals(false);
+      image_ = QImage(reinterpret_cast<const unsigned char*>(image.data().c_str()), image.size().x(), image.size().y(), QImage::Format_RGBA8888);
+      on_render();
     }
+  });
+
+  on_render.connect([&] ()
+  {
+    setPixmap(QPixmap::fromImage(image_));
   });
 }
 remote_viewer::~remote_viewer()
