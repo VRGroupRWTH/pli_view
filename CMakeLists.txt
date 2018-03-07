@@ -190,6 +190,7 @@ set(PROJECT_SOURCES
   include/pli_vis/ui/utility/line_edit.hpp
   include/pli_vis/ui/utility/plot_interactor.hpp
   include/pli_vis/ui/utility/text_browser_sink.hpp
+  include/pli_vis/ui/widgets/remote_viewer.hpp
   include/pli_vis/ui/widgets/roi_rectangle.hpp
   include/pli_vis/ui/widgets/roi_selector.hpp
   include/pli_vis/ui/widgets/transfer_function_editor.hpp
@@ -199,8 +200,11 @@ set(PROJECT_SOURCES
   include/pli_vis/ui/plugin.hpp
   include/pli_vis/ui/plugin_base.hpp
 	include/pli_vis/utility/make_even.hpp
+  include/pli_vis/visualization/algorithms/color_mapper.hpp
   include/pli_vis/visualization/algorithms/lineao_streamline_renderer.hpp
   include/pli_vis/visualization/algorithms/odf_field.hpp
+  include/pli_vis/visualization/algorithms/ospray_streamline_exporter.hpp
+  include/pli_vis/visualization/algorithms/ospray_streamline_renderer.hpp
   include/pli_vis/visualization/algorithms/polar_plot_field.hpp
   include/pli_vis/visualization/algorithms/scalar_field.hpp
   include/pli_vis/visualization/algorithms/streamline_renderer.hpp
@@ -222,6 +226,8 @@ set(PROJECT_SOURCES
   
   shaders/depth_pass.frag.glsl
   shaders/depth_pass.vert.glsl
+  shaders/fullscreen_texture.frag.glsl
+  shaders/fullscreen_texture.vert.glsl
   shaders/lineao_color_pass.frag.glsl
   shaders/lineao_color_pass.vert.glsl
   shaders/lineao_main_pass.frag.glsl
@@ -368,6 +374,7 @@ set(PROJECT_SOURCES
   source/ui/plugins/volume_rendering_plugin.cpp
   source/ui/plugins/zernike_plugin.cpp
   source/ui/utility/plot_interactor.cpp
+  source/ui/widgets/remote_viewer.cpp
   source/ui/widgets/roi_rectangle.cpp
   source/ui/widgets/roi_selector.cpp
   source/ui/widgets/transfer_function_editor.cpp
@@ -376,6 +383,8 @@ set(PROJECT_SOURCES
   source/ui/application.cpp
   source/visualization/algorithms/lineao_streamline_renderer.cpp
   source/visualization/algorithms/odf_field.cpp
+  source/visualization/algorithms/ospray_streamline_exporter.cpp
+  source/visualization/algorithms/ospray_streamline_renderer.cpp
   source/visualization/algorithms/polar_plot_field.cpp
   source/visualization/algorithms/scalar_field.cpp
   source/visualization/algorithms/streamline_renderer.cpp
@@ -426,11 +435,41 @@ list          (APPEND CMAKE_CXX_FLAGS ${OpenMP_CXX_FLAGS})
 find_package  (OpenGL REQUIRED)
 import_library(opengl OPENGL_INCLUDE_DIRS OPENGL_LIBRARIES)
 
+find_package  (OSPRay REQUIRED)
+import_library(ospray OSPRAY_INCLUDE_DIRS OSPRAY_LIBRARIES)
+
+find_package  (Protobuf REQUIRED)
+list          (APPEND PROJECT_INCLUDE_DIRS ${PROTOBUF_INCLUDE_DIRS})
+list          (APPEND PROJECT_LIBRARIES    ${PROTOBUF_LIBRARIES}   )
+
+find_package  (TBB REQUIRED)
+import_library(tbb TBB_INCLUDE_DIRS TBB_LIBRARY_DEBUG TBB_LIBRARY_RELEASE)
+import_library(tbb_malloc TBB_MALLOC_INCLUDE_DIRS TBB_MALLOC_LIBRARY_DEBUG TBB_MALLOC_LIBRARY_RELEASE)
+import_library(tbb_malloc_proxy TBB_MALLOC_PROXY_INCLUDE_DIRS TBB_MALLOC_PROXY_LIBRARY_DEBUG TBB_MALLOC_PROXY_LIBRARY_RELEASE)
+
+find_package  (ZeroMQ REQUIRED)
+list          (APPEND PROJECT_INCLUDE_DIRS ${ZeroMQ_INCLUDE_DIR})
+list          (APPEND PROJECT_LIBRARIES    ${ZeroMQ_LIBRARIES}  )
+
 set           (CMAKE_AUTOMOC ON)
 set           (CMAKE_AUTOUIC ON)
 set           (CMAKE_INCLUDE_CURRENT_DIR ON)
 find_package  (Qt5Widgets REQUIRED)
 list          (APPEND PROJECT_LIBRARIES Qt5::Widgets)
+
+##################################################    Prebuild    ##################################################
+set(PROJECT_PROTO_SOURCES
+  proto/camera.proto
+  proto/color_mapping.proto
+  proto/dataset_format.proto
+  proto/image.proto
+  proto/parameters.proto
+  proto/selection.proto
+  proto/vector_types.proto
+)
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROJECT_PROTO_SOURCES})
+list                 (APPEND PROJECT_SOURCES ${PROJECT_PROTO_SOURCES} ${PROTO_HDRS} ${PROTO_SRCS})
+assign_source_group  (${PROJECT_SOURCES})
 
 ##################################################    Targets     ##################################################
 cuda_add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
@@ -441,6 +480,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   $<INSTALL_INTERFACE:include> 
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}/third_party>
   PRIVATE source)
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_INCLUDE_DIRS})
 target_link_libraries     (${PROJECT_NAME} PUBLIC ${PROJECT_LIBRARIES})
 target_compile_definitions(${PROJECT_NAME} PUBLIC -DQWT_NO_SVG -DQT_NO_SVG -DQT_NO_PRINTER -DQT_NO_PRINTDIALOG)
 set_target_properties     (${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)

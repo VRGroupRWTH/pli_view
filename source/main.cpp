@@ -7,6 +7,7 @@ extern "C"
 #endif
 
 #include <omp.h>
+#include <ospray/ospray.h>
 #include <QApplication>
 #include <QSurfaceFormat>
 
@@ -14,6 +15,8 @@ extern "C"
 
 int main(int argc, char** argv)
 {
+  ospInit(&argc, const_cast<const char**>(argv));
+
   omp_set_num_threads(4);
 
   QSurfaceFormat format;

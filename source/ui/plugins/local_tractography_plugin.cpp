@@ -4,27 +4,34 @@
 #include <random>
 
 #include <boost/format.hpp>
+#include <QFileDialog>
 #include <tangent-base/default_tracers.hpp>
+#include <tangent-tbb/tbb_default_tracers.hpp>
 
 #include <pli_vis/cuda/pt/tracer.h>
 #include <pli_vis/cuda/utility/vector_ops.h>
 #include <pli_vis/ui/plugins/data_plugin.hpp>
+#include <pli_vis/ui/widgets/remote_viewer.hpp>
 #include <pli_vis/ui/utility/line_edit.hpp>
 #include <pli_vis/ui/utility/text_browser_sink.hpp>
 #include <pli_vis/ui/application.hpp>
 #include <pli_vis/utility/make_even.hpp>
 #include <pli_vis/visualization/algorithms/streamline_renderer.hpp>
 #include <pli_vis/visualization/algorithms/lineao_streamline_renderer.hpp>
+#include <pli_vis/visualization/algorithms/ospray_streamline_exporter.hpp>
+#include <pli_vis/visualization/algorithms/ospray_streamline_renderer.hpp>
 
 namespace pli
 {
 local_tractography_plugin::local_tractography_plugin(QWidget* parent) : plugin(parent)
 {
-  line_edit_integration_step->setValidator(new QDoubleValidator(0, std::numeric_limits<double>::max(), 10, this));
-  line_edit_iterations      ->setValidator(new QIntValidator   (0, std::numeric_limits<int>   ::max(),     this));
+  line_edit_integration_step ->setValidator(new QDoubleValidator(0, std::numeric_limits<double>::max(), 10, this));
+  line_edit_iterations       ->setValidator(new QIntValidator   (0, std::numeric_limits<int>   ::max(),     this));
+  line_edit_streamline_radius->setValidator(new QDoubleValidator(0, std::numeric_limits<double>::max(), 10, this));
  
-  line_edit_integration_step->setText(QString::fromStdString((boost::format("%.4f") % (float(slider_integration_step->value()) / slider_integration_step->maximum())).str()));
-  line_edit_iterations      ->setText(QString::fromStdString(std::to_string(slider_iterations   ->value())));
+  line_edit_integration_step ->setText(QString::fromStdString((boost::format("%.4f") % (float(slider_integration_step ->value()) / slider_integration_step ->maximum())).str()));
+  line_edit_iterations       ->setText(QString::fromStdString(std::to_string(slider_iterations   ->value())));
+  line_edit_streamline_radius->setText(QString::fromStdString((boost::format("%.4f") % (float(slider_streamline_radius->value()) / slider_streamline_radius->maximum())).str()));
 
   connect(checkbox_enabled          , &QCheckBox::stateChanged          , [&] (bool state)
   {
@@ -83,7 +90,7 @@ local_tractography_plugin::local_tractography_plugin(QWidget* parent) : plugin(p
   });
   connect(line_edit_offset_x        , &QLineEdit::editingFinished       , [&] 
   {
-    auto value = std::max(std::min(make_even(line_edit::get_text<int>(line_edit_offset_x)), int(slider_x->maximum())), int(slider_x->minimum()));
+    auto value = make_even(line_edit::get_text<int>(line_edit_offset_x)); // std::max(std::min(make_even(line_edit::get_text<int>(line_edit_offset_x)), int(slider_x->maximum())), int(slider_x->minimum()));
     if (slider_x->upperValue() < value)
       slider_x->setUpperValue(value);
     slider_x        ->setLowerValue                  (value);
@@ -93,13 +100,13 @@ local_tractography_plugin::local_tractography_plugin(QWidget* parent) : plugin(p
   });
   connect(line_edit_size_x          , &QLineEdit::editingFinished       , [&] 
   {
-    auto value = std::max(std::min(make_even(line_edit::get_text<int>(line_edit_size_x)), int(slider_x->maximum())), int(slider_x->minimum()));
+    auto value = make_even(line_edit::get_text<int>(line_edit_size_x)); // std::max(std::min(make_even(line_edit::get_text<int>(line_edit_size_x)), int(slider_x->maximum())), int(slider_x->minimum()));
     slider_x->setUpperValue                (make_even(slider_x->lowerValue() + value));
     image   ->set_selection_size_percentage({static_cast<float>(value) / slider_x->maximum(), image->selection_size_percentage()[1]});
   });
   connect(line_edit_offset_y        , &QLineEdit::editingFinished       , [&] 
   {
-    auto value = std::max(std::min(make_even(line_edit::get_text<int>(line_edit_offset_y)), int(slider_y->maximum())), int(slider_y->minimum()));
+    auto value = make_even(line_edit::get_text<int>(line_edit_offset_y)); // std::max(std::min(make_even(line_edit::get_text<int>(line_edit_offset_y)), int(slider_y->maximum())), int(slider_y->minimum()));
     if (slider_y->upperValue() < value)
       slider_y->setUpperValue(value);
     slider_y        ->setLowerValue                  (value);
@@ -109,13 +116,13 @@ local_tractography_plugin::local_tractography_plugin(QWidget* parent) : plugin(p
   });
   connect(line_edit_size_y          , &QLineEdit::editingFinished       , [&] 
   {
-    auto value = std::max(std::min(make_even(line_edit::get_text<int>(line_edit_size_y)), int(slider_y->maximum())), int(slider_y->minimum()));
+    auto value = make_even(line_edit::get_text<int>(line_edit_size_y)); // std::max(std::min(make_even(line_edit::get_text<int>(line_edit_size_y)), int(slider_y->maximum())), int(slider_y->minimum()));
     slider_y->setUpperValue                (make_even(slider_y->lowerValue() + value));
     image   ->set_selection_size_percentage({image->selection_size_percentage()[0], static_cast<float>(value) / slider_y->maximum()});
   });
   connect(line_edit_offset_z        , &QLineEdit::editingFinished       , [&] 
   {
-    auto value = std::max(std::min(line_edit::get_text<int>(line_edit_offset_z), int(slider_z->maximum())), int(slider_z->minimum()));
+    auto value = make_even(line_edit::get_text<int>(line_edit_offset_z)); // std::max(std::min(line_edit::get_text<int>(line_edit_offset_z), int(slider_z->maximum())), int(slider_z->minimum()));
     if (slider_z->upperValue() < value)
       slider_z->setUpperValue(value + 1);
     slider_z        ->setLowerValue(value);
@@ -123,7 +130,7 @@ local_tractography_plugin::local_tractography_plugin(QWidget* parent) : plugin(p
   });
   connect(line_edit_size_z          , &QLineEdit::editingFinished       , [&] 
   {
-    auto value = std::min(line_edit::get_text<int>(line_edit_size_z), int(slider_z->maximum() - slider_z->minimum()));
+    auto value = make_even(line_edit::get_text<int>(line_edit_size_z)); // std::min(line_edit::get_text<int>(line_edit_size_z), int(slider_z->maximum() - slider_z->minimum()));
     slider_z->setUpperValue(slider_z->lowerValue() + value);
   });
   connect(slider_integration_step   , &QSlider::valueChanged            , [&] 
@@ -142,9 +149,34 @@ local_tractography_plugin::local_tractography_plugin(QWidget* parent) : plugin(p
   {
     slider_iterations->setValue(line_edit::get_text<int>(line_edit_iterations));
   });
-  connect(button_trace_selection, &QPushButton::clicked, [&]
+  connect(slider_streamline_radius   , &QSlider::valueChanged            , [&] 
+  {
+    line_edit_streamline_radius->setText(QString::fromStdString((boost::format("%.4f") % (float(slider_streamline_radius->value()) / slider_streamline_radius->maximum())).str()));
+  });
+  connect(line_edit_streamline_radius, &QLineEdit::editingFinished       , [&]
+  {
+    slider_streamline_radius->setValue(line_edit::get_text<double>(line_edit_streamline_radius) * slider_streamline_radius->maximum());
+  });
+  connect(button_local_trace        , &QPushButton::clicked             , [&]
   {
     trace();
+  });
+  connect(button_remote_trace       , &QPushButton::clicked             , [&]
+  {
+    remote_trace();
+  });
+  connect(button_ospray_export      , &QPushButton::clicked             , [&]
+  {
+    auto filepath = QFileDialog::getSaveFileName(this, tr("Select output file."), "C:/", tr("Image Files (*.bmp *.jpg *.png *.tga)")).toStdString();
+    if (filepath.empty())
+      return;
+
+    auto camera   = owner_->viewer->camera();
+    auto position = float3{camera->translation()[0], camera->translation()[1], camera->translation()[2]};
+    auto forward  = float3{camera->forward    ()[0], camera->forward    ()[1], camera->forward    ()[2]};
+    auto up       = float3{camera->up         ()[0], camera->up         ()[1], camera->up         ()[2]};
+    auto size     = uint2 {unsigned(owner_->viewer->size().width()), unsigned(owner_->viewer->size().height())};
+    ospray_streamline_exporter::to_image(position, forward, up, size, vertices_, tangents_, indices_, filepath);
   });
   connect(radio_button_cpu          , &QRadioButton::clicked            , [&]
   {
@@ -158,13 +190,30 @@ local_tractography_plugin::local_tractography_plugin(QWidget* parent) : plugin(p
   });
   connect(radio_button_regular      , &QRadioButton::clicked            , [&]
   {
+    auto color_plugin = owner_->get_plugin<pli::color_plugin>();
+    
     owner_->viewer->remove_renderable(streamline_renderer_);
-    streamline_renderer_ = owner_->viewer->add_renderable<streamline_renderer>();
+    streamline_renderer_ = owner_->viewer->add_renderable<streamline_renderer>       ();
+    streamline_renderer_->set_active(checkbox_enabled->isChecked());
+    streamline_renderer_->set_color_mapping(color_plugin->mode(), color_plugin->k(), color_plugin->inverted());
   });
   connect(radio_button_lineao       , &QRadioButton::clicked            , [&]
   {
+    auto color_plugin = owner_->get_plugin<pli::color_plugin>();
+
     owner_->viewer->remove_renderable(streamline_renderer_);
     streamline_renderer_ = owner_->viewer->add_renderable<lineao_streamline_renderer>();
+    streamline_renderer_->set_active(checkbox_enabled->isChecked());
+    streamline_renderer_->set_color_mapping(color_plugin->mode(), color_plugin->k(), color_plugin->inverted());
+  });
+  connect(radio_button_ospray       , &QRadioButton::clicked            , [&]
+  {
+    auto color_plugin = owner_->get_plugin<pli::color_plugin>();
+
+    owner_->viewer->remove_renderable(streamline_renderer_);
+    streamline_renderer_ = owner_->viewer->add_renderable<ospray_streamline_renderer>();
+    streamline_renderer_->set_active(checkbox_enabled->isChecked());
+    streamline_renderer_->set_color_mapping(color_plugin->mode(), color_plugin->k(), color_plugin->inverted());
   });
 }
 
@@ -172,10 +221,12 @@ void local_tractography_plugin::start()
 {
   set_sink(std::make_shared<text_browser_sink>(owner_->console));
 
-  if(radio_button_lineao->isChecked())
+  if      (radio_button_regular->isChecked())
+    streamline_renderer_ = owner_->viewer->add_renderable<streamline_renderer>       ();
+  else if (radio_button_lineao ->isChecked())
     streamline_renderer_ = owner_->viewer->add_renderable<lineao_streamline_renderer>();
   else
-    streamline_renderer_ = owner_->viewer->add_renderable<streamline_renderer>();
+    streamline_renderer_ = owner_->viewer->add_renderable<ospray_streamline_renderer>();
 
   connect(owner_->toolbox, &QToolBox::currentChanged, [&](int tab)
   {
@@ -225,8 +276,10 @@ void local_tractography_plugin::trace()
 
   logger_->info(std::string("Tracing..."));
 
-  std::vector<float3> points        ;
-  std::vector<float3> directions    ;
+  vertices_.clear();
+  tangents_.clear();
+  indices_ .clear();
+
   std::vector<float4> random_vectors;
   future_ = std::async(std::launch::async, [&]
   {
@@ -243,7 +296,7 @@ void local_tractography_plugin::trace()
           for (auto y = 0; y < shape[1]; y++)
             for (auto z = 0; z < shape[2]; z++)
             {
-              auto vector = vectors[x][y][z];
+              auto& vector = vectors[x][y][z];
               data_ptr[x + shape[0] * (y + shape[1] * z)] = tangent::vector_t{{vector.x, vector.y, vector.z}};
             }
 
@@ -257,64 +310,120 @@ void local_tractography_plugin::trace()
               seeds.push_back({{float(x), float(y), float(z), 0.0F}});
 
         tangent::TraceRecorder recorder;
-        tangent::OmpCartGridStreamlineTracer tracer(&recorder);
+        tangent::TBBCartGridStreamlineTracer tracer(&recorder);
         tracer.SetData              (&data);
-        tracer.SetIntegrationStep   (float(slider_integration_step->value()) / slider_integration_step->maximum());
-        tracer.SetNumberOfIterations(slider_iterations->value());
+        tracer.SetIntegrationStep   (step());
+        tracer.SetNumberOfIterations(iterations());
         auto output = tracer.TraceSeeds(seeds);
 
         auto& population = recorder.GetPopulation();
-        for(auto i = 0; i < population.GetNumberOfTraces(); i++)
+        for (auto i = 0; i < population.GetNumberOfTraces(); ++i)
         {
-          auto& path = population[i];
-          for(auto j = 0; j < path.size() - 1; j++)
+          auto& path          = population[i];
+          auto  vertex_offset = vertices_.size();
+          for(auto j = 0; j < path.size(); ++j)
           {
-            float3 start {path[j]    [0], path[j]    [1], path[j]    [2]};
-            float3 end   {path[j + 1][0], path[j + 1][1], path[j + 1][2]};
-            points.push_back(start);
-            points.push_back(end  );
-            directions.push_back(normalize(end   - start));
-            directions.push_back(normalize(start - end  ));
+            auto& vertex = path[j];
+            if (isnan(vertex[0])  || 
+                isnan(vertex[1])  || 
+                isnan(vertex[2])  || 
+                vertex[0] == 0.0F && 
+                vertex[1] == 0.0F && 
+                vertex[2] == 0.0F)
+              continue;
+
+            vertices_.push_back(float4{vertex[0], vertex[1], vertex[2], 1.0});
+            
+            if (j > 0)
+              tangents_.push_back(normalize(float4{
+                path[j][0] - path[j - 1][0], 
+                path[j][1] - path[j - 1][1], 
+                path[j][2] - path[j - 1][2], 
+                0.0}));
+            else if (path.size() > 1)
+              tangents_.push_back(normalize(float4{
+                path[j + 1][0] - path[j][0], 
+                path[j + 1][1] - path[j][1], 
+                path[j + 1][2] - path[j][2], 
+                0.0}));
+            else
+              tangents_.push_back(float4{0.0F, 0.0F, 0.0F, 0.0F});
+
+            if (j > 0)
+            {
+              indices_.push_back(vertex_offset + j - 1);
+              indices_.push_back(vertex_offset + j);
+            }
           }
         }
       }
       else
       {
-        std::vector<float3> data(shape[0] * shape[1] * shape[2]);
+        std::vector<float4> data(shape[0] * shape[1] * shape[2]);
         for (auto x = 0; x < shape[0]; x++)
           for (auto y = 0; y < shape[1]; y++)
             for (auto z = 0; z < shape[2]; z++)
-              data[x + shape[0] * (y + shape[1] * z)] = vectors[x][y][z];
+            {
+              auto& vector = vectors[x][y][z];
+              data[x + shape[0] * (y + shape[1] * z)] = float4 {vector.x, vector.y, vector.z, 1.0};
+            }
 
-        std::vector<float3> seeds;
         auto offset = seed_offset();
         auto size   = seed_size  ();
         auto stride = seed_stride();
+        std::vector<float4> seeds;
         for (auto x = offset[0]; x < offset[0] + size[0]; x += stride[0])
           for (auto y = offset[1]; y < offset[1] + size[1]; y += stride[1])
             for (auto z = offset[2]; z < offset[2] + size[2]; z += stride[2])
-              seeds.push_back(float3{float(x), float(y), float(z)});
+              seeds.push_back(float4{float(x), float(y), float(z), 0.0});
         
         auto traces = cupt::trace(
           slider_iterations->value(),
           float(slider_integration_step->value()) / slider_integration_step->maximum(),
           uint3  {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
-          float3 {1.0f, 1.0f, 1.0f},
+          float4 {1.0f, 1.0f, 1.0f, 0.0f},
           data ,
           seeds);
 
         for (auto i = 0; i < traces.size(); ++i)
-          for (auto j = 0; j < traces[i].size() - 1; ++j)
+        {
+          auto& path          = traces[i];
+          auto  vertex_offset = vertices_.size();
+          for(auto j = 0; j < path.size(); ++j)
           {
-            auto& start = traces[i][j  ];
-            auto& end   = traces[i][j+1];
-            if(end.x == 0.0f && end.y == 0.0f && end.z == 0.0f)
-              break;
-            points    .push_back(start);
-            points    .push_back(end  ); 
-            directions.push_back(normalize(end   - start));
-            directions.push_back(normalize(start - end  ));
+            auto& vertex = path[j];
+            if (isnan(vertex.x)  || 
+                isnan(vertex.y)  || 
+                isnan(vertex.z)  || 
+                vertex.x == 0.0F && 
+                vertex.y == 0.0F && 
+                vertex.z == 0.0F)
+              continue;
+
+            vertices_.push_back(float4{vertex.x, vertex.y, vertex.z, 1.0});
+            
+            if (j > 0)
+              tangents_.push_back(normalize(float4{
+                path[j].x - path[j - 1].x, 
+                path[j].y - path[j - 1].y, 
+                path[j].z - path[j - 1].z, 
+                0.0}));
+            else if (path.size() > 1)
+              tangents_.push_back(normalize(float4{
+                path[j + 1].x - path[j].x, 
+                path[j + 1].y - path[j].y, 
+                path[j + 1].z - path[j].z, 
+                0.0}));
+            else
+              tangents_.push_back(float4{0.0F, 0.0F, 0.0F, 0.0F});
+
+            if (j > 0)
+            {
+              indices_.push_back(vertex_offset + j - 1);
+              indices_.push_back(vertex_offset + j);
+            }
           }
+        }
       }
 
       std::random_device                    random_device;
@@ -344,15 +453,18 @@ void local_tractography_plugin::trace()
   while (future_.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
     QApplication::processEvents();
 
-  if (points.size() > 0 && directions.size() > 0)
+  if (vertices_.size() > 0 && tangents_.size() > 0)
   {
     logger_->info(std::string("Trace successful."));
 
-    auto lineao_renderer  = dynamic_cast<lineao_streamline_renderer*>(streamline_renderer_);
-    if  (lineao_renderer)  lineao_renderer ->set_data(points, directions, random_vectors);
+    auto regular_renderer = dynamic_cast<streamline_renderer*>       (streamline_renderer_);
+    if  (regular_renderer) regular_renderer->set_data(vertices_, tangents_, indices_);
     
-    auto regular_renderer = dynamic_cast<streamline_renderer*>(streamline_renderer_);
-    if  (regular_renderer) regular_renderer->set_data(points, directions);
+    //auto lineao_renderer  = dynamic_cast<lineao_streamline_renderer*>(streamline_renderer_);
+    //if  (lineao_renderer)  lineao_renderer ->set_data(vertices_, tangents_, random_vectors);
+    
+    //auto ospray_renderer  = dynamic_cast<ospray_streamline_renderer*>(streamline_renderer_);
+    //if  (ospray_renderer)  ospray_renderer ->set_data(vertices_, tangents_);
   }
   else
   {
@@ -360,6 +472,14 @@ void local_tractography_plugin::trace()
   }
 
   owner_->set_is_loading(false);
+}
+void local_tractography_plugin::remote_trace()
+{
+  remote_viewer_ = std::make_unique<remote_viewer>(owner_);
+  remote_viewer_->on_close.connect([&]()
+  {
+    remote_viewer_.reset();
+  });
 }
   
 std::array<std::size_t, 3> local_tractography_plugin::seed_offset() const

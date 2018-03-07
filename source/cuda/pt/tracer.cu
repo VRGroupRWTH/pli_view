@@ -16,7 +16,7 @@ __global__ void trace_kernel(
   const std::size_t iteration_count,
   const float       step_size      ,
   const uint3       data_dimensions,
-  const float3      data_spacing   ,
+  const data_type   data_spacing   ,
   const data_type*  data           ,
   const std::size_t seed_size      ,
   const data_type*  seeds          ,
@@ -44,24 +44,24 @@ __global__ void trace_kernel(
   }
 }
 
-std::vector<std::vector<float3>> trace(
+std::vector<std::vector<float4>> trace(
   const std::size_t          iteration_count,
   const float                step_size      ,
   const uint3                data_dimensions,
-  const float3               data_spacing   ,
-  const std::vector<float3>& data           ,
-  const std::vector<float3>& seeds          )
+  const float4               data_spacing   ,
+  const std::vector<float4>& data           ,
+  const std::vector<float4>& seeds          )
 {
-  thrust::device_vector<float3> data_gpu   = data ;
-  thrust::device_vector<float3> seeds_gpu  = seeds;
-  thrust::device_vector<float3> traces_gpu(iteration_count * seeds.size(), float3{0.0f, 0.0f, 0.0f});
+  thrust::device_vector<float4> data_gpu   = data ;
+  thrust::device_vector<float4> seeds_gpu  = seeds;
+  thrust::device_vector<float4> traces_gpu(iteration_count * seeds.size(), float4{0.0f, 0.0f, 0.0f, 1.0f});
   const auto data_gpu_ptr   = raw_pointer_cast(&data_gpu  [0]);
   const auto seeds_gpu_ptr  = raw_pointer_cast(&seeds_gpu [0]);
   const auto traces_gpu_ptr = raw_pointer_cast(&traces_gpu[0]);
   cudaDeviceSynchronize();
 
   trace_kernel
-    <float3, runge_kutta_4_integrator<float3, trilinear_interpolator<float3>>>
+    <float4, runge_kutta_4_integrator<float4, trilinear_interpolator<float4>>>
     <<<pli::grid_size_1d(seeds.size()), pli::block_size_1d()>>>(
     iteration_count,
     step_size      ,
@@ -73,13 +73,13 @@ std::vector<std::vector<float3>> trace(
     traces_gpu_ptr );
   cudaDeviceSynchronize();
 
-  std::vector<float3> traces_linear(traces_gpu.size());
+  std::vector<float4> traces_linear(traces_gpu.size());
   thrust::copy (traces_gpu.begin(), traces_gpu.end (), traces_linear.begin());
   cudaDeviceSynchronize();
 
-  std::vector<std::vector<float3>> traces(seeds.size());
+  std::vector<std::vector<float4>> traces(seeds.size());
   for(auto i = 0; i < traces.size(); ++i)
-    traces[i] = std::vector<float3>(traces_linear.begin() + i * iteration_count, traces_linear.begin() + (i + 1) * iteration_count);
+    traces[i] = std::vector<float4>(traces_linear.begin() + i * iteration_count, traces_linear.begin() + (i + 1) * iteration_count);
   return traces;
 }
 }

@@ -67,8 +67,14 @@ public:
   {
     return *unit_vector_;
   }
+
+  const std::string& filepath() const
+  {
+    return io_.filepath();
+  }
   
   std::array<std::size_t, 3> selection_offset() const;
+  std::array<std::size_t, 3> selection_bounds() const;
   std::array<std::size_t, 3> selection_size  () const;
   std::array<std::size_t, 3> selection_stride() const;
 

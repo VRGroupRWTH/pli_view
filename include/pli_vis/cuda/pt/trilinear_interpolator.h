@@ -11,11 +11,11 @@
 
 namespace cupt 
 {
-template<class type = float3>
+template<class type>
 class trilinear_interpolator 
 {
 public:
-  __host__ __device__ explicit trilinear_interpolator(const uint3& dimensions, const float3& spacing, const type* data) 
+  __host__ __device__ explicit trilinear_interpolator(const uint3& dimensions, const type& spacing, const type* data) 
   : data_   {data}
   , locator_{dimensions, spacing}
   {

@@ -7,6 +7,7 @@
 #include <pli_vis/opengl/opengl.hpp>
 
 #include <QOpenGLWidget>
+#include <QTimer>
 
 #include <pli_vis/aspects/loggable.hpp>
 #include <pli_vis/aspects/renderable.hpp>
@@ -48,6 +49,7 @@ private:
   std::vector<std::unique_ptr<renderable>> renderables_ ;
   pli::camera                              camera_      ;
   std::unique_ptr<pli::interactor>         interactor_  ;
+  QTimer                                   timer_       ;
 };
 
 template <typename type, typename ... args>

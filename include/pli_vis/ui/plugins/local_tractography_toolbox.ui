@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>337</width>
-    <height>480</height>
+    <height>580</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -40,7 +40,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="5">
+   <item row="1" column="0" colspan="4">
     <widget class="QxtLetterBoxWidget" name="letterbox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -507,7 +507,7 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="0" colspan="5">
+   <item row="2" column="0" colspan="4">
     <layout class="QGridLayout" name="gridLayout_4">
      <item row="0" column="1">
       <widget class="QLabel" name="label_offset">
@@ -1025,7 +1025,7 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="2" colspan="2">
+   <item row="3" column="2">
     <widget class="QSlider" name="slider_integration_step">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -1053,7 +1053,7 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="4">
+   <item row="3" column="3">
     <widget class="QLineEdit" name="line_edit_integration_step">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -1073,7 +1073,7 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="2" colspan="2">
+   <item row="4" column="2">
     <widget class="QSlider" name="slider_iterations">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -1101,7 +1101,7 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="4">
+   <item row="4" column="3">
     <widget class="QLineEdit" name="line_edit_iterations">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -1114,95 +1114,55 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="3" colspan="2">
-    <widget class="QGroupBox" name="groupBox_2">
-     <property name="enabled">
-      <bool>true</bool>
+   <item row="5" column="0" colspan="2">
+    <widget class="QLabel" name="label_streamline_radius">
+     <property name="text">
+      <string>Streamline Radius</string>
      </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-       <horstretch>0</horstretch>
-       <verstretch>1</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="title">
-      <string>Shading</string>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
-      <property name="spacing">
-       <number>0</number>
-      </property>
-      <property name="leftMargin">
-       <number>6</number>
-      </property>
-      <property name="topMargin">
-       <number>0</number>
-      </property>
-      <property name="rightMargin">
-       <number>0</number>
-      </property>
-      <property name="bottomMargin">
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="QRadioButton" name="radio_button_regular">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="text">
-         <string>Regular</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="radio_button_lineao">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="text">
-         <string>Line AO</string>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </widget>
    </item>
-   <item row="6" column="0" colspan="5">
-    <widget class="QPushButton" name="button_trace_selection">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
+   <item row="5" column="2">
+    <widget class="QSlider" name="slider_streamline_radius">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>0</horstretch>
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>4</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="text">
-      <string>Trace Selection</string>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>10000</number>
+     </property>
+     <property name="value">
+      <number>1000</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
-   <item row="7" column="0">
-    <spacer name="spacer_vertical">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+   <item row="5" column="3">
+    <widget class="QLineEdit" name="line_edit_streamline_radius">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>4</height>
-      </size>
+     <property name="placeholderText">
+      <string>0.1</string>
      </property>
-    </spacer>
+    </widget>
    </item>
-   <item row="5" column="0" colspan="3">
+   <item row="6" column="0" colspan="2">
     <widget class="QGroupBox" name="groupBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
@@ -1230,9 +1190,9 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QRadioButton" name="radio_button_gpu">
+       <widget class="QRadioButton" name="radio_button_cpu">
         <property name="text">
-         <string>GPU</string>
+         <string>CPU</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -1240,14 +1200,139 @@
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="radio_button_cpu">
+       <widget class="QRadioButton" name="radio_button_gpu">
         <property name="text">
-         <string>CPU</string>
+         <string>GPU</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
      </layout>
     </widget>
+   </item>
+   <item row="6" column="2" colspan="2">
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title">
+      <string>Shading</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="1">
+       <widget class="QRadioButton" name="radio_button_lineao">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Line AO</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="radio_button_regular">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Regular</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QRadioButton" name="radio_button_ospray">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>OSPRay</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="7" column="0" colspan="4">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="button_local_trace">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Local Trace</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="button_remote_trace">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Remote Trace</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="button_ospray_export">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>OSPRay Export</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="8" column="0">
+    <spacer name="spacer_vertical">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>4</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
@@ -1288,10 +1373,9 @@
   <tabstop>slider_iterations</tabstop>
   <tabstop>line_edit_iterations</tabstop>
   <tabstop>radio_button_gpu</tabstop>
-  <tabstop>radio_button_cpu</tabstop>
   <tabstop>radio_button_regular</tabstop>
   <tabstop>radio_button_lineao</tabstop>
-  <tabstop>button_trace_selection</tabstop>
+  <tabstop>button_local_trace</tabstop>
  </tabstops>
  <resources/>
  <connections/>

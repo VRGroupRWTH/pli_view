@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+import "vector_types.proto";
+
+package tt;
+
+message image 
+{
+  uvec2 size = 1;
+  bytes data = 2;
+}

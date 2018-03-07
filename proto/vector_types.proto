@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+message bvec2
+{
+  bool   x = 1;
+  bool   y = 2;
+}
+message ivec2
+{
+  int32  x = 1;
+  int32  y = 2;
+}
+message uvec2
+{
+  uint32 x = 1;
+  uint32 y = 2;
+}
+message fvec2
+{
+  float  x = 1;
+  float  y = 2;
+}
+message dvec2
+{
+  double x = 1;
+  double y = 2;
+}
+
+message bvec3
+{
+  bool   x = 1;
+  bool   y = 2;
+  bool   z = 3;
+}
+message ivec3
+{
+  int32  x = 1;
+  int32  y = 2;
+  int32  z = 3;
+}
+message uvec3
+{
+  uint32 x = 1;
+  uint32 y = 2;
+  uint32 z = 3;
+}
+message fvec3
+{
+  float  x = 1;
+  float  y = 2;
+  float  z = 3;
+}
+message dvec3
+{
+  double x = 1;
+  double y = 2;
+  double z = 3;
+}
+
+message bvec4
+{
+  bool   x = 1;
+  bool   y = 2;
+  bool   z = 3;
+  bool   w = 4;
+}
+message ivec4
+{
+  int32  x = 1;
+  int32  y = 2;
+  int32  z = 3;
+  int32  w = 4;
+}
+message uvec4
+{
+  uint32 x = 1;
+  uint32 y = 2;
+  uint32 z = 3;
+  uint32 w = 4;
+}
+message fvec4
+{
+  float  x = 1;
+  float  y = 2;
+  float  z = 3;
+  float  w = 4;
+}
+message dvec4
+{
+  double x = 1;
+  double y = 2;
+  double z = 3;
+  double w = 4;
+}

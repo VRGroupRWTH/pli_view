@@ -1,21 +1,23 @@
 #include <pli_vis/ui/widgets/viewer.hpp>
 
 #include <QKeyEvent>
-#include <QTimer>
 
 #include <pli_vis/visualization/interactors/simple_interactor.hpp>
 
 namespace pli
 {
-viewer::viewer(QWidget* parent) : QOpenGLWidget(parent), interactor_(std::make_unique<simple_interactor>(&camera_))
+viewer::viewer(QWidget* parent) : QOpenGLWidget(parent), interactor_(std::make_unique<simple_interactor>(&camera_)), timer_(this)
 {
   reset_camera_transform();
 
   setFocusPolicy(Qt::StrongFocus);
 
-  auto timer = new QTimer(this);
-  connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-  timer->start(16);
+  connect(&timer_, &QTimer::timeout, [&] ()
+  {
+    update();
+    timer_.start();
+  });
+  timer_.start();
 }
 
 void viewer::remove_renderable(renderable* renderable)

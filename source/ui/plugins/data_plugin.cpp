@@ -191,6 +191,16 @@ std::array<std::size_t, 3> data_plugin::selection_offset() const
     line_edit::get_text<std::size_t>(line_edit_offset_z)
   };
 }
+
+std::array<std::size_t, 3> data_plugin::selection_bounds() const
+{
+  return
+  {
+    line_edit::get_text<std::size_t>(line_edit_size_x),
+    line_edit::get_text<std::size_t>(line_edit_size_y),
+    line_edit::get_text<std::size_t>(line_edit_size_z)
+  };
+}
 std::array<std::size_t, 3> data_plugin::selection_size  () const
 {
   auto stride = selection_stride();
