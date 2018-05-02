@@ -203,8 +203,6 @@ set(PROJECT_SOURCES
   include/pli_vis/visualization/algorithms/color_mapper.hpp
   include/pli_vis/visualization/algorithms/lineao_streamline_renderer.hpp
   include/pli_vis/visualization/algorithms/odf_field.hpp
-  include/pli_vis/visualization/algorithms/ospray_streamline_exporter.hpp
-  include/pli_vis/visualization/algorithms/ospray_streamline_renderer.hpp
   include/pli_vis/visualization/algorithms/polar_plot_field.hpp
   include/pli_vis/visualization/algorithms/scalar_field.hpp
   include/pli_vis/visualization/algorithms/streamline_renderer.hpp
@@ -383,8 +381,6 @@ set(PROJECT_SOURCES
   source/ui/application.cpp
   source/visualization/algorithms/lineao_streamline_renderer.cpp
   source/visualization/algorithms/odf_field.cpp
-  source/visualization/algorithms/ospray_streamline_exporter.cpp
-  source/visualization/algorithms/ospray_streamline_renderer.cpp
   source/visualization/algorithms/polar_plot_field.cpp
   source/visualization/algorithms/scalar_field.cpp
   source/visualization/algorithms/streamline_renderer.cpp
@@ -434,9 +430,6 @@ list          (APPEND CMAKE_CXX_FLAGS ${OpenMP_CXX_FLAGS})
 
 find_package  (OpenGL REQUIRED)
 import_library(opengl OPENGL_INCLUDE_DIRS OPENGL_LIBRARIES)
-
-find_package  (OSPRay REQUIRED)
-import_library(ospray OSPRAY_INCLUDE_DIRS OSPRAY_LIBRARIES)
 
 find_package  (Protobuf REQUIRED)
 list          (APPEND PROJECT_INCLUDE_DIRS ${PROTOBUF_INCLUDE_DIRS})

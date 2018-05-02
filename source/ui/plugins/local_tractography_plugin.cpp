@@ -18,8 +18,6 @@
 #include <pli_vis/utility/make_even.hpp>
 #include <pli_vis/visualization/algorithms/streamline_renderer.hpp>
 #include <pli_vis/visualization/algorithms/lineao_streamline_renderer.hpp>
-#include <pli_vis/visualization/algorithms/ospray_streamline_exporter.hpp>
-#include <pli_vis/visualization/algorithms/ospray_streamline_renderer.hpp>
 
 namespace pli
 {
@@ -165,69 +163,14 @@ local_tractography_plugin::local_tractography_plugin(QWidget* parent) : plugin(p
   {
     remote_trace();
   });
-  connect(button_ospray_export      , &QPushButton::clicked             , [&]
-  {
-    auto filepath = QFileDialog::getSaveFileName(this, tr("Select output file."), "C:/", tr("Image Files (*.bmp *.jpg *.png *.tga)")).toStdString();
-    if (filepath.empty())
-      return;
-
-    auto camera   = owner_->viewer->camera();
-    auto position = float3{camera->translation()[0], camera->translation()[1], camera->translation()[2]};
-    auto forward  = float3{camera->forward    ()[0], camera->forward    ()[1], camera->forward    ()[2]};
-    auto up       = float3{camera->up         ()[0], camera->up         ()[1], camera->up         ()[2]};
-    auto size     = uint2 {unsigned(owner_->viewer->size().width()), unsigned(owner_->viewer->size().height())};
-    ospray_streamline_exporter::to_image(position, forward, up, size, vertices_, tangents_, indices_, filepath);
-  });
-  connect(radio_button_cpu          , &QRadioButton::clicked            , [&]
-  {
-    logger_->info(std::string("CPU particle tracing selected."));
-    gpu_tracing_ = false;
-  });
-  connect(radio_button_gpu          , &QRadioButton::clicked            , [&]
-  {
-    logger_->info(std::string("GPU particle tracing selected."));
-    gpu_tracing_ = true;
-  });
-  connect(radio_button_regular      , &QRadioButton::clicked            , [&]
-  {
-    auto color_plugin = owner_->get_plugin<pli::color_plugin>();
-    
-    owner_->viewer->remove_renderable(streamline_renderer_);
-    streamline_renderer_ = owner_->viewer->add_renderable<streamline_renderer>       ();
-    streamline_renderer_->set_active(checkbox_enabled->isChecked());
-    streamline_renderer_->set_color_mapping(color_plugin->mode(), color_plugin->k(), color_plugin->inverted());
-  });
-  connect(radio_button_lineao       , &QRadioButton::clicked            , [&]
-  {
-    auto color_plugin = owner_->get_plugin<pli::color_plugin>();
-
-    owner_->viewer->remove_renderable(streamline_renderer_);
-    streamline_renderer_ = owner_->viewer->add_renderable<lineao_streamline_renderer>();
-    streamline_renderer_->set_active(checkbox_enabled->isChecked());
-    streamline_renderer_->set_color_mapping(color_plugin->mode(), color_plugin->k(), color_plugin->inverted());
-  });
-  connect(radio_button_ospray       , &QRadioButton::clicked            , [&]
-  {
-    auto color_plugin = owner_->get_plugin<pli::color_plugin>();
-
-    owner_->viewer->remove_renderable(streamline_renderer_);
-    streamline_renderer_ = owner_->viewer->add_renderable<ospray_streamline_renderer>();
-    streamline_renderer_->set_active(checkbox_enabled->isChecked());
-    streamline_renderer_->set_color_mapping(color_plugin->mode(), color_plugin->k(), color_plugin->inverted());
-  });
 }
 
 void local_tractography_plugin::start()
 {
   set_sink(std::make_shared<text_browser_sink>(owner_->console));
 
-  if      (radio_button_regular->isChecked())
-    streamline_renderer_ = owner_->viewer->add_renderable<streamline_renderer>       ();
-  else if (radio_button_lineao ->isChecked())
-    streamline_renderer_ = owner_->viewer->add_renderable<lineao_streamline_renderer>();
-  else
-    streamline_renderer_ = owner_->viewer->add_renderable<ospray_streamline_renderer>();
-
+  streamline_renderer_ = owner_->viewer->add_renderable<streamline_renderer>();
+  
   connect(owner_->toolbox, &QToolBox::currentChanged, [&](int tab)
   {
     // Hack for enforcing a UI update.
@@ -288,140 +231,69 @@ void local_tractography_plugin::trace()
       auto vectors = owner_->get_plugin<data_plugin>()->generate_vectors(true);
       auto shape   = vectors.shape();
 
-      if(!gpu_tracing_)
-      {
-        tangent::CartesianGrid data(tangent::grid_dim_t{{shape[0], shape[1], shape[2]}}, tangent::vector_t{{1.0, 1.0, 1.0}});
-        auto data_ptr = data.GetVectorPointer(0);
-        for (auto x = 0; x < shape[0]; x++)
-          for (auto y = 0; y < shape[1]; y++)
-            for (auto z = 0; z < shape[2]; z++)
-            {
-              auto& vector = vectors[x][y][z];
-              data_ptr[x + shape[0] * (y + shape[1] * z)] = tangent::vector_t{{vector.x, vector.y, vector.z}};
-            }
-
-        auto offset = seed_offset();
-        auto size   = seed_size  ();
-        auto stride = seed_stride();
-        std::vector<tangent::point_t> seeds;
-        for (auto x = offset[0]; x < offset[0] + size[0]; x+= stride[0])
-          for (auto y = offset[1]; y < offset[1] + size[1]; y += stride[1])
-            for (auto z = offset[2]; z < offset[2] + size[2]; z += stride[2])
-              seeds.push_back({{float(x), float(y), float(z), 0.0F}});
-
-        tangent::TraceRecorder recorder;
-        tangent::TBBCartGridStreamlineTracer tracer(&recorder);
-        tracer.SetData              (&data);
-        tracer.SetIntegrationStep   (step());
-        tracer.SetNumberOfIterations(iterations());
-        auto output = tracer.TraceSeeds(seeds);
-
-        auto& population = recorder.GetPopulation();
-        for (auto i = 0; i < population.GetNumberOfTraces(); ++i)
-        {
-          auto& path          = population[i];
-          auto  vertex_offset = vertices_.size();
-          for(auto j = 0; j < path.size(); ++j)
+      tangent::CartesianGrid data(tangent::grid_dim_t{{shape[0], shape[1], shape[2]}}, tangent::vector_t{{1.0, 1.0, 1.0}});
+      auto data_ptr = data.GetVectorPointer(0);
+      for (auto x = 0; x < shape[0]; x++)
+        for (auto y = 0; y < shape[1]; y++)
+          for (auto z = 0; z < shape[2]; z++)
           {
-            auto& vertex = path[j];
-            if (isnan(vertex[0])  || 
-                isnan(vertex[1])  || 
-                isnan(vertex[2])  || 
-                vertex[0] == 0.0F && 
-                vertex[1] == 0.0F && 
-                vertex[2] == 0.0F)
-              continue;
-
-            vertices_.push_back(float4{vertex[0], vertex[1], vertex[2], 1.0});
-            
-            if (j > 0)
-              tangents_.push_back(normalize(float4{
-                path[j][0] - path[j - 1][0], 
-                path[j][1] - path[j - 1][1], 
-                path[j][2] - path[j - 1][2], 
-                0.0}));
-            else if (path.size() > 1)
-              tangents_.push_back(normalize(float4{
-                path[j + 1][0] - path[j][0], 
-                path[j + 1][1] - path[j][1], 
-                path[j + 1][2] - path[j][2], 
-                0.0}));
-            else
-              tangents_.push_back(float4{0.0F, 0.0F, 0.0F, 0.0F});
-
-            if (j > 0)
-            {
-              indices_.push_back(vertex_offset + j - 1);
-              indices_.push_back(vertex_offset + j);
-            }
+            auto& vector = vectors[x][y][z];
+            data_ptr[x + shape[0] * (y + shape[1] * z)] = tangent::vector_t{{vector.x, vector.y, vector.z}};
           }
-        }
-      }
-      else
+
+      auto offset = seed_offset();
+      auto size   = seed_size  ();
+      auto stride = seed_stride();
+      std::vector<tangent::point_t> seeds;
+      for (auto x = offset[0]; x < offset[0] + size[0]; x+= stride[0])
+        for (auto y = offset[1]; y < offset[1] + size[1]; y += stride[1])
+          for (auto z = offset[2]; z < offset[2] + size[2]; z += stride[2])
+            seeds.push_back({{float(x), float(y), float(z), 0.0F}});
+
+      tangent::TraceRecorder recorder;
+      tangent::TBBCartGridStreamlineTracer tracer(&recorder);
+      tracer.SetData              (&data);
+      tracer.SetIntegrationStep   (step());
+      tracer.SetNumberOfIterations(iterations());
+      auto output = tracer.TraceSeeds(seeds);
+
+      auto& population = recorder.GetPopulation();
+      for (auto i = 0; i < population.GetNumberOfTraces(); ++i)
       {
-        std::vector<float4> data(shape[0] * shape[1] * shape[2]);
-        for (auto x = 0; x < shape[0]; x++)
-          for (auto y = 0; y < shape[1]; y++)
-            for (auto z = 0; z < shape[2]; z++)
-            {
-              auto& vector = vectors[x][y][z];
-              data[x + shape[0] * (y + shape[1] * z)] = float4 {vector.x, vector.y, vector.z, 1.0};
-            }
-
-        auto offset = seed_offset();
-        auto size   = seed_size  ();
-        auto stride = seed_stride();
-        std::vector<float4> seeds;
-        for (auto x = offset[0]; x < offset[0] + size[0]; x += stride[0])
-          for (auto y = offset[1]; y < offset[1] + size[1]; y += stride[1])
-            for (auto z = offset[2]; z < offset[2] + size[2]; z += stride[2])
-              seeds.push_back(float4{float(x), float(y), float(z), 0.0});
-        
-        auto traces = cupt::trace(
-          slider_iterations->value(),
-          float(slider_integration_step->value()) / slider_integration_step->maximum(),
-          uint3  {unsigned(shape[0]), unsigned(shape[1]), unsigned(shape[2])},
-          float4 {1.0f, 1.0f, 1.0f, 0.0f},
-          data ,
-          seeds);
-
-        for (auto i = 0; i < traces.size(); ++i)
+        auto& path          = population[i];
+        auto  vertex_offset = vertices_.size();
+        for(auto j = 0; j < path.size(); ++j)
         {
-          auto& path          = traces[i];
-          auto  vertex_offset = vertices_.size();
-          for(auto j = 0; j < path.size(); ++j)
-          {
-            auto& vertex = path[j];
-            if (isnan(vertex.x)  || 
-                isnan(vertex.y)  || 
-                isnan(vertex.z)  || 
-                vertex.x == 0.0F && 
-                vertex.y == 0.0F && 
-                vertex.z == 0.0F)
-              continue;
+          auto& vertex = path[j];
+          if (isnan(vertex[0])  || 
+              isnan(vertex[1])  || 
+              isnan(vertex[2])  || 
+              vertex[0] == 0.0F && 
+              vertex[1] == 0.0F && 
+              vertex[2] == 0.0F)
+            continue;
 
-            vertices_.push_back(float4{vertex.x, vertex.y, vertex.z, 1.0});
+          vertices_.push_back(float4{vertex[0], vertex[1], vertex[2], 1.0});
             
-            if (j > 0)
-              tangents_.push_back(normalize(float4{
-                path[j].x - path[j - 1].x, 
-                path[j].y - path[j - 1].y, 
-                path[j].z - path[j - 1].z, 
-                0.0}));
-            else if (path.size() > 1)
-              tangents_.push_back(normalize(float4{
-                path[j + 1].x - path[j].x, 
-                path[j + 1].y - path[j].y, 
-                path[j + 1].z - path[j].z, 
-                0.0}));
-            else
-              tangents_.push_back(float4{0.0F, 0.0F, 0.0F, 0.0F});
+          if (j > 0)
+            tangents_.push_back(normalize(float4{
+              path[j][0] - path[j - 1][0], 
+              path[j][1] - path[j - 1][1], 
+              path[j][2] - path[j - 1][2], 
+              0.0}));
+          else if (path.size() > 1)
+            tangents_.push_back(normalize(float4{
+              path[j + 1][0] - path[j][0], 
+              path[j + 1][1] - path[j][1], 
+              path[j + 1][2] - path[j][2], 
+              0.0}));
+          else
+            tangents_.push_back(float4{0.0F, 0.0F, 0.0F, 0.0F});
 
-            if (j > 0)
-            {
-              indices_.push_back(vertex_offset + j - 1);
-              indices_.push_back(vertex_offset + j);
-            }
+          if (j > 0)
+          {
+            indices_.push_back(vertex_offset + j - 1);
+            indices_.push_back(vertex_offset + j);
           }
         }
       }
@@ -462,9 +334,6 @@ void local_tractography_plugin::trace()
     
     //auto lineao_renderer  = dynamic_cast<lineao_streamline_renderer*>(streamline_renderer_);
     //if  (lineao_renderer)  lineao_renderer ->set_data(vertices_, tangents_, random_vectors);
-    
-    //auto ospray_renderer  = dynamic_cast<ospray_streamline_renderer*>(streamline_renderer_);
-    //if  (ospray_renderer)  ospray_renderer ->set_data(vertices_, tangents_);
   }
   else
   {
