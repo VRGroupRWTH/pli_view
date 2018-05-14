@@ -18,7 +18,7 @@
 
 namespace pli
 {
-remote_viewer::remote_viewer(application* owner, QWidget* parent) : QLabel(parent), owner_(owner), alive_(true)
+remote_viewer::remote_viewer(application* owner, interactor* interactor, QWidget* parent) : QLabel(parent), owner_(owner), alive_(true), interactor_(interactor)
 {
   setWindowTitle(std::string("Remote Viewer " + address_).c_str());
   resize        (640, 480);
@@ -158,9 +158,25 @@ remote_viewer::~remote_viewer()
   future_.get();
 }
 
-void remote_viewer::closeEvent(QCloseEvent* event)
+void remote_viewer::closeEvent     (QCloseEvent* event)
 {
   QLabel::closeEvent(event);
   on_close();
+}
+void remote_viewer::keyPressEvent  (QKeyEvent*   event)
+{
+  interactor_->key_press_handler  (event);
+}
+void remote_viewer::keyReleaseEvent(QKeyEvent*   event)
+{
+  interactor_->key_release_handler(event);
+}
+void remote_viewer::mousePressEvent(QMouseEvent* event)
+{
+  interactor_->mouse_press_handler(event);
+}
+void remote_viewer::mouseMoveEvent (QMouseEvent* event)
+{
+  interactor_->mouse_move_handler (event);
 }
 }
