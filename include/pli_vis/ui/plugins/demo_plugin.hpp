@@ -17,10 +17,11 @@ public:
   demo_plugin& operator=(      demo_plugin&& temp) = default;
 
 protected:
-  void start      () override;
+  void start         () override;
 
-  void load_preset(std::size_t index);
-  void save_preset(std::size_t index);
+  void create_default() const;
+  void load_preset   (std::size_t index) const;
+  void save_preset   (std::size_t index) const;
 
   std::vector<QPushButton*> buttons_          ;
   std::string               presets_filepath_ = "presets.json";
