@@ -11,8 +11,12 @@
 #include <glm/glm.hpp>
 #include <QCloseEvent>
 #include <QImage>
+#include <QKeyEvent>
 #include <QLabel>
+#include <QMouseEvent>
 #include <QTimer>
+
+#include <pli_vis/visualization/interactors/interactor.hpp>
 
 namespace pli
 {
@@ -21,23 +25,28 @@ class application;
 class remote_viewer : public QLabel
 {
 public:
-  explicit remote_viewer  (application* owner, QWidget* parent = nullptr);
+  explicit remote_viewer  (application* owner, interactor* interactor, QWidget* parent = nullptr);
   remote_viewer           (const remote_viewer&  that) = default;
   remote_viewer           (      remote_viewer&& temp) = default;
   virtual ~remote_viewer  ();
   remote_viewer& operator=(const remote_viewer&  that) = default;
   remote_viewer& operator=(      remote_viewer&& temp) = default;
 
-  void closeEvent(QCloseEvent* event) override;
+  void closeEvent     (QCloseEvent* event) override;
+  void keyPressEvent  (QKeyEvent*   event) override;
+  void keyReleaseEvent(QKeyEvent*   event) override;
+  void mousePressEvent(QMouseEvent* event) override;
+  void mouseMoveEvent (QMouseEvent* event) override;
 
   boost::signals2::signal<void()> on_close ;
   boost::signals2::signal<void()> on_render;
 
 protected:
-  std::string       address_ = "tcp://linuxihdc090.rz.rwth-aachen.de:14130";
-  application*      owner_   ;
-  std::atomic<bool> alive_   ;
-  std::future<void> future_  ;
+  std::string                address_          = "tcp://linuxihdc090.rz.rwth-aachen.de:14130";
+  application*               owner_            ;
+  interactor*                interactor_       ;
+  std::atomic<bool>          alive_            ;
+  std::future<void>          future_           ;
 
   std::string                filepath_         ;
   std::array<std::size_t, 3> offset_           ;
@@ -57,6 +66,7 @@ protected:
   float                      streamline_radius_;
   QImage                     image_            ;
   QTimer                     timer_            ;
+
 };
 }
 
