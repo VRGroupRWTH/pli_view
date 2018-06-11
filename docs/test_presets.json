@@ -1,0 +1,65 @@
+{
+  "presets"                      : 
+  [
+	  {
+      "data_plugin"              :
+      {
+        "dataset"                : "msa",
+        "offset"                 : [300, 700, 0  ],
+        "size"                   : [512, 512, 32 ],
+        "stride"                 : [1  , 1  , 1  ]
+      },
+      "interactor_plugin"        :
+      {
+        "translation"            : [10.0, 10.0, 10.0],
+        "rotation"               : [30.0, 60.0, 10.0]
+      },
+      "color_plugin"             :
+      {
+        "mode"                   : "hsl-tkp",
+        "k"                      : 0.5,
+        "invert_p"               : false
+      },
+      "scalar_plugin"            :
+      {
+        "enabled"                : true,
+        "mode"                   : "retardation"
+      },
+      "fom_plugin"               :
+      {
+        "enabled"                : true,
+        "scale"                  : 1.0
+      },
+      "polar_plot_plugin"        :
+      {
+        "enabled"                : true,
+        "symmetric"              : true,
+        "superpixel_size"        : 16,
+        "angular_partitions"     : 180
+      },
+      "odf_plugin"               :
+      {
+        "enabled"                : true,
+        "symmetric"              : true,
+        "supervoxel_extent"      : [64 , 64, 1],
+        "histogram_bins"         : [100, 50],
+        "maximum_sh_degree"      : 6,
+        "sampling_partitions"    : [32, 16],
+        "hierarchical"           : false,
+        "visible_layers"         : [false, false, false, false, false, false, false, false, false, false]
+      },
+      "local_tractography_plugin":
+      {
+        "enabled"                : true,
+        "offset"                 : [300, 700, 0  ],
+        "size"                   : [512, 512, 32 ],
+        "stride"                 : [1  , 1  , 1  ],
+        "integration_step"       : 1.0,
+        "iterations"             : 10,
+        "streamline_radius"      : 0.1,
+        "remote_address"         : "tcp://linuxihdc090.rz.rwth-aachen.de:14130",
+        "remote_folder"          : "/home/ad784563/data/"
+      }
+	  }
+  ]
+}
