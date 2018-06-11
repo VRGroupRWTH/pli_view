@@ -344,7 +344,7 @@ void local_tractography_plugin::trace()
 }
 void local_tractography_plugin::remote_trace()
 {
-  remote_viewer_ = std::make_unique<remote_viewer>(owner_, owner_->viewer->interactor());
+  remote_viewer_ = std::make_unique<remote_viewer>(line_edit::get_text<std::string>(line_edit_remote_address), owner_, owner_->viewer->interactor());
   remote_viewer_->on_close.connect([&]()
   {
     remote_viewer_.reset();
