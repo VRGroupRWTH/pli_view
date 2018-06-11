@@ -201,7 +201,7 @@
           <x>0</x>
           <y>0</y>
           <width>168</width>
-          <height>385</height>
+          <height>406</height>
          </rect>
         </property>
         <property name="font">
@@ -219,8 +219,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>28</height>
+          <width>168</width>
+          <height>406</height>
          </rect>
         </property>
         <attribute name="label">
@@ -232,8 +232,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>28</height>
+          <width>168</width>
+          <height>406</height>
          </rect>
         </property>
         <attribute name="label">
@@ -245,8 +245,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>28</height>
+          <width>168</width>
+          <height>406</height>
          </rect>
         </property>
         <attribute name="label">
@@ -258,8 +258,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>28</height>
+          <width>168</width>
+          <height>406</height>
          </rect>
         </property>
         <attribute name="label">
@@ -272,8 +272,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>28</height>
+          <width>168</width>
+          <height>406</height>
          </rect>
         </property>
         <attribute name="label">
@@ -286,7 +286,7 @@
           <x>0</x>
           <y>0</y>
           <width>168</width>
-          <height>385</height>
+          <height>406</height>
          </rect>
         </property>
         <attribute name="label">
@@ -299,25 +299,12 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>28</height>
+          <width>168</width>
+          <height>406</height>
          </rect>
         </property>
         <attribute name="label">
          <string>Local Tractography</string>
-        </attribute>
-       </widget>
-       <widget class="pli::global_tractography_plugin" name="plugin_global_tractography">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>98</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <attribute name="label">
-         <string>Global Tractography</string>
         </attribute>
        </widget>
       </widget>
@@ -420,12 +407,6 @@
    <class>pli::color_plugin</class>
    <extends>QWidget</extends>
    <header location="global">pli_vis/ui/plugins/color_plugin.hpp</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>pli::global_tractography_plugin</class>
-   <extends>QWidget</extends>
-   <header location="global">pli_vis/ui/plugins/global_tractography_plugin.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>

@@ -6,7 +6,6 @@
 #include <pli_vis/ui/utility/text_browser_sink.hpp>
 #include <pli_vis/ui/application.hpp>
 #include <pli_vis/visualization/interactors/first_person_interactor.hpp>
-#include <pli_vis/visualization/interactors/orbit_interactor.hpp>
 #include <pli_vis/visualization/interactors/simple_interactor.hpp>
 
 namespace pli
@@ -23,31 +22,12 @@ interactor_plugin::interactor_plugin(QWidget* parent) : plugin(parent)
     owner_->viewer->interactor()->set_move_speed(float(slider_move_speed->value()) / slider_move_speed->maximum());
     owner_->viewer->interactor()->set_look_speed(float(slider_look_speed->value()) / slider_look_speed->maximum());
   });
-  connect(radio_button_orbit       , &QRadioButton::clicked     , [&]
-  {
-    logger_->info(std::string("Orbit controls selected."));
-    owner_->viewer->set_interactor<orbit_interactor>();
-    owner_->viewer->interactor()->set_move_speed(float(slider_move_speed->value()) / slider_move_speed->maximum());
-    owner_->viewer->interactor()->set_look_speed(float(slider_look_speed->value()) / slider_look_speed->maximum());
-  });
   connect(radio_button_wasd        , &QRadioButton::clicked     , [&]
   {
     logger_->info(std::string("WASD controls selected."));
     owner_->viewer->set_interactor<first_person_interactor>();
     owner_->viewer->interactor()->set_move_speed(float(slider_move_speed->value()) / slider_move_speed->maximum());
     owner_->viewer->interactor()->set_look_speed(float(slider_look_speed->value()) / slider_look_speed->maximum());
-  });
-  connect(radio_button_orthographic, &QRadioButton::clicked     , [&]
-  {
-    logger_->info(std::string("Orthographic projection selected."));
-    owner_->viewer->camera()->set_orthographic(true);
-    owner_->viewer->reset_camera_transform();
-  });
-  connect(radio_button_perspective , &QRadioButton::clicked     , [&]
-  {
-    logger_->info(std::string("Perspective projection selected."));
-    owner_->viewer->camera()->set_orthographic(false);
-    owner_->viewer->reset_camera_transform();
   });
   connect(slider_move_speed        , &QSlider::valueChanged     , [&]
   {
