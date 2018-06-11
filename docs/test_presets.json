@@ -1,7 +1,7 @@
 {
   "presets"                      : 
   [
-	  {
+    {
       "data_plugin"              :
       {
         "dataset"                : "msa",
@@ -60,6 +60,6 @@
         "remote_address"         : "tcp://linuxihdc090.rz.rwth-aachen.de:14130",
         "remote_folder"          : "/home/ad784563/data/"
       }
-	  }
+    }
   ]
 }
