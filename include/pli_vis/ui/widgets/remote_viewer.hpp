@@ -42,6 +42,9 @@ public:
   boost::signals2::signal<void()> on_render;
 
 protected:
+  std::string                address_          ;
+  std::string                folder_           ;
+
   application*               owner_            ;
   interactor*                interactor_       ;
   std::atomic<bool>          alive_            ;

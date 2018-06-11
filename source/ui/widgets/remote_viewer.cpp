@@ -25,6 +25,9 @@ remote_viewer::remote_viewer(const std::string& address, const std::string& fold
   resize        (640, 480);
   show          ();
   
+  address_ = address;
+  folder_  = folder ;
+
   future_ = std::async(std::launch::async, [&]
   {
     auto camera               = owner_->viewer->camera                            ();
@@ -34,7 +37,7 @@ remote_viewer::remote_viewer(const std::string& address, const std::string& fold
 
     zmq::context_t context(1);
     zmq::socket_t  socket(context, ZMQ_PAIR);
-    socket.connect(address);
+    socket.connect(std::string(address_));
 
     while(alive_)
     {
@@ -51,7 +54,7 @@ remote_viewer::remote_viewer(const std::string& address, const std::string& fold
         stride_   = stride;
 
         auto data_loading_parameters = parameters.mutable_data_loading();
-        data_loading_parameters->set_filepath      (folder + std::experimental::filesystem::path(filepath_).filename().string());
+        data_loading_parameters->set_filepath      (folder_ + std::experimental::filesystem::path(filepath_).filename().string());
         data_loading_parameters->set_dataset_format(filepath_.find("MSA") != std::string::npos ? tt::msa0309 : tt::vervet1818);
         data_loading_parameters->mutable_selection()->mutable_offset()->set_x(offset_[0]);
         data_loading_parameters->mutable_selection()->mutable_offset()->set_y(offset_[1]);
@@ -156,7 +159,14 @@ remote_viewer::remote_viewer(const std::string& address, const std::string& fold
 remote_viewer::~remote_viewer()
 {
   alive_ = false;
-  future_.get();
+  try
+  {
+    future_.get();
+  }
+  catch(...)
+  {
+    
+  }
 }
 
 void remote_viewer::closeEvent     (QCloseEvent* event)
