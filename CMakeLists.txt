@@ -54,6 +54,7 @@ set(PROJECT_SOURCES
   include/pli_vis/opengl/texture.hpp
   include/pli_vis/opengl/vertex_array.hpp
   include/pli_vis/third_party/glew/GL/glew.h
+  include/pli_vis/third_party/json/json.hpp
   include/pli_vis/third_party/qxt/QxtGlobal.h
   include/pli_vis/third_party/qxt/QxtLetterBoxWidget.h
   include/pli_vis/third_party/qxt/QxtLetterBoxWidgetP.h
