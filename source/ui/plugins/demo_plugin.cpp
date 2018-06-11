@@ -19,7 +19,7 @@ demo_plugin::demo_plugin        (QWidget* parent) : plugin(parent), buttons_{but
     {
       bool save  = QApplication::keyboardModifiers() & Qt::ControlModifier;
       auto index = boost::lexical_cast<std::size_t>(button->text().toStdString());
-      save ? save_preset(index) : load_preset(index);
+      save ? save_preset(index - 1) : load_preset(index - 1);
       logger_->info("{} preset {}.", save ? "Saved" : "Loaded", index);
     });
   }
@@ -54,7 +54,16 @@ void demo_plugin::load_preset   (std::size_t index) const
   nlohmann::json json;
   file >> json;
 
-  // TODO: Read current state from preset i in json.
+  auto& preset                    = json["presets"][index];
+  auto& data_plugin               = preset["data_plugin"              ];
+  auto& interactor_plugin         = preset["interactor_plugin"        ];
+  auto& color_plugin              = preset["color_plugin"             ];
+  auto& scalar_plugin             = preset["scalar_plugin"            ];
+  auto& fom_plugin                = preset["fom_plugin"               ];
+  auto& polar_plot_plugin         = preset["polar_plot_plugin"        ];
+  auto& odf_plugin                = preset["odf_plugin"               ];
+  auto& local_tractography_plugin = preset["local_tractography_plugin"];
+  // TODO: Read current state from json.
 }
 void demo_plugin::save_preset   (std::size_t index) const
 {
@@ -62,7 +71,24 @@ void demo_plugin::save_preset   (std::size_t index) const
   nlohmann::json json;
   file >> json;
 
-  // TODO: Write current state to preset i in json.
+  auto& preset                        = json["presets"][index];
+  preset["data_plugin"              ] = nlohmann::json::object();
+  preset["interactor_plugin"        ] = nlohmann::json::object();
+  preset["color_plugin"             ] = nlohmann::json::object();
+  preset["scalar_plugin"            ] = nlohmann::json::object();
+  preset["fom_plugin"               ] = nlohmann::json::object();
+  preset["polar_plot_plugin"        ] = nlohmann::json::object();
+  preset["odf_plugin"               ] = nlohmann::json::object();
+  preset["local_tractography_plugin"] = nlohmann::json::object();
+  auto& data_plugin                   = preset["data_plugin"              ];
+  auto& interactor_plugin             = preset["interactor_plugin"        ];
+  auto& color_plugin                  = preset["color_plugin"             ];
+  auto& scalar_plugin                 = preset["scalar_plugin"            ];
+  auto& fom_plugin                    = preset["fom_plugin"               ];
+  auto& polar_plot_plugin             = preset["polar_plot_plugin"        ];
+  auto& odf_plugin                    = preset["odf_plugin"               ];
+  auto& local_tractography_plugin     = preset["local_tractography_plugin"];
+  // TODO: Write current state to json.
 
   std::ofstream mutable_file(presets_filepath_);
   mutable_file << std::setw(4) << json << std::endl;
