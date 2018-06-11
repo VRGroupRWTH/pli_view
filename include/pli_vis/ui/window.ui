@@ -44,7 +44,7 @@
       <widget class="QSplitter" name="splitter_vertical_left">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>1</horstretch>
+         <horstretch>3</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
@@ -158,7 +158,7 @@
        </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
+         <horstretch>1</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
@@ -173,6 +173,9 @@
          <weight>50</weight>
          <bold>false</bold>
         </font>
+       </property>
+       <property name="mouseTracking">
+        <bool>false</bool>
        </property>
        <property name="inputMethodHints">
         <set>Qt::ImhNone</set>
@@ -200,8 +203,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>168</width>
-          <height>406</height>
+          <width>308</width>
+          <height>385</height>
          </rect>
         </property>
         <property name="font">
@@ -219,8 +222,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>168</width>
-          <height>406</height>
+          <width>308</width>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
@@ -232,8 +235,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>168</width>
-          <height>406</height>
+          <width>308</width>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
@@ -245,8 +248,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>168</width>
-          <height>406</height>
+          <width>308</width>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
@@ -258,8 +261,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>168</width>
-          <height>406</height>
+          <width>308</width>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
@@ -272,8 +275,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>168</width>
-          <height>406</height>
+          <width>308</width>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
@@ -285,8 +288,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>168</width>
-          <height>406</height>
+          <width>308</width>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
@@ -299,12 +302,25 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>168</width>
-          <height>406</height>
+          <width>308</width>
+          <height>385</height>
          </rect>
         </property>
         <attribute name="label">
          <string>Local Tractography</string>
+        </attribute>
+       </widget>
+       <widget class="pli::demo_plugin" name="page">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>308</width>
+          <height>385</height>
+         </rect>
+        </property>
+        <attribute name="label">
+         <string>Demo Presets</string>
         </attribute>
        </widget>
       </widget>
@@ -413,6 +429,12 @@
    <class>pli::polar_plot_plugin</class>
    <extends>QWidget</extends>
    <header location="global">pli_vis/ui/plugins/polar_plot_plugin.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>pli::demo_plugin</class>
+   <extends>QWidget</extends>
+   <header location="global">pli_vis/ui/plugins/demo_plugin.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
