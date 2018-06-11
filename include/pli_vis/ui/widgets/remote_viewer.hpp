@@ -25,7 +25,7 @@ class application;
 class remote_viewer : public QLabel
 {
 public:
-  explicit remote_viewer  (const std::string& address, application* owner, interactor* interactor, QWidget* parent = nullptr);
+  explicit remote_viewer  (const std::string& address, const std::string& folder, application* owner, interactor* interactor, QWidget* parent = nullptr);
   remote_viewer           (const remote_viewer&  that) = default;
   remote_viewer           (      remote_viewer&& temp) = default;
   virtual ~remote_viewer  ();
@@ -42,7 +42,6 @@ public:
   boost::signals2::signal<void()> on_render;
 
 protected:
-  std::string                address_          ;
   application*               owner_            ;
   interactor*                interactor_       ;
   std::atomic<bool>          alive_            ;

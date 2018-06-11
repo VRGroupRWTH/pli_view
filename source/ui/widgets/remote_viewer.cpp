@@ -6,6 +6,7 @@
 
 #include <array>
 #include <cstdint>
+#include <filesystem>
 
 #include <pli_vis/third_party/cppzmq/zmq.hpp>
 #include <pli_vis/ui/plugins/data_plugin.hpp>
@@ -18,9 +19,9 @@
 
 namespace pli
 {
-remote_viewer::remote_viewer(const std::string& address, application* owner, interactor* interactor, QWidget* parent) : QLabel(parent), address_(address), owner_(owner), interactor_(interactor), alive_(true)
+remote_viewer::remote_viewer(const std::string& address, const std::string& folder, application* owner, interactor* interactor, QWidget* parent) : QLabel(parent), owner_(owner), interactor_(interactor), alive_(true)
 {
-  setWindowTitle(std::string("Remote Viewer " + address_).c_str());
+  setWindowTitle(std::string("Remote Viewer " + address).c_str());
   resize        (640, 480);
   show          ();
   
@@ -33,7 +34,7 @@ remote_viewer::remote_viewer(const std::string& address, application* owner, int
 
     zmq::context_t context(1);
     zmq::socket_t  socket(context, ZMQ_PAIR);
-    socket.connect(address_);
+    socket.connect(address);
 
     while(alive_)
     {
@@ -50,7 +51,7 @@ remote_viewer::remote_viewer(const std::string& address, application* owner, int
         stride_   = stride;
 
         auto data_loading_parameters = parameters.mutable_data_loading();
-        data_loading_parameters->set_filepath      (filepath_.find("MSA") != std::string::npos ? "/home/ad784563/data/MSA0309_s0536-0695.h5" : "/home/ad784563/data/Vervet1818.h5");
+        data_loading_parameters->set_filepath      (folder + std::experimental::filesystem::path(filepath_).filename().string());
         data_loading_parameters->set_dataset_format(filepath_.find("MSA") != std::string::npos ? tt::msa0309 : tt::vervet1818);
         data_loading_parameters->mutable_selection()->mutable_offset()->set_x(offset_[0]);
         data_loading_parameters->mutable_selection()->mutable_offset()->set_y(offset_[1]);
