@@ -9,9 +9,21 @@ namespace pli
 class demo_plugin : public plugin<demo_plugin, Ui_demo_toolbox>
 {
 public:
+  explicit demo_plugin  (QWidget* parent = nullptr);
+  demo_plugin           (const demo_plugin&  that) = delete ;
+  demo_plugin           (      demo_plugin&& temp) = default;
+  virtual ~demo_plugin   ()                        = default;
+  demo_plugin& operator=(const demo_plugin&  that) = delete ;
+  demo_plugin& operator=(      demo_plugin&& temp) = default;
 
 protected:
+  void start      () override;
 
+  void load_preset(std::size_t index);
+  void save_preset(std::size_t index);
+
+  std::vector<QPushButton*> buttons_          ;
+  std::string               presets_filepath_ = "presets.json";
 };
 }
 

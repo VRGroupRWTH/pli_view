@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>window</class>
  <widget class="QMainWindow" name="window">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -203,7 +206,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>308</width>
+          <width>139</width>
           <height>385</height>
          </rect>
         </property>
@@ -222,7 +225,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>308</width>
+          <width>139</width>
           <height>385</height>
          </rect>
         </property>
@@ -235,7 +238,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>308</width>
+          <width>139</width>
           <height>385</height>
          </rect>
         </property>
@@ -248,7 +251,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>308</width>
+          <width>139</width>
           <height>385</height>
          </rect>
         </property>
@@ -261,7 +264,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>308</width>
+          <width>139</width>
           <height>385</height>
          </rect>
         </property>
@@ -275,7 +278,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>308</width>
+          <width>139</width>
           <height>385</height>
          </rect>
         </property>
@@ -288,7 +291,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>308</width>
+          <width>139</width>
           <height>385</height>
          </rect>
         </property>
@@ -302,7 +305,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>308</width>
+          <width>139</width>
           <height>385</height>
          </rect>
         </property>
@@ -310,12 +313,12 @@
          <string>Local Tractography</string>
         </attribute>
        </widget>
-       <widget class="pli::demo_plugin" name="page">
+       <widget class="pli::demo_plugin" name="plugin_demo">
         <property name="geometry">
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>308</width>
+          <width>139</width>
           <height>385</height>
          </rect>
         </property>
