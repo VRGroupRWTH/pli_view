@@ -16,9 +16,13 @@ signals :
 public:
   explicit color_plugin(QWidget* parent = nullptr);
 
-  int   mode    () const;
-  float k       () const;
-  bool  inverted() const;
+  int   mode        () const;
+  float k           () const;
+  bool  inverted    () const;
+
+  void  set_mode    (const int   mode    );
+  void  set_k       (const float k       );
+  void  set_inverted(const bool  inverted);
 };
 }
 

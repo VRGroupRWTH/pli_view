@@ -74,7 +74,92 @@ void demo_plugin::load_preset   (std::size_t index) const
   auto& odf_plugin_data                = preset["odf_plugin"               ];
   auto& local_tractography_plugin_data = preset["local_tractography_plugin"];
 
-  // TODO: Read current state from json.
+  data_plugin->unserialize(
+    data_plugin_data["dataset"],
+    { 
+      data_plugin_data["offset"][0].get<std::size_t>(), 
+      data_plugin_data["offset"][1].get<std::size_t>(), 
+      data_plugin_data["offset"][2].get<std::size_t>() 
+    },
+    { 
+      data_plugin_data["size"]  [0].get<std::size_t>(), 
+      data_plugin_data["size"]  [1].get<std::size_t>(), 
+      data_plugin_data["size"]  [2].get<std::size_t>() 
+    },
+    { 
+      data_plugin_data["stride"][0].get<std::size_t>(), 
+      data_plugin_data["stride"][1].get<std::size_t>(), 
+      data_plugin_data["stride"][2].get<std::size_t>() 
+    });
+
+  owner_->viewer->camera()->set_translation   (
+  {
+    interactor_plugin_data["translation"][0].get<float>(),
+    interactor_plugin_data["translation"][1].get<float>(),
+    interactor_plugin_data["translation"][2].get<float>()
+  });
+  owner_->viewer->camera()->set_rotation_euler(
+  {
+    interactor_plugin_data["rotation"]   [0].get<float>(),
+    interactor_plugin_data["rotation"]   [1].get<float>(),
+    interactor_plugin_data["rotation"]   [2].get<float>()
+  });
+
+  color_plugin->set_mode    (color_plugin_data["mode"    ].get<int>  ());
+  color_plugin->set_k       (color_plugin_data["k"       ].get<float>());
+  color_plugin->set_inverted(color_plugin_data["invert_p"].get<bool> ());
+  
+  scalar_plugin->checkbox_enabled->setChecked(scalar_plugin_data["enabled"].get<bool>());
+  scalar_plugin_data["mode"].get<bool>() ? scalar_plugin->checkbox_retardation->setChecked(true) : scalar_plugin->checkbox_transmittance->setChecked(true);
+
+  polar_plot_plugin->checkbox_enabled            ->setChecked(polar_plot_plugin_data["enabled"  ].get<bool>());
+  polar_plot_plugin->checkbox_symmetric          ->setChecked(polar_plot_plugin_data["symmetric"].get<bool>());
+  polar_plot_plugin->line_edit_superpixel_size   ->setText   (QString::fromStdString(std::to_string(polar_plot_plugin_data["superpixel_size"   ].get<std::size_t>())));
+  polar_plot_plugin->line_edit_angular_partitions->setText   (QString::fromStdString(std::to_string(polar_plot_plugin_data["angular_partitions"].get<std::size_t>())));
+  if (polar_plot_plugin->checkbox_enabled->isChecked())
+    polar_plot_plugin->button_calculate->click();
+
+  odf_plugin->checkbox_enabled           ->setChecked(odf_plugin_data["enabled"  ].get<bool>());
+  odf_plugin->checkbox_even_only         ->setChecked(odf_plugin_data["symmetric"].get<bool>());
+  odf_plugin->line_edit_vector_block_x   ->setText   (QString::fromStdString(std::to_string(odf_plugin_data["supervoxel_extent"  ][0].get<std::size_t>())));
+  odf_plugin->line_edit_vector_block_y   ->setText   (QString::fromStdString(std::to_string(odf_plugin_data["supervoxel_extent"  ][1].get<std::size_t>())));
+  odf_plugin->line_edit_vector_block_z   ->setText   (QString::fromStdString(std::to_string(odf_plugin_data["supervoxel_extent"  ][2].get<std::size_t>())));
+  odf_plugin->line_edit_histogram_theta  ->setText   (QString::fromStdString(std::to_string(odf_plugin_data["histogram_bins"     ][0].get<std::size_t>())));
+  odf_plugin->line_edit_histogram_phi    ->setText   (QString::fromStdString(std::to_string(odf_plugin_data["histogram_bins"     ][1].get<std::size_t>())));
+  odf_plugin->line_edit_maximum_sh_degree->setText   (QString::fromStdString(std::to_string(odf_plugin_data["maximum_sh_degree"  ]   .get<std::size_t>())));
+  odf_plugin->line_edit_sampling_theta   ->setText   (QString::fromStdString(std::to_string(odf_plugin_data["sampling_partitions"][0].get<std::size_t>())));
+  odf_plugin->line_edit_sampling_phi     ->setText   (QString::fromStdString(std::to_string(odf_plugin_data["sampling_partitions"][1].get<std::size_t>())));
+  odf_plugin->checkbox_hierarchical      ->setChecked(odf_plugin_data["hierarchical"  ]   .get<bool>());
+  odf_plugin->checkbox_depth_0           ->setChecked(odf_plugin_data["visible_layers"][0].get<bool>());
+  odf_plugin->checkbox_depth_1           ->setChecked(odf_plugin_data["visible_layers"][1].get<bool>());
+  odf_plugin->checkbox_depth_2           ->setChecked(odf_plugin_data["visible_layers"][2].get<bool>());
+  odf_plugin->checkbox_depth_3           ->setChecked(odf_plugin_data["visible_layers"][3].get<bool>());
+  odf_plugin->checkbox_depth_4           ->setChecked(odf_plugin_data["visible_layers"][4].get<bool>());
+  odf_plugin->checkbox_depth_5           ->setChecked(odf_plugin_data["visible_layers"][5].get<bool>());
+  odf_plugin->checkbox_depth_6           ->setChecked(odf_plugin_data["visible_layers"][6].get<bool>());
+  odf_plugin->checkbox_depth_7           ->setChecked(odf_plugin_data["visible_layers"][7].get<bool>());
+  odf_plugin->checkbox_depth_8           ->setChecked(odf_plugin_data["visible_layers"][8].get<bool>());
+  odf_plugin->checkbox_depth_9           ->setChecked(odf_plugin_data["visible_layers"][9].get<bool>());
+  if (odf_plugin->checkbox_enabled->isChecked())
+    odf_plugin->button_calculate->click();
+
+  local_tractography_plugin->checkbox_enabled           ->setChecked(local_tractography_plugin_data["enabled"].get<bool>());
+  local_tractography_plugin->line_edit_offset_x         ->setText(QString::fromStdString(std::to_string(local_tractography_plugin_data["offset"][0]        .get<std::size_t>())));
+  local_tractography_plugin->line_edit_offset_y         ->setText(QString::fromStdString(std::to_string(local_tractography_plugin_data["offset"][1]        .get<std::size_t>())));
+  local_tractography_plugin->line_edit_offset_z         ->setText(QString::fromStdString(std::to_string(local_tractography_plugin_data["offset"][2]        .get<std::size_t>())));
+  local_tractography_plugin->line_edit_size_x           ->setText(QString::fromStdString(std::to_string(local_tractography_plugin_data["size"  ][0]        .get<std::size_t>())));
+  local_tractography_plugin->line_edit_size_y           ->setText(QString::fromStdString(std::to_string(local_tractography_plugin_data["size"  ][1]        .get<std::size_t>())));
+  local_tractography_plugin->line_edit_size_z           ->setText(QString::fromStdString(std::to_string(local_tractography_plugin_data["size"  ][2]        .get<std::size_t>())));
+  local_tractography_plugin->line_edit_stride_x         ->setText(QString::fromStdString(std::to_string(local_tractography_plugin_data["stride"][0]        .get<std::size_t>())));
+  local_tractography_plugin->line_edit_stride_y         ->setText(QString::fromStdString(std::to_string(local_tractography_plugin_data["stride"][1]        .get<std::size_t>())));
+  local_tractography_plugin->line_edit_stride_z         ->setText(QString::fromStdString(std::to_string(local_tractography_plugin_data["stride"][2]        .get<std::size_t>())));
+  local_tractography_plugin->line_edit_integration_step ->setText(QString::fromStdString(std::to_string(local_tractography_plugin_data["integration_step"] .get<float>      ())));
+  local_tractography_plugin->line_edit_iterations       ->setText(QString::fromStdString(std::to_string(local_tractography_plugin_data["iterations"]       .get<std::size_t>())));
+  local_tractography_plugin->line_edit_streamline_radius->setText(QString::fromStdString(std::to_string(local_tractography_plugin_data["streamline_radius"].get<float>      ())));
+  local_tractography_plugin->line_edit_remote_address   ->setText(QString::fromStdString(local_tractography_plugin_data["remote_address"].get<std::string>()));
+  local_tractography_plugin->line_edit_dataset_folder   ->setText(QString::fromStdString(local_tractography_plugin_data["remote_folder" ].get<std::string>()));
+  if(local_tractography_plugin->checkbox_enabled->isChecked())
+    local_tractography_plugin->button_remote_trace->click();
 }
 void demo_plugin::save_preset   (std::size_t index) const
 {
@@ -111,7 +196,7 @@ void demo_plugin::save_preset   (std::size_t index) const
 
   data_plugin_data      ["dataset"            ] = data_plugin->filepath        ();
   data_plugin_data      ["offset"             ] = data_plugin->selection_offset();
-  data_plugin_data      ["size"               ] = data_plugin->selection_size  ();
+  data_plugin_data      ["size"               ] = data_plugin->selection_bounds();
   data_plugin_data      ["stride"             ] = data_plugin->selection_stride();
   
   auto translation = owner_->viewer->camera()->translation   ();
