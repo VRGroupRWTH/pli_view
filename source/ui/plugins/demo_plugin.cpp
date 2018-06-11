@@ -54,15 +54,25 @@ void demo_plugin::load_preset   (std::size_t index) const
   nlohmann::json json;
   file >> json;
 
-  auto& preset                    = json["presets"][index];
-  auto& data_plugin               = preset["data_plugin"              ];
-  auto& interactor_plugin         = preset["interactor_plugin"        ];
-  auto& color_plugin              = preset["color_plugin"             ];
-  auto& scalar_plugin             = preset["scalar_plugin"            ];
-  auto& fom_plugin                = preset["fom_plugin"               ];
-  auto& polar_plot_plugin         = preset["polar_plot_plugin"        ];
-  auto& odf_plugin                = preset["odf_plugin"               ];
-  auto& local_tractography_plugin = preset["local_tractography_plugin"];
+  auto  data_plugin                    = owner_->get_plugin<pli::data_plugin>              ();
+  auto  interactor_plugin              = owner_->get_plugin<pli::interactor_plugin>        ();
+  auto  color_plugin                   = owner_->get_plugin<pli::color_plugin>             ();
+  auto  scalar_plugin                  = owner_->get_plugin<pli::scalar_plugin>            ();
+  auto  fom_plugin                     = owner_->get_plugin<pli::fom_plugin>               ();
+  auto  polar_plot_plugin              = owner_->get_plugin<pli::polar_plot_plugin>        ();
+  auto  odf_plugin                     = owner_->get_plugin<pli::odf_plugin>               ();
+  auto  local_tractography_plugin      = owner_->get_plugin<pli::local_tractography_plugin>();
+
+  auto& preset                         = json["presets"][index];
+  auto& data_plugin_data               = preset["data_plugin"              ];
+  auto& interactor_plugin_data         = preset["interactor_plugin"        ];
+  auto& color_plugin_data              = preset["color_plugin"             ];
+  auto& scalar_plugin_data             = preset["scalar_plugin"            ];
+  auto& fom_plugin_data                = preset["fom_plugin"               ];
+  auto& polar_plot_plugin_data         = preset["polar_plot_plugin"        ];
+  auto& odf_plugin_data                = preset["odf_plugin"               ];
+  auto& local_tractography_plugin_data = preset["local_tractography_plugin"];
+
   // TODO: Read current state from json.
 }
 void demo_plugin::save_preset   (std::size_t index) const
@@ -70,24 +80,33 @@ void demo_plugin::save_preset   (std::size_t index) const
   std::ifstream  file(presets_filepath_);
   nlohmann::json json;
   file >> json;
+  
+  auto  data_plugin                    = owner_->get_plugin<pli::data_plugin>              ();
+  auto  interactor_plugin              = owner_->get_plugin<pli::interactor_plugin>        ();
+  auto  color_plugin                   = owner_->get_plugin<pli::color_plugin>             ();
+  auto  scalar_plugin                  = owner_->get_plugin<pli::scalar_plugin>            ();
+  auto  fom_plugin                     = owner_->get_plugin<pli::fom_plugin>               ();
+  auto  polar_plot_plugin              = owner_->get_plugin<pli::polar_plot_plugin>        ();
+  auto  odf_plugin                     = owner_->get_plugin<pli::odf_plugin>               ();
+  auto  local_tractography_plugin      = owner_->get_plugin<pli::local_tractography_plugin>();
 
-  auto& preset                        = json["presets"][index];
-  preset["data_plugin"              ] = nlohmann::json::object();
-  preset["interactor_plugin"        ] = nlohmann::json::object();
-  preset["color_plugin"             ] = nlohmann::json::object();
-  preset["scalar_plugin"            ] = nlohmann::json::object();
-  preset["fom_plugin"               ] = nlohmann::json::object();
-  preset["polar_plot_plugin"        ] = nlohmann::json::object();
-  preset["odf_plugin"               ] = nlohmann::json::object();
-  preset["local_tractography_plugin"] = nlohmann::json::object();
-  auto& data_plugin                   = preset["data_plugin"              ];
-  auto& interactor_plugin             = preset["interactor_plugin"        ];
-  auto& color_plugin                  = preset["color_plugin"             ];
-  auto& scalar_plugin                 = preset["scalar_plugin"            ];
-  auto& fom_plugin                    = preset["fom_plugin"               ];
-  auto& polar_plot_plugin             = preset["polar_plot_plugin"        ];
-  auto& odf_plugin                    = preset["odf_plugin"               ];
-  auto& local_tractography_plugin     = preset["local_tractography_plugin"];
+  auto& preset                         = json["presets"][index];
+  preset["data_plugin"              ]  = nlohmann::json::object();
+  preset["interactor_plugin"        ]  = nlohmann::json::object();
+  preset["color_plugin"             ]  = nlohmann::json::object();
+  preset["scalar_plugin"            ]  = nlohmann::json::object();
+  preset["fom_plugin"               ]  = nlohmann::json::object();
+  preset["polar_plot_plugin"        ]  = nlohmann::json::object();
+  preset["odf_plugin"               ]  = nlohmann::json::object();
+  preset["local_tractography_plugin"]  = nlohmann::json::object();
+  auto& data_plugin_data               = preset["data_plugin"              ];
+  auto& interactor_plugin_data         = preset["interactor_plugin"        ];
+  auto& color_plugin_data              = preset["color_plugin"             ];
+  auto& scalar_plugin_data             = preset["scalar_plugin"            ];
+  auto& fom_plugin_data                = preset["fom_plugin"               ];
+  auto& polar_plot_plugin_data         = preset["polar_plot_plugin"        ];
+  auto& odf_plugin_data                = preset["odf_plugin"               ];
+  auto& local_tractography_plugin_data = preset["local_tractography_plugin"];
   // TODO: Write current state to json.
 
   std::ofstream mutable_file(presets_filepath_);
