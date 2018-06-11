@@ -1295,7 +1295,12 @@
   <tabstop>line_edit_integration_step</tabstop>
   <tabstop>slider_iterations</tabstop>
   <tabstop>line_edit_iterations</tabstop>
+  <tabstop>slider_streamline_radius</tabstop>
+  <tabstop>line_edit_streamline_radius</tabstop>
+  <tabstop>line_edit_remote_address</tabstop>
+  <tabstop>line_edit_dataset_folder</tabstop>
   <tabstop>button_local_trace</tabstop>
+  <tabstop>button_remote_trace</tabstop>
  </tabstops>
  <resources/>
  <connections/>
