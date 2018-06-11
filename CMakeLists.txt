@@ -208,9 +208,6 @@ else()
   import_library(hdf5 HDF5_INCLUDE_DIR HDF5_C_SHARED_LIBRARY)
 endif()
 
-find_package  (OpenMP)
-list          (APPEND CMAKE_CXX_FLAGS ${OpenMP_CXX_FLAGS})
-
 find_package  (OpenGL REQUIRED)
 import_library(opengl OPENGL_INCLUDE_DIRS OPENGL_LIBRARIES)
 
