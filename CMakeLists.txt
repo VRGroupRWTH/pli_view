@@ -256,7 +256,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   PRIVATE source)
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_INCLUDE_DIRS})
 target_link_libraries     (${PROJECT_NAME} PUBLIC ${PROJECT_LIBRARIES})
-target_compile_definitions(${PROJECT_NAME} PUBLIC -DQWT_NO_SVG -DQT_NO_SVG -DQT_NO_PRINTER -DQT_NO_PRINTDIALOG)
+target_compile_definitions(${PROJECT_NAME} PUBLIC -DH5_BUILT_AS_DYNAMIC_LIB -DQWT_NO_SVG -DQT_NO_SVG -DQT_NO_PRINTER -DQT_NO_PRINTDIALOG)
 set_target_properties     (${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 
 ##################################################    Testing     ##################################################
