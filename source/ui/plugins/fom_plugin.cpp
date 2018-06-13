@@ -3,6 +3,7 @@
 #include <limits>
 
 #include <boost/format.hpp>
+#include <QDoubleValidator>
 #include <vector_functions.hpp>
 
 #include <pli_vis/ui/plugins/color_plugin.hpp>

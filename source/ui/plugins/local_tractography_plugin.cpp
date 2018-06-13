@@ -4,7 +4,9 @@
 #include <random>
 
 #include <boost/format.hpp>
+#include <QDoubleValidator>
 #include <QFileDialog>
+#include <QIntValidator>
 #include <tangent-base/default_tracers.hpp>
 #include <tangent-tbb/tbb_default_tracers.hpp>
 

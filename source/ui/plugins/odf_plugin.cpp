@@ -4,6 +4,7 @@
 #include <string>
 
 #include <boost/format.hpp>
+#include <QIntValidator>
 #include <vector_functions.hpp>
 
 #include <pli_vis/cuda/sh/spherical_harmonics.h>

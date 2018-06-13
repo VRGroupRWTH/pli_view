@@ -1,5 +1,7 @@
 #include <pli_vis/ui/plugins/polar_plot_plugin.hpp>
 
+#include <QIntValidator>
+
 #include <pli_vis/cuda/polar_plot.h>
 #include <pli_vis/cuda/utility/vector_ops.h>
 #include <pli_vis/ui/utility/line_edit.hpp>

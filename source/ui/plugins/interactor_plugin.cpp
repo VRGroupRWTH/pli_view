@@ -1,6 +1,7 @@
 #include <pli_vis/ui/plugins/interactor_plugin.hpp>
 
 #include <boost/format.hpp>
+#include <QDoubleValidator>
 
 #include <pli_vis/ui/utility/line_edit.hpp>
 #include <pli_vis/ui/utility/text_browser_sink.hpp>

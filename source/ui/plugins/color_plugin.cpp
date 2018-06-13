@@ -1,6 +1,7 @@
 #include <pli_vis/ui/plugins/color_plugin.hpp>
 
 #include <boost/format.hpp>
+#include <QDoubleValidator>
 
 #include <pli_vis/ui/utility/line_edit.hpp>
 
