@@ -11,8 +11,10 @@ set                   (CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} "--expt-extended-lambd
                                                           "-lcublas"
                                                           "-lcublas_device"
                                                           "-lcudadevrt"
-                                                         #"-gencode=arch=compute_50,code=sm_50")
-                                                          "-gencode=arch=compute_60,code=sm_60")
+                                                          "-gencode=arch=compute_52,code=sm_52")
+                                                         #"-gencode=arch=compute_60,code=sm_60")
+set                   (CUDA_SEPARABLE_COMPILATION ON)
+set                   (CUDA_USE_STATIC_CUDA_RUNTIME OFF)
 
 ##################################################    Options     ##################################################
 option(BUILD_TESTS "Build tests." OFF)
