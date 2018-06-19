@@ -21,6 +21,7 @@ namespace pli
 {
 remote_viewer::remote_viewer(const std::string& address, const std::string& folder, application* owner, interactor* interactor, QWidget* parent) : QLabel(parent), owner_(owner), interactor_(interactor), alive_(true)
 {
+  setAttribute  (Qt::WidgetAttribute::WA_StaticContents, true);
   setWindowTitle(std::string("Remote Viewer " + address).c_str());
   resize        (640, 480);
   show          ();
