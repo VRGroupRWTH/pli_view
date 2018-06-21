@@ -23,6 +23,7 @@ remote_viewer::remote_viewer(const std::string& address, const std::string& fold
 {
   setAttribute  (Qt::WidgetAttribute::WA_StaticContents, true);
   setWindowTitle(std::string("Remote Viewer " + address).c_str());
+  move          (12 , 32 );
   resize        (640, 480);
   show          ();
   
