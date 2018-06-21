@@ -2,6 +2,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include <json/json.hpp>
+#include <QTextDocument>
 
 #include <pli_vis/ui/utility/line_edit.hpp>
 #include <pli_vis/ui/utility/text_browser_sink.hpp>
@@ -73,6 +74,7 @@ void demo_plugin::load_preset   (std::size_t index) const
   auto& polar_plot_plugin_data         = preset["polar_plot_plugin"        ];
   auto& odf_plugin_data                = preset["odf_plugin"               ];
   auto& local_tractography_plugin_data = preset["local_tractography_plugin"];
+  auto& demo_plugin_data               = preset["demo_plugin"              ];
 
   data_plugin->unserialize(
     data_plugin_data["dataset"],
@@ -112,6 +114,9 @@ void demo_plugin::load_preset   (std::size_t index) const
   scalar_plugin->checkbox_enabled->setChecked(scalar_plugin_data["enabled"].get<bool>());
   scalar_plugin_data["mode"].get<bool>() ? scalar_plugin->checkbox_retardation->setChecked(true) : scalar_plugin->checkbox_transmittance->setChecked(true);
 
+  fom_plugin->checkbox_enabled->setChecked(fom_plugin_data["enabled"].get<bool>());
+  fom_plugin->line_edit_fiber_scale->setText(QString::fromStdString(std::to_string(fom_plugin_data["scale"].get<float>())));
+                       
   polar_plot_plugin->checkbox_enabled            ->setChecked(polar_plot_plugin_data["enabled"  ].get<bool>());
   polar_plot_plugin->checkbox_symmetric          ->setChecked(polar_plot_plugin_data["symmetric"].get<bool>());
   polar_plot_plugin->line_edit_superpixel_size   ->setText   (QString::fromStdString(std::to_string(polar_plot_plugin_data["superpixel_size"   ].get<std::size_t>())));
@@ -160,6 +165,9 @@ void demo_plugin::load_preset   (std::size_t index) const
   local_tractography_plugin->line_edit_dataset_folder   ->setText(QString::fromStdString(local_tractography_plugin_data["remote_folder" ].get<std::string>()));
   if(local_tractography_plugin->checkbox_enabled->isChecked())
     local_tractography_plugin->button_remote_trace->click();
+  local_tractography_plugin->updateGeometry();
+
+  text_content->document()->setPlainText(QString::fromStdString(std::to_string(demo_plugin_data["description"].get<float>())));
 }
 void demo_plugin::save_preset   (std::size_t index) const
 {
@@ -175,7 +183,7 @@ void demo_plugin::save_preset   (std::size_t index) const
   auto  polar_plot_plugin              = owner_->get_plugin<pli::polar_plot_plugin>        ();
   auto  odf_plugin                     = owner_->get_plugin<pli::odf_plugin>               ();
   auto  local_tractography_plugin      = owner_->get_plugin<pli::local_tractography_plugin>();
-
+  
   auto& preset                         = json["presets"][index];
   preset["data_plugin"              ]  = nlohmann::json::object();
   preset["interactor_plugin"        ]  = nlohmann::json::object();
@@ -185,6 +193,7 @@ void demo_plugin::save_preset   (std::size_t index) const
   preset["polar_plot_plugin"        ]  = nlohmann::json::object();
   preset["odf_plugin"               ]  = nlohmann::json::object();
   preset["local_tractography_plugin"]  = nlohmann::json::object();
+  preset["demo_plugin"              ]  = nlohmann::json::object();
   auto& data_plugin_data               = preset["data_plugin"              ];
   auto& interactor_plugin_data         = preset["interactor_plugin"        ];
   auto& color_plugin_data              = preset["color_plugin"             ];
@@ -193,6 +202,7 @@ void demo_plugin::save_preset   (std::size_t index) const
   auto& polar_plot_plugin_data         = preset["polar_plot_plugin"        ];
   auto& odf_plugin_data                = preset["odf_plugin"               ];
   auto& local_tractography_plugin_data = preset["local_tractography_plugin"];
+  auto& demo_plugin_data               = preset["demo_plugin"              ];
 
   data_plugin_data      ["dataset"            ] = data_plugin->filepath        ();
   data_plugin_data      ["offset"             ] = data_plugin->selection_offset();
@@ -255,6 +265,8 @@ void demo_plugin::save_preset   (std::size_t index) const
   local_tractography_plugin_data["streamline_radius"] = local_tractography_plugin->streamline_radius();
   local_tractography_plugin_data["remote_address"   ] = line_edit::get_text<std::string>(local_tractography_plugin->line_edit_remote_address);
   local_tractography_plugin_data["remote_folder"    ] = line_edit::get_text<std::string>(local_tractography_plugin->line_edit_dataset_folder);
+
+  demo_plugin_data["description"] = text_content->document()->toPlainText().toStdString();
 
   std::ofstream mutable_file(presets_filepath_);
   mutable_file << std::setw(4) << json << std::endl;
