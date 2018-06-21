@@ -10,8 +10,9 @@ set                   (CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++11")
 set                   (CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} "--expt-extended-lambda"
                                                           "-lcublas"
                                                           "-lcudadevrt"
-                                                          "-gencode=arch=compute_52,code=sm_52")
-                                                         #"-gencode=arch=compute_60,code=sm_60")
+                                                          "-gencode=arch=compute_52,code=sm_52"
+                                                          "-gencode=arch=compute_60,code=sm_60"
+                                                          "-gencode=arch=compute_61,code=sm_61")
 set                   (CUDA_SEPARABLE_COMPILATION ON)
 set                   (CUDA_USE_STATIC_CUDA_RUNTIME OFF)
 
