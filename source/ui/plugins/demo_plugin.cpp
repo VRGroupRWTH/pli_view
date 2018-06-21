@@ -167,7 +167,7 @@ void demo_plugin::load_preset   (std::size_t index) const
     local_tractography_plugin->button_remote_trace->click();
   local_tractography_plugin->updateGeometry();
 
-  text_content->document()->setPlainText(QString::fromStdString(std::to_string(demo_plugin_data["description"].get<float>())));
+  text_content->document()->setPlainText(QString::fromStdString(demo_plugin_data["description"].get<std::string>()));
 }
 void demo_plugin::save_preset   (std::size_t index) const
 {
