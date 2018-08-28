@@ -212,7 +212,9 @@ endif()
 find_package  (OpenGL REQUIRED)
 import_library(opengl OPENGL_INCLUDE_DIRS OPENGL_LIBRARIES)
 
-find_package  (Protobuf)
+find_package  (Protobuf REQUIRED)
+list          (APPEND PROJECT_INCLUDE_DIRS ${PROTOBUF_INCLUDE_DIRS})
+list          (APPEND PROJECT_LIBRARIES    ${PROTOBUF_LIBRARIES}   )
 
 find_package  (TBB REQUIRED)
 import_library(tbb TBB_INCLUDE_DIRS TBB_LIBRARY_DEBUG TBB_LIBRARY_RELEASE)
