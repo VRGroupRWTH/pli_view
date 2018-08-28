@@ -13,8 +13,6 @@ set                   (CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} "--expt-extended-lambd
                                                           "-gencode=arch=compute_52,code=sm_52"
                                                           "-gencode=arch=compute_60,code=sm_60"
                                                           "-gencode=arch=compute_61,code=sm_61")
-set                   (CUDA_SEPARABLE_COMPILATION ON)
-set                   (CUDA_USE_STATIC_CUDA_RUNTIME OFF)
 
 ##################################################    Options     ##################################################
 option(BUILD_TESTS "Build tests." OFF)
@@ -77,7 +75,7 @@ set(PROJECT_SOURCES
   include/pli_vis/third_party/tangent-base/simple_tracer.hpp
   include/pli_vis/third_party/tangent-base/trace_recorder.hpp
   include/pli_vis/third_party/tangent-base/tracer_base.hpp
-	include/pli_vis/ui/plugins/color_plugin.hpp
+  include/pli_vis/ui/plugins/color_plugin.hpp
   include/pli_vis/ui/plugins/data_plugin.hpp
   include/pli_vis/ui/plugins/demo_plugin.hpp
   include/pli_vis/ui/plugins/fom_plugin.hpp
@@ -96,7 +94,7 @@ set(PROJECT_SOURCES
   include/pli_vis/ui/application.hpp
   include/pli_vis/ui/plugin.hpp
   include/pli_vis/ui/plugin_base.hpp
-	include/pli_vis/utility/make_even.hpp
+  include/pli_vis/utility/make_even.hpp
   include/pli_vis/visualization/algorithms/color_mapper.hpp
   include/pli_vis/visualization/algorithms/lineao_streamline_renderer.hpp
   include/pli_vis/visualization/algorithms/odf_field.hpp
@@ -152,7 +150,7 @@ set(PROJECT_SOURCES
   source/third_party/glew/glew.c
   source/third_party/qxt/QxtLetterBoxWidget.cpp
   source/third_party/qxt/QxtSpanSlider.cpp
-	source/ui/plugins/color_plugin.cpp
+  source/ui/plugins/color_plugin.cpp
   source/ui/plugins/data_plugin.cpp
   source/ui/plugins/demo_plugin.cpp
   source/ui/plugins/fom_plugin.cpp
@@ -193,8 +191,9 @@ include(import_library)
 find_package  (Boost REQUIRED)
 import_library(boost Boost_INCLUDE_DIR)
 
-set           (CUDA_SEPARABLE_COMPILATION ON)
 find_package  (CUDA REQUIRED)
+set           (CUDA_SEPARABLE_COMPILATION ON)
+set           (CUDA_USE_STATIC_CUDA_RUNTIME OFF)
 list          (APPEND PROJECT_LIBRARIES 
                ${CUDA_CUBLAS_LIBRARIES} 
                ${CUDA_cusolver_LIBRARY} 
@@ -213,9 +212,7 @@ endif()
 find_package  (OpenGL REQUIRED)
 import_library(opengl OPENGL_INCLUDE_DIRS OPENGL_LIBRARIES)
 
-find_package  (Protobuf REQUIRED)
-list          (APPEND PROJECT_INCLUDE_DIRS ${PROTOBUF_INCLUDE_DIRS})
-list          (APPEND PROJECT_LIBRARIES    ${PROTOBUF_LIBRARIES}   )
+find_package  (Protobuf)
 
 find_package  (TBB REQUIRED)
 import_library(tbb TBB_INCLUDE_DIRS TBB_LIBRARY_DEBUG TBB_LIBRARY_RELEASE)
