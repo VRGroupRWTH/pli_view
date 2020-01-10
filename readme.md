@@ -24,6 +24,13 @@
 - For ODFs: Ensure the selection is a power of two (e.g. 2048x2048x1) and click the "Fiber Distribution Maps" plugin, adjust the parameters as you like, and click "Calculate".
 ![alt text](/docs/images/Tutorial6.png)
 
+**Examples**:
+The following are example visualizations extracted from the application.
+![alt text](/docs/images/Example1.png)
+![alt text](/docs/images/Example2.png)
+![alt text](/docs/images/Example3.png)
+![alt text](/docs/images/Example4.png)
+![alt text](/docs/images/Example5.png)
+
 **Limitations**:
 - For the hierarchical ODF tree to work correctly, one must use power-of-2 selections.
-- Peak extraction and tractography plugin are not implemented at the moment.
