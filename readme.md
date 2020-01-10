@@ -25,7 +25,7 @@
 ![alt text](/docs/images/Tutorial6.png)
 
 **Examples**:
-The following are example visualizations extracted from the application.
+- The following are example visualizations extracted from the application.
 ![alt text](/docs/images/Example1.png)
 ![alt text](/docs/images/Example2.png)
 ![alt text](/docs/images/Example3.png)
