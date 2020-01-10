@@ -1,0 +1,442 @@
+{
+    "presets": [
+        {
+            "color_plugin": {
+                "invert_p": false,
+                "k": 0.5,
+                "mode": 0
+            },
+            "data_plugin": {
+                "dataset": "D:/data/pli/MSA/MSA0309_s0536-0695.h5",
+                "offset": [
+                    34,
+                    752,
+                    32
+                ],
+                "size": [
+                    768,
+                    768,
+                    32
+                ],
+                "stride": [
+                    1,
+                    1,
+                    1
+                ]
+            },
+            "demo_plugin": {
+                "description": "1- Scalar Maps:\n\nThe retardation map describes the quantity of change in the direction of light as it travels through the brain slice.\n\nDue to the optical properties (birefringence) of myelinated axons, the light deviates as it travels through them. Measuring this deviation for various polarization angles enable computation of the most likely direction for the axon (and hence the neuron). This is the major physical principle behind Polarized Light Imaging (PLI).\n\nMathematically, the retardation map is a 3D scalar map (see the Scalar Maps tab for modifying the slice)."
+            },
+            "fom_plugin": {
+                "enabled": false,
+                "scale": 1.0
+            },
+            "interactor_plugin": {
+                "rotation": [
+                    -152.49996948242188,
+                    -4.602674835041398e-06,
+                    1.057937515724916e-05
+                ],
+                "translation": [
+                    388.6102294921875,
+                    724.0062255859375,
+                    -366.82843017578125
+                ]
+            },
+            "local_tractography_plugin": {
+                "enabled": false,
+                "integration_step": 1.0,
+                "iterations": 10,
+                "offset": [
+                    0,
+                    0,
+                    0
+                ],
+                "remote_address": "tcp://linuxihdc090.rz.rwth-aachen.de:14130",
+                "remote_folder": "/home/ad784563/data/",
+                "size": [
+                    0,
+                    0,
+                    0
+                ],
+                "streamline_radius": 0.10000000149011612,
+                "stride": [
+                    1,
+                    1,
+                    1
+                ]
+            },
+            "odf_plugin": {
+                "enabled": false,
+                "hierarchical": false,
+                "histogram_bins": [
+                    100,
+                    50
+                ],
+                "maximum_sh_degree": 6,
+                "sampling_partitions": [
+                    32,
+                    16
+                ],
+                "supervoxel_extent": [
+                    64,
+                    64,
+                    1
+                ],
+                "symmetric": true,
+                "visible_layers": [
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true
+                ]
+            },
+            "polar_plot_plugin": {
+                "angular_partitions": 360,
+                "enabled": false,
+                "superpixel_size": 16,
+                "symmetric": true
+            },
+            "scalar_plugin": {
+                "enabled": true,
+                "mode": true
+            }
+        },
+        {
+            "color_plugin": {
+                "invert_p": false,
+                "k": 0.5,
+                "mode": 0
+            },
+            "data_plugin": {
+                "dataset": "D:/data/pli/MSA/MSA0309_s0536-0695.h5",
+                "offset": [
+                    34,
+                    752,
+                    32
+                ],
+                "size": [
+                    768,
+                    768,
+                    32
+                ],
+                "stride": [
+                    1,
+                    1,
+                    1
+                ]
+            },
+            "demo_plugin": {
+                "description": "2- Fiber Orientation Maps:\n\nThe Fiber Orientation Map is computed from the combination of Transmittance and Retardation maps. Each voxel is a single unit vector depicting the computed orientation of the axons at the given point.\n\nSince PLI data acquisition involves physical slicing, overlaying the slices naively results in significant discrepancies and prevent a full 3D reconstruction. Registration is almost always necessary to achieve 3D, which is researched by the collaborators of Jülich Forschungszentrum at University of Oxford.\n\nMathematically, the Fiber Orientation Map is a 3D unit vector field (see the Fiber Orientation Maps tab for modifying the scale)."
+            },
+            "fom_plugin": {
+                "enabled": true,
+                "scale": 1.0
+            },
+            "interactor_plugin": {
+                "rotation": [
+                    -152.49996948242188,
+                    -4.602674835041398e-06,
+                    1.057937515724916e-05
+                ],
+                "translation": [
+                    388.6102294921875,
+                    724.0062255859375,
+                    -366.82843017578125
+                ]
+            },
+            "local_tractography_plugin": {
+                "enabled": false,
+                "integration_step": 1.0,
+                "iterations": 10,
+                "offset": [
+                    0,
+                    0,
+                    0
+                ],
+                "remote_address": "tcp://linuxihdc090.rz.rwth-aachen.de:14130",
+                "remote_folder": "/home/ad784563/data/",
+                "size": [
+                    0,
+                    0,
+                    0
+                ],
+                "streamline_radius": 0.10000000149011612,
+                "stride": [
+                    1,
+                    1,
+                    1
+                ]
+            },
+            "odf_plugin": {
+                "enabled": false,
+                "hierarchical": false,
+                "histogram_bins": [
+                    100,
+                    50
+                ],
+                "maximum_sh_degree": 6,
+                "sampling_partitions": [
+                    32,
+                    16
+                ],
+                "supervoxel_extent": [
+                    64,
+                    64,
+                    1
+                ],
+                "symmetric": true,
+                "visible_layers": [
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true
+                ]
+            },
+            "polar_plot_plugin": {
+                "angular_partitions": 360,
+                "enabled": false,
+                "superpixel_size": 16,
+                "symmetric": true
+            },
+            "scalar_plugin": {
+                "enabled": true,
+                "mode": true
+            }
+        },
+        {
+            "color_plugin": {
+                "invert_p": false,
+                "k": 0.5,
+                "mode": 0
+            },
+            "data_plugin": {
+                "dataset": "D:/data/pli/MSA/MSA0309_s0536-0695.h5",
+                "offset": [
+                    34,
+                    752,
+                    32
+                ],
+                "size": [
+                    768,
+                    768,
+                    32
+                ],
+                "stride": [
+                    1,
+                    1,
+                    1
+                ]
+            },
+            "demo_plugin": {
+                "description": "3- Orientation Distribution Function (ODF) Maps:\n\nThe Fiber Orientation Map is convenient to analyze nerve fibers per slice, but visual clutter emerges when viewing multiple slices.\n\nGrouping the vectors into orientation distribution functions provide a workaround to the clutter without significantly distorting the data. These functions also enable comparison of 3D-PLI results with other approaches such as diffusion Magnetic Resonance Imaging.\n\nThe algorithm collects nearby vectors into spherical histograms and projects it to the spherical harmonics basis to create the visuals to the left.\n\nMathematically, the ODF map is a 3D (spherical) tensor field (see the Orientation Distribution Functions tab for customizing the parameters and re-run)."
+            },
+            "fom_plugin": {
+                "enabled": false,
+                "scale": 1.0
+            },
+            "interactor_plugin": {
+                "rotation": [
+                    -152.49996948242188,
+                    -4.602674835041398e-06,
+                    1.057937515724916e-05
+                ],
+                "translation": [
+                    388.6102294921875,
+                    724.0062255859375,
+                    -366.82843017578125
+                ]
+            },
+            "local_tractography_plugin": {
+                "enabled": false,
+                "integration_step": 1.0,
+                "iterations": 10,
+                "offset": [
+                    0,
+                    0,
+                    0
+                ],
+                "remote_address": "tcp://linuxihdc090.rz.rwth-aachen.de:14130",
+                "remote_folder": "/home/ad784563/data/",
+                "size": [
+                    0,
+                    0,
+                    0
+                ],
+                "streamline_radius": 0.10000000149011612,
+                "stride": [
+                    1,
+                    1,
+                    1
+                ]
+            },
+            "odf_plugin": {
+                "enabled": true,
+                "hierarchical": false,
+                "histogram_bins": [
+                    64,
+                    32
+                ],
+                "maximum_sh_degree": 6,
+                "sampling_partitions": [
+                    64,
+                    32
+                ],
+                "supervoxel_extent": [
+                    8,
+                    8,
+                    32
+                ],
+                "symmetric": false,
+                "visible_layers": [
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true
+                ]
+            },
+            "polar_plot_plugin": {
+                "angular_partitions": 360,
+                "enabled": false,
+                "superpixel_size": 16,
+                "symmetric": true
+            },
+            "scalar_plugin": {
+                "enabled": true,
+                "mode": true
+            }
+        },
+        {
+            "color_plugin": {
+                "invert_p": false,
+                "k": 0.5,
+                "mode": 0
+            },
+            "data_plugin": {
+                "dataset": "D:/data/pli/MSA/MSA0309_s0536-0695.h5",
+                "offset": [
+                    34,
+                    752,
+                    32
+                ],
+                "size": [
+                    768,
+                    768,
+                    32
+                ],
+                "stride": [
+                    1,
+                    1,
+                    1
+                ]
+            },
+            "demo_plugin": {
+                "description": "4- Computing Fiber Pathways via Particle Tracing\n\nThe voxel-wise visualization techniques certainly help the neuroscientists in comparison settings but they are a discrete depiction of continuous data such as the nerve fibers within the brain.\n\nParticle tracing enables computation of continuous pathways from the discrete Fiber Orientation Map using an integration scheme such as Runge-Kutta or Euler. This reveals structural details invisible to voxel-wise methods.\n\nIn order to be able to scale to the large datasets created through 3D-PLI, we utilize a larger server to back the application up remotely. The server runs Runge-Kutta integration in parallel using TBB and passes the results onto Ospray, which is a CPU raytracing framework by Intel.\n"
+            },
+            "fom_plugin": {
+                "enabled": true,
+                "scale": 1.0
+            },
+            "interactor_plugin": {
+                "rotation": [
+                    -152.49996948242188,
+                    -4.602674835041398e-06,
+                    1.057937515724916e-05
+                ],
+                "translation": [
+                    388.6102294921875,
+                    668.595703125,
+                    -260.3866271972656
+                ]
+            },
+            "local_tractography_plugin": {
+                "enabled": true,
+                "integration_step": 0.5,
+                "iterations": 100,
+                "offset": [
+                    0,
+                    0,
+                    0
+                ],
+                "remote_address": "tcp://localhost:14130",
+                "remote_folder": "D:/data/pli/MSA/",
+                "size": [
+                    768,
+                    768,
+                    32
+                ],
+                "streamline_radius": 0.10000000149011612,
+                "stride": [
+                    2,
+                    2,
+                    2
+                ]
+            },
+            "odf_plugin": {
+                "enabled": false,
+                "hierarchical": false,
+                "histogram_bins": [
+                    64,
+                    32
+                ],
+                "maximum_sh_degree": 6,
+                "sampling_partitions": [
+                    64,
+                    32
+                ],
+                "supervoxel_extent": [
+                    8,
+                    8,
+                    32
+                ],
+                "symmetric": false,
+                "visible_layers": [
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true,
+                    true
+                ]
+            },
+            "polar_plot_plugin": {
+                "angular_partitions": 360,
+                "enabled": false,
+                "superpixel_size": 16,
+                "symmetric": true
+            },
+            "scalar_plugin": {
+                "enabled": true,
+                "mode": true
+            }
+        },
+        {},
+        {},
+        {},
+        {},
+        {},
+        {}
+    ]
+}

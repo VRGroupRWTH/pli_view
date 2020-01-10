@@ -191,6 +191,16 @@ std::array<std::size_t, 3> data_plugin::selection_offset() const
     line_edit::get_text<std::size_t>(line_edit_offset_z)
   };
 }
+
+std::array<std::size_t, 3> data_plugin::selection_bounds() const
+{
+  return
+  {
+    line_edit::get_text<std::size_t>(line_edit_size_x),
+    line_edit::get_text<std::size_t>(line_edit_size_y),
+    line_edit::get_text<std::size_t>(line_edit_size_z)
+  };
+}
 std::array<std::size_t, 3> data_plugin::selection_size  () const
 {
   auto stride = selection_stride();
@@ -308,6 +318,45 @@ boost::multi_array<float3, 3>        data_plugin::generate_vectors        (bool 
 
     return vectors;
   }
+}
+
+void data_plugin::unserialize(const std::string& filename, const std::array<std::size_t, 3>& offset, const std::array<std::size_t, 3>& bounds, const std::array<std::size_t, 3>& stride)
+{
+  if(filename.find("MSA") != std::string::npos)
+  {
+    io_.set_filepath          (filename.c_str());
+    io_.set_transmittance_path("Transmittance");
+    io_.set_retardation_path  ("Retardation"  );
+    io_.set_direction_path    ("Direction"    );
+    io_.set_inclination_path  ("Inclination"  );
+    io_.set_mask_path         ("Mask"         );
+    io_.set_unit_vector_path  ("UnitVector"   );
+  }
+  else
+  {
+    io_.set_filepath          (filename.c_str());
+    io_.set_transmittance_path("%Slice%/Microscope/Processed/Registered/NTransmittance");
+    io_.set_retardation_path  ("%Slice%/Microscope/Processed/Registered/Retardation"   );
+    io_.set_direction_path    ("%Slice%/Microscope/Processed/Registered/Direction"     );
+    io_.set_inclination_path  ("%Slice%/Microscope/Processed/Registered/Inclination"   );
+    io_.set_mask_path         ("%Slice%/Microscope/Processed/Registered/Mask"          );
+    io_.set_unit_vector_path  ("%Slice%/Microscope/Processed/Registered/UnitVector"    );
+  }
+  setup();
+
+  line_edit_offset_x->setText(QString::fromStdString(std::to_string(offset[0])));
+  line_edit_offset_y->setText(QString::fromStdString(std::to_string(offset[1])));
+  line_edit_offset_z->setText(QString::fromStdString(std::to_string(offset[2])));
+
+  line_edit_size_x  ->setText(QString::fromStdString(std::to_string(bounds[0])));
+  line_edit_size_y  ->setText(QString::fromStdString(std::to_string(bounds[1])));
+  line_edit_size_z  ->setText(QString::fromStdString(std::to_string(bounds[2])));
+  
+  line_edit_stride_x->setText(QString::fromStdString(std::to_string(stride[0])));
+  line_edit_stride_y->setText(QString::fromStdString(std::to_string(stride[1])));
+  line_edit_stride_z->setText(QString::fromStdString(std::to_string(stride[2])));
+
+  button_update->click();
 }
 
 void data_plugin::start()

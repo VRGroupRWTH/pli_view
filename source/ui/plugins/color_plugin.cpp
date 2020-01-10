@@ -1,6 +1,7 @@
 #include <pli_vis/ui/plugins/color_plugin.hpp>
 
 #include <boost/format.hpp>
+#include <QDoubleValidator>
 
 #include <pli_vis/ui/utility/line_edit.hpp>
 
@@ -67,5 +68,22 @@ float color_plugin::k       () const
 bool  color_plugin::inverted() const
 {
   return checkbox_invert_k->isChecked();
+}
+  
+void color_plugin::set_mode    (const int   mode    )
+{
+  if(mode == 0) radio_button_hsl_1->setChecked(true);
+  if(mode == 1) radio_button_hsl_2->setChecked(true);
+  if(mode == 2) radio_button_hsv_1->setChecked(true);
+  if(mode == 3) radio_button_hsv_2->setChecked(true);
+  if(mode == 4) radio_button_rgb  ->setChecked(true);
+}
+void color_plugin::set_k       (const float k       )
+{
+  line_edit_k->setText(QString::fromStdString(std::to_string(k)));
+}
+void color_plugin::set_inverted(const bool  inverted)
+{
+  checkbox_invert_k->setChecked(inverted);
 }
 }

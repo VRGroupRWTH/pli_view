@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package tt;
+
+enum dataset_format
+{
+  msa0309    = 0;
+  vervet1818 = 1;
+}

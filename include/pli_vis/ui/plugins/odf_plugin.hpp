@@ -23,13 +23,9 @@ public:
 
 private:
   void calculate         ();
-  void extract_peaks     ();
   void set_visible_layers() const;
 
-  float                         threshold_multiplier_ = 0.01F;
-  std::size_t                   maxima_count_         = 3;
   boost::multi_array<float , 4> coefficients_;
-  boost::multi_array<float3, 4> maxima_      ;
   odf_field*                    odf_field_   ;                              
   std::future<void>             future_      ;                                          
   cusolverDnHandle_t            cusolver_    ;

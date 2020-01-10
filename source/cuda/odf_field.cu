@@ -24,46 +24,26 @@ namespace pli
 template<typename vector_type, typename scalar_type>
 __global__ void quantify_and_project_kernel(
   // Input related parameters.
-        uint3          dimensions         ,
-        uint3          vectors_dimensions ,
+        uint3        dimensions          ,
+        uint3        vectors_dimensions  ,
   // Quantification related parameters. 
-  const vector_type*   vectors            , 
-        unsigned       histogram_bin_count,
-        vector_type*   histogram_vectors  ,
-  // Projection related parameters.     
-        unsigned       maximum_degree     ,
-  const scalar_type*   inverse_transform  ,
-        scalar_type*   coefficient_vectors)
+  const vector_type* vectors             , 
+        unsigned     histogram_bin_count ,
+        vector_type* histogram_vectors   ,
+        scalar_type* histogram_magnitudes)
 {
-  auto x = blockIdx.x * blockDim.x + threadIdx.x;
-  auto y = blockIdx.y * blockDim.y + threadIdx.y;
-  auto z = blockIdx.z * blockDim.z + threadIdx.z;
+  const auto x = blockIdx.x * blockDim.x + threadIdx.x;
+  const auto y = blockIdx.y * blockDim.y + threadIdx.y;
+  const auto z = blockIdx.z * blockDim.z + threadIdx.z;
 
   if (x >= dimensions.x || y >= dimensions.y || z >= dimensions.z)
     return;
     
-  auto volume_index              = z + dimensions.z * (y + dimensions.y * x);
-  auto coefficient_count         = pli::coefficient_count(maximum_degree);
-  auto coefficient_vector_offset = volume_index * coefficient_count;
-  auto alpha                     = 1.0F;
-  auto beta                      = 0.0F;
-  
-  float* histogram_magnitudes;
-  cudaMalloc(&histogram_magnitudes, histogram_bin_count * sizeof(float));
-  for(auto i = 0; i < histogram_bin_count; ++i)
-    histogram_magnitudes[i] = 0.0F;
-    
-  uint3 offset {
-    vectors_dimensions.x * x,
-    vectors_dimensions.y * y,
-    vectors_dimensions.z * z };
-  uint3 size {
-    vectors_dimensions.x * dimensions.x,
-    vectors_dimensions.y * dimensions.y,
-    vectors_dimensions.z * dimensions.z };
+  const auto volume_index     = z + dimensions.z * (y + dimensions.y * x);
+  const auto histogram_offset = volume_index * histogram_bin_count;
 
-  cublasHandle_t cublas;
-  cublasCreate(&cublas);
+  uint3 offset { vectors_dimensions.x * x           , vectors_dimensions.y * y           , vectors_dimensions.z * z            };
+  uint3 size   { vectors_dimensions.x * dimensions.x, vectors_dimensions.y * dimensions.y, vectors_dimensions.z * dimensions.z };
 
   accumulate_kernel<<<grid_size_3d(vectors_dimensions), block_size_3d()>>>(
     vectors_dimensions  ,
@@ -72,28 +52,8 @@ __global__ void quantify_and_project_kernel(
     vectors             ,
     histogram_bin_count ,
     histogram_vectors   ,
-    histogram_magnitudes);
-  __syncthreads();
+    histogram_magnitudes + histogram_offset);
   cudaDeviceSynchronize();
-  __syncthreads();
-
-  cublasSgemv(
-    cublas                                         ,
-    CUBLAS_OP_N                                    ,
-    coefficient_count                              ,
-    histogram_bin_count                            ,
-    &alpha                                         ,
-    inverse_transform                              ,
-    coefficient_count                              ,
-    histogram_magnitudes                           ,
-    1                                              ,
-    &beta                                          ,
-    coefficient_vectors + coefficient_vector_offset,
-    1                                              );
-
-  cublasDestroy(cublas);
-
-  cudaFree(histogram_magnitudes);
 }
 
 // Call on a dimensions.x x dimensions.y x dimensions.z 3D grid.
@@ -180,8 +140,10 @@ void calculate_odfs(
 
   status_callback("Allocating histogram vector and magnitudes.");
   auto histogram_bin_count = histogram_bins.x * histogram_bins.y;
-  thrust::device_vector<float3> histogram_vectors(histogram_bin_count);
-  auto histogram_vectors_ptr = raw_pointer_cast(&histogram_vectors[0]);
+  thrust::device_vector<float3> histogram_vectors   (histogram_bin_count);
+  thrust::device_vector<float>  histogram_magnitudes(histogram_bin_count * voxel_count, 0.0f);
+  auto histogram_vectors_ptr    = raw_pointer_cast(&histogram_vectors   [0]);
+  auto histogram_magnitudes_ptr = raw_pointer_cast(&histogram_magnitudes[0]);
 
   status_callback("Allocating spherical harmonics basis matrix.");
   auto coefficient_count = pli::coefficient_count(maximum_degree);
@@ -325,18 +287,34 @@ void calculate_odfs(
 
   status_callback("Accumulating histograms and projecting via V E^-1 U^T * h. This might take a while.");
   quantify_and_project_kernel<<<dimensions, dim3(1, 1, 1)>>> (
-    dimensions             ,
-    vectors_dimensions     ,
-    gpu_vectors_ptr        ,
-    histogram_bin_count    ,
-    histogram_vectors_ptr  ,
-    maximum_degree         ,
-    V_EI_UT_ptr            ,
-    gpu_coefficients_ptr   );
+    dimensions              ,
+    vectors_dimensions      ,
+    gpu_vectors_ptr         ,
+    histogram_bin_count     ,
+    histogram_vectors_ptr   ,
+    histogram_magnitudes_ptr);
   cudaDeviceSynchronize();
   gpu_vectors      .clear();
   histogram_vectors.clear();
-
+  
+  for (auto i = 0; i < voxel_count; ++i)
+    cublasSgemv(
+      cublas                                            ,
+      CUBLAS_OP_N                                       ,
+      coefficient_count                                 ,
+      histogram_bin_count                               ,
+      &alpha                                            ,
+      V_EI_UT_ptr                                       ,
+      coefficient_count                                 ,
+      histogram_magnitudes_ptr + i * histogram_bin_count,
+      1                                                 ,
+      &beta                                             ,
+      gpu_coefficients_ptr     + i * coefficient_count  ,
+      1                                                 );
+  cudaDeviceSynchronize();
+  V_EI_UT             .clear();
+  histogram_magnitudes.clear();
+  
   status_callback("Copying coefficients to CPU.");
   cudaMemcpy(coefficients, gpu_coefficients_ptr, sizeof(float) * total_coefficient_count, cudaMemcpyDeviceToHost);
 
@@ -506,60 +484,6 @@ void sample_odfs(
       dimension_count == 3 ? layer_dimensions.z / 2 : 1
     };
   }
-
-  auto end_time = std::chrono::system_clock::now();
-  std::chrono::duration<double> elapsed_time = end_time - start_time;
-  status_callback("Cuda ODF sampling operations took " + std::to_string(elapsed_time.count()) + " seconds.");
-}
-
-void extract_peaks(
-  const uint3&   dimensions    ,
-  const unsigned maximum_degree,
-  const float*   coefficients  ,
-  const uint2&   tessellations , 
-  const unsigned maxima_count  ,
-        float3*  maxima        ,
-        std::function<void(const std::string&)> status_callback)
-{
-  auto start_time = std::chrono::system_clock::now();
-
-  auto voxel_count       = dimensions.x * dimensions.y * dimensions.z;
-  auto coefficient_count = pli::coefficient_count(maximum_degree);
-
-  status_callback("Allocating and copying the spherical harmonics coefficients.");
-  thrust::device_vector<float> coefficient_vectors(voxel_count * coefficient_count);
-  auto coefficients_ptr = raw_pointer_cast(&coefficient_vectors[0]);
-  copy_n(coefficients, coefficient_vectors.size(), coefficient_vectors.begin());
-  cudaDeviceSynchronize();
-
-  status_callback("Allocating the maxima vectors.");
-  thrust::device_vector<float3> maxima_vectors(voxel_count * maxima_count);
-  auto maxima_ptr = raw_pointer_cast(&maxima_vectors[0]);
-
-  status_callback("Extracting maxima.");
-  extract_maxima<<<grid_size_3d(dimensions), block_size_3d()>>>(
-    dimensions       ,
-    coefficient_count,
-    coefficients_ptr ,
-    tessellations    ,
-    maxima_count     ,
-    maxima_ptr       );
-  cudaDeviceSynchronize();
-
-  status_callback("Converting the maxima to Cartesian coordinates.");
-  thrust::transform(
-    thrust::device,
-    maxima_vectors.begin(),
-    maxima_vectors.end  (),
-    maxima_vectors.begin(),
-    [] __host__ __device__(const float3& point)
-    {
-      return to_cartesian_coords(point);
-    });
-  cudaDeviceSynchronize();
-
-  status_callback("Copying maxima to CPU.");
-  cudaMemcpy(maxima, maxima_ptr, sizeof(float3) * maxima_vectors.size(), cudaMemcpyDeviceToHost);
 
   auto end_time = std::chrono::system_clock::now();
   std::chrono::duration<double> elapsed_time = end_time - start_time;

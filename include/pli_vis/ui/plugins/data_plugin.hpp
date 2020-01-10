@@ -67,15 +67,27 @@ public:
   {
     return *unit_vector_;
   }
-  
+
+  const std::string& filepath() const
+  {
+    return io_.filepath();
+  }
+
   std::array<std::size_t, 3> selection_offset() const;
+  std::array<std::size_t, 3> selection_bounds() const;
   std::array<std::size_t, 3> selection_size  () const;
   std::array<std::size_t, 3> selection_stride() const;
 
   boost::multi_array<unsigned char, 2> generate_preview_image  (std::size_t x_resolution = 2048 );
   boost::multi_array<unsigned char, 2> generate_selection_image(std::size_t x_resolution = 2048 );
   boost::multi_array<float3, 3>        generate_vectors        (bool        cartesian    = false);
-  
+
+  void unserialize(
+    const std::string&                file  ,
+    const std::array<std::size_t, 3>& offset,
+    const std::array<std::size_t, 3>& bounds,
+    const std::array<std::size_t, 3>& stride);
+
 signals:
   void on_load();
 

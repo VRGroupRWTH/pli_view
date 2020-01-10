@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+import "vector_types.proto";
+
+package tt;
+
+message camera
+{
+  fvec3 position = 1;
+  fvec3 forward  = 2;
+  fvec3 up       = 3;
+}

@@ -4,6 +4,7 @@
 #include <string>
 
 #include <boost/format.hpp>
+#include <QIntValidator>
 #include <vector_functions.hpp>
 
 #include <pli_vis/cuda/sh/spherical_harmonics.h>
@@ -36,7 +37,6 @@ odf_plugin::odf_plugin(QWidget* parent) : plugin(parent)
   line_edit_maximum_sh_degree->setText(QString::fromStdString(std::to_string(slider_maximum_sh_degree->value())));
   line_edit_sampling_theta   ->setText(QString::fromStdString(std::to_string(slider_sampling_theta   ->value())));
   line_edit_sampling_phi     ->setText(QString::fromStdString(std::to_string(slider_sampling_phi     ->value())));
-  line_edit_threshold        ->setText(QString::fromStdString((boost::format("%.2f") % (threshold_multiplier_ * slider_threshold->value())).str()));
 
   connect(checkbox_enabled, &QCheckBox::stateChanged, [&](int state)
   {
@@ -165,29 +165,9 @@ odf_plugin::odf_plugin(QWidget* parent) : plugin(parent)
     set_visible_layers();
   });
 
-  connect(checkbox_clustering_enabled, &QCheckBox::stateChanged    , [&](int state)
-  {
-    logger_->info("Clustering is {}.", state ? "enabled" : "disabled");
-    label_threshold    ->setEnabled(state);
-    slider_threshold   ->setEnabled(state);
-    line_edit_threshold->setEnabled(state);
-  });
-  connect(slider_threshold           , &QxtSpanSlider::valueChanged, [&]
-  {
-    line_edit_threshold->setText(QString::fromStdString((boost::format("%.2f") % (threshold_multiplier_ * slider_threshold->value())).str()));
-  });
-  connect(line_edit_threshold        , &QLineEdit::editingFinished , [&]
-  {
-    slider_threshold->setValue(line_edit::get_text<double>(line_edit_threshold) / threshold_multiplier_);
-  });
-
   connect(button_calculate           , &QAbstractButton::clicked   , [&]
   {
     calculate();
-  });
-  connect(button_extract_peaks       , &QAbstractButton::clicked   , [&]
-  {
-    extract_peaks();
   });
 }
 
@@ -285,59 +265,13 @@ void odf_plugin::calculate         ()
     sampling_dimensions,
     block_dimensions,
     1.0F,
-    checkbox_hierarchical      ->isChecked(),
-    checkbox_clustering_enabled->isChecked(),
-    threshold_multiplier_ * float(slider_threshold->value()),
+    checkbox_hierarchical->isChecked(),
+    false,
+    0.1f ,
     [&] (const std::string& message) { logger_->info(message); });
 
   logger_->info(std::string("Update successful."));
  
-  owner_->set_is_loading(false);
-}
-void odf_plugin::extract_peaks     ()
-{
-  owner_->set_is_loading(true);
-
-  logger_->info(std::string("Extracting peaks..."));
-    
-  auto dimensions = make_uint3(
-    coefficients_.shape()[0],
-    coefficients_.shape()[1],
-    coefficients_.shape()[2]);
-
-  uint2 sampling_dimensions    = { 
-    line_edit::get_text<unsigned>(line_edit_sampling_theta   ),
-    line_edit::get_text<unsigned>(line_edit_sampling_phi     )};
-  
-  future_ = std::async(std::launch::async, [&]
-  {
-    try
-    {
-      maxima_.resize(boost::extents
-        [coefficients_.shape()[0]]
-        [coefficients_.shape()[1]]
-        [coefficients_.shape()[2]]
-        [maxima_count_]);
-
-      pli::extract_peaks(
-        dimensions,
-        maximum_degree(coefficients_.shape()[3]),
-        coefficients_.data(),
-        sampling_dimensions ,
-        maxima_count_       ,
-        maxima_.data()      ,
-        [&] (const std::string& message) { logger_->info(message); });
-    }
-    catch (std::exception& exception)
-    {
-      logger_->error(std::string(exception.what()));
-    }
-  });
-  while (future_.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
-    QApplication::processEvents();
-
-  logger_->info(std::string("Extraction successful."));
-  
   owner_->set_is_loading(false);
 }
 void odf_plugin::set_visible_layers() const
